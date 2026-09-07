@@ -1,0 +1,32 @@
+line_item,label,FY2023A,FY2024A,FY2025A,FY2026B,FY2026F
+cash,Cash and cash equivalents,15.000000,15.000000,22.000000,22.000000,22.000000
+ar,"Trade accounts receivable, net",55.715068,61.052055,65.484384,67.506849,70.670685
+contract_assets,Contract assets / unbilled,7.512000,8.206400,8.901000,9.093000,10.137600
+inventory,"Inventory, net",35.600822,38.628433,40.103425,40.640642,43.441716
+prepaid,Prepaid expenses and other current assets,6.560000,7.428000,8.242000,8.960000,8.744000
+total_current_assets,Total current assets,120.387890,130.314888,144.730808,148.200492,154.994001
+ppe_net,"Property, plant and equipment, net",77.200000,87.500000,95.200000,102.500000,101.600000
+rou_asset,Operating lease right-of-use assets,22.000000,24.000000,24.500000,24.000000,25.500000
+goodwill,Goodwill,124.400000,140.300000,142.200000,142.200000,143.200000
+intangibles_net,"Intangible assets, net",53.600000,59.400000,53.100000,45.900000,46.400000
+other_nca,Other non-current assets,6.500000,7.200000,7.800000,8.000000,8.200000
+total_assets,TOTAL ASSETS,404.087890,448.714888,467.530808,470.800492,479.894001
+ap,Trade accounts payable,29.775233,34.984241,40.103425,44.964115,43.441716
+contract_liabilities,Contract liabilities,5.225000,5.886000,6.678000,7.790000,6.647000
+accrued,Accrued liabilities,18.040000,20.427000,22.665500,24.640000,24.046000
+tax_payable,Income taxes payable,1.968000,2.228400,2.472600,2.688000,2.623200
+rcf,Revolving credit facility,15.136696,23.847882,16.321318,6.756755,11.422959
+tlb_net,"Term loan B, net of financing costs",196.000000,222.500000,221.250000,209.950000,219.950000
+finance_lease,Finance lease liabilities,10.268500,10.368828,10.850594,10.843234,11.343234
+operating_lease,Operating lease liabilities,22.000000,24.000000,24.500000,24.000000,25.500000
+dtl,Deferred tax liabilities,15.500000,17.900000,16.300000,14.700000,14.800000
+other_ltl,Other long-term liabilities,3.500000,3.800000,4.000000,4.000000,4.200000
+total_liabilities,Total liabilities,317.413428,365.942350,365.141437,350.332104,363.974110
+contributed_capital,Contributed capital and APIC,166.000000,167.200000,168.600000,170.100000,170.100000
+retained_earnings,Retained earnings / (accumulated deficit),-82.405538,-82.287463,-73.210629,-56.821612,-62.380109
+cta,Cumulative translation adjustment,0.000000,-5.300000,3.500000,3.500000,4.500000
+nci,Non-controlling interests,3.080000,3.160000,3.500000,3.690000,3.700000
+total_equity,Total equity,86.674462,82.772537,102.389371,120.468388,115.919891
+total_liabilities_and_equity,TOTAL LIABILITIES AND EQUITY,404.087890,448.714888,467.530808,470.800492,479.894001
+tlb_gross,"Memo: term loan B, gross principal",201.200000,228.900000,226.600000,214.300000,224.300000
+dff,Memo: unamortised deferred financing costs,5.200000,6.400000,5.350000,4.350000,4.350000

@@ -1,0 +1,182 @@
+group_account,account_name,statement,fs_caption_l1,fs_caption_l2,account_class,normal_balance,fx_method,cash_flow_category,is_intercompany,is_ebitda,is_ebitda_addback,is_statistical,include_in_tb_balance,sort_order
+110100,Cash and cash equivalents,BS,Current Assets,Cash and cash equivalents,ASSET,D,CLOSE,CASH,FALSE,FALSE,FALSE,FALSE,TRUE,1010
+110200,Restricted cash,BS,Current Assets,Cash and cash equivalents,ASSET,D,CLOSE,CASH,FALSE,FALSE,FALSE,FALSE,TRUE,1020
+115100,Short-term investments,BS,Current Assets,Cash and cash equivalents,ASSET,D,CLOSE,INV_OTHER,FALSE,FALSE,FALSE,FALSE,TRUE,1030
+120100,Trade accounts receivable,BS,Current Assets,"Accounts receivable, net",ASSET,D,CLOSE,OP_WC,FALSE,FALSE,FALSE,FALSE,TRUE,1110
+120200,Allowance for doubtful accounts,BS,Current Assets,"Accounts receivable, net",ASSET,C,CLOSE,OP_WC,FALSE,FALSE,FALSE,FALSE,TRUE,1120
+120300,Other receivables,BS,Current Assets,"Accounts receivable, net",ASSET,D,CLOSE,OP_WC,FALSE,FALSE,FALSE,FALSE,TRUE,1130
+120500,Intercompany accounts receivable,BS,Current Assets,Intercompany balances,ASSET,D,CLOSE,OP_WC,TRUE,FALSE,FALSE,FALSE,TRUE,1140
+121100,Contract assets and unbilled receivables,BS,Current Assets,Contract assets,ASSET,D,CLOSE,OP_WC,FALSE,FALSE,FALSE,FALSE,TRUE,1150
+125100,Intercompany loans receivable - current,BS,Current Assets,Intercompany balances,ASSET,D,CLOSE,INV_OTHER,TRUE,FALSE,FALSE,FALSE,TRUE,1160
+130100,Raw materials inventory,BS,Current Assets,"Inventory, net",ASSET,D,CLOSE,OP_WC,FALSE,FALSE,FALSE,FALSE,TRUE,1210
+130200,Work in process inventory,BS,Current Assets,"Inventory, net",ASSET,D,CLOSE,OP_WC,FALSE,FALSE,FALSE,FALSE,TRUE,1220
+130300,Finished goods inventory,BS,Current Assets,"Inventory, net",ASSET,D,CLOSE,OP_WC,FALSE,FALSE,FALSE,FALSE,TRUE,1230
+130400,Inventory reserve,BS,Current Assets,"Inventory, net",ASSET,C,CLOSE,OP_WC,FALSE,FALSE,FALSE,FALSE,TRUE,1240
+130500,Unrealised intercompany profit in inventory,BS,Current Assets,"Inventory, net",ASSET,C,CLOSE,OP_WC,TRUE,FALSE,FALSE,FALSE,TRUE,1250
+140100,Prepaid expenses,BS,Current Assets,Prepaid and other current assets,ASSET,D,CLOSE,OP_WC,FALSE,FALSE,FALSE,FALSE,TRUE,1310
+140200,Prepaid income taxes,BS,Current Assets,Prepaid and other current assets,ASSET,D,CLOSE,OP_WC,FALSE,FALSE,FALSE,FALSE,TRUE,1320
+140300,Other current assets,BS,Current Assets,Prepaid and other current assets,ASSET,D,CLOSE,OP_WC,FALSE,FALSE,FALSE,FALSE,TRUE,1330
+150100,Land,BS,Non-Current Assets,"Property, plant and equipment, net",ASSET,D,CLOSE,INV_CAPEX,FALSE,FALSE,FALSE,FALSE,TRUE,1410
+150200,Buildings and improvements,BS,Non-Current Assets,"Property, plant and equipment, net",ASSET,D,CLOSE,INV_CAPEX,FALSE,FALSE,FALSE,FALSE,TRUE,1420
+150300,Machinery and equipment,BS,Non-Current Assets,"Property, plant and equipment, net",ASSET,D,CLOSE,INV_CAPEX,FALSE,FALSE,FALSE,FALSE,TRUE,1430
+150400,Vehicles,BS,Non-Current Assets,"Property, plant and equipment, net",ASSET,D,CLOSE,INV_CAPEX,FALSE,FALSE,FALSE,FALSE,TRUE,1440
+150500,Computer hardware and software,BS,Non-Current Assets,"Property, plant and equipment, net",ASSET,D,CLOSE,INV_CAPEX,FALSE,FALSE,FALSE,FALSE,TRUE,1450
+150600,Leasehold improvements,BS,Non-Current Assets,"Property, plant and equipment, net",ASSET,D,CLOSE,INV_CAPEX,FALSE,FALSE,FALSE,FALSE,TRUE,1460
+150700,Construction in progress,BS,Non-Current Assets,"Property, plant and equipment, net",ASSET,D,CLOSE,INV_CAPEX,FALSE,FALSE,FALSE,FALSE,TRUE,1470
+150800,Finance lease right-of-use assets,BS,Non-Current Assets,"Property, plant and equipment, net",ASSET,D,CLOSE,FIN_LEASE,FALSE,FALSE,FALSE,FALSE,TRUE,1480
+155100,Accumulated depreciation,BS,Non-Current Assets,"Property, plant and equipment, net",ASSET,C,CLOSE,OP_NONCASH,FALSE,FALSE,FALSE,FALSE,TRUE,1490
+158100,Operating lease right-of-use assets,BS,Non-Current Assets,Operating lease right-of-use assets,ASSET,D,CLOSE,OP_NONCASH,FALSE,FALSE,FALSE,FALSE,TRUE,1510
+160100,Goodwill,BS,Non-Current Assets,Goodwill,ASSET,D,CLOSE,INV_ACQ,FALSE,FALSE,FALSE,FALSE,TRUE,1610
+165100,Customer relationships,BS,Non-Current Assets,"Intangible assets, net",ASSET,D,CLOSE,INV_ACQ,FALSE,FALSE,FALSE,FALSE,TRUE,1710
+165200,Technology and patents,BS,Non-Current Assets,"Intangible assets, net",ASSET,D,CLOSE,INV_ACQ,FALSE,FALSE,FALSE,FALSE,TRUE,1720
+165300,Trade names,BS,Non-Current Assets,"Intangible assets, net",ASSET,D,CLOSE,INV_ACQ,FALSE,FALSE,FALSE,FALSE,TRUE,1730
+165400,Non-compete agreements,BS,Non-Current Assets,"Intangible assets, net",ASSET,D,CLOSE,INV_ACQ,FALSE,FALSE,FALSE,FALSE,TRUE,1740
+165500,Capitalised software,BS,Non-Current Assets,"Intangible assets, net",ASSET,D,CLOSE,INV_CAPEX,FALSE,FALSE,FALSE,FALSE,TRUE,1750
+166100,Accumulated amortisation - intangibles,BS,Non-Current Assets,"Intangible assets, net",ASSET,C,CLOSE,OP_NONCASH,FALSE,FALSE,FALSE,FALSE,TRUE,1760
+170100,Deferred tax assets,BS,Non-Current Assets,Other non-current assets,ASSET,D,CLOSE,OP_NONCASH,FALSE,FALSE,FALSE,FALSE,TRUE,1810
+175100,Intercompany loans receivable - non-current,BS,Non-Current Assets,Intercompany balances,ASSET,D,CLOSE,INV_OTHER,TRUE,FALSE,FALSE,FALSE,TRUE,1820
+178100,Investments in subsidiaries,BS,Non-Current Assets,Investments in subsidiaries,ASSET,D,HIST,INV_ACQ,TRUE,FALSE,FALSE,FALSE,TRUE,1830
+180100,Other non-current assets,BS,Non-Current Assets,Other non-current assets,ASSET,D,CLOSE,INV_OTHER,FALSE,FALSE,FALSE,FALSE,TRUE,1840
+210100,Trade accounts payable,BS,Current Liabilities,Accounts payable,LIABILITY,C,CLOSE,OP_WC,FALSE,FALSE,FALSE,FALSE,TRUE,2110
+210200,Goods received not invoiced,BS,Current Liabilities,Accounts payable,LIABILITY,C,CLOSE,OP_WC,FALSE,FALSE,FALSE,FALSE,TRUE,2120
+210500,Intercompany accounts payable,BS,Current Liabilities,Intercompany balances,LIABILITY,C,CLOSE,OP_WC,TRUE,FALSE,FALSE,FALSE,TRUE,2130
+211100,Contract liabilities and customer advances,BS,Current Liabilities,Contract liabilities,LIABILITY,C,CLOSE,OP_WC,FALSE,FALSE,FALSE,FALSE,TRUE,2140
+215100,Accrued payroll and benefits,BS,Current Liabilities,Accrued liabilities,LIABILITY,C,CLOSE,OP_WC,FALSE,FALSE,FALSE,FALSE,TRUE,2210
+215200,Accrued bonus and incentive,BS,Current Liabilities,Accrued liabilities,LIABILITY,C,CLOSE,OP_WC,FALSE,FALSE,FALSE,FALSE,TRUE,2220
+215300,Accrued professional fees,BS,Current Liabilities,Accrued liabilities,LIABILITY,C,CLOSE,OP_WC,FALSE,FALSE,FALSE,FALSE,TRUE,2230
+215400,Accrued warranty,BS,Current Liabilities,Accrued liabilities,LIABILITY,C,CLOSE,OP_WC,FALSE,FALSE,FALSE,FALSE,TRUE,2240
+215500,Accrued restructuring,BS,Current Liabilities,Accrued liabilities,LIABILITY,C,CLOSE,OP_WC,FALSE,FALSE,FALSE,FALSE,TRUE,2250
+215600,Other accrued liabilities,BS,Current Liabilities,Accrued liabilities,LIABILITY,C,CLOSE,OP_WC,FALSE,FALSE,FALSE,FALSE,TRUE,2260
+216100,Accrued interest,BS,Current Liabilities,Accrued liabilities,LIABILITY,C,CLOSE,OP_WC,FALSE,FALSE,FALSE,FALSE,TRUE,2270
+218100,Income taxes payable,BS,Current Liabilities,Income taxes payable,LIABILITY,C,CLOSE,OP_WC,FALSE,FALSE,FALSE,FALSE,TRUE,2310
+219100,Other taxes payable,BS,Current Liabilities,Accrued liabilities,LIABILITY,C,CLOSE,OP_WC,FALSE,FALSE,FALSE,FALSE,TRUE,2320
+220100,Current portion of long-term debt,BS,Current Liabilities,Current portion of debt,LIABILITY,C,CLOSE,FIN_DEBT,FALSE,FALSE,FALSE,FALSE,TRUE,2410
+220200,Revolving credit facility,BS,Current Liabilities,Current portion of debt,LIABILITY,C,CLOSE,FIN_DEBT,FALSE,FALSE,FALSE,FALSE,TRUE,2420
+220300,Current portion of finance lease liabilities,BS,Current Liabilities,Current portion of debt,LIABILITY,C,CLOSE,FIN_LEASE,FALSE,FALSE,FALSE,FALSE,TRUE,2430
+220400,Current portion of operating lease liabilities,BS,Current Liabilities,Operating lease liabilities,LIABILITY,C,CLOSE,OP_NONCASH,FALSE,FALSE,FALSE,FALSE,TRUE,2440
+225100,Intercompany loans payable - current,BS,Current Liabilities,Intercompany balances,LIABILITY,C,CLOSE,FIN_DEBT,TRUE,FALSE,FALSE,FALSE,TRUE,2450
+230100,Long-term debt - term loan,BS,Non-Current Liabilities,Long-term debt,LIABILITY,C,CLOSE,FIN_DEBT,FALSE,FALSE,FALSE,FALSE,TRUE,2510
+230200,Unamortised deferred financing costs,BS,Non-Current Liabilities,Long-term debt,LIABILITY,D,CLOSE,FIN_DEBT,FALSE,FALSE,FALSE,FALSE,TRUE,2520
+230300,Finance lease liabilities - non-current,BS,Non-Current Liabilities,Long-term debt,LIABILITY,C,CLOSE,FIN_LEASE,FALSE,FALSE,FALSE,FALSE,TRUE,2530
+230400,Operating lease liabilities - non-current,BS,Non-Current Liabilities,Operating lease liabilities,LIABILITY,C,CLOSE,OP_NONCASH,FALSE,FALSE,FALSE,FALSE,TRUE,2540
+235100,Intercompany loans payable - non-current,BS,Non-Current Liabilities,Intercompany balances,LIABILITY,C,CLOSE,FIN_DEBT,TRUE,FALSE,FALSE,FALSE,TRUE,2550
+240100,Deferred tax liabilities,BS,Non-Current Liabilities,Deferred tax liabilities,LIABILITY,C,CLOSE,OP_NONCASH,FALSE,FALSE,FALSE,FALSE,TRUE,2610
+245100,Other long-term liabilities,BS,Non-Current Liabilities,Other long-term liabilities,LIABILITY,C,CLOSE,OP_NONCASH,FALSE,FALSE,FALSE,FALSE,TRUE,2620
+310100,Common stock,BS,Equity,Contributed capital,EQUITY,C,HIST,FIN_EQUITY,FALSE,FALSE,FALSE,FALSE,TRUE,3110
+310200,Additional paid-in capital,BS,Equity,Contributed capital,EQUITY,C,HIST,FIN_EQUITY,FALSE,FALSE,FALSE,FALSE,TRUE,3120
+315100,Share-based compensation reserve,BS,Equity,Contributed capital,EQUITY,C,HIST,OP_NONCASH,FALSE,FALSE,FALSE,FALSE,TRUE,3130
+320100,Retained earnings - opening,BS,Equity,Retained earnings,EQUITY,C,HIST,OP_NI,FALSE,FALSE,FALSE,FALSE,TRUE,3210
+320200,Current year result,BS,Equity,Retained earnings,EQUITY,C,HIST,OP_NI,FALSE,FALSE,FALSE,FALSE,TRUE,3220
+320300,Dividends and distributions,BS,Equity,Retained earnings,EQUITY,D,HIST,FIN_EQUITY,FALSE,FALSE,FALSE,FALSE,TRUE,3230
+330100,Cumulative translation adjustment,BS,Equity,Cumulative translation adjustment,EQUITY,C,NONE,OP_NONCASH,FALSE,FALSE,FALSE,FALSE,TRUE,3310
+340100,Non-controlling interests,BS,Equity,Non-controlling interests,EQUITY,C,CLOSE,FIN_EQUITY,FALSE,FALSE,FALSE,FALSE,TRUE,3410
+350100,Treasury stock,BS,Equity,Contributed capital,EQUITY,D,HIST,FIN_EQUITY,FALSE,FALSE,FALSE,FALSE,TRUE,3510
+410100,Product revenue - equipment,IS,Revenue,Product revenue,REVENUE,C,AVG,OP_NI,FALSE,TRUE,FALSE,FALSE,TRUE,4110
+410200,Product revenue - components,IS,Revenue,Product revenue,REVENUE,C,AVG,OP_NI,FALSE,TRUE,FALSE,FALSE,TRUE,4120
+415100,Aftermarket parts revenue,IS,Revenue,Product revenue,REVENUE,C,AVG,OP_NI,FALSE,TRUE,FALSE,FALSE,TRUE,4130
+420100,Service revenue - field services,IS,Revenue,Service revenue,REVENUE,C,AVG,OP_NI,FALSE,TRUE,FALSE,FALSE,TRUE,4210
+420200,Service revenue - maintenance contracts,IS,Revenue,Service revenue,REVENUE,C,AVG,OP_NI,FALSE,TRUE,FALSE,FALSE,TRUE,4220
+420300,Service revenue - turnarounds,IS,Revenue,Service revenue,REVENUE,C,AVG,OP_NI,FALSE,TRUE,FALSE,FALSE,TRUE,4230
+425100,Project revenue - recognised over time,IS,Revenue,Project revenue,REVENUE,C,AVG,OP_NI,FALSE,TRUE,FALSE,FALSE,TRUE,4310
+425200,Project revenue - recognised at a point in time,IS,Revenue,Project revenue,REVENUE,C,AVG,OP_NI,FALSE,TRUE,FALSE,FALSE,TRUE,4320
+430100,Freight and handling revenue,IS,Revenue,Other revenue,REVENUE,C,AVG,OP_NI,FALSE,TRUE,FALSE,FALSE,TRUE,4410
+435100,Other operating revenue,IS,Revenue,Other revenue,REVENUE,C,AVG,OP_NI,FALSE,TRUE,FALSE,FALSE,TRUE,4420
+440100,Sales returns and allowances,IS,Revenue,Revenue deductions,REVENUE,D,AVG,OP_NI,FALSE,TRUE,FALSE,FALSE,TRUE,4510
+440200,Customer rebates and discounts,IS,Revenue,Revenue deductions,REVENUE,D,AVG,OP_NI,FALSE,TRUE,FALSE,FALSE,TRUE,4520
+490100,Intercompany product revenue,IS,Revenue,Intercompany revenue,REVENUE,C,AVG,OP_NI,TRUE,TRUE,FALSE,FALSE,TRUE,4910
+490200,Intercompany service revenue,IS,Revenue,Intercompany revenue,REVENUE,C,AVG,OP_NI,TRUE,TRUE,FALSE,FALSE,TRUE,4920
+490300,Intercompany management fee income,IS,Revenue,Intercompany revenue,REVENUE,C,AVG,OP_NI,TRUE,TRUE,FALSE,FALSE,TRUE,4930
+490400,Intercompany royalty income,IS,Revenue,Intercompany revenue,REVENUE,C,AVG,OP_NI,TRUE,TRUE,FALSE,FALSE,TRUE,4940
+510100,Direct materials,IS,Cost of Sales,Materials and subcontract,COGS,D,AVG,OP_NI,FALSE,TRUE,FALSE,FALSE,TRUE,5110
+510200,Purchased components,IS,Cost of Sales,Materials and subcontract,COGS,D,AVG,OP_NI,FALSE,TRUE,FALSE,FALSE,TRUE,5120
+510300,Subcontract costs,IS,Cost of Sales,Materials and subcontract,COGS,D,AVG,OP_NI,FALSE,TRUE,FALSE,FALSE,TRUE,5130
+515100,Direct labour - production,IS,Cost of Sales,Direct labour,COGS,D,AVG,OP_NI,FALSE,TRUE,FALSE,FALSE,TRUE,5210
+515200,Direct labour - field and project,IS,Cost of Sales,Direct labour,COGS,D,AVG,OP_NI,FALSE,TRUE,FALSE,FALSE,TRUE,5220
+515300,Direct labour burden and benefits,IS,Cost of Sales,Direct labour,COGS,D,AVG,OP_NI,FALSE,TRUE,FALSE,FALSE,TRUE,5230
+520100,Overhead - indirect labour,IS,Cost of Sales,Production and delivery overhead,COGS,D,AVG,OP_NI,FALSE,TRUE,FALSE,FALSE,TRUE,5310
+520200,Overhead - facilities and utilities,IS,Cost of Sales,Production and delivery overhead,COGS,D,AVG,OP_NI,FALSE,TRUE,FALSE,FALSE,TRUE,5320
+520300,Overhead - supplies and consumables,IS,Cost of Sales,Production and delivery overhead,COGS,D,AVG,OP_NI,FALSE,TRUE,FALSE,FALSE,TRUE,5330
+520400,Overhead - equipment and tool rental,IS,Cost of Sales,Production and delivery overhead,COGS,D,AVG,OP_NI,FALSE,TRUE,FALSE,FALSE,TRUE,5340
+525100,Freight and logistics,IS,Cost of Sales,Freight and duty,COGS,D,AVG,OP_NI,FALSE,TRUE,FALSE,FALSE,TRUE,5410
+525200,Duties and tariffs,IS,Cost of Sales,Freight and duty,COGS,D,AVG,OP_NI,FALSE,TRUE,FALSE,FALSE,TRUE,5420
+530100,Inventory adjustments and scrap,IS,Cost of Sales,Inventory and warranty,COGS,D,AVG,OP_NI,FALSE,TRUE,FALSE,FALSE,TRUE,5510
+530200,Warranty expense,IS,Cost of Sales,Inventory and warranty,COGS,D,AVG,OP_NI,FALSE,TRUE,FALSE,FALSE,TRUE,5520
+535100,Contract estimate-at-completion adjustments,IS,Cost of Sales,Inventory and warranty,COGS,D,AVG,OP_NI,FALSE,TRUE,FALSE,FALSE,TRUE,5530
+590100,Intercompany cost of sales - product,IS,Cost of Sales,Intercompany cost of sales,COGS,D,AVG,OP_NI,TRUE,TRUE,FALSE,FALSE,TRUE,5910
+590200,Intercompany cost of sales - services,IS,Cost of Sales,Intercompany cost of sales,COGS,D,AVG,OP_NI,TRUE,TRUE,FALSE,FALSE,TRUE,5920
+610100,Salaries and wages,IS,Operating Expenses,Personnel costs,OPEX,D,AVG,OP_NI,FALSE,TRUE,FALSE,FALSE,TRUE,6110
+610200,Employee benefits,IS,Operating Expenses,Personnel costs,OPEX,D,AVG,OP_NI,FALSE,TRUE,FALSE,FALSE,TRUE,6120
+610300,Payroll taxes,IS,Operating Expenses,Personnel costs,OPEX,D,AVG,OP_NI,FALSE,TRUE,FALSE,FALSE,TRUE,6130
+610400,Bonus and incentive compensation,IS,Operating Expenses,Personnel costs,OPEX,D,AVG,OP_NI,FALSE,TRUE,FALSE,FALSE,TRUE,6140
+610500,Share-based compensation,IS,Operating Expenses,Personnel costs,OPEX,D,AVG,OP_NONCASH,FALSE,TRUE,FALSE,FALSE,TRUE,6150
+610600,Contract and temporary labour,IS,Operating Expenses,Personnel costs,OPEX,D,AVG,OP_NI,FALSE,TRUE,FALSE,FALSE,TRUE,6160
+610700,Recruitment and relocation,IS,Operating Expenses,Personnel costs,OPEX,D,AVG,OP_NI,FALSE,TRUE,FALSE,FALSE,TRUE,6170
+610800,Training and development,IS,Operating Expenses,Personnel costs,OPEX,D,AVG,OP_NI,FALSE,TRUE,FALSE,FALSE,TRUE,6180
+620100,Rent and occupancy,IS,Operating Expenses,Facilities,OPEX,D,AVG,OP_NI,FALSE,TRUE,FALSE,FALSE,TRUE,6210
+620200,Utilities,IS,Operating Expenses,Facilities,OPEX,D,AVG,OP_NI,FALSE,TRUE,FALSE,FALSE,TRUE,6220
+620300,Repairs and maintenance - facilities,IS,Operating Expenses,Facilities,OPEX,D,AVG,OP_NI,FALSE,TRUE,FALSE,FALSE,TRUE,6230
+620400,Property taxes and insurance,IS,Operating Expenses,Facilities,OPEX,D,AVG,OP_NI,FALSE,TRUE,FALSE,FALSE,TRUE,6240
+630100,Audit and accounting fees,IS,Operating Expenses,Professional fees,OPEX,D,AVG,OP_NI,FALSE,TRUE,FALSE,FALSE,TRUE,6310
+630200,Legal fees,IS,Operating Expenses,Professional fees,OPEX,D,AVG,OP_NI,FALSE,TRUE,FALSE,FALSE,TRUE,6320
+630300,Consulting and advisory fees,IS,Operating Expenses,Professional fees,OPEX,D,AVG,OP_NI,FALSE,TRUE,FALSE,FALSE,TRUE,6330
+630400,Sponsor monitoring fee,IS,Operating Expenses,Professional fees,OPEX,D,AVG,OP_NI,FALSE,TRUE,TRUE,FALSE,TRUE,6340
+640100,Advertising and promotion,IS,Operating Expenses,Selling and marketing,OPEX,D,AVG,OP_NI,FALSE,TRUE,FALSE,FALSE,TRUE,6410
+640200,Trade shows and events,IS,Operating Expenses,Selling and marketing,OPEX,D,AVG,OP_NI,FALSE,TRUE,FALSE,FALSE,TRUE,6420
+640300,Third-party commissions,IS,Operating Expenses,Selling and marketing,OPEX,D,AVG,OP_NI,FALSE,TRUE,FALSE,FALSE,TRUE,6430
+640400,Bad debt expense,IS,Operating Expenses,Selling and marketing,OPEX,D,AVG,OP_NONCASH,FALSE,TRUE,FALSE,FALSE,TRUE,6440
+650100,Software licences and subscriptions,IS,Operating Expenses,Technology,OPEX,D,AVG,OP_NI,FALSE,TRUE,FALSE,FALSE,TRUE,6510
+650200,IT services and support,IS,Operating Expenses,Technology,OPEX,D,AVG,OP_NI,FALSE,TRUE,FALSE,FALSE,TRUE,6520
+650300,Telecommunications,IS,Operating Expenses,Technology,OPEX,D,AVG,OP_NI,FALSE,TRUE,FALSE,FALSE,TRUE,6530
+660100,Travel and entertainment,IS,Operating Expenses,Travel and other,OPEX,D,AVG,OP_NI,FALSE,TRUE,FALSE,FALSE,TRUE,6610
+660200,Vehicle and fleet,IS,Operating Expenses,Travel and other,OPEX,D,AVG,OP_NI,FALSE,TRUE,FALSE,FALSE,TRUE,6620
+670100,Office supplies and postage,IS,Operating Expenses,Travel and other,OPEX,D,AVG,OP_NI,FALSE,TRUE,FALSE,FALSE,TRUE,6710
+670200,Bank charges,IS,Operating Expenses,Travel and other,OPEX,D,AVG,OP_NI,FALSE,TRUE,FALSE,FALSE,TRUE,6720
+670300,Dues and subscriptions,IS,Operating Expenses,Travel and other,OPEX,D,AVG,OP_NI,FALSE,TRUE,FALSE,FALSE,TRUE,6730
+670400,Other operating expenses,IS,Operating Expenses,Travel and other,OPEX,D,AVG,OP_NI,FALSE,TRUE,FALSE,FALSE,TRUE,6740
+680100,Restructuring - severance,IS,Operating Expenses,Non-recurring operating items,OPEX,D,AVG,OP_NI,FALSE,TRUE,TRUE,FALSE,TRUE,6810
+680200,Restructuring - facility exit,IS,Operating Expenses,Non-recurring operating items,OPEX,D,AVG,OP_NI,FALSE,TRUE,TRUE,FALSE,TRUE,6820
+680300,Acquisition and transaction costs,IS,Operating Expenses,Non-recurring operating items,OPEX,D,AVG,OP_NI,FALSE,TRUE,TRUE,FALSE,TRUE,6830
+680400,Integration and ERP programme costs,IS,Operating Expenses,Non-recurring operating items,OPEX,D,AVG,OP_NI,FALSE,TRUE,TRUE,FALSE,TRUE,6840
+680600,Legal settlements and claims,IS,Operating Expenses,Non-recurring operating items,OPEX,D,AVG,OP_NI,FALSE,TRUE,TRUE,FALSE,TRUE,6850
+680700,Transaction and retention bonuses,IS,Operating Expenses,Non-recurring operating items,OPEX,D,AVG,OP_NI,FALSE,TRUE,TRUE,FALSE,TRUE,6860
+695100,Intercompany management fee expense,IS,Operating Expenses,Intercompany operating expense,OPEX,D,AVG,OP_NI,TRUE,TRUE,FALSE,FALSE,TRUE,6910
+695200,Intercompany shared services expense,IS,Operating Expenses,Intercompany operating expense,OPEX,D,AVG,OP_NI,TRUE,TRUE,FALSE,FALSE,TRUE,6920
+695300,Intercompany royalty expense,IS,Operating Expenses,Intercompany operating expense,OPEX,D,AVG,OP_NI,TRUE,TRUE,FALSE,FALSE,TRUE,6930
+710100,"Depreciation - property, plant and equipment",IS,Depreciation and Amortisation,Depreciation,DA,D,AVG,OP_NONCASH,FALSE,FALSE,FALSE,FALSE,TRUE,7110
+710200,Depreciation - finance lease right-of-use assets,IS,Depreciation and Amortisation,Depreciation,DA,D,AVG,OP_NONCASH,FALSE,FALSE,FALSE,FALSE,TRUE,7120
+720100,Amortisation - acquired intangibles,IS,Depreciation and Amortisation,Amortisation,DA,D,AVG,OP_NONCASH,FALSE,FALSE,FALSE,FALSE,TRUE,7210
+720200,Amortisation - capitalised software,IS,Depreciation and Amortisation,Amortisation,DA,D,AVG,OP_NONCASH,FALSE,FALSE,FALSE,FALSE,TRUE,7220
+725100,Impairment - goodwill,IS,Depreciation and Amortisation,Impairment,DA,D,AVG,OP_NONCASH,FALSE,FALSE,FALSE,FALSE,TRUE,7310
+725200,Impairment - long-lived assets,IS,Depreciation and Amortisation,Impairment,DA,D,AVG,OP_NONCASH,FALSE,FALSE,FALSE,FALSE,TRUE,7320
+730100,Interest expense - term loan,IS,Non-Operating,Interest expense,NONOP,D,AVG,OP_NI,FALSE,FALSE,FALSE,FALSE,TRUE,7410
+730200,Interest expense - revolving facility,IS,Non-Operating,Interest expense,NONOP,D,AVG,OP_NI,FALSE,FALSE,FALSE,FALSE,TRUE,7420
+730300,Interest expense - finance leases,IS,Non-Operating,Interest expense,NONOP,D,AVG,OP_NI,FALSE,FALSE,FALSE,FALSE,TRUE,7430
+730400,Amortisation of deferred financing costs,IS,Non-Operating,Interest expense,NONOP,D,AVG,OP_NONCASH,FALSE,FALSE,FALSE,FALSE,TRUE,7440
+730500,Commitment and agency fees,IS,Non-Operating,Interest expense,NONOP,D,AVG,OP_NI,FALSE,FALSE,FALSE,FALSE,TRUE,7450
+730600,Interest expense - other,IS,Non-Operating,Interest expense,NONOP,D,AVG,OP_NI,FALSE,FALSE,FALSE,FALSE,TRUE,7460
+730700,Fair value movement on interest rate swap,IS,Non-Operating,Interest expense,NONOP,D,AVG,OP_NONCASH,FALSE,FALSE,FALSE,FALSE,TRUE,7470
+735100,Interest income,IS,Non-Operating,Interest income,NONOP,C,AVG,OP_NI,FALSE,FALSE,FALSE,FALSE,TRUE,7510
+740100,Realised foreign exchange gain/(loss),IS,Non-Operating,Foreign exchange,NONOP,C,AVG,OP_NI,FALSE,FALSE,FALSE,FALSE,TRUE,7610
+740200,Unrealised foreign exchange gain/(loss),IS,Non-Operating,Foreign exchange,NONOP,C,AVG,OP_NONCASH,FALSE,FALSE,FALSE,FALSE,TRUE,7620
+745100,Gain/(loss) on disposal of assets,IS,Non-Operating,Other income and expense,NONOP,C,AVG,INV_OTHER,FALSE,FALSE,FALSE,FALSE,TRUE,7710
+750100,"Other income/(expense), net",IS,Non-Operating,Other income and expense,NONOP,C,AVG,OP_NI,FALSE,FALSE,FALSE,FALSE,TRUE,7720
+795100,Intercompany interest income,IS,Non-Operating,Intercompany financing,NONOP,C,AVG,OP_NI,TRUE,FALSE,FALSE,FALSE,TRUE,7910
+795200,Intercompany interest expense,IS,Non-Operating,Intercompany financing,NONOP,D,AVG,OP_NI,TRUE,FALSE,FALSE,FALSE,TRUE,7920
+810100,Current income tax - federal,IS,Income Tax,Current tax,TAX,D,AVG,OP_NI,FALSE,FALSE,FALSE,FALSE,TRUE,8110
+810200,Current income tax - state and provincial,IS,Income Tax,Current tax,TAX,D,AVG,OP_NI,FALSE,FALSE,FALSE,FALSE,TRUE,8120
+810300,Current income tax - foreign,IS,Income Tax,Current tax,TAX,D,AVG,OP_NI,FALSE,FALSE,FALSE,FALSE,TRUE,8130
+820100,Deferred income tax expense/(benefit),IS,Income Tax,Deferred tax,TAX,D,AVG,OP_NONCASH,FALSE,FALSE,FALSE,FALSE,TRUE,8210
+830100,Uncertain tax positions and other tax,IS,Income Tax,Other tax,TAX,D,AVG,OP_NI,FALSE,FALSE,FALSE,FALSE,TRUE,8310
+910100,Headcount - FTE period end,STAT,Statistical,Workforce,STAT,D,NONE,NONE,FALSE,FALSE,FALSE,TRUE,FALSE,9110
+910200,Headcount - FTE period average,STAT,Statistical,Workforce,STAT,D,NONE,NONE,FALSE,FALSE,FALSE,TRUE,FALSE,9120
+910300,Contractor FTE equivalent,STAT,Statistical,Workforce,STAT,D,NONE,NONE,FALSE,FALSE,FALSE,TRUE,FALSE,9130
+910400,Voluntary attrition - leavers,STAT,Statistical,Workforce,STAT,D,NONE,NONE,FALSE,FALSE,FALSE,TRUE,FALSE,9140
+920100,Capital expenditure additions,STAT,Statistical,Capital,STAT,D,NONE,NONE,FALSE,FALSE,FALSE,TRUE,FALSE,9210
+920200,Capital commitments outstanding,STAT,Statistical,Capital,STAT,D,NONE,NONE,FALSE,FALSE,FALSE,TRUE,FALSE,9220
+930100,Orders and bookings,STAT,Statistical,Commercial,STAT,C,NONE,NONE,FALSE,FALSE,FALSE,TRUE,FALSE,9310
+930200,Backlog - closing,STAT,Statistical,Commercial,STAT,C,NONE,NONE,FALSE,FALSE,FALSE,TRUE,FALSE,9320
+930300,Quotation value issued,STAT,Statistical,Commercial,STAT,C,NONE,NONE,FALSE,FALSE,FALSE,TRUE,FALSE,9330
+940100,Units shipped,STAT,Statistical,Operations,STAT,D,NONE,NONE,FALSE,FALSE,FALSE,TRUE,FALSE,9410
+940200,Billable hours delivered,STAT,Statistical,Operations,STAT,D,NONE,NONE,FALSE,FALSE,FALSE,TRUE,FALSE,9420
+940300,Available labour hours,STAT,Statistical,Operations,STAT,D,NONE,NONE,FALSE,FALSE,FALSE,TRUE,FALSE,9430
+950100,Occupied square footage,STAT,Statistical,Operations,STAT,D,NONE,NONE,FALSE,FALSE,FALSE,TRUE,FALSE,9510

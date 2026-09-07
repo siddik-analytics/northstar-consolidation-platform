@@ -1,0 +1,18 @@
+bu_code,bu_name,measure,FY2023A,FY2024A,FY2025A,FY2026B,FY2026F
+FC,Flow Control & Components,revenue,124.000,141.000,156.600,169.000,163.500
+FC,Flow Control & Components,gross_profit,40.300,47.094,53.244,58.812,55.590
+FC,Flow Control & Components,gross_margin_pct,0.3250,0.3340,0.3400,0.3480,0.3400
+FC,Flow Control & Components,headcount,700,748,780,800,784
+IS,Industrial Services,revenue,101.500,113.000,123.600,134.500,133.000
+IS,Industrial Services,gross_profit,21.315,24.408,27.192,30.397,29.659
+IS,Industrial Services,gross_margin_pct,0.2100,0.2160,0.2200,0.2260,0.2230
+IS,Industrial Services,headcount,930,1000,1050,1090,1074
+ES,Engineered Systems,revenue,55.000,65.400,74.200,82.000,78.200
+ES,Engineered Systems,gross_profit,10.175,11.772,14.098,15.990,13.920
+ES,Engineered Systems,gross_margin_pct,0.1850,0.1800,0.1900,0.1950,0.1780
+ES,Engineered Systems,headcount,290,322,340,352,344
+AM,Aftermarket & Parts,revenue,47.500,52.000,57.700,62.500,62.500
+AM,Aftermarket & Parts,gross_profit,19.950,22.100,24.811,27.188,27.125
+AM,Aftermarket & Parts,gross_margin_pct,0.4200,0.4250,0.4300,0.4350,0.4340
+AM,Aftermarket & Parts,headcount,175,182,190,196,194
+CORP,Corporate & Shared Services,headcount,85,88,90,92,90

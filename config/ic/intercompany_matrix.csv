@@ -1,0 +1,36 @@
+ic_flow_id,flow_type,seller_entity,buyer_entity,description,pricing_basis,margin_pct,seller_pl_account,buyer_pl_account,seller_bs_account,buyer_bs_account,elimination_rule,creates_unrealised_profit,effective_from,effective_to,notes
+IC-MF-01,MANAGEMENT_FEE,NIG-110,NIG-200,Group management fee,PCT_OF_EXTERNAL_REVENUE,,490300,695100,120500,210500,ELIMINATE_IN_FULL,FALSE,2019-07-01,,"2.5% of the buyer's external revenue. Charged monthly in arrears in USD."
+IC-MF-02,MANAGEMENT_FEE,NIG-110,NIG-210,Group management fee,PCT_OF_EXTERNAL_REVENUE,,490300,695100,120500,210500,ELIMINATE_IN_FULL,FALSE,2019-07-01,,"Invoiced in CAD; the receivable and payable are therefore exposed to CAD/USD until settlement."
+IC-MF-03,MANAGEMENT_FEE,NIG-110,NIG-220,Group management fee,PCT_OF_EXTERNAL_REVENUE,,490300,695100,120500,210500,ELIMINATE_IN_FULL,FALSE,2023-04-01,,"Invoiced in EUR."
+IC-MF-04,MANAGEMENT_FEE,NIG-110,NIG-300,Group management fee,PCT_OF_EXTERNAL_REVENUE,,490300,695100,120500,210500,ELIMINATE_IN_FULL,FALSE,2021-03-01,,
+IC-MF-05,MANAGEMENT_FEE,NIG-110,NIG-310,Group management fee,PCT_OF_EXTERNAL_REVENUE,,490300,695100,120500,210500,ELIMINATE_IN_FULL,FALSE,2021-03-01,,"Invoiced in CAD."
+IC-MF-06,MANAGEMENT_FEE,NIG-110,NIG-320,Group management fee,PCT_OF_EXTERNAL_REVENUE,,490300,695100,120500,210500,ELIMINATE_IN_FULL,FALSE,2022-02-01,,"Invoiced in GBP."
+IC-MF-07,MANAGEMENT_FEE,NIG-110,NIG-400,Group management fee,PCT_OF_EXTERNAL_REVENUE,,490300,695100,120500,210500,ELIMINATE_IN_FULL,FALSE,2022-09-01,,
+IC-MF-08,MANAGEMENT_FEE,NIG-110,NIG-410,Group management fee,PCT_OF_EXTERNAL_REVENUE,,490300,695100,120500,210500,ELIMINATE_IN_FULL,FALSE,2024-07-01,,"Invoiced in EUR."
+IC-MF-09,MANAGEMENT_FEE,NIG-110,NIG-500,Group management fee,PCT_OF_EXTERNAL_REVENUE,,490300,695100,120500,210500,ELIMINATE_IN_FULL,FALSE,2020-01-01,,
+IC-MF-10,MANAGEMENT_FEE,NIG-110,NIG-510,Group management fee,PCT_OF_EXTERNAL_REVENUE,,490300,695100,120500,210500,ELIMINATE_IN_FULL,FALSE,2023-01-01,,"Invoiced in GBP. Buyer is 80% owned, so the NCI share of the charge is a genuine consolidation consideration."
+IC-PR-01,PRODUCT_SALE,NIG-200,NIG-210,Finished goods transferred to Canadian distribution,COST_PLUS,0.1200,490100,590100,120500,210500,ELIMINATE_IN_FULL,TRUE,2019-01-01,,"Largest single intercompany product flow. Unrealised profit remains in Meridian Canada's closing inventory."
+IC-PR-02,PRODUCT_SALE,NIG-200,NIG-500,Finished goods transferred to the aftermarket business,COST_PLUS,0.1200,490100,590100,120500,210500,ELIMINATE_IN_FULL,TRUE,2020-01-01,,
+IC-PR-03,PRODUCT_SALE,NIG-200,NIG-510,Finished goods transferred to UK parts distribution,COST_PLUS,0.1200,490100,590100,120500,210500,ELIMINATE_IN_FULL,TRUE,2023-01-01,,"Buyer is 80% owned; the unrealised profit elimination is allocated between group and NCI."
+IC-PR-04,PRODUCT_SALE,NIG-220,NIG-200,European valve bodies supplied to the US plant,COST_PLUS,0.1000,490100,590100,120500,210500,ELIMINATE_IN_FULL,TRUE,2023-04-01,,"Reverse-direction flow. Ensures the elimination engine cannot assume a single hub."
+IC-PR-05,PRODUCT_SALE,NIG-200,NIG-400,Flow components supplied into engineered skid packages,COST_PLUS,0.1000,490100,590100,120500,210500,ELIMINATE_IN_FULL,TRUE,2022-09-01,,"Sits in contract WIP rather than finished goods inventory at the buyer."
+IC-SV-01,SERVICE_RECHARGE,NIG-310,NIG-300,Canadian field crews mobilised on US turnarounds,COST_PLUS,0.0500,490200,590200,120500,210500,ELIMINATE_IN_FULL,FALSE,2021-03-01,,"Cross-border labour recharge. Creates a CAD/USD exposure on the intercompany balance."
+IC-SV-02,SERVICE_RECHARGE,NIG-300,NIG-400,Field installation and commissioning support,COST_PLUS,0.0500,490200,590200,120500,210500,ELIMINATE_IN_FULL,FALSE,2022-09-01,,"Recharged into project cost, so it affects Vector's contract margin."
+IC-SV-03,SERVICE_RECHARGE,NIG-320,NIG-410,UK mechanical support to European projects,COST_PLUS,0.0500,490200,590200,120500,210500,ELIMINATE_IN_FULL,FALSE,2024-07-01,,"GBP/EUR intercompany pair with neither side in USD. A useful stress test for the translation engine."
+IC-RY-01,ROYALTY,NIG-200,NIG-220,Technology licence for valve actuation designs,PCT_OF_EXTERNAL_REVENUE,,490400,695300,120500,210500,ELIMINATE_IN_FULL,FALSE,2023-04-01,,"1.5% of Halden external revenue."
+IC-LN-01,LOAN,NIG-100,NIG-220,Acquisition funding loan,FIXED_RATE,,795100,795200,175100,235100,ELIMINATE_IN_FULL,FALSE,2023-04-01,,"EUR 24.0m at 6.0%. Denominated in EUR, so the lender carries a USD translation exposure that must not be mistaken for a consolidation error."
+IC-LN-02,LOAN,NIG-100,NIG-410,Acquisition funding loan,FIXED_RATE,,795100,795200,175100,235100,ELIMINATE_IN_FULL,FALSE,2024-07-01,,"EUR 12.0m at 6.0%."
+IC-LN-03,LOAN,NIG-100,NIG-320,Working capital facility,FIXED_RATE,,795100,795200,175100,235100,ELIMINATE_IN_FULL,FALSE,2022-02-01,,"GBP 10.0m at 6.0%."
+IC-LN-04,LOAN,NIG-100,NIG-510,Working capital facility,FIXED_RATE,,795100,795200,125100,225100,ELIMINATE_IN_FULL,FALSE,2023-01-01,,"GBP 4.0m at 6.0%, repayable within twelve months and therefore classified as current."
+IC-LN-05,LOAN,NIG-100,NIG-300,Domestic funding loan,FIXED_RATE,,795100,795200,175100,235100,ELIMINATE_IN_FULL,FALSE,2021-03-01,,"USD 15.0m at 6.0%. No FX exposure; provides a control case against the cross-currency loans."
+IC-EQ-01,EQUITY,NIG-100,NIG-200,Investment in subsidiary,HISTORICAL_COST,,,,178100,310100,ELIMINATE_ON_CONSOLIDATION,FALSE,2019-01-01,,"Investment in subsidiary eliminates against the subsidiary's share capital and pre-acquisition reserves. Posted to ELIM-CON, not ELIM-IC."
+IC-EQ-02,EQUITY,NIG-100,NIG-110,Investment in subsidiary,HISTORICAL_COST,,,,178100,310100,ELIMINATE_ON_CONSOLIDATION,FALSE,2019-07-01,,
+IC-EQ-03,EQUITY,NIG-100,NIG-220,Investment in subsidiary,HISTORICAL_COST,,,,178100,310100,ELIMINATE_ON_CONSOLIDATION,FALSE,2023-04-01,,
+IC-EQ-04,EQUITY,NIG-100,NIG-300,Investment in subsidiary,HISTORICAL_COST,,,,178100,310100,ELIMINATE_ON_CONSOLIDATION,FALSE,2021-03-01,,
+IC-EQ-05,EQUITY,NIG-100,NIG-320,Investment in subsidiary,HISTORICAL_COST,,,,178100,310100,ELIMINATE_ON_CONSOLIDATION,FALSE,2022-02-01,,
+IC-EQ-06,EQUITY,NIG-100,NIG-400,Investment in subsidiary,HISTORICAL_COST,,,,178100,310100,ELIMINATE_ON_CONSOLIDATION,FALSE,2022-09-01,,
+IC-EQ-07,EQUITY,NIG-100,NIG-500,Investment in subsidiary,HISTORICAL_COST,,,,178100,310100,ELIMINATE_ON_CONSOLIDATION,FALSE,2020-01-01,,
+IC-EQ-08,EQUITY,NIG-200,NIG-210,Investment in subsidiary,HISTORICAL_COST,,,,178100,310100,ELIMINATE_ON_CONSOLIDATION,FALSE,2019-01-01,,"Second-tier holding. Tests that the elimination engine walks the full ownership tree rather than assuming every subsidiary is held directly by Topco."
+IC-EQ-09,EQUITY,NIG-300,NIG-310,Investment in subsidiary,HISTORICAL_COST,,,,178100,310100,ELIMINATE_ON_CONSOLIDATION,FALSE,2021-03-01,,
+IC-EQ-10,EQUITY,NIG-400,NIG-410,Investment in subsidiary,HISTORICAL_COST,,,,178100,310100,ELIMINATE_ON_CONSOLIDATION,FALSE,2024-07-01,,
+IC-EQ-11,EQUITY,NIG-500,NIG-510,Investment in subsidiary (80%),HISTORICAL_COST,,,,178100,310100,ELIMINATE_WITH_NCI,FALSE,2023-01-01,,"80% eliminates against the investment; the residual 20% of net assets is reclassified to non-controlling interests."

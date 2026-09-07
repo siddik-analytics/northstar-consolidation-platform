@@ -1,0 +1,27 @@
+attribute,AURORA,SABLE,KESTREL
+vendor_archetype,Cloud mid-market ERP,Project-centric mid-market ERP,Legacy on-premise European ERP
+entities_served,NIG-100; NIG-110; NIG-200; NIG-210; NIG-500,NIG-300; NIG-310; NIG-400,NIG-220; NIG-320; NIG-410; NIG-510
+company_code_format,Entity code (NIG100),Alphanumeric (CAS-US),Numeric 4-digit (1000)
+account_code_format,4-digit numeric,5-digit numeric,8-character zero-padded numeric string
+account_code_is_text,FALSE,FALSE,TRUE
+amount_representation,Single signed amount,Single unsigned amount,Separate debit and credit columns
+sign_convention,Credits negative; debits positive,All amounts unsigned - sign inferred from account normal balance,Both columns positive - net = debit less credit
+sign_normalisation_rule,amount_signed = amount,amount_signed = amount * (1 if normal_balance='D' else -1),amount_signed = debit_amount - credit_amount
+analysis_dimensions,Department; Class; Location,"Dimension string: BU|Department|Project|Partner",Cost Centre; Profit Centre; Segment; Trading Partner
+department_source,Dedicated department segment,Segment 2 of the dimension string,Cost centre master attribute
+project_dimension,Not available,Segment 3 of the dimension string,Project code field (WBS)
+intercompany_partner_source,Subsidiary segment on the line,Segment 4 of the dimension string,Trading partner field on the document header
+currency_columns,Local amount plus system-translated USD,Local amount only,Local amount plus legacy EUR group amount
+currency_handling_note,"System USD column uses Aurora's own rate table and is IGNORED. All translation is performed by the consolidation engine from the local amount.","No translation available in source. Consolidation engine translates from local.","The EUR group column is a relic of the pre-acquisition parent and is IGNORED. Retranslating it into USD would produce a triangulated rate error. See ADR-0005 and control CTL-FX-06."
+fiscal_periods,1-12 calendar,1-12 calendar,1-12 calendar plus 13-16 special adjustment periods
+special_period_handling,Not applicable,Not applicable,"Periods 13-16 are year-end adjustment periods. All map to December of the fiscal year with adjustment_period_flag = TRUE. Period completeness controls must not treat 13-16 as missing months. See CTL-DQ-07."
+statutory_year_end,31 December,31 December,"31 December for DE and NL; 31 March for NIG-320 (UK). All entities report to group on a calendar basis; the statutory difference is out of scope."
+journal_granularity,Journal line with document reference,Journal line with job and cost code,Journal line with document header and posting key
+posting_key_field,Not applicable,Not applicable,"Two-digit posting key (40 debit / 50 credit and variants). Retained for traceability only; not used in mapping."
+customer_dimension_on_gl,FALSE,FALSE,FALSE
+extract_format,CSV per entity per period,CSV per entity per period,Fixed-layout CSV per company code per period
+extract_encoding,UTF-8,UTF-8,Windows-1252 with German characters
+decimal_separator,Period,Period,Comma
+date_format,YYYY-MM-DD,MM/DD/YYYY,DD.MM.YYYY
+thousands_separator,None,Comma,Period
+known_data_quality_issues,"Single payroll account across direct and indirect labour; single interest account across instruments","Single professional fees account; no dedicated warranty or professional fee accrual accounts; reimbursables netted into one revenue account","Total-cost-method presentation (inventory movement and own work capitalised shown above revenue); affiliate interest not separated from third-party interest; locale-specific number and date formats"

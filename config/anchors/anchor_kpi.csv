@@ -1,0 +1,24 @@
+metric,label,format,FY2023A,FY2024A,FY2025A,FY2026B,FY2026F
+gross_margin_pct,Gross margin %,pct,0.279695,0.283721,0.289602,0.295506,0.288869
+ebitda_margin_pct,EBITDA margin %,pct,0.089146,0.104938,0.124594,0.133898,0.122126
+adjusted_ebitda_margin_pct,Adjusted EBITDA margin %,pct,0.119024,0.127017,0.140366,0.141711,0.135392
+opex_pct_revenue,Opex % of revenue,pct,0.190549,0.178783,0.165008,0.161607,0.166743
+net_margin_pct,Net margin %,pct,-0.015627,0.001072,0.022899,0.037565,0.025687
+headcount,Headcount (period-end FTE),int,2180.000000,2340.000000,2450.000000,2530.000000,2486.000000
+revenue_per_fte_usd,Revenue per FTE (USD),int,150458.715596,158717.948718,168204.081633,177075.098814,175864.843121
+capex_pct_revenue,Capex % of revenue,pct,0.038110,0.037695,0.037612,0.039062,0.034309
+dso,DSO (days),int,62.000000,60.000000,58.000000,55.000000,59.000000
+dio,DIO (days),int,55.000000,53.000000,50.000000,47.000000,51.000000
+dpo,DPO (days),int,46.000000,48.000000,50.000000,52.000000,51.000000
+cash_conversion_cycle,Cash conversion cycle (days),int,71.000000,65.000000,58.000000,50.000000,59.000000
+net_working_capital,Net working capital,num,52.347658,54.017647,53.283884,48.806377,58.859285
+nwc_pct_revenue,NWC % of revenue,pct,0.159597,0.145443,0.129298,0.108943,0.134628
+total_debt,Total debt,num,226.605196,263.116709,253.771913,231.899989,247.066194
+net_debt,Net debt,num,211.605196,248.116709,231.771913,209.899989,225.066194
+net_leverage_x,Net leverage (x Adj. EBITDA),x,5.420215,5.259607,4.006775,3.306215,3.802205
+interest_coverage_x,Interest coverage (x),x,2.135238,2.280106,2.944271,3.620961,3.164887
+fcf_conversion_pct,FCF conversion % of Adj. EBITDA,pct,0.047254,0.107866,0.320595,0.379954,0.156364
+liquidity,Total liquidity (cash + undrawn RCF),num,59.863304,51.152118,65.678682,75.243245,70.577041
+covenant_max_leverage_x,Covenant: maximum net leverage,x,6.000000,5.500000,5.000000,4.500000,4.500000
+covenant_leverage_headroom_x,Covenant headroom — leverage,x,0.579785,0.240393,0.993225,1.193785,0.697795
+covenant_coverage_headroom_x,Covenant headroom — interest coverage,x,0.135238,0.280106,0.944271,1.620961,1.164887

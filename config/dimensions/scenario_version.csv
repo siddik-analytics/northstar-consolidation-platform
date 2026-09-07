@@ -1,0 +1,12 @@
+table,code,name,parent_code,fiscal_year,scenario_type,fx_rate_set,actual_months,forecast_months,is_default,is_locked,approved_by,approved_date,sort_order,description
+scenario,ACT,Actual,,,ACTUAL,ACTUAL,,,TRUE,FALSE,,,10,"Reported actual results sourced from the three ERP systems and translated at actual monthly average / closing rates."
+scenario,BUD,Budget,,,BUDGET,BUDGET,,,FALSE,TRUE,,,20,"Board-approved annual budget. Locked on approval, translated at locked budget rates, and never restated."
+scenario,FC,Forecast,,,FORECAST,FORECAST,,,FALSE,FALSE,,,30,"Rolling forecast. Actual months to date plus forecast months to year end. Re-issued on a defined cycle as a new version."
+scenario,PY,Prior Year,ACT,,DERIVED,ACTUAL,,,FALSE,TRUE,,,40,"Not stored. Derived from Actual by a 12-month date offset in the semantic layer (ADR-0004)."
+version,ACTUAL,Actual (single version),ACT,,ACTUAL,ACTUAL,,,TRUE,FALSE,,,10,"Actuals carry a single version. Restatements are handled by adjustment postings, never by overwriting history."
+version,BUD_FY25_V1,FY2025 Budget v1,BUD,2025,BUDGET,BUDGET,0,12,FALSE,TRUE,Board,2024-11-22,20,"FY2025 board-approved budget. Retained for prior-year budget comparison."
+version,BUD_FY26_V1,FY2026 Budget v1,BUD,2026,BUDGET,BUDGET,0,12,TRUE,TRUE,Board,2025-11-28,30,"FY2026 board-approved budget. The default budget comparison for the current year."
+version,FC_FY26_02,FY2026 Forecast 1+11,FC,2026,FORECAST,FORECAST,1,11,FALSE,TRUE,CFO,2026-02-18,40,"First rolling forecast of FY2026, issued after the January close."
+version,FC_FY26_05,FY2026 Forecast 4+8,FC,2026,FORECAST,FORECAST,4,8,FALSE,TRUE,CFO,2026-05-19,50,"Q1 reforecast. First recognition of European capital-equipment softness."
+version,FC_FY26_08,FY2026 Forecast 8+4,FC,2026,FORECAST,FORECAST,8,4,TRUE,FALSE,CFO,2026-09-16,60,"Current live forecast. Reflects the Vector project slippage into FY2027 and the associated restructuring action."
+version,FC_FY27_P1,FY2027 Plan (placeholder),FC,2027,FORECAST,FORECAST,0,12,FALSE,FALSE,,,70,"Placeholder proving the architecture is not bounded to a single fiscal year. Not populated in this engagement."

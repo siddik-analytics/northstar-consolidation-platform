@@ -1,0 +1,6 @@
+bu_code,bu_name,bu_short_name,segment_type,description,reporting_sort_order,is_reportable_segment
+FC,Flow Control & Components,Flow Control,PRODUCT,"Design and manufacture of pumps, control valves and flow instrumentation for process industries. Capital-equipment cycle exposure; the most inventory-intensive unit.",10,TRUE
+IS,Industrial Services,Services,SERVICE,"Field mechanical services, rotating equipment maintenance and plant turnarounds. Labour-intensive, low inventory, significant unbilled revenue at period end.",20,TRUE
+ES,Engineered Systems,Eng Systems,PROJECT,"Custom-engineered skid packages, automation and integration delivered as long-duration projects. Revenue recognised over time; the source of contract assets and liabilities.",30,TRUE
+AM,Aftermarket & Parts,Aftermarket,DISTRIBUTION,"Spare parts, consumables and aftermarket kits distributed to the installed base. Highest gross margin, least cyclical.",40,TRUE
+CORP,Corporate & Shared Services,Corporate,SUPPORT,"Group holding, treasury, and shared finance, HR, IT and procurement functions. No external revenue; recovers cost through an intercompany management fee.",90,FALSE
