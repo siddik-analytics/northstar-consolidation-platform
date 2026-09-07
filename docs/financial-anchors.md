@@ -48,6 +48,12 @@
 | **Net income** | **-5.1** | **0.4** | **9.4** | **16.8** | **11.2** |
 | Less: non-controlling interests | 0.2 | 0.3 | 0.4 | 0.4 | 0.4 |
 | **Net income attributable to the group** | **-5.3** | **0.1** | **9.1** | **16.4** | **10.8** |
+| Memo: interest expense - term loan | 15.4 | 18.0 | 17.8 | 16.1 | 16.8 |
+| Memo: interest expense - revolving facility | 1.4 | 1.1 | 0.4 | 0.2 | 0.5 |
+| Memo: interest expense - finance leases | 0.7 | 0.7 | 0.7 | 0.7 | 0.7 |
+| Memo: commitment and agency fees | 0.2 | 0.2 | 0.3 | 0.3 | 0.3 |
+| Memo: amortisation of deferred financing costs | 0.9 | 1.1 | 1.1 | 1.0 | 1.0 |
+| Memo: interest income | -0.3 | -0.3 | -0.6 | -0.7 | -0.6 |
 
     **Reading the story.** Revenue grows from $328.0m to
     $412.1m, a 12.1%

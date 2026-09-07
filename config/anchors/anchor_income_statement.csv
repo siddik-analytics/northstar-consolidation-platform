@@ -16,3 +16,9 @@ tax,Income tax expense/(benefit),0.781862,0.486537,3.761535,6.224431,4.259852
 net_income,Net income,-5.125538,0.398075,9.436834,16.829017,11.230520
 nci,Less: non-controlling interests,0.180000,0.280000,0.360000,0.440000,0.400000
 ni_parent,Net income attributable to the group,-5.305538,0.118075,9.076834,16.389017,10.830520
+interest_tlb,Memo: interest expense - term loan,15.365700,17.956675,17.764500,16.092850,16.796025
+interest_rcf,Memo: interest expense - revolving facility,1.387500,1.122000,0.417500,0.156000,0.477000
+interest_lease,Memo: interest expense - finance leases,0.655476,0.670713,0.689631,0.694203,0.710203
+commitment_fee,Memo: commitment and agency fees,0.225000,0.240000,0.275000,0.290000,0.270000
+dff_amortisation,Memo: amortisation of deferred financing costs,0.950000,1.050000,1.050000,1.000000,1.000000
+interest_income,Memo: interest income,-0.300000,-0.350000,-0.550000,-0.700000,-0.550000

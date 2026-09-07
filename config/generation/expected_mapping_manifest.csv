@@ -1,0 +1,314 @@
+erp_system,source_account,source_account_name,mapping_type,expected_group_account,requested_group_account,required_line_attributes,group_account_name,statement,substituted_because_unavailable
+AURORA,1010,Operating Bank Accounts,DIRECT,110100,110100,,Cash and cash equivalents,BS,FALSE
+AURORA,1100,Accounts Receivable - Trade,DIRECT,120100,120100,,Trade accounts receivable,BS,FALSE
+AURORA,1110,Allowance for Doubtful Accounts,DIRECT,120200,120200,,Allowance for doubtful accounts,BS,FALSE
+AURORA,1150,Due From Affiliates,DIRECT,120500,120500,,Intercompany accounts receivable,BS,FALSE
+AURORA,1160,Intercompany Notes Receivable,SPLIT,125100,125100,maturity_months=12,Intercompany loans receivable - current,BS,FALSE
+AURORA,1200,Inventory - Raw Materials,DIRECT,130100,130100,,Raw materials inventory,BS,FALSE
+AURORA,1210,Inventory - WIP,DIRECT,130200,130200,,Work in process inventory,BS,FALSE
+AURORA,1220,Inventory - Finished Goods,DIRECT,130300,130300,,Finished goods inventory,BS,FALSE
+AURORA,1290,Inventory Valuation Reserve,DIRECT,130400,130400,,Inventory reserve,BS,FALSE
+AURORA,1300,Prepaid Expenses,DIRECT,140100,140100,,Prepaid expenses,BS,FALSE
+AURORA,1510,Buildings,DIRECT,150200,150200,,Buildings and improvements,BS,FALSE
+AURORA,1520,Machinery and Equipment,DIRECT,150300,150300,,Machinery and equipment,BS,FALSE
+AURORA,1530,Vehicles,DIRECT,150400,150400,,Vehicles,BS,FALSE
+AURORA,1540,Computer Equipment,DIRECT,150500,150500,,Computer hardware and software,BS,FALSE
+AURORA,1550,Leasehold Improvements,DIRECT,150600,150600,,Leasehold improvements,BS,FALSE
+AURORA,1590,Accumulated Depreciation,DIRECT,155100,155100,,Accumulated depreciation,BS,FALSE
+AURORA,1595,Operating Lease ROU Asset,DIRECT,158100,158100,,Operating lease right-of-use assets,BS,FALSE
+AURORA,1160,Intercompany Notes Receivable,SPLIT,175100,175100,,Intercompany loans receivable - non-current,BS,FALSE
+AURORA,1750,Investment in Subsidiaries,DIRECT,178100,178100,,Investments in subsidiaries,BS,FALSE
+AURORA,1790,Other Long Term Assets,DIRECT,180100,180100,,Other non-current assets,BS,FALSE
+AURORA,2000,Accounts Payable - Trade,DIRECT,210100,210100,,Trade accounts payable,BS,FALSE
+AURORA,2010,Accrued Purchases (GRNI),DIRECT,210200,210200,,Goods received not invoiced,BS,FALSE
+AURORA,2050,Due To Affiliates,DIRECT,210500,210500,,Intercompany accounts payable,BS,FALSE
+AURORA,2200,Accrued Payroll,DIRECT,215100,215100,,Accrued payroll and benefits,BS,FALSE
+AURORA,2220,Accrued Bonus,DIRECT,215200,215200,,Accrued bonus and incentive,BS,FALSE
+AURORA,2230,Accrued Professional Fees,DIRECT,215300,215300,,Accrued professional fees,BS,FALSE
+AURORA,2240,Warranty Reserve,DIRECT,215400,215400,,Accrued warranty,BS,FALSE
+AURORA,2250,Restructuring Accrual,DIRECT,215500,215500,,Accrued restructuring,BS,FALSE
+AURORA,2290,Other Accrued Liabilities,DIRECT,215600,215600,,Other accrued liabilities,BS,FALSE
+AURORA,2295,Accrued Interest,DIRECT,216100,216100,,Accrued interest,BS,FALSE
+AURORA,2300,Income Taxes Payable,DIRECT,218100,218100,,Income taxes payable,BS,FALSE
+AURORA,2310,Sales and Use Tax Payable,DIRECT,219100,219100,,Other taxes payable,BS,FALSE
+AURORA,2410,Line of Credit,DIRECT,220200,220200,,Revolving credit facility,BS,FALSE
+AURORA,2420,Capital Lease Obligation - Current,DIRECT,220300,220300,,Current portion of finance lease liabilities,BS,FALSE
+AURORA,2430,Operating Lease Liability - Current,DIRECT,220400,220400,,Current portion of operating lease liabilities,BS,FALSE
+AURORA,2060,Intercompany Notes Payable,SPLIT,225100,225100,maturity_months=12,Intercompany loans payable - current,BS,FALSE
+AURORA,2500,Term Loan Payable,DIRECT,230100,230100,,Long-term debt - term loan,BS,FALSE
+AURORA,2510,Deferred Financing Costs,DIRECT,230200,230200,,Unamortised deferred financing costs,BS,FALSE
+AURORA,2520,Capital Lease Obligation - Long Term,DIRECT,230300,230300,,Finance lease liabilities - non-current,BS,FALSE
+AURORA,2530,Operating Lease Liability - Long Term,DIRECT,230400,230400,,Operating lease liabilities - non-current,BS,FALSE
+AURORA,2690,Other Long Term Liabilities,DIRECT,245100,245100,,Other long-term liabilities,BS,FALSE
+AURORA,3000,Common Stock,DIRECT,310100,310100,,Common stock,BS,FALSE
+AURORA,3010,Additional Paid In Capital,DIRECT,310200,310200,,Additional paid-in capital,BS,FALSE
+AURORA,3100,Retained Earnings,DIRECT,320100,320100,,Retained earnings - opening,BS,FALSE
+AURORA,4000,Revenue - Equipment,DIRECT,410100,410100,,Product revenue - equipment,IS,FALSE
+AURORA,4010,Revenue - Components,DIRECT,410200,410200,,Product revenue - components,IS,FALSE
+AURORA,4020,Revenue - Spare Parts,DIRECT,415100,415100,,Aftermarket parts revenue,IS,FALSE
+AURORA,4300,Revenue - Freight Billed,DIRECT,430100,430100,,Freight and handling revenue,IS,FALSE
+AURORA,4500,Sales Returns,DIRECT,440100,440100,,Sales returns and allowances,IS,FALSE
+AURORA,4510,Customer Rebates,DIRECT,440200,440200,,Customer rebates and discounts,IS,FALSE
+AURORA,4900,Intercompany Revenue - Product,DIRECT,490100,490100,,Intercompany product revenue,IS,FALSE
+AURORA,4920,Management Fee Income,DIRECT,490300,490300,,Intercompany management fee income,IS,FALSE
+AURORA,4930,Royalty Income,DIRECT,490400,490400,,Intercompany royalty income,IS,FALSE
+AURORA,5000,Cost of Goods Sold - Materials,DIRECT,510100,510100,,Direct materials,IS,FALSE
+AURORA,5010,Cost of Goods Sold - Purchased Parts,DIRECT,510200,510200,,Purchased components,IS,FALSE
+AURORA,6150,Temporary Labor,SPLIT,510300,510300,dept_function=PRODUCTION,Subcontract costs,IS,FALSE
+AURORA,6100,Salaries and Wages,SPLIT,515100,515100,dept_function=PRODUCTION,Direct labour - production,IS,FALSE
+AURORA,6110,Employee Benefits,SPLIT,515300,515300,dept_function=PRODUCTION,Direct labour burden and benefits,IS,FALSE
+AURORA,6100,Salaries and Wages,SPLIT,520100,520100,dept_function=INDIRECT_OPS,Overhead - indirect labour,IS,FALSE
+AURORA,6200,Rent,SPLIT,520200,520200,dept_function=PRODUCTION,Overhead - facilities and utilities,IS,FALSE
+AURORA,5100,Manufacturing Overhead,SPLIT,520300,520300,dept_function=INDIRECT_OPS,Overhead - supplies and consumables,IS,FALSE
+AURORA,5400,Freight Out,DIRECT,525100,525100,,Freight and logistics,IS,FALSE
+AURORA,5410,Duties and Customs,DIRECT,525200,525200,,Duties and tariffs,IS,FALSE
+AURORA,5500,Inventory Adjustments,DIRECT,530100,530100,,Inventory adjustments and scrap,IS,FALSE
+AURORA,5510,Warranty Expense,DIRECT,530200,530200,,Warranty expense,IS,FALSE
+AURORA,5900,Intercompany COGS,SPLIT,590100,590100,partner_bu=FC,Intercompany cost of sales - product,IS,FALSE
+AURORA,6100,Salaries and Wages,SPLIT,610100,610100,,Salaries and wages,IS,FALSE
+AURORA,6110,Employee Benefits,SPLIT,610200,610200,dept_function=SGA,Employee benefits,IS,FALSE
+AURORA,6120,Payroll Taxes,SPLIT,610300,610300,dept_function=SGA,Payroll taxes,IS,FALSE
+AURORA,6130,Bonus Expense,DIRECT,610400,610400,,Bonus and incentive compensation,IS,FALSE
+AURORA,6140,Stock Compensation Expense,DIRECT,610500,610500,,Share-based compensation,IS,FALSE
+AURORA,6150,Temporary Labor,SPLIT,610600,610600,dept_function=SGA,Contract and temporary labour,IS,FALSE
+AURORA,6160,Recruiting and Relocation,DIRECT,610700,610700,,Recruitment and relocation,IS,FALSE
+AURORA,6170,Training,DIRECT,610800,610800,,Training and development,IS,FALSE
+AURORA,6200,Rent,SPLIT,620100,620100,dept_function=SGA,Rent and occupancy,IS,FALSE
+AURORA,6210,Utilities,SPLIT,620200,620200,dept_function=SGA,Utilities,IS,FALSE
+AURORA,6220,Repairs and Maintenance,DIRECT,620300,620300,,Repairs and maintenance - facilities,IS,FALSE
+AURORA,6230,Property Tax and Insurance,DIRECT,620400,620400,,Property taxes and insurance,IS,FALSE
+AURORA,6300,Audit and Tax Fees,DIRECT,630100,630100,,Audit and accounting fees,IS,FALSE
+AURORA,6310,Legal Fees,DIRECT,630200,630200,,Legal fees,IS,FALSE
+AURORA,6320,Consulting Fees,SPLIT,630300,630300,dept_function=SGA,Consulting and advisory fees,IS,FALSE
+AURORA,6330,Sponsor Management Fee,DIRECT,630400,630400,,Sponsor monitoring fee,IS,FALSE
+AURORA,6400,Advertising and Promotion,DIRECT,640100,640100,,Advertising and promotion,IS,FALSE
+AURORA,6410,Trade Shows,DIRECT,640200,640200,,Trade shows and events,IS,FALSE
+AURORA,6420,Sales Commissions,DIRECT,640300,640300,,Third-party commissions,IS,FALSE
+AURORA,6430,Bad Debt Expense,DIRECT,640400,640400,,Bad debt expense,IS,FALSE
+AURORA,6500,Software and Subscriptions,DIRECT,650100,650100,,Software licences and subscriptions,IS,FALSE
+AURORA,6510,IT Services,SPLIT,650200,650200,,IT services and support,IS,FALSE
+AURORA,6520,Telephone and Internet,DIRECT,650300,650300,,Telecommunications,IS,FALSE
+AURORA,6600,Travel and Entertainment,DIRECT,660100,660100,,Travel and entertainment,IS,FALSE
+AURORA,6610,Vehicle Expense,DIRECT,660200,660200,,Vehicle and fleet,IS,FALSE
+AURORA,6700,Office Supplies,DIRECT,670100,670100,,Office supplies and postage,IS,FALSE
+AURORA,6710,Bank Fees,DIRECT,670200,670200,,Bank charges,IS,FALSE
+AURORA,6720,Dues and Subscriptions,DIRECT,670300,670300,,Dues and subscriptions,IS,FALSE
+AURORA,6790,Miscellaneous Expense,DIRECT,670400,670400,,Other operating expenses,IS,FALSE
+AURORA,6800,Severance,DIRECT,680100,680100,,Restructuring - severance,IS,FALSE
+AURORA,6810,Facility Exit Costs,DIRECT,680200,680200,,Restructuring - facility exit,IS,FALSE
+AURORA,6820,Acquisition Costs,DIRECT,680300,680300,,Acquisition and transaction costs,IS,FALSE
+AURORA,6320,Consulting Fees,SPLIT,680400,680400,dept_code=D910,Integration and ERP programme costs,IS,FALSE
+AURORA,6840,Legal Settlements,DIRECT,680600,680600,,Legal settlements and claims,IS,FALSE
+AURORA,6850,Retention Bonuses,DIRECT,680700,680700,,Transaction and retention bonuses,IS,FALSE
+AURORA,6900,Management Fee Expense,DIRECT,695100,695100,,Intercompany management fee expense,IS,FALSE
+AURORA,7000,Depreciation Expense,SPLIT,710100,710100,asset_class=PLANT,"Depreciation - property, plant and equipment",IS,FALSE
+AURORA,7100,Interest Expense,SPLIT,730100,730100,instrument_type=TERM_LOAN,Interest expense - term loan,IS,FALSE
+AURORA,7100,Interest Expense,SPLIT,730200,730200,instrument_type=RCF,Interest expense - revolving facility,IS,FALSE
+AURORA,7100,Interest Expense,SPLIT,730300,730300,instrument_type=LEASE,Interest expense - finance leases,IS,FALSE
+AURORA,7110,Amortization of Financing Costs,DIRECT,730400,730400,,Amortisation of deferred financing costs,IS,FALSE
+AURORA,7120,Commitment Fees,DIRECT,730500,730500,,Commitment and agency fees,IS,FALSE
+AURORA,7200,Interest Income,DIRECT,735100,735100,,Interest income,IS,FALSE
+AURORA,7900,Intercompany Interest Income,DIRECT,795100,795100,,Intercompany interest income,IS,FALSE
+AURORA,8000,Federal Income Tax,DIRECT,810100,810100,,Current income tax - federal,IS,FALSE
+AURORA,8000,Federal Income Tax,DIRECT,810100,810300,,Current income tax - foreign,IS,TRUE
+SABLE,10100,Cash - Operating,DIRECT,110100,110100,,Cash and cash equivalents,BS,FALSE
+SABLE,11000,Customer Receivables,DIRECT,120100,120100,,Trade accounts receivable,BS,FALSE
+SABLE,11500,Reserve for Bad Debts,DIRECT,120200,120200,,Allowance for doubtful accounts,BS,FALSE
+SABLE,11900,Affiliate Receivables,DIRECT,120500,120500,,Intercompany accounts receivable,BS,FALSE
+SABLE,12000,Costs in Excess of Billings,DIRECT,121100,121100,,Contract assets and unbilled receivables,BS,FALSE
+SABLE,11900,Affiliate Receivables,DIRECT,120500,125100,,Intercompany loans receivable - current,BS,TRUE
+SABLE,13000,Inventory - Materials,DIRECT,130100,130100,,Raw materials inventory,BS,FALSE
+SABLE,13200,Inventory - Job WIP,DIRECT,130200,130200,,Work in process inventory,BS,FALSE
+SABLE,13200,Inventory - Job WIP,DIRECT,130200,130300,,Finished goods inventory,BS,TRUE
+SABLE,13900,Inventory Obsolescence Reserve,DIRECT,130400,130400,,Inventory reserve,BS,FALSE
+SABLE,14000,Prepaid Expenses,DIRECT,140100,140100,,Prepaid expenses,BS,FALSE
+SABLE,15000,Land and Buildings,SPLIT,150200,150200,asset_class=BUILDING,Buildings and improvements,BS,FALSE
+SABLE,15200,Shop Equipment,DIRECT,150300,150300,,Machinery and equipment,BS,FALSE
+SABLE,15300,Trucks and Trailers,DIRECT,150400,150400,,Vehicles,BS,FALSE
+SABLE,15400,IT Equipment,DIRECT,150500,150500,,Computer hardware and software,BS,FALSE
+SABLE,15500,Leasehold Improvements,DIRECT,150600,150600,,Leasehold improvements,BS,FALSE
+SABLE,15900,Accumulated Depreciation,DIRECT,155100,155100,,Accumulated depreciation,BS,FALSE
+SABLE,15950,ROU Asset - Operating Leases,DIRECT,158100,158100,,Operating lease right-of-use assets,BS,FALSE
+SABLE,17500,Investment in Affiliates,DIRECT,178100,178100,,Investments in subsidiaries,BS,FALSE
+SABLE,17900,Other Assets,DIRECT,180100,180100,,Other non-current assets,BS,FALSE
+SABLE,20000,Vendor Payables,DIRECT,210100,210100,,Trade accounts payable,BS,FALSE
+SABLE,20100,Received Not Vouchered,DIRECT,210200,210200,,Goods received not invoiced,BS,FALSE
+SABLE,20900,Affiliate Payables,DIRECT,210500,210500,,Intercompany accounts payable,BS,FALSE
+SABLE,21000,Billings in Excess of Costs,DIRECT,211100,211100,,Contract liabilities and customer advances,BS,FALSE
+SABLE,22000,Accrued Wages,DIRECT,215100,215100,,Accrued payroll and benefits,BS,FALSE
+SABLE,22200,Accrued Incentive Comp,DIRECT,215200,215200,,Accrued bonus and incentive,BS,FALSE
+SABLE,22400,Job Loss Reserve,DIRECT,215600,215300,,Accrued professional fees,BS,TRUE
+SABLE,22400,Job Loss Reserve,DIRECT,215600,215400,,Accrued warranty,BS,TRUE
+SABLE,22400,Job Loss Reserve,DIRECT,215600,215500,,Accrued restructuring,BS,TRUE
+SABLE,22400,Job Loss Reserve,DIRECT,215600,215600,,Other accrued liabilities,BS,FALSE
+SABLE,22950,Accrued Interest Payable,DIRECT,216100,216100,,Accrued interest,BS,FALSE
+SABLE,23000,Income Tax Payable,DIRECT,218100,218100,,Income taxes payable,BS,FALSE
+SABLE,23100,Sales Tax Payable,DIRECT,219100,219100,,Other taxes payable,BS,FALSE
+SABLE,24200,Capital Lease - Current,DIRECT,220300,220300,,Current portion of finance lease liabilities,BS,FALSE
+SABLE,24300,Operating Lease Liability - Current,DIRECT,220400,220400,,Current portion of operating lease liabilities,BS,FALSE
+SABLE,25200,Capital Lease - Long Term,DIRECT,230300,230300,,Finance lease liabilities - non-current,BS,FALSE
+SABLE,25300,Operating Lease Liability - Long Term,DIRECT,230400,230400,,Operating lease liabilities - non-current,BS,FALSE
+SABLE,24900,Affiliate Loans Payable,SPLIT,235100,235100,maturity_months=60,Intercompany loans payable - non-current,BS,FALSE
+SABLE,26900,Other Long Term Liabilities,DIRECT,245100,245100,,Other long-term liabilities,BS,FALSE
+SABLE,30000,Member Capital,DIRECT,310100,310100,,Common stock,BS,FALSE
+SABLE,30100,Contributed Capital,DIRECT,310200,310200,,Additional paid-in capital,BS,FALSE
+SABLE,31000,Retained Earnings,DIRECT,320100,320100,,Retained earnings - opening,BS,FALSE
+SABLE,40100,Service Revenue - T&M,DIRECT,420100,420100,,Service revenue - field services,IS,FALSE
+SABLE,40300,Maintenance Agreement Revenue,DIRECT,420200,420200,,Service revenue - maintenance contracts,IS,FALSE
+SABLE,40400,Turnaround Revenue,DIRECT,420300,420300,,Service revenue - turnarounds,IS,FALSE
+SABLE,40500,Project Revenue - POC,DIRECT,425100,425100,,Project revenue - recognised over time,IS,FALSE
+SABLE,40600,Project Revenue - Completed Contract,DIRECT,425200,425200,,Project revenue - recognised at a point in time,IS,FALSE
+SABLE,41500,Credits and Allowances,DIRECT,440100,440100,,Sales returns and allowances,IS,FALSE
+SABLE,41500,Credits and Allowances,DIRECT,440100,440200,,Customer rebates and discounts,IS,TRUE
+SABLE,49000,Intercompany Service Revenue,DIRECT,490200,490200,,Intercompany service revenue,IS,FALSE
+SABLE,50200,Job Cost - Materials,DIRECT,510100,510100,,Direct materials,IS,FALSE
+SABLE,50210,Job Cost - Purchased Equipment,DIRECT,510200,510200,,Purchased components,IS,FALSE
+SABLE,50300,Job Cost - Subcontractors,DIRECT,510300,510300,,Subcontract costs,IS,FALSE
+SABLE,50100,Job Cost - Labor,DIRECT,515200,515200,,Direct labour - field and project,IS,FALSE
+SABLE,50110,Job Cost - Labor Burden,DIRECT,515300,515300,,Direct labour burden and benefits,IS,FALSE
+SABLE,51000,Shop and Yard Overhead,DIRECT,520100,520100,,Overhead - indirect labour,IS,FALSE
+SABLE,60700,Safety Training and Certification,SPLIT,520300,520300,dept_function=FIELD,Overhead - supplies and consumables,IS,FALSE
+SABLE,65100,Company Vehicles,SPLIT,520400,520400,dept_function=FIELD,Overhead - equipment and tool rental,IS,FALSE
+SABLE,50600,Job Cost - Freight,DIRECT,525100,525100,,Freight and logistics,IS,FALSE
+SABLE,51900,Contract EAC Adjustment,DIRECT,535100,535100,,Contract estimate-at-completion adjustments,IS,FALSE
+SABLE,50900,Job Cost - Intercompany,SPLIT,590200,590200,partner_bu=IS,Intercompany cost of sales - services,IS,FALSE
+SABLE,60100,Salaries - Administrative,DIRECT,610100,610100,,Salaries and wages,IS,FALSE
+SABLE,60200,Benefits - Administrative,DIRECT,610200,610200,,Employee benefits,IS,FALSE
+SABLE,60300,Payroll Taxes - Administrative,DIRECT,610300,610300,,Payroll taxes,IS,FALSE
+SABLE,60400,Incentive Compensation,DIRECT,610400,610400,,Bonus and incentive compensation,IS,FALSE
+SABLE,60500,Contract Admin Labor,DIRECT,610600,610600,,Contract and temporary labour,IS,FALSE
+SABLE,60600,Recruiting,DIRECT,610700,610700,,Recruitment and relocation,IS,FALSE
+SABLE,60700,Safety Training and Certification,SPLIT,610800,610800,dept_function=SGA,Training and development,IS,FALSE
+SABLE,61000,Facility Rent,DIRECT,620100,620100,,Rent and occupancy,IS,FALSE
+SABLE,61100,Utilities and Waste,DIRECT,620200,620200,,Utilities,IS,FALSE
+SABLE,61200,Building Maintenance,DIRECT,620300,620300,,Repairs and maintenance - facilities,IS,FALSE
+SABLE,61300,Insurance - General,DIRECT,620400,620400,,Property taxes and insurance,IS,FALSE
+SABLE,62000,Professional Fees,SPLIT,630100,630100,vendor_category=AUDIT,Audit and accounting fees,IS,FALSE
+SABLE,62000,Professional Fees,SPLIT,630200,630200,vendor_category=LEGAL,Legal fees,IS,FALSE
+SABLE,62000,Professional Fees,SPLIT,630300,630300,vendor_category=CONSULTING,Consulting and advisory fees,IS,FALSE
+SABLE,63000,Selling Expense,SPLIT,640100,640100,expense_subtype=ADVERTISING,Advertising and promotion,IS,FALSE
+SABLE,63000,Selling Expense,SPLIT,640200,640200,expense_subtype=TRADESHOW,Trade shows and events,IS,FALSE
+SABLE,63000,Selling Expense,SPLIT,640300,640300,expense_subtype=COMMISSION,Third-party commissions,IS,FALSE
+SABLE,63500,Bad Debt Provision,DIRECT,640400,640400,,Bad debt expense,IS,FALSE
+SABLE,64000,Technology and Software,DIRECT,650100,650100,,Software licences and subscriptions,IS,FALSE
+SABLE,64100,IT Support Services,SPLIT,650200,650200,,IT services and support,IS,FALSE
+SABLE,64200,Communications,DIRECT,650300,650300,,Telecommunications,IS,FALSE
+SABLE,65000,Travel and Meals,DIRECT,660100,660100,,Travel and entertainment,IS,FALSE
+SABLE,65100,Company Vehicles,SPLIT,660200,660200,dept_function=SGA,Vehicle and fleet,IS,FALSE
+SABLE,66000,Office and Administrative,DIRECT,670100,670100,,Office supplies and postage,IS,FALSE
+SABLE,66100,Banking and Merchant Fees,DIRECT,670200,670200,,Bank charges,IS,FALSE
+SABLE,66200,Licenses and Permits,DIRECT,670300,670300,,Dues and subscriptions,IS,FALSE
+SABLE,66900,Other Operating Expense,DIRECT,670400,670400,,Other operating expenses,IS,FALSE
+SABLE,68000,Restructuring Costs,SPLIT,680100,680100,,Restructuring - severance,IS,FALSE
+SABLE,62000,Professional Fees,SPLIT,680400,680400,dept_code=D910,Integration and ERP programme costs,IS,FALSE
+SABLE,68400,Claims and Settlements,DIRECT,680600,680600,,Legal settlements and claims,IS,FALSE
+SABLE,69000,Management Fee - Affiliate,DIRECT,695100,695100,,Intercompany management fee expense,IS,FALSE
+SABLE,70000,Depreciation,SPLIT,710100,710100,asset_class=PLANT,"Depreciation - property, plant and equipment",IS,FALSE
+SABLE,71000,Interest Expense,SPLIT,730300,730300,instrument_type=LEASE,Interest expense - finance leases,IS,FALSE
+SABLE,79100,Affiliate Interest Expense,DIRECT,795200,795200,,Intercompany interest expense,IS,FALSE
+SABLE,80000,Income Tax Provision,SPLIT,810100,810100,tax_jurisdiction=FEDERAL,Current income tax - federal,IS,FALSE
+SABLE,80000,Income Tax Provision,SPLIT,810300,810300,tax_jurisdiction=FOREIGN,Current income tax - foreign,IS,FALSE
+KESTREL,00010000,Bank - Current Accounts,DIRECT,110100,110100,,Cash and cash equivalents,BS,FALSE
+KESTREL,00012000,Trade Receivables - Third Party,DIRECT,120100,120100,,Trade accounts receivable,BS,FALSE
+KESTREL,00012800,Bad Debt Provision,DIRECT,120200,120200,,Allowance for doubtful accounts,BS,FALSE
+KESTREL,00016000,Receivables from Affiliated Companies,DIRECT,120500,120500,,Intercompany accounts receivable,BS,FALSE
+KESTREL,00017000,Accrued Income,SPLIT,121100,121100,accrual_type=CONTRACT,Contract assets and unbilled receivables,BS,FALSE
+KESTREL,00016500,Loans to Affiliated Companies,SPLIT,125100,125100,maturity_months=12,Intercompany loans receivable - current,BS,FALSE
+KESTREL,00020000,Raw Materials,DIRECT,130100,130100,,Raw materials inventory,BS,FALSE
+KESTREL,00020500,Work in Progress,DIRECT,130200,130200,,Work in process inventory,BS,FALSE
+KESTREL,00021000,Finished Goods,DIRECT,130300,130300,,Finished goods inventory,BS,FALSE
+KESTREL,00022900,Inventory Valuation Allowance,DIRECT,130400,130400,,Inventory reserve,BS,FALSE
+KESTREL,00017000,Accrued Income,SPLIT,140100,140100,accrual_type=PREPAID,Prepaid expenses,BS,FALSE
+KESTREL,00030000,Land and Buildings,SPLIT,150200,150200,asset_class=BUILDING,Buildings and improvements,BS,FALSE
+KESTREL,00031000,Technical Equipment and Machinery,DIRECT,150300,150300,,Machinery and equipment,BS,FALSE
+KESTREL,00032000,Vehicles,DIRECT,150400,150400,,Vehicles,BS,FALSE
+KESTREL,00033000,Office and IT Equipment,DIRECT,150500,150500,,Computer hardware and software,BS,FALSE
+KESTREL,00034000,Tenant Improvements,DIRECT,150600,150600,,Leasehold improvements,BS,FALSE
+KESTREL,00039000,Accumulated Depreciation,DIRECT,155100,155100,,Accumulated depreciation,BS,FALSE
+KESTREL,00059000,Other Non-Current Assets,DIRECT,180100,180100,,Other non-current assets,BS,FALSE
+KESTREL,00060000,Trade Payables,DIRECT,210100,210100,,Trade accounts payable,BS,FALSE
+KESTREL,00060500,Goods Received Not Invoiced,DIRECT,210200,210200,,Goods received not invoiced,BS,FALSE
+KESTREL,00061000,Payables to Affiliated Companies,DIRECT,210500,210500,,Intercompany accounts payable,BS,FALSE
+KESTREL,00062000,Advance Payments Received,DIRECT,211100,211100,,Contract liabilities and customer advances,BS,FALSE
+KESTREL,00064000,Accrued Personnel Costs,DIRECT,215100,215100,,Accrued payroll and benefits,BS,FALSE
+KESTREL,00064200,Accrued Bonus,DIRECT,215200,215200,,Accrued bonus and incentive,BS,FALSE
+KESTREL,00064400,Accrued Audit and Advisory,DIRECT,215300,215300,,Accrued professional fees,BS,FALSE
+KESTREL,00064600,Warranty Provision,DIRECT,215400,215400,,Accrued warranty,BS,FALSE
+KESTREL,00064800,Restructuring Provision,DIRECT,215500,215500,,Accrued restructuring,BS,FALSE
+KESTREL,00064900,Other Provisions,DIRECT,215600,215600,,Other accrued liabilities,BS,FALSE
+KESTREL,00065000,Accrued Interest,DIRECT,216100,216100,,Accrued interest,BS,FALSE
+KESTREL,00066000,Corporate Tax Payable,DIRECT,218100,218100,,Income taxes payable,BS,FALSE
+KESTREL,00066500,VAT Payable,DIRECT,219100,219100,,Other taxes payable,BS,FALSE
+KESTREL,00067200,Finance Lease Liability - Current,DIRECT,220300,220300,,Current portion of finance lease liabilities,BS,FALSE
+KESTREL,00068200,Finance Lease Liability - Non-Current,DIRECT,230300,230300,,Finance lease liabilities - non-current,BS,FALSE
+KESTREL,00061500,Loans from Affiliated Companies,SPLIT,235100,235100,maturity_months=60,Intercompany loans payable - non-current,BS,FALSE
+KESTREL,00069500,Pension and Other Long Term,DIRECT,245100,245100,,Other long-term liabilities,BS,FALSE
+KESTREL,00070000,Share Capital,DIRECT,310100,310100,,Common stock,BS,FALSE
+KESTREL,00070500,Capital Reserve,DIRECT,310200,310200,,Additional paid-in capital,BS,FALSE
+KESTREL,00071500,Result for the Year,DIRECT,320200,320200,,Current year result attributable to the group,BS,FALSE
+KESTREL,00080000,Revenue - Products,SPLIT,410100,410100,product_group=EQUIPMENT,Product revenue - equipment,IS,FALSE
+KESTREL,00080000,Revenue - Products,SPLIT,410200,410200,product_group=COMPONENT,Product revenue - components,IS,FALSE
+KESTREL,00080200,Revenue - Spare Parts,DIRECT,415100,415100,,Aftermarket parts revenue,IS,FALSE
+KESTREL,00080400,Revenue - Services,DIRECT,420100,420100,,Service revenue - field services,IS,FALSE
+KESTREL,00080600,Revenue - Maintenance Contracts,DIRECT,420200,420200,,Service revenue - maintenance contracts,IS,FALSE
+KESTREL,00080400,Revenue - Services,DIRECT,420100,420300,,Service revenue - turnarounds,IS,TRUE
+KESTREL,00080800,Revenue - Projects,DIRECT,425100,425100,,Project revenue - recognised over time,IS,FALSE
+KESTREL,00080800,Revenue - Projects,DIRECT,425100,425200,,Project revenue - recognised at a point in time,IS,TRUE
+KESTREL,00081500,Other Operating Income,SPLIT,435100,430100,income_type=OPERATING,Freight and handling revenue,IS,TRUE
+KESTREL,00081800,Sales Deductions,DIRECT,440200,440100,,Sales returns and allowances,IS,TRUE
+KESTREL,00081800,Sales Deductions,DIRECT,440200,440200,,Customer rebates and discounts,IS,FALSE
+KESTREL,00089000,Intercompany Revenue,SPLIT,490100,490100,partner_bu=FC,Intercompany product revenue,IS,FALSE
+KESTREL,00089000,Intercompany Revenue,SPLIT,490200,490200,partner_bu=IS,Intercompany service revenue,IS,FALSE
+KESTREL,00090000,Cost of Materials,DIRECT,510100,510100,,Direct materials,IS,FALSE
+KESTREL,00090200,Cost of Purchased Goods,DIRECT,510200,510200,,Purchased components,IS,FALSE
+KESTREL,00091600,Temporary Staff,SPLIT,510300,510300,cost_center_function=PRODUCTION,Subcontract costs,IS,FALSE
+KESTREL,00091000,Wages and Salaries,SPLIT,515100,515100,cost_center_function=PRODUCTION,Direct labour - production,IS,FALSE
+KESTREL,00091000,Wages and Salaries,SPLIT,515200,515200,cost_center_function=FIELD,Direct labour - field and project,IS,FALSE
+KESTREL,00091200,Social Security Contributions,SPLIT,515300,515300,cost_center_function=PRODUCTION,Direct labour burden and benefits,IS,FALSE
+KESTREL,00091000,Wages and Salaries,SPLIT,520100,520100,cost_center_function=INDIRECT_OPS,Overhead - indirect labour,IS,FALSE
+KESTREL,00093000,Rent and Leases,SPLIT,520200,520200,cost_center_function=PRODUCTION,Overhead - facilities and utilities,IS,FALSE
+KESTREL,00090000,Cost of Materials,DIRECT,510100,520300,,Overhead - supplies and consumables,IS,TRUE
+KESTREL,00091600,Temporary Staff,SPLIT,510300,520400,cost_center_function=PRODUCTION,Overhead - equipment and tool rental,IS,TRUE
+KESTREL,00091600,Temporary Staff,SPLIT,510300,525100,cost_center_function=PRODUCTION,Freight and logistics,IS,TRUE
+KESTREL,00090000,Cost of Materials,DIRECT,510100,525200,,Duties and tariffs,IS,TRUE
+KESTREL,00081000,Change in Finished Goods Inventory,DERIVED,530100,530100,presentation=TOTAL_COST_METHOD,Inventory adjustments and scrap,IS,FALSE
+KESTREL,00090000,Cost of Materials,DIRECT,510100,530200,,Warranty expense,IS,TRUE
+KESTREL,00091600,Temporary Staff,SPLIT,510300,535100,cost_center_function=PRODUCTION,Contract estimate-at-completion adjustments,IS,TRUE
+KESTREL,00090600,Intercompany Cost of Materials,DIRECT,590100,590100,,Intercompany cost of sales - product,IS,FALSE
+KESTREL,00090600,Intercompany Cost of Materials,DIRECT,590100,590200,,Intercompany cost of sales - services,IS,TRUE
+KESTREL,00091000,Wages and Salaries,SPLIT,610100,610100,cost_center_function=SGA,Salaries and wages,IS,FALSE
+KESTREL,00091400,Pension and Benefit Costs,SPLIT,610200,610200,cost_center_function=SGA,Employee benefits,IS,FALSE
+KESTREL,00091200,Social Security Contributions,SPLIT,610300,610300,cost_center_function=SGA,Payroll taxes,IS,FALSE
+KESTREL,00091000,Wages and Salaries,SPLIT,610100,610400,cost_center_function=SGA,Bonus and incentive compensation,IS,TRUE
+KESTREL,00091600,Temporary Staff,SPLIT,610600,610600,cost_center_function=SGA,Contract and temporary labour,IS,FALSE
+KESTREL,00097900,Other Operating Expenses,DIRECT,670400,610700,,Recruitment and relocation,IS,TRUE
+KESTREL,00097900,Other Operating Expenses,DIRECT,670400,610800,,Training and development,IS,TRUE
+KESTREL,00093000,Rent and Leases,SPLIT,620100,620100,cost_center_function=SGA,Rent and occupancy,IS,FALSE
+KESTREL,00093200,Energy and Utilities,SPLIT,620200,620200,cost_center_function=SGA,Utilities,IS,FALSE
+KESTREL,00093400,Repairs and Maintenance,DIRECT,620300,620300,,Repairs and maintenance - facilities,IS,FALSE
+KESTREL,00093600,Insurance and Property Charges,DIRECT,620400,620400,,Property taxes and insurance,IS,FALSE
+KESTREL,00094000,Legal and Advisory Costs,SPLIT,630100,630100,advisor_type=AUDIT,Audit and accounting fees,IS,FALSE
+KESTREL,00094000,Legal and Advisory Costs,SPLIT,630200,630200,advisor_type=LEGAL,Legal fees,IS,FALSE
+KESTREL,00094000,Legal and Advisory Costs,SPLIT,630300,630300,advisor_type=CONSULTING,Consulting and advisory fees,IS,FALSE
+KESTREL,00094200,Advertising and Marketing,DIRECT,640100,640100,,Advertising and promotion,IS,FALSE
+KESTREL,00094300,Trade Fairs,DIRECT,640200,640200,,Trade shows and events,IS,FALSE
+KESTREL,00094400,Sales Commissions,DIRECT,640300,640300,,Third-party commissions,IS,FALSE
+KESTREL,00094500,Bad Debt Expense,DIRECT,640400,640400,,Bad debt expense,IS,FALSE
+KESTREL,00095000,IT and Software Costs,SPLIT,650100,650100,expense_subtype=LICENCE,Software licences and subscriptions,IS,FALSE
+KESTREL,00095000,IT and Software Costs,SPLIT,650200,650200,expense_subtype=SERVICES,IT services and support,IS,FALSE
+KESTREL,00095200,Telecommunications,DIRECT,650300,650300,,Telecommunications,IS,FALSE
+KESTREL,00096000,Travel Expenses,DIRECT,660100,660100,,Travel and entertainment,IS,FALSE
+KESTREL,00096400,Vehicle Costs,DIRECT,660200,660200,,Vehicle and fleet,IS,FALSE
+KESTREL,00097000,Office Supplies and Postage,DIRECT,670100,670100,,Office supplies and postage,IS,FALSE
+KESTREL,00097200,Bank Charges,DIRECT,670200,670200,,Bank charges,IS,FALSE
+KESTREL,00097400,Contributions and Fees,DIRECT,670300,670300,,Dues and subscriptions,IS,FALSE
+KESTREL,00097900,Other Operating Expenses,DIRECT,670400,670400,,Other operating expenses,IS,FALSE
+KESTREL,00098000,Restructuring Expense,SPLIT,680100,680100,cost_type=SEVERANCE,Restructuring - severance,IS,FALSE
+KESTREL,00098000,Restructuring Expense,SPLIT,680200,680200,cost_type=FACILITY,Restructuring - facility exit,IS,FALSE
+KESTREL,00098400,Integration Programme Costs,DIRECT,680400,680400,,Integration and ERP programme costs,IS,FALSE
+KESTREL,00099000,Management Fees to Affiliates,DIRECT,695100,695100,,Intercompany management fee expense,IS,FALSE
+KESTREL,00099400,Licence Fees to Affiliates,DIRECT,695300,695300,,Intercompany royalty expense,IS,FALSE
+KESTREL,00092000,Depreciation of Tangible Assets,SPLIT,710100,710100,asset_class=PLANT,"Depreciation - property, plant and equipment",IS,FALSE
+KESTREL,00100000,Interest and Similar Expenses,SPLIT,730300,730300,instrument_type=LEASE,Interest expense - finance leases,IS,FALSE
+KESTREL,00100000,Interest and Similar Expenses,SPLIT,795200,795200,instrument_type=AFFILIATE,Intercompany interest expense,IS,FALSE
+KESTREL,00101000,Taxes on Income,DIRECT,810300,810300,,Current income tax - foreign,IS,FALSE

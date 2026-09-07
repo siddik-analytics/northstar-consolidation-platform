@@ -30,6 +30,7 @@ SABLE,16200,Intangibles - Trade Name,ASSET,D,165300,DIRECT,,2021-03-01,,
 SABLE,16300,Intangibles - Non-Compete,ASSET,D,165400,DIRECT,,2021-03-01,,
 SABLE,16900,Accumulated Amortization,ASSET,C,166100,DIRECT,,2021-03-01,,
 SABLE,17000,Deferred Tax Asset,ASSET,D,170100,DIRECT,,2021-03-01,,
+SABLE,17500,Investment in Affiliates,ASSET,D,178100,DIRECT,,2021-03-01,,"Added in Phase 2. NIG-300 and NIG-400 are intermediate holding companies, so the Sable chart requires an investment account for the second-tier holdings in NIG-310 and NIG-410. Its absence was a gap in the Phase 1 chart, not a deliberate ERP difference."
 SABLE,17900,Other Assets,ASSET,D,180100,DIRECT,,2021-03-01,,
 SABLE,20000,Vendor Payables,LIABILITY,C,210100,DIRECT,,2021-03-01,,
 SABLE,20100,Received Not Vouchered,LIABILITY,C,210200,DIRECT,,2021-03-01,,

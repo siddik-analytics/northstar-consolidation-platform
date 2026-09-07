@@ -1,0 +1,122 @@
+[
+  {
+    "fault_id": "F01",
+    "name": "Unmapped source account",
+    "category": "MAPPING",
+    "expected_control": "CTL-MAP-01",
+    "phase_detected": 3,
+    "detector": "source account not present in the ERP chart of accounts",
+    "variant_file": "F01/AURORA_GL_NIG200_202411.csv",
+    "affected_rows": 1,
+    "description": "A posting carries a source account that does not exist in the Aurora chart, so the mapping engine has nothing to map it to. It must land in suspense and block the close, never default into other expenses.",
+    "detail": "Aurora account 6100 changed to 6199, which is not in the chart"
+  },
+  {
+    "fault_id": "F02",
+    "name": "Intercompany amount mismatch",
+    "category": "INTERCOMPANY",
+    "expected_control": "CTL-IC-01",
+    "phase_detected": 4,
+    "detector": "entity-pair intercompany balance does not net to zero",
+    "variant_file": "F02/AURORA_GL_NIG200_202411.csv",
+    "affected_rows": 6,
+    "description": "The buying entity restates a management fee by 4.5% while the selling entity does not. Both trial balances still close, so only a control that tests the entity PAIR -- rather than the aggregate -- can find it.",
+    "detail": "the buyer restates the management fee by 4.5%; its own trial balance still closes, but the entity pair no longer eliminates"
+  },
+  {
+    "fault_id": "F03",
+    "name": "Missing FX rate",
+    "category": "FX",
+    "expected_control": "CTL-FX-01",
+    "phase_detected": 4,
+    "detector": "currency-period-rate-type absent from the rate table",
+    "variant_file": "F03/fx_rates_monthly.csv",
+    "affected_rows": 1,
+    "description": "The closing rate for one currency and period is absent from the rate file. Translation must fail rather than silently apply zero or carry a stale rate.",
+    "detail": "EUR closing rate for 2024-11 removed"
+  },
+  {
+    "fault_id": "F04",
+    "name": "Duplicate journal identifier",
+    "category": "DATA_QUALITY",
+    "expected_control": "CTL-DQ-03",
+    "phase_detected": 3,
+    "detector": "duplicate (entity, journal_id, line_number)",
+    "variant_file": "F04/SABLE_LEDGERTRANS_CAS-US_202411.csv",
+    "affected_rows": 2,
+    "description": "A journal is present twice in the same extract, as happens when a period is loaded twice. It doubles the entity's result while still balancing.",
+    "detail": "journal SA202411300000922 present twice"
+  },
+  {
+    "fault_id": "F05",
+    "name": "Invalid cost centre",
+    "category": "DATA_QUALITY",
+    "expected_control": "CTL-DQ-08",
+    "phase_detected": 3,
+    "detector": "cost centre not present in the cost centre master",
+    "variant_file": "F05/KESTREL_BSEG_1000_202412.csv",
+    "affected_rows": 3,
+    "description": "A posting references a cost centre that is not in the master, which would otherwise become an orphan dimension key.",
+    "detail": "cost centre 999-999 does not exist in the master"
+  },
+  {
+    "fault_id": "F06",
+    "name": "Malformed localised amount",
+    "category": "DATA_QUALITY",
+    "expected_control": "CTL-DQ-09",
+    "phase_detected": 3,
+    "detector": "amount does not parse under the declared locale",
+    "variant_file": "F06/KESTREL_BSEG_1000_202412.csv",
+    "affected_rows": 4,
+    "description": "A Kestrel amount is written with a period decimal separator instead of a comma. Parsed under the German locale, 1.234,56 becomes 1.23456 -- a thousand-fold error that still looks like a number.",
+    "detail": "German comma decimal replaced by a period separator"
+  },
+  {
+    "fault_id": "F07",
+    "name": "Posting date outside its period",
+    "category": "DATA_QUALITY",
+    "expected_control": "CTL-DQ-06",
+    "phase_detected": 3,
+    "detector": "posting date month does not match the fiscal period",
+    "variant_file": "F07/AURORA_GL_NIG200_202411.csv",
+    "affected_rows": 2,
+    "description": "A line is stamped with a posting date in a different month from the fiscal period it is filed under.",
+    "detail": "posting date moved into the following month"
+  },
+  {
+    "fault_id": "F08",
+    "name": "Payroll misclassified across the gross margin line",
+    "category": "MAPPING",
+    "expected_control": "CTL-MAP-04",
+    "phase_detected": 3,
+    "detector": "payroll line whose department contradicts its cost centre function",
+    "variant_file": "F08/AURORA_GL_NIG200_202411.csv",
+    "affected_rows": 8,
+    "description": "A direct production payroll posting carries an SGA department, so Aurora's conditional split resolves it to operating expense instead of cost of sales. Every balancing control still passes; only gross margin moves.",
+    "detail": "production payroll re-tagged to an SGA department; gross margin moves, every balancing control still passes"
+  },
+  {
+    "fault_id": "F09",
+    "name": "Unbalanced journal",
+    "category": "TRIAL_BALANCE",
+    "expected_control": "CTL-TB-01",
+    "phase_detected": 3,
+    "detector": "journal whose lines do not sum to zero",
+    "variant_file": "F09/AURORA_GL_NIG200_202411.csv",
+    "affected_rows": 1,
+    "description": "One leg of a two-sided entry is removed, so the entity's trial balance no longer closes to zero.",
+    "detail": "one leg of journal AU202411200001155 removed"
+  },
+  {
+    "fault_id": "F10",
+    "name": "Posting before the consolidation effective date",
+    "category": "CONSOLIDATION",
+    "expected_control": "CTL-CON-02",
+    "phase_detected": 4,
+    "detector": "period earlier than the entity's consolidation effective date",
+    "variant_file": "F10/KESTREL_BSEG_1000_202304.csv",
+    "affected_rows": 5,
+    "description": "Halden Valve posts a period before its 1 April 2023 acquisition date, which would overstate FY2023 and corrupt the organic growth bridge.",
+    "detail": "Halden Valve posts February 2023, before its 1 April 2023 acquisition"
+  }
+]

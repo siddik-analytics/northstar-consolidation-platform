@@ -8,7 +8,10 @@ here is not guaranteed to exist.
 ## 1. Architecture
 
 ```
-  data/00_raw          Source ERP extracts, byte-for-byte as received. Immutable.
+  data/raw             Source ERP extracts, byte-for-byte as generated. Immutable.
+  data/reference       Source master, planning and subledger data
+  data/samples         Committed samples and the build digest
+  data/faults          Injected-fault variants and their expected results
         |
   data/10_staging      stg_*  — normalised, typed, sign-corrected. Still source-shaped.
         |
@@ -19,6 +22,13 @@ here is not guaranteed to exist.
         |
   data/90_exports      Board pack outputs, Excel refresh sources, screenshots
 ```
+
+> **Amended at Phase 2.** The raw layer is `data/raw/` rather than the `data/00_raw/`
+> placeholder this contract originally named, and three sibling directories were added for
+> the source reference data, committed samples and fault fixtures. This is a naming and
+> completeness change to match the approved Phase 2 deliverable structure; the layered
+> architecture, the schemas and every guarantee in section 8 are unchanged.
+> See `docs/source-data-dictionary.md`.
 
 Storage is a single DuckDB database (`data/20_warehouse/northstar.duckdb`) with Parquet
 exports for anything Power BI or Excel consumes (ADR-0001). Layer separation is by schema,

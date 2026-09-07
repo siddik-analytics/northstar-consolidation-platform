@@ -17,7 +17,7 @@ each contained two genuinely separable pieces of work with different risk profil
 |---|---|---|
 | 1 | Business design & architecture | **Complete** |
 | 1.1 | Architecture correction pass | **Complete — ready for Phase 2 approval** |
-| 2 | Synthetic source systems & reference data | Not started |
+| 2 | Synthetic source systems & reference data | **Complete — awaiting review** |
 | 3 | Ingestion, staging & COA harmonisation | Not started |
 | 4 | Consolidation engine | Not started |
 | 5 | Reporting marts & automated control suite | Not started |
@@ -84,6 +84,13 @@ exports, calibrated to hit the Phase 1 anchors.
 **Risks.** This is the phase most likely to consume more effort than expected. Generating data
 that is simultaneously realistic, internally consistent and anchor-conforming is genuinely
 hard — the temptation will be to relax the anchor tolerance. It should not be relaxed.
+
+**Delivered.** 1,082,408 journal lines across 507 native extracts in three systems, plus
+eleven reference and planning datasets. Every income statement and balance sheet aggregate
+reconciles to the anchor bridge at 0.0000% deviation — the tolerance was not relaxed, and
+was not needed. 57 source controls pass, ten fault fixtures all fire, the build is
+byte-identical on rebuild. Nine defects found and fixed, and one Phase 1 chart gap disclosed.
+See [`phase-02-report.md`](phase-02-report.md).
 
 ---
 

@@ -1,0 +1,999 @@
+customer_code,customer_name,customer_group_code,customer_group_name,industry_sector,country_code,billing_entity,channel,payment_terms_days,first_order_date,is_key_account,is_active
+C2000001,Thornbury Refining Industries - 200 001,CG0020,Thornbury Refining Industries,Pharmaceutical,US,NIG-200,DIRECT,45,2020-01-20,TRUE,TRUE
+C2000002,Vale Foods Group - 200 002,CG0172,Vale Foods Group,Food & Beverage,US,NIG-200,DIRECT,75,2022-12-06,FALSE,TRUE
+C2000003,Baytown Utilities Ltd. - 200 003,CG0002,Baytown Utilities Ltd.,Food & Beverage,US,NIG-200,DIRECT,75,2020-12-03,TRUE,TRUE
+C2000004,Zenith Chemicals Corporation - 200 004,CG0025,Zenith Chemicals Corporation,Refining & Petrochemical,US,NIG-200,DIRECT,45,2019-01-01,TRUE,TRUE
+C2000005,Ironside Minerals Holdings - 200 005,CG0009,Ironside Minerals Holdings,Refining & Petrochemical,US,NIG-200,DISTRIBUTOR,75,2019-01-03,TRUE,TRUE
+C2000006,Zenith Petrochemical plc - 200 006,CG0125,Zenith Petrochemical plc,General Industrial,US,NIG-200,DIRECT,45,2024-10-17,FALSE,TRUE
+C2000007,Cedar Ridge Energy Works - 200 007,CG0003,Cedar Ridge Energy Works,Chemicals,US,NIG-200,DIRECT,45,2022-12-25,TRUE,TRUE
+C2000008,Foxbridge Refining Industries - 200 008,CG0056,Foxbridge Refining Industries,General Industrial,US,NIG-200,DIRECT,45,2020-02-08,FALSE,TRUE
+C2000009,Thornbury Petrochemical plc - 200 009,CG0245,Thornbury Petrochemical plc,Pharmaceutical,US,NIG-200,DIRECT,45,2021-07-08,FALSE,TRUE
+C2000010,Foxbridge Utilities Ltd. - 200 010,CG0206,Foxbridge Utilities Ltd.,Water Treatment,US,NIG-200,DIRECT,30,2021-06-13,FALSE,TRUE
+C2000011,Delta Point Foods Group - 200 011,CG0004,Delta Point Foods Group,Food & Beverage,US,NIG-200,DIRECT,30,2024-02-25,TRUE,TRUE
+C2000012,Oakfield Paper Inc. - 200 012,CG0215,Oakfield Paper Inc.,Food & Beverage,US,NIG-200,DISTRIBUTOR,60,2021-05-30,FALSE,TRUE
+C2000013,Harlow Paper Inc. - 200 013,CG0083,Harlow Paper Inc.,Power Generation,US,NIG-200,DIRECT,45,2024-02-04,FALSE,TRUE
+C2000014,Oakfield Industrial B.V. - 200 014,CG0240,Oakfield Industrial B.V.,Power Generation,US,NIG-200,DIRECT,45,2024-10-19,FALSE,TRUE
+C2000015,Eastgate Petrochemical plc - 200 015,CG0005,Eastgate Petrochemical plc,Pulp & Paper,US,NIG-200,DIRECT,30,2023-01-28,TRUE,TRUE
+C2000016,Foxbridge Metals LLC - 200 016,CG0006,Foxbridge Metals LLC,General Industrial,US,NIG-200,DIRECT,45,2020-01-28,TRUE,TRUE
+C2000017,Delta Point Metals LLC - 200 017,CG0054,Delta Point Metals LLC,Pulp & Paper,US,NIG-200,DIRECT,30,2020-07-17,FALSE,TRUE
+C2000018,Granville Processing GmbH - 200 018,CG0007,Granville Processing GmbH,Chemicals,US,NIG-200,DIRECT,60,2021-10-11,TRUE,TRUE
+C2000019,Larkfield Industrial B.V. - 200 019,CG0012,Larkfield Industrial B.V.,General Industrial,US,NIG-200,DIRECT,60,2024-03-05,TRUE,TRUE
+C2000020,Kestrel Bay Industrial B.V. - 200 020,CG0036,Kestrel Bay Industrial B.V.,Water Treatment,US,NIG-200,DIRECT,75,2022-10-19,FALSE,TRUE
+C2000021,Upton Paper Inc. - 200 021,CG0071,Upton Paper Inc.,General Industrial,US,NIG-200,DIRECT,75,2020-09-16,FALSE,TRUE
+C2000022,Yarrow Utilities Ltd. - 200 022,CG0074,Yarrow Utilities Ltd.,Pharmaceutical,US,NIG-200,DIRECT,45,2023-06-28,FALSE,TRUE
+C2000023,Upton Minerals Holdings - 200 023,CG0021,Upton Minerals Holdings,Pharmaceutical,US,NIG-200,DIRECT,45,2022-11-20,TRUE,TRUE
+C2000024,Ashford Chemicals Corporation - 200 024,CG0001,Ashford Chemicals Corporation,Food & Beverage,US,NIG-200,DIRECT,45,2025-01-23,TRUE,TRUE
+C2000025,Harlow Water Partners - 200 025,CG0058,Harlow Water Partners,Power Generation,US,NIG-200,DISTRIBUTOR,30,2021-03-29,FALSE,TRUE
+C2000026,Delta Point Foods Group - 200 026,CG0004,Delta Point Foods Group,General Industrial,US,NIG-200,DIRECT,30,2019-07-03,TRUE,TRUE
+C2000027,Oakfield Water Partners - 200 027,CG0190,Oakfield Water Partners,Chemicals,US,NIG-200,DIRECT,60,2020-07-01,FALSE,TRUE
+C2000028,Ashford Chemicals Corporation - 200 028,CG0001,Ashford Chemicals Corporation,Pulp & Paper,US,NIG-200,DIRECT,30,2024-02-10,TRUE,TRUE
+C2000029,Ashford Chemicals Corporation - 200 029,CG0001,Ashford Chemicals Corporation,Refining & Petrochemical,US,NIG-200,DIRECT,45,2019-09-27,TRUE,TRUE
+C2000030,Ironside Water Partners - 200 030,CG0034,Ironside Water Partners,Power Generation,US,NIG-200,DIRECT,90,2022-09-29,FALSE,TRUE
+C2000031,Ironside Metals LLC - 200 031,CG0234,Ironside Metals LLC,Water Treatment,US,NIG-200,DIRECT,45,2019-10-31,FALSE,TRUE
+C2000032,Baytown Utilities Ltd. - 200 032,CG0002,Baytown Utilities Ltd.,Refining & Petrochemical,US,NIG-200,DISTRIBUTOR,45,2021-02-21,TRUE,TRUE
+C2000033,Baytown Utilities Ltd. - 200 033,CG0002,Baytown Utilities Ltd.,Pharmaceutical,US,NIG-200,DISTRIBUTOR,30,2022-07-09,TRUE,TRUE
+C2000034,Ashford Chemicals Corporation - 200 034,CG0001,Ashford Chemicals Corporation,Refining & Petrochemical,US,NIG-200,DIRECT,75,2020-09-15,TRUE,TRUE
+C2000035,Larkfield Energy Works - 200 035,CG0087,Larkfield Energy Works,General Industrial,US,NIG-200,DISTRIBUTOR,75,2021-03-26,FALSE,TRUE
+C2000036,Foxbridge Metals LLC - 200 036,CG0006,Foxbridge Metals LLC,Food & Beverage,US,NIG-200,DIRECT,30,2023-08-15,TRUE,TRUE
+C2000037,Baytown Utilities Ltd. - 200 037,CG0002,Baytown Utilities Ltd.,Power Generation,US,NIG-200,DISTRIBUTOR,45,2025-03-11,TRUE,TRUE
+C2000038,Quarry Hill Petrochemical plc - 200 038,CG0017,Quarry Hill Petrochemical plc,Water Treatment,US,NIG-200,DIRECT,60,2019-11-30,TRUE,TRUE
+C2000039,Upton Minerals Holdings - 200 039,CG0021,Upton Minerals Holdings,Food & Beverage,US,NIG-200,DIRECT,60,2020-09-06,TRUE,TRUE
+C2000040,Ashford Foods Group - 200 040,CG0076,Ashford Foods Group,Pharmaceutical,US,NIG-200,DIRECT,90,2020-10-04,FALSE,TRUE
+C2000041,Ashford Chemicals Corporation - 200 041,CG0001,Ashford Chemicals Corporation,Pharmaceutical,US,NIG-200,DIRECT,45,2023-08-04,TRUE,TRUE
+C2000042,Cedar Ridge Energy Works - 200 042,CG0003,Cedar Ridge Energy Works,Mining & Minerals,US,NIG-200,DIRECT,60,2019-07-28,TRUE,TRUE
+C2000043,Ironside Minerals Holdings - 200 043,CG0009,Ironside Minerals Holdings,Pharmaceutical,US,NIG-200,DIRECT,90,2022-07-14,TRUE,TRUE
+C2000044,Baytown Processing GmbH - 200 044,CG0127,Baytown Processing GmbH,Mining & Minerals,US,NIG-200,DISTRIBUTOR,30,2021-11-24,FALSE,TRUE
+C2000045,Eastgate Refining Industries - 200 045,CG0080,Eastgate Refining Industries,Mining & Minerals,US,NIG-200,DIRECT,60,2022-12-14,FALSE,TRUE
+C2000046,Vale Utilities Ltd. - 200 046,CG0122,Vale Utilities Ltd.,Pharmaceutical,US,NIG-200,DIRECT,45,2019-12-25,FALSE,TRUE
+C2000047,Juniper Water Partners - 200 047,CG0010,Juniper Water Partners,Chemicals,US,NIG-200,DISTRIBUTOR,30,2021-07-07,TRUE,TRUE
+C2000048,Baytown Foods Group - 200 048,CG0052,Baytown Foods Group,Mining & Minerals,US,NIG-200,DIRECT,60,2022-11-12,FALSE,TRUE
+C2000049,Zenith Chemicals Corporation - 200 049,CG0025,Zenith Chemicals Corporation,Mining & Minerals,US,NIG-200,DIRECT,30,2020-10-15,TRUE,TRUE
+C2000050,Delta Point Foods Group - 200 050,CG0004,Delta Point Foods Group,Water Treatment,US,NIG-200,DIRECT,75,2022-08-31,TRUE,TRUE
+C2000051,Ashford Chemicals Corporation - 200 051,CG0001,Ashford Chemicals Corporation,Water Treatment,US,NIG-200,DISTRIBUTOR,30,2021-06-01,TRUE,TRUE
+C2000052,Granville Water Partners - 200 052,CG0082,Granville Water Partners,Mining & Minerals,US,NIG-200,DIRECT,60,2022-08-17,FALSE,TRUE
+C2000053,Baytown Energy Works - 200 053,CG0027,Baytown Energy Works,Water Treatment,US,NIG-200,DIRECT,30,2025-07-15,FALSE,TRUE
+C2000054,Baytown Processing GmbH - 200 054,CG0127,Baytown Processing GmbH,Food & Beverage,US,NIG-200,DIRECT,75,2021-05-28,FALSE,TRUE
+C2000055,Baytown Energy Works - 200 055,CG0027,Baytown Energy Works,Pulp & Paper,US,NIG-200,DIRECT,45,2024-11-17,FALSE,TRUE
+C2000056,Eastgate Water Partners - 200 056,CG0130,Eastgate Water Partners,Water Treatment,US,NIG-200,DIRECT,45,2023-08-06,FALSE,TRUE
+C2000057,Ashford Chemicals Corporation - 200 057,CG0001,Ashford Chemicals Corporation,Refining & Petrochemical,US,NIG-200,DISTRIBUTOR,45,2022-09-07,TRUE,TRUE
+C2000058,Zenith Metals LLC - 200 058,CG0150,Zenith Metals LLC,Chemicals,US,NIG-200,DIRECT,45,2023-04-24,FALSE,TRUE
+C2000059,Oakfield Energy Works - 200 059,CG0015,Oakfield Energy Works,Food & Beverage,US,NIG-200,DIRECT,90,2024-01-31,TRUE,TRUE
+C2000060,Harlow Minerals Holdings - 200 060,CG0033,Harlow Minerals Holdings,Mining & Minerals,US,NIG-200,DIRECT,60,2021-02-10,FALSE,TRUE
+C2000061,Larkfield Industrial B.V. - 200 061,CG0012,Larkfield Industrial B.V.,Chemicals,US,NIG-200,DIRECT,90,2021-11-13,TRUE,TRUE
+C2000062,Granville Industrial B.V. - 200 062,CG0132,Granville Industrial B.V.,Power Generation,US,NIG-200,DISTRIBUTOR,30,2021-03-10,FALSE,TRUE
+C2000063,Ashford Water Partners - 200 063,CG0226,Ashford Water Partners,General Industrial,US,NIG-200,DISTRIBUTOR,30,2019-04-14,FALSE,TRUE
+C2000064,Meridian Park Chemicals Corporation - 200 064,CG0013,Meridian Park Chemicals Corporation,Pharmaceutical,US,NIG-200,DIRECT,75,2022-04-11,TRUE,TRUE
+C2000065,Ashford Chemicals Corporation - 200 065,CG0001,Ashford Chemicals Corporation,Chemicals,US,NIG-200,DIRECT,75,2021-01-24,TRUE,TRUE
+C2000066,Juniper Industrial B.V. - 200 066,CG0060,Juniper Industrial B.V.,General Industrial,US,NIG-200,DIRECT,75,2024-06-07,FALSE,TRUE
+C2000067,Ashford Chemicals Corporation - 200 067,CG0001,Ashford Chemicals Corporation,Chemicals,US,NIG-200,DIRECT,60,2020-05-28,TRUE,TRUE
+C2000068,Ashford Chemicals Corporation - 200 068,CG0001,Ashford Chemicals Corporation,Food & Beverage,US,NIG-200,DIRECT,60,2022-12-21,TRUE,TRUE
+C2000069,Thornbury Refining Industries - 200 069,CG0020,Thornbury Refining Industries,General Industrial,US,NIG-200,DIRECT,75,2023-04-18,TRUE,TRUE
+C2000070,Baytown Refining Industries - 200 070,CG0152,Baytown Refining Industries,General Industrial,US,NIG-200,DIRECT,30,2022-09-17,FALSE,TRUE
+C2000071,Meridian Park Metals LLC - 200 071,CG0138,Meridian Park Metals LLC,Refining & Petrochemical,US,NIG-200,DIRECT,90,2024-11-09,FALSE,TRUE
+C2000072,Eastgate Petrochemical plc - 200 072,CG0005,Eastgate Petrochemical plc,Food & Beverage,US,NIG-200,DIRECT,60,2019-11-09,TRUE,TRUE
+C2000073,Harlow Refining Industries - 200 073,CG0008,Harlow Refining Industries,Mining & Minerals,US,NIG-200,DIRECT,45,2022-05-20,TRUE,TRUE
+C2000074,Juniper Paper Inc. - 200 074,CG0035,Juniper Paper Inc.,Water Treatment,US,NIG-200,DISTRIBUTOR,30,2021-11-27,FALSE,TRUE
+C2000075,Foxbridge Chemicals Corporation - 200 075,CG0181,Foxbridge Chemicals Corporation,Mining & Minerals,US,NIG-200,DIRECT,45,2020-09-14,FALSE,TRUE
+C2000076,Harlow Minerals Holdings - 200 076,CG0033,Harlow Minerals Holdings,Pharmaceutical,US,NIG-200,DIRECT,30,2021-05-14,FALSE,TRUE
+C2000077,Ashford Chemicals Corporation - 200 077,CG0001,Ashford Chemicals Corporation,Pulp & Paper,US,NIG-200,DIRECT,90,2024-06-25,TRUE,TRUE
+C2000078,Baytown Utilities Ltd. - 200 078,CG0002,Baytown Utilities Ltd.,Power Generation,US,NIG-200,DISTRIBUTOR,30,2020-02-29,TRUE,TRUE
+C2000079,Kestrel Bay Paper Inc. - 200 079,CG0011,Kestrel Bay Paper Inc.,Pharmaceutical,US,NIG-200,DIRECT,60,2024-12-25,TRUE,TRUE
+C2000080,Vale Utilities Ltd. - 200 080,CG0122,Vale Utilities Ltd.,General Industrial,US,NIG-200,DISTRIBUTOR,30,2021-09-24,FALSE,TRUE
+C2000081,Cedar Ridge Foods Group - 200 081,CG0028,Cedar Ridge Foods Group,Food & Beverage,US,NIG-200,DISTRIBUTOR,45,2020-05-07,FALSE,TRUE
+C2000082,Quarry Hill Petrochemical plc - 200 082,CG0017,Quarry Hill Petrochemical plc,Pharmaceutical,US,NIG-200,DISTRIBUTOR,75,2019-12-16,TRUE,TRUE
+C2000083,Baytown Utilities Ltd. - 200 083,CG0002,Baytown Utilities Ltd.,Pulp & Paper,US,NIG-200,DISTRIBUTOR,60,2025-07-14,TRUE,TRUE
+C2000084,Eastgate Petrochemical plc - 200 084,CG0005,Eastgate Petrochemical plc,Food & Beverage,US,NIG-200,DIRECT,75,2021-02-28,TRUE,TRUE
+C2000085,Oakfield Energy Works - 200 085,CG0015,Oakfield Energy Works,Chemicals,US,NIG-200,DIRECT,30,2025-03-22,TRUE,TRUE
+C2000086,Baytown Petrochemical plc - 200 086,CG0077,Baytown Petrochemical plc,Pharmaceutical,US,NIG-200,DIRECT,90,2022-11-03,FALSE,TRUE
+C2000087,Granville Minerals Holdings - 200 087,CG0057,Granville Minerals Holdings,Refining & Petrochemical,US,NIG-200,DIRECT,30,2020-05-18,FALSE,TRUE
+C2000088,Harlow Refining Industries - 200 088,CG0008,Harlow Refining Industries,Refining & Petrochemical,US,NIG-200,DIRECT,45,2022-04-09,TRUE,TRUE
+C2000089,Cedar Ridge Energy Works - 200 089,CG0003,Cedar Ridge Energy Works,Mining & Minerals,US,NIG-200,DIRECT,75,2020-10-16,TRUE,TRUE
+C2000090,Foxbridge Minerals Holdings - 200 090,CG0081,Foxbridge Minerals Holdings,Power Generation,US,NIG-200,DIRECT,60,2020-02-13,FALSE,TRUE
+C2000091,Granville Processing GmbH - 200 091,CG0007,Granville Processing GmbH,Mining & Minerals,US,NIG-200,DIRECT,60,2023-03-18,TRUE,TRUE
+C2000092,Foxbridge Metals LLC - 200 092,CG0006,Foxbridge Metals LLC,Mining & Minerals,US,NIG-200,DIRECT,60,2021-11-15,TRUE,TRUE
+C2000093,Cedar Ridge Foods Group - 200 093,CG0028,Cedar Ridge Foods Group,General Industrial,US,NIG-200,DIRECT,60,2025-05-14,FALSE,TRUE
+C2000094,Pinehurst Metals LLC - 200 094,CG0066,Pinehurst Metals LLC,Pulp & Paper,US,NIG-200,DIRECT,60,2022-09-05,FALSE,TRUE
+C2000095,Foxbridge Water Partners - 200 095,CG0106,Foxbridge Water Partners,Water Treatment,US,NIG-200,DIRECT,45,2020-07-18,FALSE,TRUE
+C2000096,Thornbury Refining Industries - 200 096,CG0020,Thornbury Refining Industries,Pulp & Paper,US,NIG-200,DIRECT,30,2023-08-25,TRUE,TRUE
+C2000097,Cedar Ridge Metals LLC - 200 097,CG0078,Cedar Ridge Metals LLC,Power Generation,US,NIG-200,DIRECT,30,2023-01-22,FALSE,TRUE
+C2000098,Thornbury Industrial B.V. - 200 098,CG0120,Thornbury Industrial B.V.,Refining & Petrochemical,US,NIG-200,DIRECT,30,2025-04-06,FALSE,TRUE
+C2000099,Baytown Utilities Ltd. - 200 099,CG0002,Baytown Utilities Ltd.,Food & Beverage,US,NIG-200,DIRECT,75,2024-01-23,TRUE,TRUE
+C2000100,Larkfield Petrochemical plc - 200 100,CG0137,Larkfield Petrochemical plc,Water Treatment,US,NIG-200,DIRECT,30,2020-01-09,FALSE,TRUE
+C2000101,Cedar Ridge Energy Works - 200 101,CG0003,Cedar Ridge Energy Works,Water Treatment,US,NIG-200,DISTRIBUTOR,45,2021-08-12,TRUE,TRUE
+C2000102,Eastgate Petrochemical plc - 200 102,CG0005,Eastgate Petrochemical plc,Pulp & Paper,US,NIG-200,DISTRIBUTOR,45,2019-01-28,TRUE,TRUE
+C2000103,Northbrook Petrochemical plc - 200 103,CG0089,Northbrook Petrochemical plc,Pulp & Paper,US,NIG-200,DIRECT,45,2024-07-01,FALSE,TRUE
+C2000104,Cedar Ridge Energy Works - 200 104,CG0003,Cedar Ridge Energy Works,General Industrial,US,NIG-200,DIRECT,75,2020-12-17,TRUE,TRUE
+C2000105,Juniper Water Partners - 200 105,CG0010,Juniper Water Partners,Power Generation,US,NIG-200,DIRECT,60,2020-05-06,TRUE,TRUE
+C2000106,Ironside Processing GmbH - 200 106,CG0259,Ironside Processing GmbH,Pulp & Paper,US,NIG-200,DIRECT,75,2025-05-09,FALSE,TRUE
+C2000107,Meridian Park Energy Works - 200 107,CG0063,Meridian Park Energy Works,Mining & Minerals,US,NIG-200,DIRECT,90,2019-01-02,FALSE,TRUE
+C2000108,Foxbridge Metals LLC - 200 108,CG0006,Foxbridge Metals LLC,Food & Beverage,US,NIG-200,DIRECT,90,2019-05-15,TRUE,TRUE
+C2000109,Kestrel Bay Paper Inc. - 200 109,CG0011,Kestrel Bay Paper Inc.,Refining & Petrochemical,US,NIG-200,DIRECT,45,2023-02-07,TRUE,TRUE
+C2000110,Ironside Chemicals Corporation - 200 110,CG0109,Ironside Chemicals Corporation,Refining & Petrochemical,US,NIG-200,DIRECT,45,2024-12-16,FALSE,TRUE
+C2000111,Pinehurst Foods Group - 200 111,CG0016,Pinehurst Foods Group,Food & Beverage,US,NIG-200,DIRECT,60,2024-08-11,TRUE,TRUE
+C2000112,Ironside Minerals Holdings - 200 112,CG0009,Ironside Minerals Holdings,Food & Beverage,US,NIG-200,DIRECT,90,2024-10-20,TRUE,TRUE
+C2000113,Juniper Water Partners - 200 113,CG0010,Juniper Water Partners,Mining & Minerals,US,NIG-200,DISTRIBUTOR,30,2023-05-10,TRUE,TRUE
+C2000114,Zenith Foods Group - 200 114,CG0100,Zenith Foods Group,General Industrial,US,NIG-200,DIRECT,60,2024-07-10,FALSE,TRUE
+C2000115,Harlow Refining Industries - 200 115,CG0008,Harlow Refining Industries,Mining & Minerals,US,NIG-200,DIRECT,60,2019-03-07,TRUE,TRUE
+C2000116,Zenith Chemicals Corporation - 200 116,CG0025,Zenith Chemicals Corporation,Pulp & Paper,US,NIG-200,DISTRIBUTOR,90,2020-03-12,TRUE,TRUE
+C2000117,Ashford Chemicals Corporation - 200 117,CG0001,Ashford Chemicals Corporation,General Industrial,US,NIG-200,DIRECT,60,2022-01-11,TRUE,TRUE
+C2000118,Ashford Chemicals Corporation - 200 118,CG0001,Ashford Chemicals Corporation,Mining & Minerals,US,NIG-200,DIRECT,45,2022-09-25,TRUE,TRUE
+C2000119,Granville Utilities Ltd. - 200 119,CG0182,Granville Utilities Ltd.,Pulp & Paper,US,NIG-200,DIRECT,90,2022-03-30,FALSE,TRUE
+C2000120,Delta Point Foods Group - 200 120,CG0004,Delta Point Foods Group,Food & Beverage,US,NIG-200,DIRECT,60,2024-01-23,TRUE,TRUE
+C2000121,Ashford Chemicals Corporation - 200 121,CG0001,Ashford Chemicals Corporation,Power Generation,US,NIG-200,DIRECT,30,2021-04-17,TRUE,TRUE
+C2000122,Larkfield Industrial B.V. - 200 122,CG0012,Larkfield Industrial B.V.,Mining & Minerals,US,NIG-200,DIRECT,45,2020-12-17,TRUE,TRUE
+C2000123,Foxbridge Paper Inc. - 200 123,CG0131,Foxbridge Paper Inc.,Mining & Minerals,US,NIG-200,DIRECT,90,2020-09-03,FALSE,TRUE
+C2000124,Juniper Water Partners - 200 124,CG0010,Juniper Water Partners,Refining & Petrochemical,US,NIG-200,DIRECT,30,2025-03-22,TRUE,TRUE
+C2000125,Kestrel Bay Processing GmbH - 200 125,CG0211,Kestrel Bay Processing GmbH,Water Treatment,US,NIG-200,DISTRIBUTOR,45,2020-10-13,FALSE,TRUE
+C2000126,Thornbury Paper Inc. - 200 126,CG0095,Thornbury Paper Inc.,Power Generation,US,NIG-200,DIRECT,60,2021-09-04,FALSE,TRUE
+C2000127,Foxbridge Metals LLC - 200 127,CG0006,Foxbridge Metals LLC,Pulp & Paper,US,NIG-200,DIRECT,60,2025-04-16,TRUE,TRUE
+C2000128,Granville Refining Industries - 200 128,CG0032,Granville Refining Industries,Refining & Petrochemical,US,NIG-200,DIRECT,60,2022-01-09,FALSE,TRUE
+C2000129,Quarry Hill Paper Inc. - 200 129,CG0167,Quarry Hill Paper Inc.,Chemicals,US,NIG-200,DISTRIBUTOR,30,2021-10-30,FALSE,TRUE
+C2000130,Juniper Water Partners - 200 130,CG0010,Juniper Water Partners,Mining & Minerals,US,NIG-200,DIRECT,75,2023-06-07,TRUE,TRUE
+C2000131,Eastgate Industrial B.V. - 200 131,CG0180,Eastgate Industrial B.V.,Refining & Petrochemical,US,NIG-200,DISTRIBUTOR,60,2020-08-22,FALSE,TRUE
+C2000132,Eastgate Petrochemical plc - 200 132,CG0005,Eastgate Petrochemical plc,Pulp & Paper,US,NIG-200,DIRECT,30,2020-12-29,TRUE,TRUE
+C2000133,Thornbury Minerals Holdings - 200 133,CG0045,Thornbury Minerals Holdings,Chemicals,US,NIG-200,DIRECT,30,2023-12-02,FALSE,TRUE
+C2000134,Delta Point Foods Group - 200 134,CG0004,Delta Point Foods Group,Pharmaceutical,US,NIG-200,DIRECT,45,2019-03-14,TRUE,TRUE
+C2000135,Cedar Ridge Energy Works - 200 135,CG0003,Cedar Ridge Energy Works,Pulp & Paper,US,NIG-200,DIRECT,45,2024-10-01,TRUE,TRUE
+C2000136,Oakfield Metals LLC - 200 136,CG0090,Oakfield Metals LLC,Refining & Petrochemical,US,NIG-200,DIRECT,30,2022-08-02,FALSE,TRUE
+C2000137,Ironside Minerals Holdings - 200 137,CG0009,Ironside Minerals Holdings,General Industrial,US,NIG-200,DIRECT,30,2022-01-02,TRUE,TRUE
+C2000138,Kestrel Bay Industrial B.V. - 200 138,CG0036,Kestrel Bay Industrial B.V.,Mining & Minerals,US,NIG-200,DIRECT,45,2021-02-17,FALSE,TRUE
+C2000139,Northbrook Utilities Ltd. - 200 139,CG0014,Northbrook Utilities Ltd.,Water Treatment,US,NIG-200,DIRECT,75,2019-07-30,TRUE,TRUE
+C2000140,Ashford Chemicals Corporation - 200 140,CG0001,Ashford Chemicals Corporation,Water Treatment,US,NIG-200,DIRECT,60,2022-07-24,TRUE,TRUE
+C2000141,Eastgate Chemicals Corporation - 200 141,CG0205,Eastgate Chemicals Corporation,Chemicals,US,NIG-200,DIRECT,30,2023-10-31,FALSE,TRUE
+C2000142,Harlow Refining Industries - 200 142,CG0008,Harlow Refining Industries,Pharmaceutical,US,NIG-200,DISTRIBUTOR,30,2022-03-02,TRUE,TRUE
+C2000143,Quarry Hill Utilities Ltd. - 200 143,CG0242,Quarry Hill Utilities Ltd.,Refining & Petrochemical,US,NIG-200,DIRECT,45,2024-07-14,FALSE,TRUE
+C2000144,Yarrow Industrial B.V. - 200 144,CG0024,Yarrow Industrial B.V.,Chemicals,US,NIG-200,DIRECT,30,2023-09-07,TRUE,TRUE
+C2000145,Northbrook Energy Works - 200 145,CG0039,Northbrook Energy Works,Refining & Petrochemical,US,NIG-200,DIRECT,30,2023-06-26,FALSE,TRUE
+C2000146,Ashford Chemicals Corporation - 200 146,CG0001,Ashford Chemicals Corporation,Refining & Petrochemical,US,NIG-200,DIRECT,30,2019-12-26,TRUE,TRUE
+C2000147,Ashford Chemicals Corporation - 200 147,CG0001,Ashford Chemicals Corporation,Food & Beverage,US,NIG-200,DIRECT,60,2020-03-02,TRUE,TRUE
+C2000148,Cedar Ridge Energy Works - 200 148,CG0003,Cedar Ridge Energy Works,Water Treatment,US,NIG-200,DISTRIBUTOR,75,2021-03-19,TRUE,TRUE
+C2000149,Ashford Chemicals Corporation - 200 149,CG0001,Ashford Chemicals Corporation,General Industrial,US,NIG-200,DIRECT,60,2024-08-02,TRUE,TRUE
+C2000150,Harlow Refining Industries - 200 150,CG0008,Harlow Refining Industries,Chemicals,US,NIG-200,DIRECT,30,2022-10-07,TRUE,TRUE
+C5000001,Juniper Water Partners - 500 001,CG0010,Juniper Water Partners,Pharmaceutical,US,NIG-500,DISTRIBUTOR,30,2024-04-02,TRUE,TRUE
+C5000002,Redmond Processing GmbH - 500 002,CG0043,Redmond Processing GmbH,Refining & Petrochemical,US,NIG-500,DISTRIBUTOR,75,2021-09-21,FALSE,TRUE
+C5000003,Eastgate Petrochemical plc - 500 003,CG0005,Eastgate Petrochemical plc,Refining & Petrochemical,US,NIG-500,DIRECT,30,2020-02-13,TRUE,TRUE
+C5000004,Ashford Chemicals Corporation - 500 004,CG0001,Ashford Chemicals Corporation,Chemicals,US,NIG-500,DISTRIBUTOR,45,2021-10-08,TRUE,TRUE
+C5000005,Meridian Park Chemicals Corporation - 500 005,CG0013,Meridian Park Chemicals Corporation,Chemicals,US,NIG-500,DIRECT,60,2019-06-30,TRUE,TRUE
+C5000006,Larkfield Industrial B.V. - 500 006,CG0012,Larkfield Industrial B.V.,Pulp & Paper,US,NIG-500,DIRECT,30,2024-12-16,TRUE,TRUE
+C5000007,Westmoor Paper Inc. - 500 007,CG0023,Westmoor Paper Inc.,Power Generation,US,NIG-500,DIRECT,60,2021-06-28,TRUE,TRUE
+C5000008,Foxbridge Metals LLC - 500 008,CG0006,Foxbridge Metals LLC,Water Treatment,US,NIG-500,DIRECT,60,2020-02-23,TRUE,TRUE
+C5000009,Cedar Ridge Energy Works - 500 009,CG0003,Cedar Ridge Energy Works,General Industrial,US,NIG-500,DIRECT,60,2019-11-10,TRUE,TRUE
+C5000010,Quarry Hill Petrochemical plc - 500 010,CG0017,Quarry Hill Petrochemical plc,General Industrial,US,NIG-500,DISTRIBUTOR,45,2021-03-27,TRUE,TRUE
+C5000011,Foxbridge Processing GmbH - 500 011,CG0031,Foxbridge Processing GmbH,Refining & Petrochemical,US,NIG-500,DIRECT,45,2022-04-14,FALSE,TRUE
+C5000012,Northbrook Utilities Ltd. - 500 012,CG0014,Northbrook Utilities Ltd.,Food & Beverage,US,NIG-500,DIRECT,30,2022-10-01,TRUE,TRUE
+C5000013,Baytown Processing GmbH - 500 013,CG0127,Baytown Processing GmbH,Mining & Minerals,US,NIG-500,DIRECT,75,2019-01-28,FALSE,TRUE
+C5000014,Ashford Chemicals Corporation - 500 014,CG0001,Ashford Chemicals Corporation,Power Generation,US,NIG-500,DIRECT,60,2022-05-02,TRUE,TRUE
+C5000015,Stonebridge Refining Industries - 500 015,CG0044,Stonebridge Refining Industries,Power Generation,US,NIG-500,DISTRIBUTOR,30,2023-05-14,FALSE,TRUE
+C5000016,Delta Point Processing GmbH - 500 016,CG0079,Delta Point Processing GmbH,Pulp & Paper,US,NIG-500,DISTRIBUTOR,45,2025-02-03,FALSE,TRUE
+C5000017,Ashford Refining Industries - 500 017,CG0176,Ashford Refining Industries,Water Treatment,US,NIG-500,DISTRIBUTOR,75,2025-01-05,FALSE,TRUE
+C5000018,Larkfield Industrial B.V. - 500 018,CG0012,Larkfield Industrial B.V.,Pulp & Paper,US,NIG-500,DISTRIBUTOR,30,2020-03-06,TRUE,TRUE
+C5000019,Cedar Ridge Energy Works - 500 019,CG0003,Cedar Ridge Energy Works,General Industrial,US,NIG-500,DIRECT,45,2020-08-03,TRUE,TRUE
+C5000020,Ashford Chemicals Corporation - 500 020,CG0001,Ashford Chemicals Corporation,Food & Beverage,US,NIG-500,DIRECT,75,2021-03-01,TRUE,TRUE
+C5000021,Granville Minerals Holdings - 500 021,CG0057,Granville Minerals Holdings,Water Treatment,US,NIG-500,DIRECT,30,2024-04-24,FALSE,TRUE
+C5000022,Cedar Ridge Energy Works - 500 022,CG0003,Cedar Ridge Energy Works,Mining & Minerals,US,NIG-500,DISTRIBUTOR,75,2023-09-29,TRUE,TRUE
+C5000023,Westmoor Chemicals Corporation - 500 023,CG0073,Westmoor Chemicals Corporation,Mining & Minerals,US,NIG-500,DIRECT,30,2021-12-13,FALSE,TRUE
+C5000024,Ironside Minerals Holdings - 500 024,CG0009,Ironside Minerals Holdings,Water Treatment,US,NIG-500,DISTRIBUTOR,90,2020-04-21,TRUE,TRUE
+C5000025,Granville Processing GmbH - 500 025,CG0007,Granville Processing GmbH,Water Treatment,US,NIG-500,DIRECT,90,2024-07-08,TRUE,TRUE
+C5000026,Ironside Minerals Holdings - 500 026,CG0009,Ironside Minerals Holdings,Water Treatment,US,NIG-500,DIRECT,30,2024-01-22,TRUE,TRUE
+C5000027,Baytown Utilities Ltd. - 500 027,CG0002,Baytown Utilities Ltd.,Refining & Petrochemical,US,NIG-500,DIRECT,45,2019-07-23,TRUE,TRUE
+C5000028,Oakfield Energy Works - 500 028,CG0015,Oakfield Energy Works,Power Generation,US,NIG-500,DIRECT,45,2025-02-02,TRUE,TRUE
+C5000029,Kestrel Bay Energy Works - 500 029,CG0111,Kestrel Bay Energy Works,General Industrial,US,NIG-500,DIRECT,30,2021-03-11,FALSE,TRUE
+C5000030,Harlow Minerals Holdings - 500 030,CG0033,Harlow Minerals Holdings,Water Treatment,US,NIG-500,DIRECT,60,2022-02-20,FALSE,TRUE
+C5000031,Cedar Ridge Energy Works - 500 031,CG0003,Cedar Ridge Energy Works,Power Generation,US,NIG-500,DISTRIBUTOR,45,2025-02-08,TRUE,TRUE
+C5000032,Ashford Chemicals Corporation - 500 032,CG0001,Ashford Chemicals Corporation,Power Generation,US,NIG-500,DISTRIBUTOR,45,2021-11-13,TRUE,TRUE
+C5000033,Ashford Chemicals Corporation - 500 033,CG0001,Ashford Chemicals Corporation,Refining & Petrochemical,US,NIG-500,DIRECT,60,2022-07-07,TRUE,TRUE
+C5000034,Redmond Minerals Holdings - 500 034,CG0093,Redmond Minerals Holdings,Refining & Petrochemical,US,NIG-500,DIRECT,30,2025-01-09,FALSE,TRUE
+C5000035,Quarry Hill Petrochemical plc - 500 035,CG0017,Quarry Hill Petrochemical plc,Power Generation,US,NIG-500,DIRECT,60,2019-11-12,TRUE,TRUE
+C5000036,Ashford Chemicals Corporation - 500 036,CG0001,Ashford Chemicals Corporation,Water Treatment,US,NIG-500,DIRECT,45,2022-05-06,TRUE,TRUE
+C5000037,Quarry Hill Paper Inc. - 500 037,CG0167,Quarry Hill Paper Inc.,Power Generation,US,NIG-500,DISTRIBUTOR,60,2022-04-14,FALSE,TRUE
+C5000038,Larkfield Energy Works - 500 038,CG0087,Larkfield Energy Works,Refining & Petrochemical,US,NIG-500,DISTRIBUTOR,45,2025-04-16,FALSE,TRUE
+C5000039,Northbrook Utilities Ltd. - 500 039,CG0014,Northbrook Utilities Ltd.,Power Generation,US,NIG-500,DISTRIBUTOR,90,2020-08-09,TRUE,TRUE
+C5000040,Eastgate Paper Inc. - 500 040,CG0155,Eastgate Paper Inc.,Power Generation,US,NIG-500,DIRECT,45,2020-10-21,FALSE,TRUE
+C5000041,Ironside Minerals Holdings - 500 041,CG0009,Ironside Minerals Holdings,Food & Beverage,US,NIG-500,DIRECT,30,2022-02-02,TRUE,TRUE
+C5000042,Larkfield Refining Industries - 500 042,CG0212,Larkfield Refining Industries,Mining & Minerals,US,NIG-500,DIRECT,60,2024-05-09,FALSE,TRUE
+C5000043,Cedar Ridge Energy Works - 500 043,CG0003,Cedar Ridge Energy Works,Power Generation,US,NIG-500,DIRECT,75,2025-07-02,TRUE,TRUE
+C5000044,Baytown Utilities Ltd. - 500 044,CG0002,Baytown Utilities Ltd.,Mining & Minerals,US,NIG-500,DIRECT,75,2019-09-26,TRUE,TRUE
+C5000045,Baytown Utilities Ltd. - 500 045,CG0002,Baytown Utilities Ltd.,Pulp & Paper,US,NIG-500,DIRECT,75,2019-01-26,TRUE,TRUE
+C5000046,Vale Utilities Ltd. - 500 046,CG0122,Vale Utilities Ltd.,Food & Beverage,US,NIG-500,DIRECT,90,2023-12-16,FALSE,TRUE
+C5000047,Redmond Chemicals Corporation - 500 047,CG0193,Redmond Chemicals Corporation,General Industrial,US,NIG-500,DIRECT,60,2023-11-20,FALSE,TRUE
+C5000048,Ashford Chemicals Corporation - 500 048,CG0001,Ashford Chemicals Corporation,Water Treatment,US,NIG-500,DIRECT,30,2024-09-01,TRUE,TRUE
+C5000049,Harlow Minerals Holdings - 500 049,CG0033,Harlow Minerals Holdings,Mining & Minerals,US,NIG-500,DIRECT,60,2024-07-20,FALSE,TRUE
+C5000050,Ironside Paper Inc. - 500 050,CG0059,Ironside Paper Inc.,General Industrial,US,NIG-500,DISTRIBUTOR,60,2024-02-24,FALSE,TRUE
+C5000051,Ashford Processing GmbH - 500 051,CG0151,Ashford Processing GmbH,Power Generation,US,NIG-500,DIRECT,90,2023-03-22,FALSE,TRUE
+C5000052,Ashford Chemicals Corporation - 500 052,CG0001,Ashford Chemicals Corporation,General Industrial,US,NIG-500,DISTRIBUTOR,75,2022-06-28,TRUE,TRUE
+C5000053,Meridian Park Petrochemical plc - 500 053,CG0113,Meridian Park Petrochemical plc,Pulp & Paper,US,NIG-500,DIRECT,60,2019-09-28,FALSE,TRUE
+C5000054,Eastgate Petrochemical plc - 500 054,CG0005,Eastgate Petrochemical plc,Food & Beverage,US,NIG-500,DIRECT,60,2024-08-24,TRUE,TRUE
+C5000055,Ironside Minerals Holdings - 500 055,CG0009,Ironside Minerals Holdings,Mining & Minerals,US,NIG-500,DIRECT,75,2021-09-19,TRUE,TRUE
+C5000056,Harlow Water Partners - 500 056,CG0058,Harlow Water Partners,Food & Beverage,US,NIG-500,DIRECT,90,2023-08-17,FALSE,TRUE
+C5000057,Cedar Ridge Foods Group - 500 057,CG0028,Cedar Ridge Foods Group,Pharmaceutical,US,NIG-500,DISTRIBUTOR,90,2019-06-29,FALSE,TRUE
+C5000058,Juniper Petrochemical plc - 500 058,CG0185,Juniper Petrochemical plc,Pharmaceutical,US,NIG-500,DISTRIBUTOR,30,2023-09-04,FALSE,TRUE
+C5000059,Ashford Chemicals Corporation - 500 059,CG0001,Ashford Chemicals Corporation,Power Generation,US,NIG-500,DISTRIBUTOR,60,2020-05-03,TRUE,TRUE
+C5000060,Delta Point Metals LLC - 500 060,CG0054,Delta Point Metals LLC,Power Generation,US,NIG-500,DIRECT,75,2019-04-23,FALSE,TRUE
+C5000061,Ashford Chemicals Corporation - 500 061,CG0001,Ashford Chemicals Corporation,Power Generation,US,NIG-500,DISTRIBUTOR,75,2020-06-29,TRUE,TRUE
+C5000062,Ashford Chemicals Corporation - 500 062,CG0001,Ashford Chemicals Corporation,Power Generation,US,NIG-500,DISTRIBUTOR,60,2021-01-02,TRUE,TRUE
+C5000063,Eastgate Petrochemical plc - 500 063,CG0005,Eastgate Petrochemical plc,Mining & Minerals,US,NIG-500,DIRECT,45,2023-12-17,TRUE,TRUE
+C5000064,Westmoor Chemicals Corporation - 500 064,CG0073,Westmoor Chemicals Corporation,Refining & Petrochemical,US,NIG-500,DIRECT,45,2024-08-16,FALSE,TRUE
+C5000065,Vale Industrial B.V. - 500 065,CG0072,Vale Industrial B.V.,Power Generation,US,NIG-500,DIRECT,90,2019-09-05,FALSE,TRUE
+C5000066,Eastgate Petrochemical plc - 500 066,CG0005,Eastgate Petrochemical plc,Water Treatment,US,NIG-500,DIRECT,90,2019-11-01,TRUE,TRUE
+C5000067,Harlow Industrial B.V. - 500 067,CG0108,Harlow Industrial B.V.,Chemicals,US,NIG-500,DISTRIBUTOR,60,2020-02-05,FALSE,TRUE
+C5000068,Quarry Hill Petrochemical plc - 500 068,CG0017,Quarry Hill Petrochemical plc,Pharmaceutical,US,NIG-500,DISTRIBUTOR,30,2025-05-21,TRUE,TRUE
+C5000069,Ashford Chemicals Corporation - 500 069,CG0001,Ashford Chemicals Corporation,Power Generation,US,NIG-500,DISTRIBUTOR,90,2020-05-07,TRUE,TRUE
+C5000070,Ashford Chemicals Corporation - 500 070,CG0001,Ashford Chemicals Corporation,Pharmaceutical,US,NIG-500,DIRECT,45,2021-10-21,TRUE,TRUE
+C5000071,Stonebridge Processing GmbH - 500 071,CG0019,Stonebridge Processing GmbH,Water Treatment,US,NIG-500,DIRECT,75,2021-02-28,TRUE,TRUE
+C5000072,Cedar Ridge Processing GmbH - 500 072,CG0103,Cedar Ridge Processing GmbH,Power Generation,US,NIG-500,DISTRIBUTOR,90,2024-06-09,FALSE,TRUE
+C5000073,Eastgate Petrochemical plc - 500 073,CG0005,Eastgate Petrochemical plc,Mining & Minerals,US,NIG-500,DIRECT,45,2022-12-09,TRUE,TRUE
+C5000074,Larkfield Utilities Ltd. - 500 074,CG0062,Larkfield Utilities Ltd.,General Industrial,US,NIG-500,DISTRIBUTOR,45,2025-07-15,FALSE,TRUE
+C5000075,Granville Processing GmbH - 500 075,CG0007,Granville Processing GmbH,Chemicals,US,NIG-500,DIRECT,60,2019-10-03,TRUE,TRUE
+C5000076,Pinehurst Processing GmbH - 500 076,CG0091,Pinehurst Processing GmbH,Food & Beverage,US,NIG-500,DIRECT,30,2025-03-15,FALSE,TRUE
+C5000077,Redmond Processing GmbH - 500 077,CG0043,Redmond Processing GmbH,Chemicals,US,NIG-500,DIRECT,45,2020-05-14,FALSE,TRUE
+C5000078,Granville Refining Industries - 500 078,CG0032,Granville Refining Industries,Chemicals,US,NIG-500,DIRECT,60,2025-04-27,FALSE,TRUE
+C5000079,Baytown Utilities Ltd. - 500 079,CG0002,Baytown Utilities Ltd.,Chemicals,US,NIG-500,DIRECT,30,2022-11-01,TRUE,TRUE
+C5000080,Oakfield Industrial B.V. - 500 080,CG0240,Oakfield Industrial B.V.,Mining & Minerals,US,NIG-500,DIRECT,30,2022-04-27,FALSE,TRUE
+C5000081,Delta Point Foods Group - 500 081,CG0004,Delta Point Foods Group,Pharmaceutical,US,NIG-500,DIRECT,60,2024-05-15,TRUE,TRUE
+C5000082,Foxbridge Processing GmbH - 500 082,CG0031,Foxbridge Processing GmbH,Pharmaceutical,US,NIG-500,DISTRIBUTOR,60,2020-12-28,FALSE,TRUE
+C5000083,Ironside Chemicals Corporation - 500 083,CG0109,Ironside Chemicals Corporation,Chemicals,US,NIG-500,DIRECT,45,2023-09-13,FALSE,TRUE
+C5000084,Eastgate Metals LLC - 500 084,CG0030,Eastgate Metals LLC,Refining & Petrochemical,US,NIG-500,DIRECT,60,2022-04-30,FALSE,TRUE
+C5000085,Zenith Chemicals Corporation - 500 085,CG0025,Zenith Chemicals Corporation,Water Treatment,US,NIG-500,DISTRIBUTOR,30,2023-08-25,TRUE,TRUE
+C5000086,Meridian Park Energy Works - 500 086,CG0063,Meridian Park Energy Works,Refining & Petrochemical,US,NIG-500,DIRECT,60,2021-04-30,FALSE,TRUE
+C5000087,Harlow Refining Industries - 500 087,CG0008,Harlow Refining Industries,Water Treatment,US,NIG-500,DIRECT,45,2020-07-20,TRUE,TRUE
+C5000088,Redmond Metals LLC - 500 088,CG0018,Redmond Metals LLC,General Industrial,US,NIG-500,DIRECT,75,2023-07-12,TRUE,TRUE
+C5000089,Baytown Utilities Ltd. - 500 089,CG0002,Baytown Utilities Ltd.,Mining & Minerals,US,NIG-500,DISTRIBUTOR,30,2023-01-17,TRUE,TRUE
+C5000090,Harlow Foods Group - 500 090,CG0208,Harlow Foods Group,Food & Beverage,US,NIG-500,DIRECT,45,2019-09-09,FALSE,TRUE
+C5000091,Ashford Chemicals Corporation - 500 091,CG0001,Ashford Chemicals Corporation,Power Generation,US,NIG-500,DISTRIBUTOR,60,2023-02-18,TRUE,TRUE
+C5000092,Baytown Utilities Ltd. - 500 092,CG0002,Baytown Utilities Ltd.,Mining & Minerals,US,NIG-500,DISTRIBUTOR,30,2025-06-20,TRUE,TRUE
+C5000093,Harlow Paper Inc. - 500 093,CG0083,Harlow Paper Inc.,Pharmaceutical,US,NIG-500,DIRECT,75,2021-10-20,FALSE,TRUE
+C5000094,Baytown Utilities Ltd. - 500 094,CG0002,Baytown Utilities Ltd.,Water Treatment,US,NIG-500,DIRECT,30,2023-07-29,TRUE,TRUE
+C3000001,Ashford Chemicals Corporation - 300 001,CG0001,Ashford Chemicals Corporation,Pharmaceutical,US,NIG-300,DIRECT,45,2020-12-15,TRUE,TRUE
+C3000002,Delta Point Foods Group - 300 002,CG0004,Delta Point Foods Group,Food & Beverage,US,NIG-300,DIRECT,30,2023-06-03,TRUE,TRUE
+C3000003,Kestrel Bay Paper Inc. - 300 003,CG0011,Kestrel Bay Paper Inc.,Power Generation,US,NIG-300,DIRECT,90,2020-01-18,TRUE,TRUE
+C3000004,Yarrow Industrial B.V. - 300 004,CG0024,Yarrow Industrial B.V.,Chemicals,US,NIG-300,DIRECT,30,2019-11-04,TRUE,TRUE
+C3000005,Westmoor Refining Industries - 300 005,CG0248,Westmoor Refining Industries,Power Generation,US,NIG-300,DIRECT,30,2020-02-23,FALSE,TRUE
+C3000006,Ashford Chemicals Corporation - 300 006,CG0001,Ashford Chemicals Corporation,Pulp & Paper,US,NIG-300,DISTRIBUTOR,60,2019-06-30,TRUE,TRUE
+C3000007,Vale Water Partners - 300 007,CG0022,Vale Water Partners,Refining & Petrochemical,US,NIG-300,DIRECT,60,2024-01-07,TRUE,TRUE
+C3000008,Delta Point Paper Inc. - 300 008,CG0179,Delta Point Paper Inc.,General Industrial,US,NIG-300,DIRECT,60,2019-08-15,FALSE,TRUE
+C3000009,Thornbury Refining Industries - 300 009,CG0020,Thornbury Refining Industries,Refining & Petrochemical,US,NIG-300,DIRECT,90,2021-06-23,TRUE,TRUE
+C3000010,Larkfield Utilities Ltd. - 300 010,CG0062,Larkfield Utilities Ltd.,Food & Beverage,US,NIG-300,DIRECT,75,2020-03-03,FALSE,TRUE
+C3000011,Baytown Utilities Ltd. - 300 011,CG0002,Baytown Utilities Ltd.,Food & Beverage,US,NIG-300,DIRECT,30,2021-06-08,TRUE,TRUE
+C3000012,Kestrel Bay Paper Inc. - 300 012,CG0011,Kestrel Bay Paper Inc.,Mining & Minerals,US,NIG-300,DIRECT,60,2021-02-01,TRUE,TRUE
+C3000013,Ironside Water Partners - 300 013,CG0034,Ironside Water Partners,Chemicals,US,NIG-300,DISTRIBUTOR,30,2022-05-19,FALSE,TRUE
+C3000014,Pinehurst Foods Group - 300 014,CG0016,Pinehurst Foods Group,Refining & Petrochemical,US,NIG-300,DIRECT,75,2021-02-22,TRUE,TRUE
+C3000015,Stonebridge Processing GmbH - 300 015,CG0019,Stonebridge Processing GmbH,Power Generation,US,NIG-300,DISTRIBUTOR,45,2023-04-11,TRUE,TRUE
+C3000016,Baytown Utilities Ltd. - 300 016,CG0002,Baytown Utilities Ltd.,Pharmaceutical,US,NIG-300,DIRECT,90,2022-04-04,TRUE,TRUE
+C3000017,Vale Water Partners - 300 017,CG0022,Vale Water Partners,General Industrial,US,NIG-300,DIRECT,45,2019-07-13,TRUE,TRUE
+C3000018,Foxbridge Metals LLC - 300 018,CG0006,Foxbridge Metals LLC,Pulp & Paper,US,NIG-300,DISTRIBUTOR,75,2025-06-29,TRUE,TRUE
+C3000019,Eastgate Petrochemical plc - 300 019,CG0005,Eastgate Petrochemical plc,General Industrial,US,NIG-300,DIRECT,60,2021-05-06,TRUE,TRUE
+C3000020,Baytown Paper Inc. - 300 020,CG0227,Baytown Paper Inc.,Power Generation,US,NIG-300,DIRECT,45,2024-05-04,FALSE,TRUE
+C3000021,Yarrow Foods Group - 300 021,CG0124,Yarrow Foods Group,Refining & Petrochemical,US,NIG-300,DIRECT,90,2019-07-13,FALSE,TRUE
+C3000022,Delta Point Metals LLC - 300 022,CG0054,Delta Point Metals LLC,Water Treatment,US,NIG-300,DIRECT,30,2021-05-03,FALSE,TRUE
+C3000023,Baytown Utilities Ltd. - 300 023,CG0002,Baytown Utilities Ltd.,Refining & Petrochemical,US,NIG-300,DIRECT,30,2020-09-15,TRUE,TRUE
+C3000024,Larkfield Industrial B.V. - 300 024,CG0012,Larkfield Industrial B.V.,Water Treatment,US,NIG-300,DIRECT,60,2024-02-13,TRUE,TRUE
+C3000025,Cedar Ridge Foods Group - 300 025,CG0028,Cedar Ridge Foods Group,Pulp & Paper,US,NIG-300,DIRECT,90,2021-06-13,FALSE,TRUE
+C3000026,Delta Point Petrochemical plc - 300 026,CG0029,Delta Point Petrochemical plc,Mining & Minerals,US,NIG-300,DIRECT,75,2023-08-28,FALSE,TRUE
+C3000027,Meridian Park Minerals Holdings - 300 027,CG0213,Meridian Park Minerals Holdings,Pulp & Paper,US,NIG-300,DIRECT,45,2023-10-31,FALSE,TRUE
+C3000028,Baytown Utilities Ltd. - 300 028,CG0002,Baytown Utilities Ltd.,General Industrial,US,NIG-300,DISTRIBUTOR,75,2022-10-01,TRUE,TRUE
+C3000029,Ironside Water Partners - 300 029,CG0034,Ironside Water Partners,Food & Beverage,US,NIG-300,DISTRIBUTOR,60,2024-12-06,FALSE,TRUE
+C3000030,Ironside Water Partners - 300 030,CG0034,Ironside Water Partners,Pharmaceutical,US,NIG-300,DISTRIBUTOR,60,2021-01-18,FALSE,TRUE
+C3000031,Yarrow Chemicals Corporation - 300 031,CG0049,Yarrow Chemicals Corporation,General Industrial,US,NIG-300,DIRECT,60,2024-01-29,FALSE,TRUE
+C3000032,Baytown Minerals Holdings - 300 032,CG0177,Baytown Minerals Holdings,Refining & Petrochemical,US,NIG-300,DIRECT,90,2025-06-25,FALSE,TRUE
+C3000033,Quarry Hill Petrochemical plc - 300 033,CG0017,Quarry Hill Petrochemical plc,Refining & Petrochemical,US,NIG-300,DISTRIBUTOR,60,2019-12-16,TRUE,TRUE
+C3000034,Northbrook Processing GmbH - 300 034,CG0139,Northbrook Processing GmbH,General Industrial,US,NIG-300,DISTRIBUTOR,90,2024-12-05,FALSE,TRUE
+C3000035,Vale Utilities Ltd. - 300 035,CG0122,Vale Utilities Ltd.,Water Treatment,US,NIG-300,DIRECT,30,2019-03-27,FALSE,TRUE
+C3000036,Westmoor Paper Inc. - 300 036,CG0023,Westmoor Paper Inc.,Power Generation,US,NIG-300,DIRECT,30,2023-11-30,TRUE,TRUE
+C3000037,Kestrel Bay Industrial B.V. - 300 037,CG0036,Kestrel Bay Industrial B.V.,Refining & Petrochemical,US,NIG-300,DIRECT,45,2019-08-23,FALSE,TRUE
+C3000038,Foxbridge Industrial B.V. - 300 038,CG0156,Foxbridge Industrial B.V.,Food & Beverage,US,NIG-300,DIRECT,30,2023-04-28,FALSE,TRUE
+C3000039,Oakfield Energy Works - 300 039,CG0015,Oakfield Energy Works,General Industrial,US,NIG-300,DIRECT,45,2020-12-03,TRUE,TRUE
+C3000040,Upton Industrial B.V. - 300 040,CG0096,Upton Industrial B.V.,Mining & Minerals,US,NIG-300,DISTRIBUTOR,30,2021-06-29,FALSE,TRUE
+C3000041,Northbrook Metals LLC - 300 041,CG0114,Northbrook Metals LLC,Food & Beverage,US,NIG-300,DIRECT,30,2020-01-24,FALSE,TRUE
+C3000042,Foxbridge Metals LLC - 300 042,CG0006,Foxbridge Metals LLC,Mining & Minerals,US,NIG-300,DIRECT,60,2024-03-27,TRUE,TRUE
+C3000043,Ashford Chemicals Corporation - 300 043,CG0001,Ashford Chemicals Corporation,Pulp & Paper,US,NIG-300,DIRECT,30,2022-10-28,TRUE,TRUE
+C3000044,Yarrow Chemicals Corporation - 300 044,CG0049,Yarrow Chemicals Corporation,Power Generation,US,NIG-300,DISTRIBUTOR,90,2024-11-01,FALSE,TRUE
+C3000045,Pinehurst Petrochemical plc - 300 045,CG0041,Pinehurst Petrochemical plc,Refining & Petrochemical,US,NIG-300,DIRECT,60,2019-01-31,FALSE,TRUE
+C3000046,Thornbury Minerals Holdings - 300 046,CG0045,Thornbury Minerals Holdings,Mining & Minerals,US,NIG-300,DIRECT,60,2019-01-25,FALSE,TRUE
+C3000047,Foxbridge Metals LLC - 300 047,CG0006,Foxbridge Metals LLC,Chemicals,US,NIG-300,DIRECT,30,2019-04-08,TRUE,TRUE
+C3000048,Baytown Petrochemical plc - 300 048,CG0077,Baytown Petrochemical plc,Mining & Minerals,US,NIG-300,DIRECT,60,2023-06-30,FALSE,TRUE
+C3000049,Meridian Park Refining Industries - 300 049,CG0188,Meridian Park Refining Industries,Pharmaceutical,US,NIG-300,DIRECT,30,2025-05-13,FALSE,TRUE
+C3000050,Ashford Chemicals Corporation - 300 050,CG0001,Ashford Chemicals Corporation,Mining & Minerals,US,NIG-300,DIRECT,60,2020-05-08,TRUE,TRUE
+C3000051,Larkfield Foods Group - 300 051,CG0112,Larkfield Foods Group,Refining & Petrochemical,US,NIG-300,DIRECT,45,2024-07-22,FALSE,TRUE
+C3000052,Granville Petrochemical plc - 300 052,CG0257,Granville Petrochemical plc,Mining & Minerals,US,NIG-300,DIRECT,45,2021-03-21,FALSE,TRUE
+C3000053,Stonebridge Minerals Holdings - 300 053,CG0069,Stonebridge Minerals Holdings,General Industrial,US,NIG-300,DIRECT,60,2020-11-16,FALSE,TRUE
+C3000054,Harlow Refining Industries - 300 054,CG0008,Harlow Refining Industries,Food & Beverage,US,NIG-300,DIRECT,60,2019-03-27,TRUE,TRUE
+C3000055,Cedar Ridge Energy Works - 300 055,CG0003,Cedar Ridge Energy Works,General Industrial,US,NIG-300,DIRECT,30,2023-04-05,TRUE,TRUE
+C3000056,Quarry Hill Processing GmbH - 300 056,CG0067,Quarry Hill Processing GmbH,Mining & Minerals,US,NIG-300,DIRECT,60,2025-02-18,FALSE,TRUE
+C3000057,Redmond Metals LLC - 300 057,CG0018,Redmond Metals LLC,Refining & Petrochemical,US,NIG-300,DIRECT,90,2020-10-12,TRUE,TRUE
+C3000058,Baytown Paper Inc. - 300 058,CG0227,Baytown Paper Inc.,Pharmaceutical,US,NIG-300,DIRECT,90,2022-05-28,FALSE,TRUE
+C3000059,Ironside Minerals Holdings - 300 059,CG0009,Ironside Minerals Holdings,Pulp & Paper,US,NIG-300,DIRECT,45,2019-02-06,TRUE,TRUE
+C3000060,Delta Point Minerals Holdings - 300 060,CG0129,Delta Point Minerals Holdings,Chemicals,US,NIG-300,DIRECT,30,2019-11-06,FALSE,TRUE
+C3000061,Harlow Refining Industries - 300 061,CG0008,Harlow Refining Industries,Mining & Minerals,US,NIG-300,DISTRIBUTOR,30,2020-03-28,TRUE,TRUE
+C3000062,Granville Utilities Ltd. - 300 062,CG0182,Granville Utilities Ltd.,Power Generation,US,NIG-300,DIRECT,30,2019-08-19,FALSE,TRUE
+C3000063,Kestrel Bay Foods Group - 300 063,CG0136,Kestrel Bay Foods Group,Chemicals,US,NIG-300,DIRECT,75,2020-06-24,FALSE,TRUE
+C3000064,Redmond Water Partners - 300 064,CG0118,Redmond Water Partners,Pulp & Paper,US,NIG-300,DIRECT,45,2022-06-14,FALSE,TRUE
+C3000065,Westmoor Paper Inc. - 300 065,CG0023,Westmoor Paper Inc.,Pulp & Paper,US,NIG-300,DISTRIBUTOR,45,2019-03-07,TRUE,TRUE
+C3000066,Kestrel Bay Refining Industries - 300 066,CG0236,Kestrel Bay Refining Industries,Pharmaceutical,US,NIG-300,DIRECT,45,2025-07-26,FALSE,TRUE
+C3000067,Ashford Chemicals Corporation - 300 067,CG0001,Ashford Chemicals Corporation,Power Generation,US,NIG-300,DISTRIBUTOR,60,2023-06-04,TRUE,TRUE
+C3000068,Cedar Ridge Energy Works - 300 068,CG0003,Cedar Ridge Energy Works,Food & Beverage,US,NIG-300,DIRECT,30,2021-08-31,TRUE,TRUE
+C3000069,Oakfield Foods Group - 300 069,CG0040,Oakfield Foods Group,Water Treatment,US,NIG-300,DIRECT,60,2024-06-04,FALSE,TRUE
+C3000070,Ashford Chemicals Corporation - 300 070,CG0001,Ashford Chemicals Corporation,Pulp & Paper,US,NIG-300,DIRECT,75,2019-10-22,TRUE,TRUE
+C3000071,Baytown Utilities Ltd. - 300 071,CG0002,Baytown Utilities Ltd.,General Industrial,US,NIG-300,DIRECT,30,2024-05-01,TRUE,TRUE
+C3000072,Granville Industrial B.V. - 300 072,CG0132,Granville Industrial B.V.,Mining & Minerals,US,NIG-300,DIRECT,60,2023-09-01,FALSE,TRUE
+C3000073,Ironside Foods Group - 300 073,CG0184,Ironside Foods Group,Power Generation,US,NIG-300,DIRECT,45,2023-11-09,FALSE,TRUE
+C3000074,Juniper Water Partners - 300 074,CG0010,Juniper Water Partners,Chemicals,US,NIG-300,DIRECT,30,2024-08-29,TRUE,TRUE
+C3000075,Cedar Ridge Energy Works - 300 075,CG0003,Cedar Ridge Energy Works,General Industrial,US,NIG-300,DIRECT,90,2021-09-30,TRUE,TRUE
+C3000076,Redmond Refining Industries - 300 076,CG0068,Redmond Refining Industries,Water Treatment,US,NIG-300,DIRECT,30,2021-06-24,FALSE,TRUE
+C3000077,Ashford Refining Industries - 300 077,CG0176,Ashford Refining Industries,Mining & Minerals,US,NIG-300,DISTRIBUTOR,90,2021-01-11,FALSE,TRUE
+C3000078,Granville Petrochemical plc - 300 078,CG0257,Granville Petrochemical plc,Refining & Petrochemical,US,NIG-300,DISTRIBUTOR,60,2025-01-20,FALSE,TRUE
+C3000079,Kestrel Bay Paper Inc. - 300 079,CG0011,Kestrel Bay Paper Inc.,Water Treatment,US,NIG-300,DIRECT,75,2020-10-29,TRUE,TRUE
+C3000080,Baytown Utilities Ltd. - 300 080,CG0002,Baytown Utilities Ltd.,Water Treatment,US,NIG-300,DISTRIBUTOR,90,2024-12-29,TRUE,TRUE
+C3000081,Pinehurst Processing GmbH - 300 081,CG0091,Pinehurst Processing GmbH,Pulp & Paper,US,NIG-300,DIRECT,30,2021-10-05,FALSE,TRUE
+C3000082,Ironside Petrochemical plc - 300 082,CG0209,Ironside Petrochemical plc,General Industrial,US,NIG-300,DIRECT,30,2019-05-11,FALSE,TRUE
+C3000083,Eastgate Metals LLC - 300 083,CG0030,Eastgate Metals LLC,Mining & Minerals,US,NIG-300,DIRECT,45,2020-06-08,FALSE,TRUE
+C3000084,Ashford Chemicals Corporation - 300 084,CG0001,Ashford Chemicals Corporation,Chemicals,US,NIG-300,DIRECT,45,2020-09-21,TRUE,TRUE
+C3000085,Ashford Chemicals Corporation - 300 085,CG0001,Ashford Chemicals Corporation,Water Treatment,US,NIG-300,DIRECT,30,2020-08-29,TRUE,TRUE
+C3000086,Eastgate Chemicals Corporation - 300 086,CG0205,Eastgate Chemicals Corporation,Power Generation,US,NIG-300,DISTRIBUTOR,60,2024-08-10,FALSE,TRUE
+C3000087,Pinehurst Foods Group - 300 087,CG0016,Pinehurst Foods Group,Pharmaceutical,US,NIG-300,DIRECT,60,2020-09-12,TRUE,TRUE
+C3000088,Thornbury Chemicals Corporation - 300 088,CG0145,Thornbury Chemicals Corporation,General Industrial,US,NIG-300,DIRECT,75,2022-09-18,FALSE,TRUE
+C3000089,Meridian Park Chemicals Corporation - 300 089,CG0013,Meridian Park Chemicals Corporation,Chemicals,US,NIG-300,DIRECT,45,2022-08-21,TRUE,TRUE
+C3000090,Baytown Utilities Ltd. - 300 090,CG0002,Baytown Utilities Ltd.,Power Generation,US,NIG-300,DIRECT,75,2019-10-27,TRUE,TRUE
+C3000091,Ashford Chemicals Corporation - 300 091,CG0001,Ashford Chemicals Corporation,General Industrial,US,NIG-300,DIRECT,30,2021-02-17,TRUE,TRUE
+C3000092,Zenith Foods Group - 300 092,CG0100,Zenith Foods Group,Water Treatment,US,NIG-300,DIRECT,75,2022-02-01,FALSE,TRUE
+C3000093,Baytown Utilities Ltd. - 300 093,CG0002,Baytown Utilities Ltd.,Power Generation,US,NIG-300,DIRECT,45,2019-04-26,TRUE,TRUE
+C3000094,Northbrook Utilities Ltd. - 300 094,CG0014,Northbrook Utilities Ltd.,Refining & Petrochemical,US,NIG-300,DISTRIBUTOR,45,2019-05-22,TRUE,TRUE
+C3000095,Eastgate Energy Works - 300 095,CG0255,Eastgate Energy Works,General Industrial,US,NIG-300,DIRECT,90,2023-01-17,FALSE,TRUE
+C3000096,Ashford Chemicals Corporation - 300 096,CG0001,Ashford Chemicals Corporation,Food & Beverage,US,NIG-300,DISTRIBUTOR,90,2024-11-12,TRUE,TRUE
+C3000097,Baytown Utilities Ltd. - 300 097,CG0002,Baytown Utilities Ltd.,Mining & Minerals,US,NIG-300,DIRECT,75,2022-11-17,TRUE,TRUE
+C3000098,Eastgate Minerals Holdings - 300 098,CG0105,Eastgate Minerals Holdings,Food & Beverage,US,NIG-300,DISTRIBUTOR,45,2020-07-17,FALSE,TRUE
+C3000099,Foxbridge Processing GmbH - 300 099,CG0031,Foxbridge Processing GmbH,Food & Beverage,US,NIG-300,DIRECT,60,2025-04-03,FALSE,TRUE
+C3000100,Ashford Chemicals Corporation - 300 100,CG0001,Ashford Chemicals Corporation,Water Treatment,US,NIG-300,DISTRIBUTOR,45,2019-12-14,TRUE,TRUE
+C3000101,Ashford Chemicals Corporation - 300 101,CG0001,Ashford Chemicals Corporation,Food & Beverage,US,NIG-300,DIRECT,60,2019-03-03,TRUE,TRUE
+C3000102,Cedar Ridge Processing GmbH - 300 102,CG0103,Cedar Ridge Processing GmbH,Power Generation,US,NIG-300,DIRECT,45,2020-04-26,FALSE,TRUE
+C3000103,Zenith Chemicals Corporation - 300 103,CG0025,Zenith Chemicals Corporation,Refining & Petrochemical,US,NIG-300,DISTRIBUTOR,45,2024-03-17,TRUE,TRUE
+C3000104,Ironside Utilities Ltd. - 300 104,CG0134,Ironside Utilities Ltd.,Water Treatment,US,NIG-300,DISTRIBUTOR,45,2020-08-26,FALSE,TRUE
+C3000105,Upton Minerals Holdings - 300 105,CG0021,Upton Minerals Holdings,Chemicals,US,NIG-300,DIRECT,30,2025-01-15,TRUE,TRUE
+C3000106,Ironside Minerals Holdings - 300 106,CG0009,Ironside Minerals Holdings,General Industrial,US,NIG-300,DIRECT,30,2024-07-26,TRUE,TRUE
+C3000107,Pinehurst Foods Group - 300 107,CG0016,Pinehurst Foods Group,Power Generation,US,NIG-300,DIRECT,30,2022-03-01,TRUE,TRUE
+C3000108,Baytown Utilities Ltd. - 300 108,CG0002,Baytown Utilities Ltd.,Chemicals,US,NIG-300,DIRECT,75,2019-02-13,TRUE,TRUE
+C3000109,Ashford Chemicals Corporation - 300 109,CG0001,Ashford Chemicals Corporation,Refining & Petrochemical,US,NIG-300,DIRECT,75,2021-04-09,TRUE,TRUE
+C3000110,Ironside Minerals Holdings - 300 110,CG0009,Ironside Minerals Holdings,Power Generation,US,NIG-300,DISTRIBUTOR,60,2024-08-11,TRUE,TRUE
+C3000111,Ashford Chemicals Corporation - 300 111,CG0001,Ashford Chemicals Corporation,Power Generation,US,NIG-300,DISTRIBUTOR,45,2025-04-27,TRUE,TRUE
+C3000112,Kestrel Bay Processing GmbH - 300 112,CG0211,Kestrel Bay Processing GmbH,General Industrial,US,NIG-300,DIRECT,45,2020-09-10,FALSE,TRUE
+C3000113,Juniper Paper Inc. - 300 113,CG0035,Juniper Paper Inc.,Chemicals,US,NIG-300,DIRECT,30,2025-01-16,FALSE,TRUE
+C3000114,Kestrel Bay Chemicals Corporation - 300 114,CG0061,Kestrel Bay Chemicals Corporation,Water Treatment,US,NIG-300,DISTRIBUTOR,30,2020-10-01,FALSE,TRUE
+C3000115,Stonebridge Paper Inc. - 300 115,CG0119,Stonebridge Paper Inc.,Mining & Minerals,US,NIG-300,DIRECT,30,2022-10-28,FALSE,TRUE
+C3000116,Thornbury Industrial B.V. - 300 116,CG0120,Thornbury Industrial B.V.,General Industrial,US,NIG-300,DIRECT,60,2025-04-23,FALSE,TRUE
+C3000117,Delta Point Foods Group - 300 117,CG0004,Delta Point Foods Group,Food & Beverage,US,NIG-300,DISTRIBUTOR,90,2022-11-23,TRUE,TRUE
+C3000118,Stonebridge Refining Industries - 300 118,CG0044,Stonebridge Refining Industries,Chemicals,US,NIG-300,DISTRIBUTOR,30,2023-12-27,FALSE,TRUE
+C3000119,Ashford Chemicals Corporation - 300 119,CG0001,Ashford Chemicals Corporation,Pulp & Paper,US,NIG-300,DIRECT,60,2025-06-21,TRUE,TRUE
+C3000120,Meridian Park Utilities Ltd. - 300 120,CG0038,Meridian Park Utilities Ltd.,Chemicals,US,NIG-300,DIRECT,30,2024-01-17,FALSE,TRUE
+C3000121,Vale Water Partners - 300 121,CG0022,Vale Water Partners,Power Generation,US,NIG-300,DISTRIBUTOR,60,2022-06-06,TRUE,TRUE
+C3000122,Redmond Metals LLC - 300 122,CG0018,Redmond Metals LLC,Mining & Minerals,US,NIG-300,DISTRIBUTOR,60,2020-03-16,TRUE,TRUE
+C3000123,Ashford Chemicals Corporation - 300 123,CG0001,Ashford Chemicals Corporation,Chemicals,US,NIG-300,DIRECT,60,2023-08-24,TRUE,TRUE
+C3000124,Pinehurst Foods Group - 300 124,CG0016,Pinehurst Foods Group,General Industrial,US,NIG-300,DISTRIBUTOR,30,2019-10-16,TRUE,TRUE
+C3000125,Granville Processing GmbH - 300 125,CG0007,Granville Processing GmbH,General Industrial,US,NIG-300,DIRECT,30,2021-05-29,TRUE,TRUE
+C3000126,Granville Processing GmbH - 300 126,CG0007,Granville Processing GmbH,Food & Beverage,US,NIG-300,DIRECT,60,2023-04-08,TRUE,TRUE
+C3000127,Yarrow Petrochemical plc - 300 127,CG0149,Yarrow Petrochemical plc,Chemicals,US,NIG-300,DIRECT,90,2025-02-20,FALSE,TRUE
+C3000128,Larkfield Refining Industries - 300 128,CG0212,Larkfield Refining Industries,Power Generation,US,NIG-300,DIRECT,45,2020-04-26,FALSE,TRUE
+C3000129,Northbrook Energy Works - 300 129,CG0039,Northbrook Energy Works,Pulp & Paper,US,NIG-300,DISTRIBUTOR,75,2022-07-15,FALSE,TRUE
+C4000001,Thornbury Energy Works - 400 001,CG0195,Thornbury Energy Works,Pharmaceutical,US,NIG-400,DIRECT,30,2024-12-11,FALSE,TRUE
+C4000002,Juniper Foods Group - 400 002,CG0160,Juniper Foods Group,Water Treatment,US,NIG-400,DISTRIBUTOR,60,2019-08-09,FALSE,TRUE
+C4000003,Granville Processing GmbH - 400 003,CG0007,Granville Processing GmbH,General Industrial,US,NIG-400,DIRECT,45,2020-03-12,TRUE,TRUE
+C4000004,Larkfield Foods Group - 400 004,CG0112,Larkfield Foods Group,General Industrial,US,NIG-400,DISTRIBUTOR,90,2021-02-12,FALSE,TRUE
+C4000005,Ironside Minerals Holdings - 400 005,CG0009,Ironside Minerals Holdings,General Industrial,US,NIG-400,DIRECT,45,2024-02-15,TRUE,TRUE
+C4000006,Westmoor Energy Works - 400 006,CG0123,Westmoor Energy Works,Power Generation,US,NIG-400,DIRECT,60,2023-02-24,FALSE,TRUE
+C4000007,Eastgate Energy Works - 400 007,CG0255,Eastgate Energy Works,General Industrial,US,NIG-400,DIRECT,75,2025-07-01,FALSE,TRUE
+C4000008,Kestrel Bay Foods Group - 400 008,CG0136,Kestrel Bay Foods Group,Food & Beverage,US,NIG-400,DIRECT,30,2020-10-23,FALSE,TRUE
+C4000009,Harlow Paper Inc. - 400 009,CG0083,Harlow Paper Inc.,Refining & Petrochemical,US,NIG-400,DIRECT,30,2020-08-21,FALSE,TRUE
+C4000010,Cedar Ridge Foods Group - 400 010,CG0028,Cedar Ridge Foods Group,Pharmaceutical,US,NIG-400,DIRECT,60,2019-10-26,FALSE,TRUE
+C4000011,Eastgate Metals LLC - 400 011,CG0030,Eastgate Metals LLC,Refining & Petrochemical,US,NIG-400,DIRECT,60,2022-12-17,FALSE,TRUE
+C4000012,Ironside Foods Group - 400 012,CG0184,Ironside Foods Group,Water Treatment,US,NIG-400,DIRECT,60,2025-07-14,FALSE,TRUE
+C4000013,Quarry Hill Water Partners - 400 013,CG0142,Quarry Hill Water Partners,Water Treatment,US,NIG-400,DIRECT,60,2024-11-08,FALSE,TRUE
+C4000014,Ashford Chemicals Corporation - 400 014,CG0001,Ashford Chemicals Corporation,Power Generation,US,NIG-400,DIRECT,60,2021-04-14,TRUE,TRUE
+C4000015,Baytown Energy Works - 400 015,CG0027,Baytown Energy Works,Refining & Petrochemical,US,NIG-400,DIRECT,90,2019-12-14,FALSE,TRUE
+C4000016,Foxbridge Minerals Holdings - 400 016,CG0081,Foxbridge Minerals Holdings,General Industrial,US,NIG-400,DIRECT,60,2023-01-29,FALSE,TRUE
+C4000017,Yarrow Industrial B.V. - 400 017,CG0024,Yarrow Industrial B.V.,Chemicals,US,NIG-400,DISTRIBUTOR,90,2022-10-16,TRUE,TRUE
+C4000018,Meridian Park Chemicals Corporation - 400 018,CG0013,Meridian Park Chemicals Corporation,Pulp & Paper,US,NIG-400,DISTRIBUTOR,75,2021-03-26,TRUE,TRUE
+C4000019,Ironside Chemicals Corporation - 400 019,CG0109,Ironside Chemicals Corporation,Pulp & Paper,US,NIG-400,DISTRIBUTOR,60,2025-05-30,FALSE,TRUE
+C4000020,Oakfield Refining Industries - 400 020,CG0140,Oakfield Refining Industries,Refining & Petrochemical,US,NIG-400,DIRECT,60,2022-10-22,FALSE,TRUE
+C4000021,Ashford Chemicals Corporation - 400 021,CG0001,Ashford Chemicals Corporation,Water Treatment,US,NIG-400,DIRECT,60,2019-12-15,TRUE,TRUE
+C4000022,Eastgate Petrochemical plc - 400 022,CG0005,Eastgate Petrochemical plc,Food & Beverage,US,NIG-400,DIRECT,30,2021-01-29,TRUE,TRUE
+C4000023,Thornbury Water Partners - 400 023,CG0070,Thornbury Water Partners,Power Generation,US,NIG-400,DIRECT,60,2021-03-28,FALSE,TRUE
+C4000024,Delta Point Foods Group - 400 024,CG0004,Delta Point Foods Group,Chemicals,US,NIG-400,DIRECT,45,2019-10-28,TRUE,TRUE
+C4000025,Baytown Energy Works - 400 025,CG0027,Baytown Energy Works,Power Generation,US,NIG-400,DIRECT,75,2019-03-09,FALSE,TRUE
+C4000026,Ashford Chemicals Corporation - 400 026,CG0001,Ashford Chemicals Corporation,Chemicals,US,NIG-400,DIRECT,75,2019-11-26,TRUE,TRUE
+C4000027,Ashford Chemicals Corporation - 400 027,CG0001,Ashford Chemicals Corporation,General Industrial,US,NIG-400,DIRECT,60,2021-08-21,TRUE,TRUE
+C4000028,Foxbridge Metals LLC - 400 028,CG0006,Foxbridge Metals LLC,Chemicals,US,NIG-400,DIRECT,45,2022-02-04,TRUE,TRUE
+C4000029,Oakfield Energy Works - 400 029,CG0015,Oakfield Energy Works,Mining & Minerals,US,NIG-400,DIRECT,75,2019-10-05,TRUE,TRUE
+C4000030,Oakfield Water Partners - 400 030,CG0190,Oakfield Water Partners,Pulp & Paper,US,NIG-400,DIRECT,90,2025-04-10,FALSE,TRUE
+C4000031,Ashford Chemicals Corporation - 400 031,CG0001,Ashford Chemicals Corporation,Chemicals,US,NIG-400,DIRECT,45,2023-09-15,TRUE,TRUE
+C4000032,Foxbridge Metals LLC - 400 032,CG0006,Foxbridge Metals LLC,Pharmaceutical,US,NIG-400,DIRECT,90,2022-06-12,TRUE,TRUE
+C4000033,Harlow Refining Industries - 400 033,CG0008,Harlow Refining Industries,Power Generation,US,NIG-400,DIRECT,60,2023-02-17,TRUE,TRUE
+C4000034,Delta Point Foods Group - 400 034,CG0004,Delta Point Foods Group,Water Treatment,US,NIG-400,DIRECT,45,2019-07-03,TRUE,TRUE
+C4000035,Delta Point Foods Group - 400 035,CG0004,Delta Point Foods Group,Pulp & Paper,US,NIG-400,DISTRIBUTOR,45,2022-06-08,TRUE,TRUE
+C4000036,Upton Water Partners - 400 036,CG0046,Upton Water Partners,Water Treatment,US,NIG-400,DIRECT,30,2019-08-10,FALSE,TRUE
+C4000037,Ashford Chemicals Corporation - 400 037,CG0001,Ashford Chemicals Corporation,Power Generation,US,NIG-400,DIRECT,30,2023-12-03,TRUE,TRUE
+C4000038,Ironside Minerals Holdings - 400 038,CG0009,Ironside Minerals Holdings,Mining & Minerals,US,NIG-400,DIRECT,60,2022-12-05,TRUE,TRUE
+C4000039,Kestrel Bay Chemicals Corporation - 400 039,CG0061,Kestrel Bay Chemicals Corporation,Power Generation,US,NIG-400,DIRECT,60,2023-06-11,FALSE,TRUE
+C4000040,Larkfield Industrial B.V. - 400 040,CG0012,Larkfield Industrial B.V.,General Industrial,US,NIG-400,DIRECT,45,2025-06-22,TRUE,TRUE
+C4000041,Harlow Energy Works - 400 041,CG0183,Harlow Energy Works,Refining & Petrochemical,US,NIG-400,DIRECT,45,2019-08-11,FALSE,TRUE
+C4000042,Pinehurst Water Partners - 400 042,CG0166,Pinehurst Water Partners,Pharmaceutical,US,NIG-400,DIRECT,30,2025-06-01,FALSE,TRUE
+C4000043,Baytown Utilities Ltd. - 400 043,CG0002,Baytown Utilities Ltd.,Pulp & Paper,US,NIG-400,DIRECT,30,2023-04-13,TRUE,TRUE
+C4000044,Meridian Park Utilities Ltd. - 400 044,CG0038,Meridian Park Utilities Ltd.,Pulp & Paper,US,NIG-400,DISTRIBUTOR,45,2021-03-03,FALSE,TRUE
+C4000045,Foxbridge Utilities Ltd. - 400 045,CG0206,Foxbridge Utilities Ltd.,Pulp & Paper,US,NIG-400,DISTRIBUTOR,75,2022-06-20,FALSE,TRUE
+C4000046,Cedar Ridge Energy Works - 400 046,CG0003,Cedar Ridge Energy Works,Chemicals,US,NIG-400,DIRECT,60,2024-03-23,TRUE,TRUE
+C4000047,Meridian Park Chemicals Corporation - 400 047,CG0013,Meridian Park Chemicals Corporation,General Industrial,US,NIG-400,DIRECT,75,2021-12-13,TRUE,TRUE
+C4000048,Ashford Chemicals Corporation - 400 048,CG0001,Ashford Chemicals Corporation,Pulp & Paper,US,NIG-400,DIRECT,45,2019-05-29,TRUE,TRUE
+C4000049,Baytown Petrochemical plc - 400 049,CG0077,Baytown Petrochemical plc,Power Generation,US,NIG-400,DIRECT,75,2022-06-23,FALSE,TRUE
+C4000050,Upton Industrial B.V. - 400 050,CG0096,Upton Industrial B.V.,Pulp & Paper,US,NIG-400,DIRECT,60,2025-03-29,FALSE,TRUE
+C4000051,Quarry Hill Processing GmbH - 400 051,CG0067,Quarry Hill Processing GmbH,Power Generation,US,NIG-400,DIRECT,60,2019-11-23,FALSE,TRUE
+C4000052,Baytown Energy Works - 400 052,CG0027,Baytown Energy Works,Chemicals,US,NIG-400,DISTRIBUTOR,60,2022-08-27,FALSE,TRUE
+C4000053,Yarrow Foods Group - 400 053,CG0124,Yarrow Foods Group,General Industrial,US,NIG-400,DIRECT,60,2020-07-04,FALSE,TRUE
+C4000054,Pinehurst Foods Group - 400 054,CG0016,Pinehurst Foods Group,Refining & Petrochemical,US,NIG-400,DISTRIBUTOR,60,2024-11-07,TRUE,TRUE
+C4000055,Meridian Park Chemicals Corporation - 400 055,CG0013,Meridian Park Chemicals Corporation,Refining & Petrochemical,US,NIG-400,DIRECT,60,2021-06-29,TRUE,TRUE
+C4000056,Baytown Utilities Ltd. - 400 056,CG0002,Baytown Utilities Ltd.,Pharmaceutical,US,NIG-400,DISTRIBUTOR,45,2019-06-27,TRUE,TRUE
+C4000057,Ashford Chemicals Corporation - 400 057,CG0001,Ashford Chemicals Corporation,Water Treatment,US,NIG-400,DIRECT,30,2021-09-14,TRUE,TRUE
+C4000058,Baytown Water Partners - 400 058,CG0202,Baytown Water Partners,Food & Beverage,US,NIG-400,DISTRIBUTOR,30,2024-06-10,FALSE,TRUE
+C4000059,Juniper Industrial B.V. - 400 059,CG0060,Juniper Industrial B.V.,Water Treatment,US,NIG-400,DIRECT,60,2024-04-11,FALSE,TRUE
+C4000060,Upton Water Partners - 400 060,CG0046,Upton Water Partners,Mining & Minerals,US,NIG-400,DIRECT,45,2019-11-24,FALSE,TRUE
+C4000061,Stonebridge Industrial B.V. - 400 061,CG0144,Stonebridge Industrial B.V.,Food & Beverage,US,NIG-400,DIRECT,30,2019-09-05,FALSE,TRUE
+C4000062,Granville Processing GmbH - 400 062,CG0007,Granville Processing GmbH,Pulp & Paper,US,NIG-400,DIRECT,75,2022-12-22,TRUE,TRUE
+C4000063,Ashford Chemicals Corporation - 400 063,CG0001,Ashford Chemicals Corporation,Water Treatment,US,NIG-400,DIRECT,90,2020-04-25,TRUE,TRUE
+C4000064,Stonebridge Processing GmbH - 400 064,CG0019,Stonebridge Processing GmbH,Food & Beverage,US,NIG-400,DIRECT,45,2019-05-15,TRUE,TRUE
+C4000065,Harlow Minerals Holdings - 400 065,CG0033,Harlow Minerals Holdings,Pulp & Paper,US,NIG-400,DIRECT,30,2019-06-22,FALSE,TRUE
+C4000066,Juniper Foods Group - 400 066,CG0160,Juniper Foods Group,Mining & Minerals,US,NIG-400,DIRECT,45,2022-01-18,FALSE,TRUE
+C4000067,Juniper Water Partners - 400 067,CG0010,Juniper Water Partners,Water Treatment,US,NIG-400,DIRECT,45,2021-08-15,TRUE,TRUE
+C4000068,Granville Paper Inc. - 400 068,CG0107,Granville Paper Inc.,Chemicals,US,NIG-400,DIRECT,30,2023-09-19,FALSE,TRUE
+C4000069,Juniper Water Partners - 400 069,CG0010,Juniper Water Partners,Chemicals,US,NIG-400,DISTRIBUTOR,75,2020-03-07,TRUE,TRUE
+C4000070,Vale Water Partners - 400 070,CG0022,Vale Water Partners,Mining & Minerals,US,NIG-400,DIRECT,90,2019-02-19,TRUE,TRUE
+C4000071,Ashford Chemicals Corporation - 400 071,CG0001,Ashford Chemicals Corporation,Water Treatment,US,NIG-400,DISTRIBUTOR,90,2023-09-11,TRUE,TRUE
+C4000072,Pinehurst Water Partners - 400 072,CG0166,Pinehurst Water Partners,Food & Beverage,US,NIG-400,DIRECT,30,2021-04-04,FALSE,TRUE
+C4000073,Stonebridge Chemicals Corporation - 400 073,CG0169,Stonebridge Chemicals Corporation,Refining & Petrochemical,US,NIG-400,DIRECT,30,2025-04-09,FALSE,TRUE
+C4000074,Ashford Chemicals Corporation - 400 074,CG0001,Ashford Chemicals Corporation,General Industrial,US,NIG-400,DIRECT,45,2020-01-09,TRUE,TRUE
+C4000075,Eastgate Refining Industries - 400 075,CG0080,Eastgate Refining Industries,Refining & Petrochemical,US,NIG-400,DIRECT,45,2022-10-07,FALSE,TRUE
+C4000076,Vale Water Partners - 400 076,CG0022,Vale Water Partners,General Industrial,US,NIG-400,DIRECT,60,2022-09-27,TRUE,TRUE
+C4000077,Upton Chemicals Corporation - 400 077,CG0121,Upton Chemicals Corporation,Mining & Minerals,US,NIG-400,DIRECT,75,2023-07-18,FALSE,TRUE
+C4000078,Foxbridge Chemicals Corporation - 400 078,CG0181,Foxbridge Chemicals Corporation,Pulp & Paper,US,NIG-400,DIRECT,60,2020-05-21,FALSE,TRUE
+C4000079,Thornbury Refining Industries - 400 079,CG0020,Thornbury Refining Industries,Chemicals,US,NIG-400,DIRECT,75,2019-12-27,TRUE,TRUE
+C4000080,Granville Water Partners - 400 080,CG0082,Granville Water Partners,Chemicals,US,NIG-400,DIRECT,45,2020-08-03,FALSE,TRUE
+C4000081,Pinehurst Water Partners - 400 081,CG0166,Pinehurst Water Partners,Water Treatment,US,NIG-400,DIRECT,60,2025-06-04,FALSE,TRUE
+C4000082,Granville Utilities Ltd. - 400 082,CG0182,Granville Utilities Ltd.,Refining & Petrochemical,US,NIG-400,DIRECT,60,2024-10-13,FALSE,TRUE
+C4000083,Quarry Hill Water Partners - 400 083,CG0142,Quarry Hill Water Partners,Food & Beverage,US,NIG-400,DIRECT,90,2023-11-15,FALSE,TRUE
+C4000084,Cedar Ridge Energy Works - 400 084,CG0003,Cedar Ridge Energy Works,Pharmaceutical,US,NIG-400,DIRECT,30,2023-05-21,TRUE,TRUE
+C4000085,Ashford Utilities Ltd. - 400 085,CG0026,Ashford Utilities Ltd.,Food & Beverage,US,NIG-400,DISTRIBUTOR,90,2020-06-20,FALSE,TRUE
+C4000086,Stonebridge Refining Industries - 400 086,CG0044,Stonebridge Refining Industries,Power Generation,US,NIG-400,DIRECT,60,2022-02-28,FALSE,TRUE
+C4000087,Baytown Utilities Ltd. - 400 087,CG0002,Baytown Utilities Ltd.,Chemicals,US,NIG-400,DISTRIBUTOR,30,2021-06-16,TRUE,TRUE
+C4000088,Ashford Chemicals Corporation - 400 088,CG0001,Ashford Chemicals Corporation,General Industrial,US,NIG-400,DIRECT,45,2019-08-20,TRUE,TRUE
+C4000089,Ironside Water Partners - 400 089,CG0034,Ironside Water Partners,Water Treatment,US,NIG-400,DIRECT,30,2023-12-23,FALSE,TRUE
+C4000090,Baytown Processing GmbH - 400 090,CG0127,Baytown Processing GmbH,Water Treatment,US,NIG-400,DIRECT,45,2020-02-06,FALSE,TRUE
+C4000091,Larkfield Metals LLC - 400 091,CG0162,Larkfield Metals LLC,Chemicals,US,NIG-400,DIRECT,30,2025-05-24,FALSE,TRUE
+C4000092,Ashford Chemicals Corporation - 400 092,CG0001,Ashford Chemicals Corporation,Pharmaceutical,US,NIG-400,DISTRIBUTOR,90,2022-03-23,TRUE,TRUE
+C4000093,Granville Water Partners - 400 093,CG0082,Granville Water Partners,Mining & Minerals,US,NIG-400,DIRECT,60,2019-09-28,FALSE,TRUE
+C4000094,Granville Processing GmbH - 400 094,CG0007,Granville Processing GmbH,Chemicals,US,NIG-400,DIRECT,75,2021-09-05,TRUE,TRUE
+C4000095,Westmoor Metals LLC - 400 095,CG0198,Westmoor Metals LLC,Pharmaceutical,US,NIG-400,DIRECT,60,2019-07-11,FALSE,TRUE
+C4000096,Upton Metals LLC - 400 096,CG0246,Upton Metals LLC,Mining & Minerals,US,NIG-400,DIRECT,30,2021-07-06,FALSE,TRUE
+C4000097,Cedar Ridge Energy Works - 400 097,CG0003,Cedar Ridge Energy Works,Chemicals,US,NIG-400,DIRECT,75,2023-10-30,TRUE,TRUE
+C4000098,Vale Petrochemical plc - 400 098,CG0197,Vale Petrochemical plc,Chemicals,US,NIG-400,DIRECT,45,2022-07-18,FALSE,TRUE
+C4000099,Ironside Minerals Holdings - 400 099,CG0009,Ironside Minerals Holdings,General Industrial,US,NIG-400,DIRECT,90,2021-09-04,TRUE,TRUE
+C4000100,Vale Water Partners - 400 100,CG0022,Vale Water Partners,Power Generation,US,NIG-400,DISTRIBUTOR,60,2021-05-17,TRUE,TRUE
+C4000101,Ashford Chemicals Corporation - 400 101,CG0001,Ashford Chemicals Corporation,Chemicals,US,NIG-400,DIRECT,30,2024-01-03,TRUE,TRUE
+C4000102,Oakfield Foods Group - 400 102,CG0040,Oakfield Foods Group,Pulp & Paper,US,NIG-400,DISTRIBUTOR,60,2022-07-17,FALSE,TRUE
+C4000103,Eastgate Petrochemical plc - 400 103,CG0005,Eastgate Petrochemical plc,Mining & Minerals,US,NIG-400,DIRECT,30,2019-05-10,TRUE,TRUE
+C4000104,Thornbury Paper Inc. - 400 104,CG0095,Thornbury Paper Inc.,Chemicals,US,NIG-400,DIRECT,45,2022-08-06,FALSE,TRUE
+C4000105,Thornbury Refining Industries - 400 105,CG0020,Thornbury Refining Industries,Chemicals,US,NIG-400,DIRECT,75,2020-04-08,TRUE,TRUE
+C4000106,Larkfield Industrial B.V. - 400 106,CG0012,Larkfield Industrial B.V.,Mining & Minerals,US,NIG-400,DIRECT,75,2024-10-19,TRUE,TRUE
+C4000107,Ashford Energy Works - 400 107,CG0051,Ashford Energy Works,Refining & Petrochemical,US,NIG-400,DIRECT,30,2023-06-02,FALSE,TRUE
+C4000108,Northbrook Minerals Holdings - 400 108,CG0189,Northbrook Minerals Holdings,Chemicals,US,NIG-400,DIRECT,45,2025-05-08,FALSE,TRUE
+C4000109,Upton Minerals Holdings - 400 109,CG0021,Upton Minerals Holdings,Mining & Minerals,US,NIG-400,DIRECT,45,2020-11-02,TRUE,TRUE
+C4000110,Cedar Ridge Energy Works - 400 110,CG0003,Cedar Ridge Energy Works,General Industrial,US,NIG-400,DISTRIBUTOR,75,2020-11-16,TRUE,TRUE
+C4000111,Larkfield Industrial B.V. - 400 111,CG0012,Larkfield Industrial B.V.,Water Treatment,US,NIG-400,DIRECT,60,2022-05-24,TRUE,TRUE
+C4000112,Pinehurst Foods Group - 400 112,CG0016,Pinehurst Foods Group,Pharmaceutical,US,NIG-400,DIRECT,30,2023-03-04,TRUE,TRUE
+C4000113,Northbrook Energy Works - 400 113,CG0039,Northbrook Energy Works,Food & Beverage,US,NIG-400,DIRECT,45,2021-04-24,FALSE,TRUE
+C4000114,Baytown Utilities Ltd. - 400 114,CG0002,Baytown Utilities Ltd.,Pharmaceutical,US,NIG-400,DISTRIBUTOR,60,2022-10-01,TRUE,TRUE
+C2100001,Cedar Ridge Energy Works - 210 001,CG0003,Cedar Ridge Energy Works,Refining & Petrochemical,CA,NIG-210,DIRECT,60,2021-01-05,TRUE,TRUE
+C2100002,Thornbury Energy Works - 210 002,CG0195,Thornbury Energy Works,General Industrial,CA,NIG-210,DISTRIBUTOR,75,2022-03-13,FALSE,TRUE
+C2100003,Pinehurst Refining Industries - 210 003,CG0116,Pinehurst Refining Industries,Refining & Petrochemical,CA,NIG-210,DIRECT,75,2024-07-04,FALSE,TRUE
+C2100004,Juniper Industrial B.V. - 210 004,CG0060,Juniper Industrial B.V.,Power Generation,CA,NIG-210,DISTRIBUTOR,60,2020-02-11,FALSE,TRUE
+C2100005,Kestrel Bay Chemicals Corporation - 210 005,CG0061,Kestrel Bay Chemicals Corporation,Refining & Petrochemical,CA,NIG-210,DIRECT,30,2021-09-22,FALSE,TRUE
+C2100006,Larkfield Foods Group - 210 006,CG0112,Larkfield Foods Group,Power Generation,CA,NIG-210,DISTRIBUTOR,90,2023-12-28,FALSE,TRUE
+C2100007,Westmoor Paper Inc. - 210 007,CG0023,Westmoor Paper Inc.,Food & Beverage,CA,NIG-210,DIRECT,60,2019-08-25,TRUE,TRUE
+C2100008,Vale Water Partners - 210 008,CG0022,Vale Water Partners,General Industrial,CA,NIG-210,DISTRIBUTOR,45,2019-08-21,TRUE,TRUE
+C2100009,Upton Minerals Holdings - 210 009,CG0021,Upton Minerals Holdings,Mining & Minerals,CA,NIG-210,DIRECT,60,2019-04-25,TRUE,TRUE
+C2100010,Kestrel Bay Chemicals Corporation - 210 010,CG0061,Kestrel Bay Chemicals Corporation,Refining & Petrochemical,CA,NIG-210,DIRECT,30,2021-03-29,FALSE,TRUE
+C2100011,Eastgate Petrochemical plc - 210 011,CG0005,Eastgate Petrochemical plc,Chemicals,CA,NIG-210,DISTRIBUTOR,60,2024-11-28,TRUE,TRUE
+C2100012,Cedar Ridge Energy Works - 210 012,CG0003,Cedar Ridge Energy Works,Power Generation,CA,NIG-210,DISTRIBUTOR,60,2019-01-29,TRUE,TRUE
+C2100013,Pinehurst Petrochemical plc - 210 013,CG0041,Pinehurst Petrochemical plc,Mining & Minerals,CA,NIG-210,DIRECT,75,2022-03-02,FALSE,TRUE
+C2100014,Ironside Processing GmbH - 210 014,CG0259,Ironside Processing GmbH,Mining & Minerals,CA,NIG-210,DIRECT,75,2020-10-28,FALSE,TRUE
+C2100015,Ironside Metals LLC - 210 015,CG0234,Ironside Metals LLC,Power Generation,CA,NIG-210,DIRECT,45,2020-07-29,FALSE,TRUE
+C2100016,Foxbridge Metals LLC - 210 016,CG0006,Foxbridge Metals LLC,Power Generation,CA,NIG-210,DIRECT,90,2020-01-07,TRUE,TRUE
+C2100017,Oakfield Metals LLC - 210 017,CG0090,Oakfield Metals LLC,Food & Beverage,CA,NIG-210,DIRECT,30,2024-03-15,FALSE,TRUE
+C2100018,Stonebridge Processing GmbH - 210 018,CG0019,Stonebridge Processing GmbH,Chemicals,CA,NIG-210,DISTRIBUTOR,60,2024-05-11,TRUE,TRUE
+C2100019,Ironside Processing GmbH - 210 019,CG0259,Ironside Processing GmbH,Refining & Petrochemical,CA,NIG-210,DISTRIBUTOR,45,2019-04-07,FALSE,TRUE
+C2100020,Thornbury Chemicals Corporation - 210 020,CG0145,Thornbury Chemicals Corporation,Water Treatment,CA,NIG-210,DISTRIBUTOR,30,2021-03-08,FALSE,TRUE
+C2100021,Eastgate Chemicals Corporation - 210 021,CG0205,Eastgate Chemicals Corporation,Chemicals,CA,NIG-210,DIRECT,75,2023-10-11,FALSE,TRUE
+C2100022,Harlow Minerals Holdings - 210 022,CG0033,Harlow Minerals Holdings,Mining & Minerals,CA,NIG-210,DIRECT,45,2019-02-19,FALSE,TRUE
+C2100023,Ashford Chemicals Corporation - 210 023,CG0001,Ashford Chemicals Corporation,Food & Beverage,CA,NIG-210,DIRECT,60,2019-06-16,TRUE,TRUE
+C2100024,Meridian Park Chemicals Corporation - 210 024,CG0013,Meridian Park Chemicals Corporation,General Industrial,CA,NIG-210,DIRECT,30,2021-01-06,TRUE,TRUE
+C2100025,Foxbridge Processing GmbH - 210 025,CG0031,Foxbridge Processing GmbH,Pharmaceutical,CA,NIG-210,DISTRIBUTOR,60,2020-10-02,FALSE,TRUE
+C2100026,Baytown Utilities Ltd. - 210 026,CG0002,Baytown Utilities Ltd.,Pharmaceutical,CA,NIG-210,DIRECT,45,2025-07-04,TRUE,TRUE
+C2100027,Harlow Refining Industries - 210 027,CG0008,Harlow Refining Industries,Chemicals,CA,NIG-210,DIRECT,60,2024-09-01,TRUE,TRUE
+C2100028,Cedar Ridge Energy Works - 210 028,CG0003,Cedar Ridge Energy Works,General Industrial,CA,NIG-210,DIRECT,30,2024-06-02,TRUE,TRUE
+C2100029,Oakfield Industrial B.V. - 210 029,CG0240,Oakfield Industrial B.V.,Food & Beverage,CA,NIG-210,DISTRIBUTOR,30,2024-01-21,FALSE,TRUE
+C2100030,Harlow Minerals Holdings - 210 030,CG0033,Harlow Minerals Holdings,Water Treatment,CA,NIG-210,DISTRIBUTOR,30,2022-05-13,FALSE,TRUE
+C2100031,Upton Utilities Ltd. - 210 031,CG0146,Upton Utilities Ltd.,General Industrial,CA,NIG-210,DIRECT,60,2021-12-24,FALSE,TRUE
+C2100032,Kestrel Bay Paper Inc. - 210 032,CG0011,Kestrel Bay Paper Inc.,Chemicals,CA,NIG-210,DIRECT,30,2022-08-07,TRUE,TRUE
+C2100033,Upton Energy Works - 210 033,CG0171,Upton Energy Works,Refining & Petrochemical,CA,NIG-210,DIRECT,75,2023-07-10,FALSE,TRUE
+C2100034,Ashford Minerals Holdings - 210 034,CG0201,Ashford Minerals Holdings,Pharmaceutical,CA,NIG-210,DIRECT,45,2021-07-24,FALSE,TRUE
+C2100035,Baytown Utilities Ltd. - 210 035,CG0002,Baytown Utilities Ltd.,Food & Beverage,CA,NIG-210,DIRECT,30,2024-06-04,TRUE,TRUE
+C2100036,Quarry Hill Metals LLC - 210 036,CG0042,Quarry Hill Metals LLC,Power Generation,CA,NIG-210,DIRECT,60,2023-10-02,FALSE,TRUE
+C2100037,Ashford Chemicals Corporation - 210 037,CG0001,Ashford Chemicals Corporation,Mining & Minerals,CA,NIG-210,DIRECT,60,2023-12-04,TRUE,TRUE
+C2100038,Vale Water Partners - 210 038,CG0022,Vale Water Partners,Pharmaceutical,CA,NIG-210,DIRECT,90,2025-03-28,TRUE,TRUE
+C2100039,Juniper Water Partners - 210 039,CG0010,Juniper Water Partners,General Industrial,CA,NIG-210,DIRECT,75,2022-08-19,TRUE,TRUE
+C2100040,Foxbridge Metals LLC - 210 040,CG0006,Foxbridge Metals LLC,Refining & Petrochemical,CA,NIG-210,DIRECT,45,2025-06-23,TRUE,TRUE
+C2100041,Oakfield Petrochemical plc - 210 041,CG0065,Oakfield Petrochemical plc,Pulp & Paper,CA,NIG-210,DIRECT,45,2025-03-06,FALSE,TRUE
+C2100042,Cedar Ridge Foods Group - 210 042,CG0028,Cedar Ridge Foods Group,Pulp & Paper,CA,NIG-210,DISTRIBUTOR,45,2019-09-17,FALSE,TRUE
+C2100043,Cedar Ridge Foods Group - 210 043,CG0028,Cedar Ridge Foods Group,Mining & Minerals,CA,NIG-210,DISTRIBUTOR,90,2019-08-16,FALSE,TRUE
+C2100044,Ashford Chemicals Corporation - 210 044,CG0001,Ashford Chemicals Corporation,Refining & Petrochemical,CA,NIG-210,DISTRIBUTOR,90,2023-12-13,TRUE,TRUE
+C2100045,Redmond Metals LLC - 210 045,CG0018,Redmond Metals LLC,Food & Beverage,CA,NIG-210,DIRECT,45,2022-04-10,TRUE,TRUE
+C2100046,Harlow Refining Industries - 210 046,CG0008,Harlow Refining Industries,Power Generation,CA,NIG-210,DIRECT,45,2019-03-06,TRUE,TRUE
+C2100047,Pinehurst Foods Group - 210 047,CG0016,Pinehurst Foods Group,Power Generation,CA,NIG-210,DISTRIBUTOR,45,2020-12-02,TRUE,TRUE
+C2100048,Upton Minerals Holdings - 210 048,CG0021,Upton Minerals Holdings,Refining & Petrochemical,CA,NIG-210,DIRECT,75,2022-01-26,TRUE,TRUE
+C2100049,Cedar Ridge Petrochemical plc - 210 049,CG0053,Cedar Ridge Petrochemical plc,Mining & Minerals,CA,NIG-210,DIRECT,90,2019-11-09,FALSE,TRUE
+C2100050,Ashford Petrochemical plc - 210 050,CG0101,Ashford Petrochemical plc,Food & Beverage,CA,NIG-210,DISTRIBUTOR,45,2021-02-20,FALSE,TRUE
+C2100051,Delta Point Petrochemical plc - 210 051,CG0029,Delta Point Petrochemical plc,Chemicals,CA,NIG-210,DIRECT,90,2020-05-16,FALSE,TRUE
+C2100052,Ashford Utilities Ltd. - 210 052,CG0026,Ashford Utilities Ltd.,Power Generation,CA,NIG-210,DIRECT,30,2024-02-02,FALSE,TRUE
+C2100053,Ashford Foods Group - 210 053,CG0076,Ashford Foods Group,Power Generation,CA,NIG-210,DIRECT,45,2025-07-22,FALSE,TRUE
+C2100054,Northbrook Utilities Ltd. - 210 054,CG0014,Northbrook Utilities Ltd.,Pharmaceutical,CA,NIG-210,DISTRIBUTOR,45,2021-12-01,TRUE,TRUE
+C2100055,Eastgate Paper Inc. - 210 055,CG0155,Eastgate Paper Inc.,Mining & Minerals,CA,NIG-210,DIRECT,90,2023-02-25,FALSE,TRUE
+C2100056,Baytown Utilities Ltd. - 210 056,CG0002,Baytown Utilities Ltd.,Pharmaceutical,CA,NIG-210,DIRECT,60,2021-07-03,TRUE,TRUE
+C2100057,Eastgate Metals LLC - 210 057,CG0030,Eastgate Metals LLC,Refining & Petrochemical,CA,NIG-210,DIRECT,30,2024-12-31,FALSE,TRUE
+C2100058,Thornbury Utilities Ltd. - 210 058,CG0170,Thornbury Utilities Ltd.,Refining & Petrochemical,CA,NIG-210,DIRECT,45,2020-01-29,FALSE,TRUE
+C2100059,Ashford Chemicals Corporation - 210 059,CG0001,Ashford Chemicals Corporation,Chemicals,CA,NIG-210,DIRECT,45,2021-06-23,TRUE,TRUE
+C2100060,Upton Industrial B.V. - 210 060,CG0096,Upton Industrial B.V.,Power Generation,CA,NIG-210,DIRECT,45,2024-12-01,FALSE,TRUE
+C2100061,Larkfield Chemicals Corporation - 210 061,CG0037,Larkfield Chemicals Corporation,Refining & Petrochemical,CA,NIG-210,DIRECT,60,2024-04-24,FALSE,TRUE
+C2100062,Pinehurst Processing GmbH - 210 062,CG0091,Pinehurst Processing GmbH,Chemicals,CA,NIG-210,DISTRIBUTOR,30,2021-09-18,FALSE,TRUE
+C2100063,Ashford Chemicals Corporation - 210 063,CG0001,Ashford Chemicals Corporation,Pulp & Paper,CA,NIG-210,DISTRIBUTOR,30,2022-06-06,TRUE,TRUE
+C2100064,Vale Industrial B.V. - 210 064,CG0072,Vale Industrial B.V.,Pharmaceutical,CA,NIG-210,DISTRIBUTOR,60,2020-11-29,FALSE,TRUE
+C2100065,Foxbridge Metals LLC - 210 065,CG0006,Foxbridge Metals LLC,Chemicals,CA,NIG-210,DIRECT,30,2020-02-26,TRUE,TRUE
+C2100066,Westmoor Energy Works - 210 066,CG0123,Westmoor Energy Works,Mining & Minerals,CA,NIG-210,DIRECT,45,2021-03-29,FALSE,TRUE
+C2100067,Foxbridge Utilities Ltd. - 210 067,CG0206,Foxbridge Utilities Ltd.,General Industrial,CA,NIG-210,DISTRIBUTOR,60,2024-09-21,FALSE,TRUE
+C2100068,Baytown Energy Works - 210 068,CG0027,Baytown Energy Works,General Industrial,CA,NIG-210,DIRECT,60,2023-09-16,FALSE,TRUE
+C2100069,Kestrel Bay Industrial B.V. - 210 069,CG0036,Kestrel Bay Industrial B.V.,Pharmaceutical,CA,NIG-210,DISTRIBUTOR,60,2025-05-24,FALSE,TRUE
+C2100070,Cedar Ridge Energy Works - 210 070,CG0003,Cedar Ridge Energy Works,Chemicals,CA,NIG-210,DIRECT,30,2021-07-01,TRUE,TRUE
+C2100071,Juniper Water Partners - 210 071,CG0010,Juniper Water Partners,Chemicals,CA,NIG-210,DIRECT,30,2019-11-27,TRUE,TRUE
+C2100072,Pinehurst Petrochemical plc - 210 072,CG0041,Pinehurst Petrochemical plc,Pharmaceutical,CA,NIG-210,DIRECT,45,2024-08-28,FALSE,TRUE
+C2100073,Ashford Chemicals Corporation - 210 073,CG0001,Ashford Chemicals Corporation,Power Generation,CA,NIG-210,DIRECT,60,2021-10-11,TRUE,TRUE
+C2100074,Juniper Paper Inc. - 210 074,CG0035,Juniper Paper Inc.,Pharmaceutical,CA,NIG-210,DIRECT,90,2022-02-15,FALSE,TRUE
+C2100075,Quarry Hill Petrochemical plc - 210 075,CG0017,Quarry Hill Petrochemical plc,Pharmaceutical,CA,NIG-210,DIRECT,45,2023-08-12,TRUE,TRUE
+C2100076,Cedar Ridge Foods Group - 210 076,CG0028,Cedar Ridge Foods Group,Pulp & Paper,CA,NIG-210,DIRECT,60,2023-06-03,FALSE,TRUE
+C2100077,Oakfield Metals LLC - 210 077,CG0090,Oakfield Metals LLC,Power Generation,CA,NIG-210,DIRECT,75,2022-04-19,FALSE,TRUE
+C2100078,Vale Industrial B.V. - 210 078,CG0072,Vale Industrial B.V.,Refining & Petrochemical,CA,NIG-210,DISTRIBUTOR,30,2023-12-30,FALSE,TRUE
+C2100079,Harlow Water Partners - 210 079,CG0058,Harlow Water Partners,Power Generation,CA,NIG-210,DIRECT,60,2025-03-27,FALSE,TRUE
+C2100080,Foxbridge Metals LLC - 210 080,CG0006,Foxbridge Metals LLC,Pulp & Paper,CA,NIG-210,DISTRIBUTOR,30,2020-02-15,TRUE,TRUE
+C2100081,Eastgate Petrochemical plc - 210 081,CG0005,Eastgate Petrochemical plc,Food & Beverage,CA,NIG-210,DIRECT,45,2021-10-21,TRUE,TRUE
+C2100082,Kestrel Bay Paper Inc. - 210 082,CG0011,Kestrel Bay Paper Inc.,Food & Beverage,CA,NIG-210,DIRECT,30,2021-02-19,TRUE,TRUE
+C2100083,Northbrook Energy Works - 210 083,CG0039,Northbrook Energy Works,Chemicals,CA,NIG-210,DISTRIBUTOR,60,2021-03-22,FALSE,TRUE
+C2100084,Juniper Utilities Ltd. - 210 084,CG0110,Juniper Utilities Ltd.,General Industrial,CA,NIG-210,DISTRIBUTOR,30,2022-04-25,FALSE,TRUE
+C2100085,Delta Point Chemicals Corporation - 210 085,CG0229,Delta Point Chemicals Corporation,Pulp & Paper,CA,NIG-210,DIRECT,30,2025-03-23,FALSE,TRUE
+C2100086,Ironside Energy Works - 210 086,CG0159,Ironside Energy Works,Refining & Petrochemical,CA,NIG-210,DISTRIBUTOR,75,2020-01-10,FALSE,TRUE
+C2100087,Baytown Utilities Ltd. - 210 087,CG0002,Baytown Utilities Ltd.,Chemicals,CA,NIG-210,DIRECT,45,2021-08-18,TRUE,TRUE
+C2100088,Meridian Park Utilities Ltd. - 210 088,CG0038,Meridian Park Utilities Ltd.,General Industrial,CA,NIG-210,DIRECT,30,2019-01-25,FALSE,TRUE
+C2100089,Northbrook Utilities Ltd. - 210 089,CG0014,Northbrook Utilities Ltd.,Pulp & Paper,CA,NIG-210,DIRECT,90,2023-06-15,TRUE,TRUE
+C2100090,Foxbridge Paper Inc. - 210 090,CG0131,Foxbridge Paper Inc.,Food & Beverage,CA,NIG-210,DISTRIBUTOR,45,2024-02-11,FALSE,TRUE
+C2100091,Juniper Chemicals Corporation - 210 091,CG0085,Juniper Chemicals Corporation,Pharmaceutical,CA,NIG-210,DISTRIBUTOR,45,2022-06-03,FALSE,TRUE
+C2100092,Redmond Water Partners - 210 092,CG0118,Redmond Water Partners,Water Treatment,CA,NIG-210,DIRECT,45,2019-11-08,FALSE,TRUE
+C2100093,Foxbridge Processing GmbH - 210 093,CG0031,Foxbridge Processing GmbH,General Industrial,CA,NIG-210,DIRECT,30,2021-05-20,FALSE,TRUE
+C2100094,Cedar Ridge Petrochemical plc - 210 094,CG0053,Cedar Ridge Petrochemical plc,Pulp & Paper,CA,NIG-210,DIRECT,60,2019-10-08,FALSE,TRUE
+C3100001,Thornbury Refining Industries - 310 001,CG0020,Thornbury Refining Industries,Chemicals,CA,NIG-310,DIRECT,45,2022-05-08,TRUE,TRUE
+C3100002,Zenith Processing GmbH - 310 002,CG0175,Zenith Processing GmbH,Refining & Petrochemical,CA,NIG-310,DIRECT,45,2020-07-01,FALSE,TRUE
+C3100003,Juniper Water Partners - 310 003,CG0010,Juniper Water Partners,Chemicals,CA,NIG-310,DISTRIBUTOR,45,2023-10-14,TRUE,TRUE
+C3100004,Stonebridge Processing GmbH - 310 004,CG0019,Stonebridge Processing GmbH,Chemicals,CA,NIG-310,DIRECT,60,2022-01-18,TRUE,TRUE
+C3100005,Ashford Chemicals Corporation - 310 005,CG0001,Ashford Chemicals Corporation,Chemicals,CA,NIG-310,DIRECT,45,2020-08-30,TRUE,TRUE
+C3100006,Redmond Processing GmbH - 310 006,CG0043,Redmond Processing GmbH,Refining & Petrochemical,CA,NIG-310,DIRECT,60,2023-04-27,FALSE,TRUE
+C3100007,Redmond Refining Industries - 310 007,CG0068,Redmond Refining Industries,Mining & Minerals,CA,NIG-310,DIRECT,45,2023-06-10,FALSE,TRUE
+C3100008,Harlow Refining Industries - 310 008,CG0008,Harlow Refining Industries,Pulp & Paper,CA,NIG-310,DIRECT,30,2020-02-29,TRUE,TRUE
+C3100009,Upton Energy Works - 310 009,CG0171,Upton Energy Works,General Industrial,CA,NIG-310,DIRECT,30,2024-10-16,FALSE,TRUE
+C3100010,Kestrel Bay Paper Inc. - 310 010,CG0011,Kestrel Bay Paper Inc.,Food & Beverage,CA,NIG-310,DIRECT,60,2025-01-15,TRUE,TRUE
+C3100011,Larkfield Minerals Holdings - 310 011,CG0237,Larkfield Minerals Holdings,Water Treatment,CA,NIG-310,DIRECT,30,2019-10-28,FALSE,TRUE
+C3100012,Ashford Chemicals Corporation - 310 012,CG0001,Ashford Chemicals Corporation,Food & Beverage,CA,NIG-310,DISTRIBUTOR,75,2020-04-27,TRUE,TRUE
+C3100013,Granville Processing GmbH - 310 013,CG0007,Granville Processing GmbH,Power Generation,CA,NIG-310,DIRECT,90,2020-07-28,TRUE,TRUE
+C3100014,Stonebridge Paper Inc. - 310 014,CG0119,Stonebridge Paper Inc.,General Industrial,CA,NIG-310,DIRECT,30,2022-09-20,FALSE,TRUE
+C3100015,Harlow Refining Industries - 310 015,CG0008,Harlow Refining Industries,Mining & Minerals,CA,NIG-310,DIRECT,30,2024-04-10,TRUE,TRUE
+C3100016,Baytown Energy Works - 310 016,CG0027,Baytown Energy Works,Water Treatment,CA,NIG-310,DISTRIBUTOR,30,2019-07-11,FALSE,TRUE
+C3100017,Cedar Ridge Energy Works - 310 017,CG0003,Cedar Ridge Energy Works,Refining & Petrochemical,CA,NIG-310,DIRECT,75,2022-04-12,TRUE,TRUE
+C3100018,Eastgate Petrochemical plc - 310 018,CG0005,Eastgate Petrochemical plc,General Industrial,CA,NIG-310,DIRECT,45,2024-07-14,TRUE,TRUE
+C3100019,Redmond Processing GmbH - 310 019,CG0043,Redmond Processing GmbH,Mining & Minerals,CA,NIG-310,DIRECT,45,2021-08-31,FALSE,TRUE
+C3100020,Eastgate Petrochemical plc - 310 020,CG0005,Eastgate Petrochemical plc,Mining & Minerals,CA,NIG-310,DISTRIBUTOR,75,2023-04-20,TRUE,TRUE
+C3100021,Ashford Chemicals Corporation - 310 021,CG0001,Ashford Chemicals Corporation,Water Treatment,CA,NIG-310,DIRECT,60,2020-06-15,TRUE,TRUE
+C3100022,Ashford Chemicals Corporation - 310 022,CG0001,Ashford Chemicals Corporation,Pulp & Paper,CA,NIG-310,DISTRIBUTOR,30,2024-12-12,TRUE,TRUE
+C3100023,Eastgate Petrochemical plc - 310 023,CG0005,Eastgate Petrochemical plc,Refining & Petrochemical,CA,NIG-310,DISTRIBUTOR,90,2023-01-01,TRUE,TRUE
+C3100024,Westmoor Paper Inc. - 310 024,CG0023,Westmoor Paper Inc.,Pharmaceutical,CA,NIG-310,DIRECT,75,2021-06-02,TRUE,TRUE
+C3100025,Ashford Chemicals Corporation - 310 025,CG0001,Ashford Chemicals Corporation,Pharmaceutical,CA,NIG-310,DIRECT,90,2021-11-05,TRUE,TRUE
+C3100026,Larkfield Industrial B.V. - 310 026,CG0012,Larkfield Industrial B.V.,Water Treatment,CA,NIG-310,DIRECT,90,2021-03-25,TRUE,TRUE
+C3100027,Juniper Paper Inc. - 310 027,CG0035,Juniper Paper Inc.,Water Treatment,CA,NIG-310,DIRECT,45,2022-10-07,FALSE,TRUE
+C3100028,Ironside Processing GmbH - 310 028,CG0259,Ironside Processing GmbH,General Industrial,CA,NIG-310,DISTRIBUTOR,90,2019-11-04,FALSE,TRUE
+C3100029,Meridian Park Petrochemical plc - 310 029,CG0113,Meridian Park Petrochemical plc,Food & Beverage,CA,NIG-310,DISTRIBUTOR,90,2025-01-27,FALSE,TRUE
+C3100030,Cedar Ridge Energy Works - 310 030,CG0003,Cedar Ridge Energy Works,General Industrial,CA,NIG-310,DIRECT,60,2023-06-10,TRUE,TRUE
+C3100031,Ashford Chemicals Corporation - 310 031,CG0001,Ashford Chemicals Corporation,Power Generation,CA,NIG-310,DIRECT,60,2020-02-01,TRUE,TRUE
+C3100032,Stonebridge Processing GmbH - 310 032,CG0019,Stonebridge Processing GmbH,Power Generation,CA,NIG-310,DIRECT,60,2021-04-19,TRUE,TRUE
+C3100033,Ashford Energy Works - 310 033,CG0051,Ashford Energy Works,General Industrial,CA,NIG-310,DIRECT,45,2022-05-24,FALSE,TRUE
+C3100034,Cedar Ridge Energy Works - 310 034,CG0003,Cedar Ridge Energy Works,Mining & Minerals,CA,NIG-310,DIRECT,60,2022-04-17,TRUE,TRUE
+C3100035,Thornbury Chemicals Corporation - 310 035,CG0145,Thornbury Chemicals Corporation,Pharmaceutical,CA,NIG-310,DISTRIBUTOR,30,2023-09-27,FALSE,TRUE
+C3100036,Cedar Ridge Energy Works - 310 036,CG0003,Cedar Ridge Energy Works,Pulp & Paper,CA,NIG-310,DIRECT,30,2019-11-14,TRUE,TRUE
+C3100037,Ashford Chemicals Corporation - 310 037,CG0001,Ashford Chemicals Corporation,Pharmaceutical,CA,NIG-310,DIRECT,30,2020-02-12,TRUE,TRUE
+C3100038,Thornbury Water Partners - 310 038,CG0070,Thornbury Water Partners,General Industrial,CA,NIG-310,DIRECT,75,2020-12-08,FALSE,TRUE
+C3100039,Ashford Chemicals Corporation - 310 039,CG0001,Ashford Chemicals Corporation,Water Treatment,CA,NIG-310,DIRECT,45,2022-12-24,TRUE,TRUE
+C3100040,Baytown Utilities Ltd. - 310 040,CG0002,Baytown Utilities Ltd.,Pharmaceutical,CA,NIG-310,DISTRIBUTOR,75,2022-04-27,TRUE,TRUE
+C3100041,Ashford Utilities Ltd. - 310 041,CG0026,Ashford Utilities Ltd.,Food & Beverage,CA,NIG-310,DISTRIBUTOR,90,2023-12-29,FALSE,TRUE
+C3100042,Granville Processing GmbH - 310 042,CG0007,Granville Processing GmbH,Mining & Minerals,CA,NIG-310,DIRECT,45,2023-03-01,TRUE,TRUE
+C3100043,Harlow Industrial B.V. - 310 043,CG0108,Harlow Industrial B.V.,Pharmaceutical,CA,NIG-310,DIRECT,45,2024-12-03,FALSE,TRUE
+C3100044,Thornbury Refining Industries - 310 044,CG0020,Thornbury Refining Industries,Mining & Minerals,CA,NIG-310,DISTRIBUTOR,90,2022-10-17,TRUE,TRUE
+C3100045,Kestrel Bay Foods Group - 310 045,CG0136,Kestrel Bay Foods Group,Water Treatment,CA,NIG-310,DIRECT,30,2019-03-05,FALSE,TRUE
+C3100046,Foxbridge Metals LLC - 310 046,CG0006,Foxbridge Metals LLC,Mining & Minerals,CA,NIG-310,DIRECT,45,2023-03-30,TRUE,TRUE
+C3100047,Kestrel Bay Chemicals Corporation - 310 047,CG0061,Kestrel Bay Chemicals Corporation,General Industrial,CA,NIG-310,DISTRIBUTOR,75,2025-04-03,FALSE,TRUE
+C3100048,Ironside Minerals Holdings - 310 048,CG0009,Ironside Minerals Holdings,Refining & Petrochemical,CA,NIG-310,DISTRIBUTOR,60,2019-12-04,TRUE,TRUE
+C3100049,Westmoor Paper Inc. - 310 049,CG0023,Westmoor Paper Inc.,Chemicals,CA,NIG-310,DIRECT,30,2021-11-11,TRUE,TRUE
+C3100050,Cedar Ridge Energy Works - 310 050,CG0003,Cedar Ridge Energy Works,Water Treatment,CA,NIG-310,DIRECT,45,2019-02-04,TRUE,TRUE
+C3100051,Eastgate Paper Inc. - 310 051,CG0155,Eastgate Paper Inc.,Refining & Petrochemical,CA,NIG-310,DIRECT,30,2025-05-06,FALSE,TRUE
+C3100052,Eastgate Petrochemical plc - 310 052,CG0005,Eastgate Petrochemical plc,Pharmaceutical,CA,NIG-310,DIRECT,45,2024-06-14,TRUE,TRUE
+C3100053,Baytown Utilities Ltd. - 310 053,CG0002,Baytown Utilities Ltd.,Pharmaceutical,CA,NIG-310,DIRECT,30,2023-12-08,TRUE,TRUE
+C3100054,Northbrook Paper Inc. - 310 054,CG0239,Northbrook Paper Inc.,Chemicals,CA,NIG-310,DISTRIBUTOR,75,2019-12-23,FALSE,TRUE
+C3100055,Baytown Utilities Ltd. - 310 055,CG0002,Baytown Utilities Ltd.,Chemicals,CA,NIG-310,DIRECT,90,2019-10-14,TRUE,TRUE
+C3100056,Baytown Metals LLC - 310 056,CG0102,Baytown Metals LLC,Power Generation,CA,NIG-310,DIRECT,30,2021-05-03,FALSE,TRUE
+C3100057,Meridian Park Water Partners - 310 057,CG0238,Meridian Park Water Partners,Power Generation,CA,NIG-310,DIRECT,30,2023-10-09,FALSE,TRUE
+C3100058,Juniper Processing GmbH - 310 058,CG0235,Juniper Processing GmbH,Pulp & Paper,CA,NIG-310,DISTRIBUTOR,90,2021-05-27,FALSE,TRUE
+C3100059,Stonebridge Industrial B.V. - 310 059,CG0144,Stonebridge Industrial B.V.,Power Generation,CA,NIG-310,DIRECT,30,2025-05-26,FALSE,TRUE
+C3100060,Delta Point Processing GmbH - 310 060,CG0079,Delta Point Processing GmbH,Mining & Minerals,CA,NIG-310,DIRECT,45,2023-07-24,FALSE,TRUE
+C3100061,Foxbridge Metals LLC - 310 061,CG0006,Foxbridge Metals LLC,Power Generation,CA,NIG-310,DISTRIBUTOR,45,2024-10-28,TRUE,TRUE
+C3100062,Delta Point Metals LLC - 310 062,CG0054,Delta Point Metals LLC,Chemicals,CA,NIG-310,DIRECT,60,2025-06-06,FALSE,TRUE
+C3100063,Harlow Foods Group - 310 063,CG0208,Harlow Foods Group,Pharmaceutical,CA,NIG-310,DIRECT,75,2022-07-10,FALSE,TRUE
+C3100064,Delta Point Foods Group - 310 064,CG0004,Delta Point Foods Group,Water Treatment,CA,NIG-310,DIRECT,75,2021-08-27,TRUE,TRUE
+C3100065,Upton Chemicals Corporation - 310 065,CG0121,Upton Chemicals Corporation,Mining & Minerals,CA,NIG-310,DIRECT,60,2024-11-14,FALSE,TRUE
+C3100066,Westmoor Metals LLC - 310 066,CG0198,Westmoor Metals LLC,Pulp & Paper,CA,NIG-310,DIRECT,30,2024-03-12,FALSE,TRUE
+C3100067,Ashford Chemicals Corporation - 310 067,CG0001,Ashford Chemicals Corporation,Chemicals,CA,NIG-310,DIRECT,90,2021-03-26,TRUE,TRUE
+C3100068,Cedar Ridge Energy Works - 310 068,CG0003,Cedar Ridge Energy Works,Pulp & Paper,CA,NIG-310,DISTRIBUTOR,45,2024-07-12,TRUE,TRUE
+C3100069,Ironside Minerals Holdings - 310 069,CG0009,Ironside Minerals Holdings,Pharmaceutical,CA,NIG-310,DIRECT,45,2023-04-11,TRUE,TRUE
+C3100070,Ashford Chemicals Corporation - 310 070,CG0001,Ashford Chemicals Corporation,General Industrial,CA,NIG-310,DISTRIBUTOR,60,2020-05-08,TRUE,TRUE
+C3100071,Baytown Energy Works - 310 071,CG0027,Baytown Energy Works,Chemicals,CA,NIG-310,DIRECT,60,2020-04-02,FALSE,TRUE
+C3100072,Foxbridge Metals LLC - 310 072,CG0006,Foxbridge Metals LLC,Chemicals,CA,NIG-310,DIRECT,90,2022-06-29,TRUE,TRUE
+C3100073,Cedar Ridge Foods Group - 310 073,CG0028,Cedar Ridge Foods Group,Water Treatment,CA,NIG-310,DIRECT,30,2024-01-31,FALSE,TRUE
+C3100074,Delta Point Utilities Ltd. - 310 074,CG0254,Delta Point Utilities Ltd.,Pharmaceutical,CA,NIG-310,DIRECT,30,2022-07-03,FALSE,TRUE
+C3100075,Ironside Paper Inc. - 310 075,CG0059,Ironside Paper Inc.,Food & Beverage,CA,NIG-310,DIRECT,60,2024-03-19,FALSE,TRUE
+C3100076,Thornbury Utilities Ltd. - 310 076,CG0170,Thornbury Utilities Ltd.,Water Treatment,CA,NIG-310,DIRECT,30,2022-09-29,FALSE,TRUE
+C3100077,Oakfield Metals LLC - 310 077,CG0090,Oakfield Metals LLC,General Industrial,CA,NIG-310,DIRECT,60,2022-04-09,FALSE,TRUE
+C3100078,Redmond Processing GmbH - 310 078,CG0043,Redmond Processing GmbH,Chemicals,CA,NIG-310,DIRECT,60,2023-03-20,FALSE,TRUE
+C3100079,Oakfield Foods Group - 310 079,CG0040,Oakfield Foods Group,Mining & Minerals,CA,NIG-310,DISTRIBUTOR,60,2022-12-24,FALSE,TRUE
+C3100080,Baytown Utilities Ltd. - 310 080,CG0002,Baytown Utilities Ltd.,Pulp & Paper,CA,NIG-310,DIRECT,30,2019-08-10,TRUE,TRUE
+C3100081,Larkfield Chemicals Corporation - 310 081,CG0037,Larkfield Chemicals Corporation,Pharmaceutical,CA,NIG-310,DIRECT,45,2021-12-31,FALSE,TRUE
+C3100082,Ashford Chemicals Corporation - 310 082,CG0001,Ashford Chemicals Corporation,Pulp & Paper,CA,NIG-310,DIRECT,75,2020-12-28,TRUE,TRUE
+C3100083,Eastgate Water Partners - 310 083,CG0130,Eastgate Water Partners,Refining & Petrochemical,CA,NIG-310,DIRECT,45,2021-08-10,FALSE,TRUE
+C3100084,Northbrook Water Partners - 310 084,CG0214,Northbrook Water Partners,Pulp & Paper,CA,NIG-310,DIRECT,60,2020-07-30,FALSE,TRUE
+C3100085,Baytown Utilities Ltd. - 310 085,CG0002,Baytown Utilities Ltd.,Refining & Petrochemical,CA,NIG-310,DIRECT,90,2019-01-19,TRUE,TRUE
+C3200001,Ashford Chemicals Corporation - 320 001,CG0001,Ashford Chemicals Corporation,General Industrial,GB,NIG-320,DISTRIBUTOR,60,2024-02-19,TRUE,TRUE
+C3200002,Ashford Chemicals Corporation - 320 002,CG0001,Ashford Chemicals Corporation,Mining & Minerals,GB,NIG-320,DIRECT,45,2023-04-04,TRUE,TRUE
+C3200003,Larkfield Processing GmbH - 320 003,CG0187,Larkfield Processing GmbH,General Industrial,GB,NIG-320,DIRECT,45,2019-05-21,FALSE,TRUE
+C3200004,Ironside Energy Works - 320 004,CG0159,Ironside Energy Works,General Industrial,GB,NIG-320,DIRECT,75,2020-08-14,FALSE,TRUE
+C3200005,Juniper Water Partners - 320 005,CG0010,Juniper Water Partners,Refining & Petrochemical,GB,NIG-320,DISTRIBUTOR,90,2022-09-25,TRUE,TRUE
+C3200006,Baytown Minerals Holdings - 320 006,CG0177,Baytown Minerals Holdings,Mining & Minerals,GB,NIG-320,DISTRIBUTOR,30,2020-05-25,FALSE,TRUE
+C3200007,Stonebridge Minerals Holdings - 320 007,CG0069,Stonebridge Minerals Holdings,Water Treatment,GB,NIG-320,DIRECT,30,2023-02-06,FALSE,TRUE
+C3200008,Ashford Chemicals Corporation - 320 008,CG0001,Ashford Chemicals Corporation,General Industrial,GB,NIG-320,DISTRIBUTOR,75,2022-08-30,TRUE,TRUE
+C3200009,Kestrel Bay Refining Industries - 320 009,CG0236,Kestrel Bay Refining Industries,Chemicals,GB,NIG-320,DIRECT,30,2019-03-20,FALSE,TRUE
+C3200010,Delta Point Foods Group - 320 010,CG0004,Delta Point Foods Group,Refining & Petrochemical,GB,NIG-320,DISTRIBUTOR,60,2022-06-12,TRUE,TRUE
+C3200011,Ashford Chemicals Corporation - 320 011,CG0001,Ashford Chemicals Corporation,Power Generation,GB,NIG-320,DIRECT,90,2024-06-28,TRUE,TRUE
+C3200012,Quarry Hill Processing GmbH - 320 012,CG0067,Quarry Hill Processing GmbH,Pulp & Paper,GB,NIG-320,DIRECT,45,2024-03-04,FALSE,TRUE
+C3200013,Westmoor Industrial B.V. - 320 013,CG0048,Westmoor Industrial B.V.,Pulp & Paper,GB,NIG-320,DIRECT,45,2019-03-24,FALSE,TRUE
+C3200014,Delta Point Industrial B.V. - 320 014,CG0204,Delta Point Industrial B.V.,Food & Beverage,GB,NIG-320,DISTRIBUTOR,90,2024-07-05,FALSE,TRUE
+C3200015,Cedar Ridge Energy Works - 320 015,CG0003,Cedar Ridge Energy Works,Water Treatment,GB,NIG-320,DIRECT,90,2022-05-26,TRUE,TRUE
+C3200016,Redmond Chemicals Corporation - 320 016,CG0193,Redmond Chemicals Corporation,Refining & Petrochemical,GB,NIG-320,DIRECT,45,2024-04-13,FALSE,TRUE
+C3200017,Delta Point Metals LLC - 320 017,CG0054,Delta Point Metals LLC,Mining & Minerals,GB,NIG-320,DIRECT,75,2019-01-05,FALSE,TRUE
+C3200018,Foxbridge Metals LLC - 320 018,CG0006,Foxbridge Metals LLC,Power Generation,GB,NIG-320,DIRECT,30,2022-03-10,TRUE,TRUE
+C3200019,Baytown Processing GmbH - 320 019,CG0127,Baytown Processing GmbH,Refining & Petrochemical,GB,NIG-320,DISTRIBUTOR,60,2022-07-26,FALSE,TRUE
+C3200020,Baytown Utilities Ltd. - 320 020,CG0002,Baytown Utilities Ltd.,Pulp & Paper,GB,NIG-320,DIRECT,60,2021-07-02,TRUE,TRUE
+C3200021,Vale Water Partners - 320 021,CG0022,Vale Water Partners,Power Generation,GB,NIG-320,DIRECT,45,2021-10-03,TRUE,TRUE
+C3200022,Eastgate Petrochemical plc - 320 022,CG0005,Eastgate Petrochemical plc,Refining & Petrochemical,GB,NIG-320,DISTRIBUTOR,45,2021-01-01,TRUE,TRUE
+C3200023,Delta Point Processing GmbH - 320 023,CG0079,Delta Point Processing GmbH,Water Treatment,GB,NIG-320,DIRECT,75,2021-09-28,FALSE,TRUE
+C3200024,Granville Paper Inc. - 320 024,CG0107,Granville Paper Inc.,Mining & Minerals,GB,NIG-320,DIRECT,45,2022-03-31,FALSE,TRUE
+C3200025,Ironside Minerals Holdings - 320 025,CG0009,Ironside Minerals Holdings,Water Treatment,GB,NIG-320,DIRECT,90,2021-04-20,TRUE,TRUE
+C3200026,Westmoor Refining Industries - 320 026,CG0248,Westmoor Refining Industries,Refining & Petrochemical,GB,NIG-320,DIRECT,45,2019-03-25,FALSE,TRUE
+C3200027,Larkfield Industrial B.V. - 320 027,CG0012,Larkfield Industrial B.V.,Mining & Minerals,GB,NIG-320,DISTRIBUTOR,60,2023-09-01,TRUE,TRUE
+C3200028,Ashford Chemicals Corporation - 320 028,CG0001,Ashford Chemicals Corporation,General Industrial,GB,NIG-320,DIRECT,30,2024-01-28,TRUE,TRUE
+C3200029,Redmond Minerals Holdings - 320 029,CG0093,Redmond Minerals Holdings,Chemicals,GB,NIG-320,DIRECT,45,2019-09-01,FALSE,TRUE
+C3200030,Baytown Utilities Ltd. - 320 030,CG0002,Baytown Utilities Ltd.,Refining & Petrochemical,GB,NIG-320,DIRECT,30,2023-05-28,TRUE,TRUE
+C3200031,Delta Point Foods Group - 320 031,CG0004,Delta Point Foods Group,Pharmaceutical,GB,NIG-320,DIRECT,45,2025-03-03,TRUE,TRUE
+C3200032,Larkfield Chemicals Corporation - 320 032,CG0037,Larkfield Chemicals Corporation,Power Generation,GB,NIG-320,DIRECT,60,2025-01-19,FALSE,TRUE
+C3200033,Foxbridge Metals LLC - 320 033,CG0006,Foxbridge Metals LLC,General Industrial,GB,NIG-320,DIRECT,75,2020-11-10,TRUE,TRUE
+C3200034,Ashford Chemicals Corporation - 320 034,CG0001,Ashford Chemicals Corporation,General Industrial,GB,NIG-320,DIRECT,60,2024-04-10,TRUE,TRUE
+C3200035,Ashford Chemicals Corporation - 320 035,CG0001,Ashford Chemicals Corporation,Pulp & Paper,GB,NIG-320,DIRECT,60,2023-04-18,TRUE,TRUE
+C3200036,Ashford Chemicals Corporation - 320 036,CG0001,Ashford Chemicals Corporation,Refining & Petrochemical,GB,NIG-320,DIRECT,90,2021-12-04,TRUE,TRUE
+C3200037,Ashford Chemicals Corporation - 320 037,CG0001,Ashford Chemicals Corporation,Water Treatment,GB,NIG-320,DIRECT,30,2024-10-13,TRUE,TRUE
+C3200038,Westmoor Refining Industries - 320 038,CG0248,Westmoor Refining Industries,Food & Beverage,GB,NIG-320,DIRECT,30,2019-09-21,FALSE,TRUE
+C3200039,Ironside Minerals Holdings - 320 039,CG0009,Ironside Minerals Holdings,Food & Beverage,GB,NIG-320,DIRECT,60,2025-04-11,TRUE,TRUE
+C3200040,Ashford Chemicals Corporation - 320 040,CG0001,Ashford Chemicals Corporation,Power Generation,GB,NIG-320,DIRECT,30,2022-08-07,TRUE,TRUE
+C3200041,Eastgate Petrochemical plc - 320 041,CG0005,Eastgate Petrochemical plc,General Industrial,GB,NIG-320,DIRECT,90,2024-08-28,TRUE,TRUE
+C3200042,Larkfield Industrial B.V. - 320 042,CG0012,Larkfield Industrial B.V.,Power Generation,GB,NIG-320,DIRECT,75,2020-09-10,TRUE,TRUE
+C3200043,Redmond Metals LLC - 320 043,CG0018,Redmond Metals LLC,Pharmaceutical,GB,NIG-320,DIRECT,75,2020-02-07,TRUE,TRUE
+C3200044,Eastgate Petrochemical plc - 320 044,CG0005,Eastgate Petrochemical plc,Chemicals,GB,NIG-320,DIRECT,75,2021-06-22,TRUE,TRUE
+C3200045,Zenith Chemicals Corporation - 320 045,CG0025,Zenith Chemicals Corporation,General Industrial,GB,NIG-320,DIRECT,45,2020-06-02,TRUE,TRUE
+C3200046,Ashford Energy Works - 320 046,CG0051,Ashford Energy Works,Water Treatment,GB,NIG-320,DIRECT,45,2019-06-06,FALSE,TRUE
+C3200047,Ironside Minerals Holdings - 320 047,CG0009,Ironside Minerals Holdings,Chemicals,GB,NIG-320,DIRECT,45,2020-03-19,TRUE,TRUE
+C3200048,Harlow Refining Industries - 320 048,CG0008,Harlow Refining Industries,Mining & Minerals,GB,NIG-320,DIRECT,75,2024-05-14,TRUE,TRUE
+C3200049,Zenith Energy Works - 320 049,CG0075,Zenith Energy Works,Mining & Minerals,GB,NIG-320,DIRECT,60,2024-04-04,FALSE,TRUE
+C3200050,Cedar Ridge Energy Works - 320 050,CG0003,Cedar Ridge Energy Works,Chemicals,GB,NIG-320,DISTRIBUTOR,60,2024-05-20,TRUE,TRUE
+C3200051,Quarry Hill Metals LLC - 320 051,CG0042,Quarry Hill Metals LLC,Mining & Minerals,GB,NIG-320,DIRECT,75,2020-06-11,FALSE,TRUE
+C3200052,Ashford Utilities Ltd. - 320 052,CG0026,Ashford Utilities Ltd.,Pulp & Paper,GB,NIG-320,DISTRIBUTOR,90,2020-04-25,FALSE,TRUE
+C3200053,Stonebridge Paper Inc. - 320 053,CG0119,Stonebridge Paper Inc.,Mining & Minerals,GB,NIG-320,DIRECT,30,2019-08-01,FALSE,TRUE
+C3200054,Larkfield Industrial B.V. - 320 054,CG0012,Larkfield Industrial B.V.,Chemicals,GB,NIG-320,DIRECT,30,2023-12-23,TRUE,TRUE
+C3200055,Ashford Chemicals Corporation - 320 055,CG0001,Ashford Chemicals Corporation,Chemicals,GB,NIG-320,DISTRIBUTOR,45,2021-11-02,TRUE,TRUE
+C3200056,Pinehurst Paper Inc. - 320 056,CG0191,Pinehurst Paper Inc.,Refining & Petrochemical,GB,NIG-320,DISTRIBUTOR,30,2020-08-26,FALSE,TRUE
+C3200057,Redmond Water Partners - 320 057,CG0118,Redmond Water Partners,Refining & Petrochemical,GB,NIG-320,DIRECT,30,2021-11-01,FALSE,TRUE
+C3200058,Ashford Chemicals Corporation - 320 058,CG0001,Ashford Chemicals Corporation,Mining & Minerals,GB,NIG-320,DIRECT,60,2021-09-25,TRUE,TRUE
+C3200059,Foxbridge Metals LLC - 320 059,CG0006,Foxbridge Metals LLC,Pulp & Paper,GB,NIG-320,DIRECT,45,2022-12-03,TRUE,TRUE
+C3200060,Ashford Utilities Ltd. - 320 060,CG0026,Ashford Utilities Ltd.,Pulp & Paper,GB,NIG-320,DIRECT,90,2021-06-10,FALSE,TRUE
+C3200061,Larkfield Industrial B.V. - 320 061,CG0012,Larkfield Industrial B.V.,Food & Beverage,GB,NIG-320,DIRECT,90,2021-07-19,TRUE,TRUE
+C3200062,Eastgate Utilities Ltd. - 320 062,CG0230,Eastgate Utilities Ltd.,Refining & Petrochemical,GB,NIG-320,DIRECT,30,2020-03-06,FALSE,TRUE
+C3200063,Cedar Ridge Energy Works - 320 063,CG0003,Cedar Ridge Energy Works,Water Treatment,GB,NIG-320,DISTRIBUTOR,60,2021-07-31,TRUE,TRUE
+C3200064,Granville Refining Industries - 320 064,CG0032,Granville Refining Industries,Power Generation,GB,NIG-320,DIRECT,75,2021-12-22,FALSE,TRUE
+C3200065,Delta Point Foods Group - 320 065,CG0004,Delta Point Foods Group,Power Generation,GB,NIG-320,DIRECT,75,2019-07-18,TRUE,TRUE
+C3200066,Ashford Utilities Ltd. - 320 066,CG0026,Ashford Utilities Ltd.,Refining & Petrochemical,GB,NIG-320,DIRECT,45,2024-11-29,FALSE,TRUE
+C3200067,Oakfield Energy Works - 320 067,CG0015,Oakfield Energy Works,Power Generation,GB,NIG-320,DIRECT,45,2019-08-01,TRUE,TRUE
+C3200068,Thornbury Chemicals Corporation - 320 068,CG0145,Thornbury Chemicals Corporation,Chemicals,GB,NIG-320,DISTRIBUTOR,60,2020-06-13,FALSE,TRUE
+C3200069,Yarrow Metals LLC - 320 069,CG0174,Yarrow Metals LLC,Pharmaceutical,GB,NIG-320,DIRECT,45,2021-05-23,FALSE,TRUE
+C3200070,Upton Paper Inc. - 320 070,CG0071,Upton Paper Inc.,Pulp & Paper,GB,NIG-320,DIRECT,90,2022-12-03,FALSE,TRUE
+C3200071,Ashford Chemicals Corporation - 320 071,CG0001,Ashford Chemicals Corporation,Mining & Minerals,GB,NIG-320,DIRECT,30,2023-04-02,TRUE,TRUE
+C3200072,Foxbridge Metals LLC - 320 072,CG0006,Foxbridge Metals LLC,General Industrial,GB,NIG-320,DIRECT,30,2019-07-03,TRUE,TRUE
+C3200073,Ashford Chemicals Corporation - 320 073,CG0001,Ashford Chemicals Corporation,General Industrial,GB,NIG-320,DIRECT,30,2021-04-29,TRUE,TRUE
+C3200074,Delta Point Foods Group - 320 074,CG0004,Delta Point Foods Group,Power Generation,GB,NIG-320,DIRECT,60,2019-04-14,TRUE,TRUE
+C3200075,Foxbridge Processing GmbH - 320 075,CG0031,Foxbridge Processing GmbH,General Industrial,GB,NIG-320,DIRECT,90,2025-01-16,FALSE,TRUE
+C3200076,Larkfield Chemicals Corporation - 320 076,CG0037,Larkfield Chemicals Corporation,General Industrial,GB,NIG-320,DISTRIBUTOR,90,2023-11-03,FALSE,TRUE
+C3200077,Thornbury Water Partners - 320 077,CG0070,Thornbury Water Partners,Power Generation,GB,NIG-320,DIRECT,60,2020-04-09,FALSE,TRUE
+C3200078,Ironside Paper Inc. - 320 078,CG0059,Ironside Paper Inc.,Water Treatment,GB,NIG-320,DIRECT,90,2019-06-13,FALSE,TRUE
+C3200079,Ashford Chemicals Corporation - 320 079,CG0001,Ashford Chemicals Corporation,Mining & Minerals,GB,NIG-320,DIRECT,30,2023-09-21,TRUE,TRUE
+C3200080,Stonebridge Minerals Holdings - 320 080,CG0069,Stonebridge Minerals Holdings,Power Generation,GB,NIG-320,DIRECT,45,2022-10-15,FALSE,TRUE
+C3200081,Thornbury Minerals Holdings - 320 081,CG0045,Thornbury Minerals Holdings,Water Treatment,GB,NIG-320,DIRECT,30,2020-05-06,FALSE,TRUE
+C3200082,Vale Metals LLC - 320 082,CG0222,Vale Metals LLC,Mining & Minerals,GB,NIG-320,DISTRIBUTOR,60,2022-09-25,FALSE,TRUE
+C3200083,Baytown Foods Group - 320 083,CG0052,Baytown Foods Group,Food & Beverage,GB,NIG-320,DIRECT,90,2023-01-18,FALSE,TRUE
+C3200084,Baytown Utilities Ltd. - 320 084,CG0002,Baytown Utilities Ltd.,Pulp & Paper,GB,NIG-320,DIRECT,60,2023-10-25,TRUE,TRUE
+C3200085,Baytown Utilities Ltd. - 320 085,CG0002,Baytown Utilities Ltd.,Power Generation,GB,NIG-320,DISTRIBUTOR,90,2019-10-21,TRUE,TRUE
+C5100001,Delta Point Foods Group - 510 001,CG0004,Delta Point Foods Group,Mining & Minerals,GB,NIG-510,DISTRIBUTOR,45,2019-06-18,TRUE,TRUE
+C5100002,Baytown Energy Works - 510 002,CG0027,Baytown Energy Works,Chemicals,GB,NIG-510,DIRECT,60,2019-12-15,FALSE,TRUE
+C5100003,Cedar Ridge Petrochemical plc - 510 003,CG0053,Cedar Ridge Petrochemical plc,Pulp & Paper,GB,NIG-510,DIRECT,60,2023-08-01,FALSE,TRUE
+C5100004,Juniper Water Partners - 510 004,CG0010,Juniper Water Partners,Water Treatment,GB,NIG-510,DIRECT,60,2024-06-08,TRUE,TRUE
+C5100005,Cedar Ridge Energy Works - 510 005,CG0003,Cedar Ridge Energy Works,Pharmaceutical,GB,NIG-510,DISTRIBUTOR,75,2024-11-12,TRUE,TRUE
+C5100006,Pinehurst Foods Group - 510 006,CG0016,Pinehurst Foods Group,General Industrial,GB,NIG-510,DIRECT,60,2020-03-10,TRUE,TRUE
+C5100007,Delta Point Petrochemical plc - 510 007,CG0029,Delta Point Petrochemical plc,General Industrial,GB,NIG-510,DIRECT,30,2023-01-17,FALSE,TRUE
+C5100008,Redmond Paper Inc. - 510 008,CG0143,Redmond Paper Inc.,General Industrial,GB,NIG-510,DIRECT,60,2025-03-07,FALSE,TRUE
+C5100009,Delta Point Foods Group - 510 009,CG0004,Delta Point Foods Group,Water Treatment,GB,NIG-510,DIRECT,75,2020-11-04,TRUE,TRUE
+C5100010,Meridian Park Refining Industries - 510 010,CG0188,Meridian Park Refining Industries,Pharmaceutical,GB,NIG-510,DIRECT,60,2019-06-11,FALSE,TRUE
+C5100011,Ashford Chemicals Corporation - 510 011,CG0001,Ashford Chemicals Corporation,Pulp & Paper,GB,NIG-510,DIRECT,30,2021-03-14,TRUE,TRUE
+C5100012,Pinehurst Water Partners - 510 012,CG0166,Pinehurst Water Partners,Water Treatment,GB,NIG-510,DISTRIBUTOR,45,2024-05-31,FALSE,TRUE
+C5100013,Kestrel Bay Petrochemical plc - 510 013,CG0161,Kestrel Bay Petrochemical plc,General Industrial,GB,NIG-510,DIRECT,90,2022-04-28,FALSE,TRUE
+C5100014,Delta Point Metals LLC - 510 014,CG0054,Delta Point Metals LLC,Mining & Minerals,GB,NIG-510,DIRECT,30,2024-11-05,FALSE,TRUE
+C5100015,Eastgate Petrochemical plc - 510 015,CG0005,Eastgate Petrochemical plc,Chemicals,GB,NIG-510,DIRECT,45,2024-01-05,TRUE,TRUE
+C5100016,Foxbridge Metals LLC - 510 016,CG0006,Foxbridge Metals LLC,Power Generation,GB,NIG-510,DISTRIBUTOR,90,2024-03-31,TRUE,TRUE
+C5100017,Ashford Paper Inc. - 510 017,CG0251,Ashford Paper Inc.,Mining & Minerals,GB,NIG-510,DIRECT,90,2024-11-20,FALSE,TRUE
+C5100018,Delta Point Petrochemical plc - 510 018,CG0029,Delta Point Petrochemical plc,Pharmaceutical,GB,NIG-510,DIRECT,90,2021-12-24,FALSE,TRUE
+C5100019,Ironside Metals LLC - 510 019,CG0234,Ironside Metals LLC,Mining & Minerals,GB,NIG-510,DIRECT,90,2020-12-27,FALSE,TRUE
+C5100020,Cedar Ridge Metals LLC - 510 020,CG0078,Cedar Ridge Metals LLC,Mining & Minerals,GB,NIG-510,DIRECT,90,2020-07-25,FALSE,TRUE
+C5100021,Ashford Paper Inc. - 510 021,CG0251,Ashford Paper Inc.,Pharmaceutical,GB,NIG-510,DIRECT,60,2025-05-03,FALSE,TRUE
+C5100022,Granville Processing GmbH - 510 022,CG0007,Granville Processing GmbH,General Industrial,GB,NIG-510,DIRECT,45,2019-09-29,TRUE,TRUE
+C5100023,Meridian Park Water Partners - 510 023,CG0238,Meridian Park Water Partners,Refining & Petrochemical,GB,NIG-510,DIRECT,30,2024-05-04,FALSE,TRUE
+C5100024,Pinehurst Petrochemical plc - 510 024,CG0041,Pinehurst Petrochemical plc,Pulp & Paper,GB,NIG-510,DISTRIBUTOR,60,2021-12-23,FALSE,TRUE
+C5100025,Yarrow Chemicals Corporation - 510 025,CG0049,Yarrow Chemicals Corporation,Water Treatment,GB,NIG-510,DIRECT,45,2020-03-24,FALSE,TRUE
+C5100026,Ashford Chemicals Corporation - 510 026,CG0001,Ashford Chemicals Corporation,Power Generation,GB,NIG-510,DIRECT,30,2024-03-17,TRUE,TRUE
+C5100027,Juniper Water Partners - 510 027,CG0010,Juniper Water Partners,Pharmaceutical,GB,NIG-510,DIRECT,45,2023-08-03,TRUE,TRUE
+C5100028,Cedar Ridge Energy Works - 510 028,CG0003,Cedar Ridge Energy Works,Water Treatment,GB,NIG-510,DISTRIBUTOR,30,2025-05-06,TRUE,TRUE
+C5100029,Larkfield Foods Group - 510 029,CG0112,Larkfield Foods Group,Pharmaceutical,GB,NIG-510,DIRECT,30,2019-10-25,FALSE,TRUE
+C5100030,Northbrook Petrochemical plc - 510 030,CG0089,Northbrook Petrochemical plc,Mining & Minerals,GB,NIG-510,DIRECT,30,2019-05-01,FALSE,TRUE
+C5100031,Foxbridge Metals LLC - 510 031,CG0006,Foxbridge Metals LLC,Water Treatment,GB,NIG-510,DIRECT,60,2020-11-01,TRUE,TRUE
+C5100032,Upton Energy Works - 510 032,CG0171,Upton Energy Works,General Industrial,GB,NIG-510,DISTRIBUTOR,30,2019-03-23,FALSE,TRUE
+C5100033,Upton Metals LLC - 510 033,CG0246,Upton Metals LLC,Pharmaceutical,GB,NIG-510,DISTRIBUTOR,45,2019-05-13,FALSE,TRUE
+C5100034,Stonebridge Processing GmbH - 510 034,CG0019,Stonebridge Processing GmbH,Refining & Petrochemical,GB,NIG-510,DIRECT,45,2024-01-05,TRUE,TRUE
+C5100035,Ashford Chemicals Corporation - 510 035,CG0001,Ashford Chemicals Corporation,Food & Beverage,GB,NIG-510,DIRECT,30,2021-01-31,TRUE,TRUE
+C5100036,Foxbridge Minerals Holdings - 510 036,CG0081,Foxbridge Minerals Holdings,General Industrial,GB,NIG-510,DIRECT,60,2021-06-19,FALSE,TRUE
+C5100037,Yarrow Energy Works - 510 037,CG0099,Yarrow Energy Works,Mining & Minerals,GB,NIG-510,DISTRIBUTOR,30,2024-08-07,FALSE,TRUE
+C5100038,Oakfield Petrochemical plc - 510 038,CG0065,Oakfield Petrochemical plc,Power Generation,GB,NIG-510,DIRECT,60,2022-02-08,FALSE,TRUE
+C5100039,Harlow Water Partners - 510 039,CG0058,Harlow Water Partners,Power Generation,GB,NIG-510,DIRECT,30,2020-05-03,FALSE,TRUE
+C5100040,Pinehurst Petrochemical plc - 510 040,CG0041,Pinehurst Petrochemical plc,Mining & Minerals,GB,NIG-510,DIRECT,30,2022-06-02,FALSE,TRUE
+C5100041,Quarry Hill Metals LLC - 510 041,CG0042,Quarry Hill Metals LLC,Mining & Minerals,GB,NIG-510,DIRECT,45,2024-09-28,FALSE,TRUE
+C5100042,Ashford Chemicals Corporation - 510 042,CG0001,Ashford Chemicals Corporation,Food & Beverage,GB,NIG-510,DISTRIBUTOR,90,2024-06-08,TRUE,TRUE
+C5100043,Kestrel Bay Paper Inc. - 510 043,CG0011,Kestrel Bay Paper Inc.,General Industrial,GB,NIG-510,DIRECT,60,2019-04-29,TRUE,TRUE
+C5100044,Foxbridge Metals LLC - 510 044,CG0006,Foxbridge Metals LLC,Food & Beverage,GB,NIG-510,DIRECT,45,2024-12-16,TRUE,TRUE
+C5100045,Cedar Ridge Foods Group - 510 045,CG0028,Cedar Ridge Foods Group,Food & Beverage,GB,NIG-510,DIRECT,30,2022-09-20,FALSE,TRUE
+C5100046,Granville Processing GmbH - 510 046,CG0007,Granville Processing GmbH,Chemicals,GB,NIG-510,DIRECT,75,2024-02-06,TRUE,TRUE
+C5100047,Larkfield Metals LLC - 510 047,CG0162,Larkfield Metals LLC,Power Generation,GB,NIG-510,DIRECT,30,2025-02-04,FALSE,TRUE
+C5100048,Upton Paper Inc. - 510 048,CG0071,Upton Paper Inc.,Water Treatment,GB,NIG-510,DISTRIBUTOR,60,2023-08-25,FALSE,TRUE
+C5100049,Westmoor Foods Group - 510 049,CG0148,Westmoor Foods Group,Chemicals,GB,NIG-510,DISTRIBUTOR,60,2021-12-27,FALSE,TRUE
+C5100050,Ashford Chemicals Corporation - 510 050,CG0001,Ashford Chemicals Corporation,Chemicals,GB,NIG-510,DIRECT,60,2021-12-20,TRUE,TRUE
+C5100051,Baytown Utilities Ltd. - 510 051,CG0002,Baytown Utilities Ltd.,Pharmaceutical,GB,NIG-510,DIRECT,60,2019-06-21,TRUE,TRUE
+C5100052,Baytown Utilities Ltd. - 510 052,CG0002,Baytown Utilities Ltd.,Chemicals,GB,NIG-510,DIRECT,90,2022-08-05,TRUE,TRUE
+C5100053,Meridian Park Processing GmbH - 510 053,CG0163,Meridian Park Processing GmbH,Power Generation,GB,NIG-510,DISTRIBUTOR,30,2023-08-10,FALSE,TRUE
+C5100054,Westmoor Energy Works - 510 054,CG0123,Westmoor Energy Works,Pulp & Paper,GB,NIG-510,DIRECT,30,2020-06-19,FALSE,TRUE
+C5100055,Foxbridge Metals LLC - 510 055,CG0006,Foxbridge Metals LLC,Chemicals,GB,NIG-510,DIRECT,30,2021-07-05,TRUE,TRUE
+C5100056,Ashford Petrochemical plc - 510 056,CG0101,Ashford Petrochemical plc,Water Treatment,GB,NIG-510,DIRECT,30,2021-01-24,FALSE,TRUE
+C5100057,Ashford Chemicals Corporation - 510 057,CG0001,Ashford Chemicals Corporation,Pharmaceutical,GB,NIG-510,DIRECT,90,2019-01-03,TRUE,TRUE
+C5100058,Baytown Foods Group - 510 058,CG0052,Baytown Foods Group,Water Treatment,GB,NIG-510,DIRECT,45,2020-05-18,FALSE,TRUE
+C5100059,Redmond Processing GmbH - 510 059,CG0043,Redmond Processing GmbH,Pulp & Paper,GB,NIG-510,DIRECT,45,2025-06-10,FALSE,TRUE
+C5100060,Foxbridge Water Partners - 510 060,CG0106,Foxbridge Water Partners,Water Treatment,GB,NIG-510,DIRECT,45,2020-08-04,FALSE,TRUE
+C5100061,Ashford Chemicals Corporation - 510 061,CG0001,Ashford Chemicals Corporation,Water Treatment,GB,NIG-510,DIRECT,45,2022-06-22,TRUE,TRUE
+C5100062,Ashford Chemicals Corporation - 510 062,CG0001,Ashford Chemicals Corporation,Refining & Petrochemical,GB,NIG-510,DIRECT,60,2024-03-21,TRUE,TRUE
+C5100063,Vale Paper Inc. - 510 063,CG0047,Vale Paper Inc.,Refining & Petrochemical,GB,NIG-510,DIRECT,30,2021-04-10,FALSE,TRUE
+C5100064,Baytown Utilities Ltd. - 510 064,CG0002,Baytown Utilities Ltd.,General Industrial,GB,NIG-510,DIRECT,30,2022-05-08,TRUE,TRUE
+C5100065,Cedar Ridge Energy Works - 510 065,CG0003,Cedar Ridge Energy Works,Food & Beverage,GB,NIG-510,DIRECT,45,2022-02-08,TRUE,TRUE
+C5100066,Westmoor Paper Inc. - 510 066,CG0023,Westmoor Paper Inc.,Water Treatment,GB,NIG-510,DIRECT,45,2022-10-30,TRUE,TRUE
+C5100067,Larkfield Energy Works - 510 067,CG0087,Larkfield Energy Works,Refining & Petrochemical,GB,NIG-510,DIRECT,30,2025-03-16,FALSE,TRUE
+C5100068,Foxbridge Processing GmbH - 510 068,CG0031,Foxbridge Processing GmbH,Food & Beverage,GB,NIG-510,DIRECT,60,2021-11-25,FALSE,TRUE
+C5100069,Ironside Water Partners - 510 069,CG0034,Ironside Water Partners,Mining & Minerals,GB,NIG-510,DIRECT,75,2023-09-08,FALSE,TRUE
+C5100070,Ashford Utilities Ltd. - 510 070,CG0026,Ashford Utilities Ltd.,Pulp & Paper,GB,NIG-510,DIRECT,60,2022-11-17,FALSE,TRUE
+C5100071,Kestrel Bay Industrial B.V. - 510 071,CG0036,Kestrel Bay Industrial B.V.,General Industrial,GB,NIG-510,DISTRIBUTOR,45,2021-09-10,FALSE,TRUE
+C5100072,Larkfield Chemicals Corporation - 510 072,CG0037,Larkfield Chemicals Corporation,Mining & Minerals,GB,NIG-510,DIRECT,90,2023-05-28,FALSE,TRUE
+C5100073,Ashford Chemicals Corporation - 510 073,CG0001,Ashford Chemicals Corporation,Mining & Minerals,GB,NIG-510,DISTRIBUTOR,60,2020-08-03,TRUE,TRUE
+C5100074,Thornbury Refining Industries - 510 074,CG0020,Thornbury Refining Industries,Pulp & Paper,GB,NIG-510,DIRECT,90,2022-12-16,TRUE,TRUE
+C5100075,Baytown Utilities Ltd. - 510 075,CG0002,Baytown Utilities Ltd.,Chemicals,GB,NIG-510,DISTRIBUTOR,90,2020-06-29,TRUE,TRUE
+C5100076,Meridian Park Chemicals Corporation - 510 076,CG0013,Meridian Park Chemicals Corporation,Chemicals,GB,NIG-510,DIRECT,75,2019-01-18,TRUE,TRUE
+C5100077,Eastgate Water Partners - 510 077,CG0130,Eastgate Water Partners,Power Generation,GB,NIG-510,DISTRIBUTOR,60,2022-08-18,FALSE,TRUE
+C5100078,Baytown Utilities Ltd. - 510 078,CG0002,Baytown Utilities Ltd.,Chemicals,GB,NIG-510,DIRECT,45,2019-05-31,TRUE,TRUE
+C5100079,Oakfield Petrochemical plc - 510 079,CG0065,Oakfield Petrochemical plc,Mining & Minerals,GB,NIG-510,DIRECT,45,2019-09-26,FALSE,TRUE
+C5100080,Foxbridge Metals LLC - 510 080,CG0006,Foxbridge Metals LLC,Pulp & Paper,GB,NIG-510,DIRECT,60,2020-07-17,TRUE,TRUE
+C5100081,Redmond Refining Industries - 510 081,CG0068,Redmond Refining Industries,Water Treatment,GB,NIG-510,DIRECT,30,2022-05-01,FALSE,TRUE
+C2200001,Baytown Refining Industries - 220 001,CG0152,Baytown Refining Industries,Food & Beverage,DE,NIG-220,DIRECT,45,2023-01-29,FALSE,TRUE
+C2200002,Delta Point Petrochemical plc - 220 002,CG0029,Delta Point Petrochemical plc,General Industrial,DE,NIG-220,DIRECT,45,2022-05-14,FALSE,TRUE
+C2200003,Cedar Ridge Metals LLC - 220 003,CG0078,Cedar Ridge Metals LLC,Water Treatment,DE,NIG-220,DISTRIBUTOR,75,2020-03-24,FALSE,TRUE
+C2200004,Ashford Chemicals Corporation - 220 004,CG0001,Ashford Chemicals Corporation,Pulp & Paper,DE,NIG-220,DIRECT,30,2019-02-22,TRUE,TRUE
+C2200005,Kestrel Bay Paper Inc. - 220 005,CG0011,Kestrel Bay Paper Inc.,Refining & Petrochemical,DE,NIG-220,DIRECT,45,2019-03-02,TRUE,TRUE
+C2200006,Baytown Utilities Ltd. - 220 006,CG0002,Baytown Utilities Ltd.,Power Generation,DE,NIG-220,DISTRIBUTOR,45,2023-01-13,TRUE,TRUE
+C2200007,Ashford Metals LLC - 220 007,CG0126,Ashford Metals LLC,Chemicals,DE,NIG-220,DISTRIBUTOR,45,2022-09-29,FALSE,TRUE
+C2200008,Quarry Hill Chemicals Corporation - 220 008,CG0217,Quarry Hill Chemicals Corporation,Chemicals,DE,NIG-220,DIRECT,90,2022-04-26,FALSE,TRUE
+C2200009,Kestrel Bay Paper Inc. - 220 009,CG0011,Kestrel Bay Paper Inc.,Pulp & Paper,DE,NIG-220,DISTRIBUTOR,30,2021-07-11,TRUE,TRUE
+C2200010,Vale Paper Inc. - 220 010,CG0047,Vale Paper Inc.,Pulp & Paper,DE,NIG-220,DISTRIBUTOR,75,2021-07-30,FALSE,TRUE
+C2200011,Baytown Utilities Ltd. - 220 011,CG0002,Baytown Utilities Ltd.,Pulp & Paper,DE,NIG-220,DIRECT,75,2023-08-24,TRUE,TRUE
+C2200012,Ashford Chemicals Corporation - 220 012,CG0001,Ashford Chemicals Corporation,Pulp & Paper,DE,NIG-220,DIRECT,30,2020-12-30,TRUE,TRUE
+C2200013,Northbrook Foods Group - 220 013,CG0064,Northbrook Foods Group,Refining & Petrochemical,DE,NIG-220,DISTRIBUTOR,60,2022-11-30,FALSE,TRUE
+C2200014,Upton Paper Inc. - 220 014,CG0071,Upton Paper Inc.,Refining & Petrochemical,DE,NIG-220,DIRECT,45,2022-05-31,FALSE,TRUE
+C2200015,Cedar Ridge Energy Works - 220 015,CG0003,Cedar Ridge Energy Works,Pharmaceutical,DE,NIG-220,DISTRIBUTOR,45,2023-02-19,TRUE,TRUE
+C2200016,Thornbury Refining Industries - 220 016,CG0020,Thornbury Refining Industries,Refining & Petrochemical,DE,NIG-220,DIRECT,75,2021-09-18,TRUE,TRUE
+C2200017,Foxbridge Processing GmbH - 220 017,CG0031,Foxbridge Processing GmbH,Pulp & Paper,DE,NIG-220,DISTRIBUTOR,60,2024-05-06,FALSE,TRUE
+C2200018,Vale Water Partners - 220 018,CG0022,Vale Water Partners,Water Treatment,DE,NIG-220,DIRECT,90,2022-10-23,TRUE,TRUE
+C2200019,Stonebridge Energy Works - 220 019,CG0219,Stonebridge Energy Works,Water Treatment,DE,NIG-220,DIRECT,90,2024-03-30,FALSE,TRUE
+C2200020,Granville Processing GmbH - 220 020,CG0007,Granville Processing GmbH,Power Generation,DE,NIG-220,DISTRIBUTOR,90,2024-03-13,TRUE,TRUE
+C2200021,Larkfield Minerals Holdings - 220 021,CG0237,Larkfield Minerals Holdings,Water Treatment,DE,NIG-220,DIRECT,30,2022-03-30,FALSE,TRUE
+C2200022,Granville Refining Industries - 220 022,CG0032,Granville Refining Industries,Pharmaceutical,DE,NIG-220,DIRECT,90,2022-08-15,FALSE,TRUE
+C2200023,Redmond Metals LLC - 220 023,CG0018,Redmond Metals LLC,General Industrial,DE,NIG-220,DIRECT,30,2024-11-24,TRUE,TRUE
+C2200024,Cedar Ridge Foods Group - 220 024,CG0028,Cedar Ridge Foods Group,Refining & Petrochemical,DE,NIG-220,DIRECT,30,2023-01-11,FALSE,TRUE
+C2200025,Kestrel Bay Utilities Ltd. - 220 025,CG0086,Kestrel Bay Utilities Ltd.,Mining & Minerals,DE,NIG-220,DIRECT,45,2020-04-04,FALSE,TRUE
+C2200026,Larkfield Foods Group - 220 026,CG0112,Larkfield Foods Group,Water Treatment,DE,NIG-220,DIRECT,90,2021-12-20,FALSE,TRUE
+C2200027,Quarry Hill Water Partners - 220 027,CG0142,Quarry Hill Water Partners,Chemicals,DE,NIG-220,DISTRIBUTOR,30,2024-05-14,FALSE,TRUE
+C2200028,Ironside Minerals Holdings - 220 028,CG0009,Ironside Minerals Holdings,Pulp & Paper,DE,NIG-220,DIRECT,60,2020-11-21,TRUE,TRUE
+C2200029,Cedar Ridge Energy Works - 220 029,CG0003,Cedar Ridge Energy Works,Pharmaceutical,DE,NIG-220,DIRECT,45,2019-08-28,TRUE,TRUE
+C2200030,Cedar Ridge Metals LLC - 220 030,CG0078,Cedar Ridge Metals LLC,Chemicals,DE,NIG-220,DIRECT,45,2022-01-08,FALSE,TRUE
+C2200031,Pinehurst Foods Group - 220 031,CG0016,Pinehurst Foods Group,Chemicals,DE,NIG-220,DIRECT,45,2024-06-03,TRUE,TRUE
+C2200032,Juniper Water Partners - 220 032,CG0010,Juniper Water Partners,Water Treatment,DE,NIG-220,DIRECT,75,2020-12-01,TRUE,TRUE
+C2200033,Baytown Utilities Ltd. - 220 033,CG0002,Baytown Utilities Ltd.,Water Treatment,DE,NIG-220,DIRECT,60,2021-05-26,TRUE,TRUE
+C2200034,Eastgate Petrochemical plc - 220 034,CG0005,Eastgate Petrochemical plc,Chemicals,DE,NIG-220,DIRECT,45,2019-06-07,TRUE,TRUE
+C2200035,Vale Metals LLC - 220 035,CG0222,Vale Metals LLC,Pharmaceutical,DE,NIG-220,DISTRIBUTOR,30,2019-01-05,FALSE,TRUE
+C2200036,Baytown Energy Works - 220 036,CG0027,Baytown Energy Works,Pulp & Paper,DE,NIG-220,DISTRIBUTOR,30,2019-06-15,FALSE,TRUE
+C2200037,Quarry Hill Petrochemical plc - 220 037,CG0017,Quarry Hill Petrochemical plc,Pharmaceutical,DE,NIG-220,DIRECT,45,2022-05-12,TRUE,TRUE
+C2200038,Baytown Utilities Ltd. - 220 038,CG0002,Baytown Utilities Ltd.,Chemicals,DE,NIG-220,DIRECT,45,2024-09-06,TRUE,TRUE
+C2200039,Harlow Refining Industries - 220 039,CG0008,Harlow Refining Industries,Refining & Petrochemical,DE,NIG-220,DIRECT,60,2023-03-11,TRUE,TRUE
+C2200040,Baytown Utilities Ltd. - 220 040,CG0002,Baytown Utilities Ltd.,Mining & Minerals,DE,NIG-220,DISTRIBUTOR,90,2022-07-30,TRUE,TRUE
+C2200041,Redmond Utilities Ltd. - 220 041,CG0218,Redmond Utilities Ltd.,Food & Beverage,DE,NIG-220,DIRECT,60,2023-02-24,FALSE,TRUE
+C2200042,Yarrow Energy Works - 220 042,CG0099,Yarrow Energy Works,Pulp & Paper,DE,NIG-220,DIRECT,30,2023-05-18,FALSE,TRUE
+C2200043,Vale Energy Works - 220 043,CG0147,Vale Energy Works,Pharmaceutical,DE,NIG-220,DISTRIBUTOR,45,2023-04-03,FALSE,TRUE
+C2200044,Kestrel Bay Paper Inc. - 220 044,CG0011,Kestrel Bay Paper Inc.,Mining & Minerals,DE,NIG-220,DISTRIBUTOR,60,2021-08-23,TRUE,TRUE
+C2200045,Vale Water Partners - 220 045,CG0022,Vale Water Partners,Pharmaceutical,DE,NIG-220,DISTRIBUTOR,60,2022-01-11,TRUE,TRUE
+C2200046,Ashford Chemicals Corporation - 220 046,CG0001,Ashford Chemicals Corporation,Chemicals,DE,NIG-220,DIRECT,90,2023-09-18,TRUE,TRUE
+C2200047,Yarrow Industrial B.V. - 220 047,CG0024,Yarrow Industrial B.V.,Food & Beverage,DE,NIG-220,DISTRIBUTOR,75,2021-01-05,TRUE,TRUE
+C2200048,Foxbridge Water Partners - 220 048,CG0106,Foxbridge Water Partners,General Industrial,DE,NIG-220,DIRECT,45,2024-09-03,FALSE,TRUE
+C2200049,Redmond Processing GmbH - 220 049,CG0043,Redmond Processing GmbH,General Industrial,DE,NIG-220,DISTRIBUTOR,60,2024-11-08,FALSE,TRUE
+C2200050,Granville Industrial B.V. - 220 050,CG0132,Granville Industrial B.V.,Pulp & Paper,DE,NIG-220,DIRECT,45,2022-01-12,FALSE,TRUE
+C2200051,Northbrook Energy Works - 220 051,CG0039,Northbrook Energy Works,Chemicals,DE,NIG-220,DISTRIBUTOR,30,2022-10-25,FALSE,TRUE
+C2200052,Delta Point Foods Group - 220 052,CG0004,Delta Point Foods Group,Mining & Minerals,DE,NIG-220,DIRECT,45,2024-12-06,TRUE,TRUE
+C2200053,Zenith Foods Group - 220 053,CG0100,Zenith Foods Group,Chemicals,DE,NIG-220,DIRECT,30,2023-11-10,FALSE,TRUE
+C2200054,Meridian Park Utilities Ltd. - 220 054,CG0038,Meridian Park Utilities Ltd.,Power Generation,DE,NIG-220,DISTRIBUTOR,45,2021-10-15,FALSE,TRUE
+C2200055,Eastgate Refining Industries - 220 055,CG0080,Eastgate Refining Industries,General Industrial,DE,NIG-220,DIRECT,60,2025-06-25,FALSE,TRUE
+C2200056,Ironside Chemicals Corporation - 220 056,CG0109,Ironside Chemicals Corporation,Water Treatment,DE,NIG-220,DIRECT,60,2024-09-20,FALSE,TRUE
+C2200057,Ashford Chemicals Corporation - 220 057,CG0001,Ashford Chemicals Corporation,Power Generation,DE,NIG-220,DISTRIBUTOR,60,2024-05-07,TRUE,TRUE
+C2200058,Meridian Park Petrochemical plc - 220 058,CG0113,Meridian Park Petrochemical plc,Pulp & Paper,DE,NIG-220,DIRECT,90,2022-04-30,FALSE,TRUE
+C2200059,Zenith Processing GmbH - 220 059,CG0175,Zenith Processing GmbH,Refining & Petrochemical,DE,NIG-220,DIRECT,30,2023-10-10,FALSE,TRUE
+C2200060,Foxbridge Processing GmbH - 220 060,CG0031,Foxbridge Processing GmbH,Pharmaceutical,DE,NIG-220,DIRECT,30,2019-05-30,FALSE,TRUE
+C2200061,Meridian Park Utilities Ltd. - 220 061,CG0038,Meridian Park Utilities Ltd.,Pulp & Paper,DE,NIG-220,DIRECT,60,2023-07-10,FALSE,TRUE
+C2200062,Ashford Chemicals Corporation - 220 062,CG0001,Ashford Chemicals Corporation,Chemicals,DE,NIG-220,DIRECT,45,2024-06-26,TRUE,TRUE
+C2200063,Baytown Petrochemical plc - 220 063,CG0077,Baytown Petrochemical plc,General Industrial,DE,NIG-220,DISTRIBUTOR,45,2023-01-27,FALSE,TRUE
+C2200064,Ashford Paper Inc. - 220 064,CG0251,Ashford Paper Inc.,Pharmaceutical,DE,NIG-220,DIRECT,75,2022-07-28,FALSE,TRUE
+C2200065,Harlow Utilities Ltd. - 220 065,CG0158,Harlow Utilities Ltd.,General Industrial,DE,NIG-220,DIRECT,75,2020-10-22,FALSE,TRUE
+C2200066,Zenith Energy Works - 220 066,CG0075,Zenith Energy Works,Mining & Minerals,DE,NIG-220,DIRECT,30,2019-01-23,FALSE,TRUE
+C2200067,Ashford Chemicals Corporation - 220 067,CG0001,Ashford Chemicals Corporation,Food & Beverage,DE,NIG-220,DIRECT,30,2024-10-17,TRUE,TRUE
+C2200068,Cedar Ridge Energy Works - 220 068,CG0003,Cedar Ridge Energy Works,General Industrial,DE,NIG-220,DIRECT,45,2021-08-11,TRUE,TRUE
+C2200069,Harlow Minerals Holdings - 220 069,CG0033,Harlow Minerals Holdings,Water Treatment,DE,NIG-220,DIRECT,60,2025-02-27,FALSE,TRUE
+C2200070,Yarrow Utilities Ltd. - 220 070,CG0074,Yarrow Utilities Ltd.,Chemicals,DE,NIG-220,DIRECT,60,2021-03-01,FALSE,TRUE
+C2200071,Cedar Ridge Energy Works - 220 071,CG0003,Cedar Ridge Energy Works,Food & Beverage,DE,NIG-220,DIRECT,90,2023-05-18,TRUE,TRUE
+C2200072,Oakfield Industrial B.V. - 220 072,CG0240,Oakfield Industrial B.V.,General Industrial,DE,NIG-220,DIRECT,45,2022-03-11,FALSE,TRUE
+C2200073,Ironside Minerals Holdings - 220 073,CG0009,Ironside Minerals Holdings,Pulp & Paper,DE,NIG-220,DIRECT,75,2020-09-22,TRUE,TRUE
+C2200074,Thornbury Refining Industries - 220 074,CG0020,Thornbury Refining Industries,General Industrial,DE,NIG-220,DISTRIBUTOR,60,2019-05-14,TRUE,TRUE
+C2200075,Granville Water Partners - 220 075,CG0082,Granville Water Partners,General Industrial,DE,NIG-220,DIRECT,75,2019-12-24,FALSE,TRUE
+C2200076,Granville Processing GmbH - 220 076,CG0007,Granville Processing GmbH,Refining & Petrochemical,DE,NIG-220,DISTRIBUTOR,30,2023-06-03,TRUE,TRUE
+C2200077,Granville Utilities Ltd. - 220 077,CG0182,Granville Utilities Ltd.,Power Generation,DE,NIG-220,DIRECT,75,2022-02-02,FALSE,TRUE
+C2200078,Quarry Hill Processing GmbH - 220 078,CG0067,Quarry Hill Processing GmbH,Refining & Petrochemical,DE,NIG-220,DIRECT,30,2020-01-19,FALSE,TRUE
+C2200079,Zenith Foods Group - 220 079,CG0100,Zenith Foods Group,Power Generation,DE,NIG-220,DIRECT,90,2024-09-10,FALSE,TRUE
+C2200080,Delta Point Foods Group - 220 080,CG0004,Delta Point Foods Group,Power Generation,DE,NIG-220,DIRECT,60,2021-10-19,TRUE,TRUE
+C2200081,Ashford Chemicals Corporation - 220 081,CG0001,Ashford Chemicals Corporation,Pulp & Paper,DE,NIG-220,DIRECT,75,2020-09-27,TRUE,TRUE
+C2200082,Upton Utilities Ltd. - 220 082,CG0146,Upton Utilities Ltd.,Power Generation,DE,NIG-220,DISTRIBUTOR,30,2021-01-31,FALSE,TRUE
+C2200083,Oakfield Energy Works - 220 083,CG0015,Oakfield Energy Works,Chemicals,DE,NIG-220,DIRECT,60,2020-02-19,TRUE,TRUE
+C2200084,Baytown Utilities Ltd. - 220 084,CG0002,Baytown Utilities Ltd.,Water Treatment,DE,NIG-220,DIRECT,30,2024-10-19,TRUE,TRUE
+C2200085,Ashford Chemicals Corporation - 220 085,CG0001,Ashford Chemicals Corporation,Power Generation,DE,NIG-220,DIRECT,30,2024-08-11,TRUE,TRUE
+C2200086,Yarrow Industrial B.V. - 220 086,CG0024,Yarrow Industrial B.V.,Food & Beverage,DE,NIG-220,DIRECT,60,2021-10-07,TRUE,TRUE
+C2200087,Northbrook Energy Works - 220 087,CG0039,Northbrook Energy Works,Food & Beverage,DE,NIG-220,DIRECT,75,2020-02-12,FALSE,TRUE
+C2200088,Delta Point Paper Inc. - 220 088,CG0179,Delta Point Paper Inc.,Pharmaceutical,DE,NIG-220,DISTRIBUTOR,75,2023-04-15,FALSE,TRUE
+C4100001,Eastgate Metals LLC - 410 001,CG0030,Eastgate Metals LLC,General Industrial,NL,NIG-410,DISTRIBUTOR,45,2023-05-23,FALSE,TRUE
+C4100002,Harlow Refining Industries - 410 002,CG0008,Harlow Refining Industries,Power Generation,NL,NIG-410,DIRECT,75,2024-03-20,TRUE,TRUE
+C4100003,Northbrook Utilities Ltd. - 410 003,CG0014,Northbrook Utilities Ltd.,Water Treatment,NL,NIG-410,DIRECT,45,2020-10-20,TRUE,TRUE
+C4100004,Thornbury Minerals Holdings - 410 004,CG0045,Thornbury Minerals Holdings,Pulp & Paper,NL,NIG-410,DIRECT,60,2019-09-10,FALSE,TRUE
+C4100005,Juniper Refining Industries - 410 005,CG0260,Juniper Refining Industries,General Industrial,NL,NIG-410,DIRECT,45,2024-06-21,FALSE,TRUE
+C4100006,Ironside Petrochemical plc - 410 006,CG0209,Ironside Petrochemical plc,Pulp & Paper,NL,NIG-410,DIRECT,90,2020-07-21,FALSE,TRUE
+C4100007,Eastgate Petrochemical plc - 410 007,CG0005,Eastgate Petrochemical plc,Power Generation,NL,NIG-410,DIRECT,90,2019-11-01,TRUE,TRUE
+C4100008,Ashford Energy Works - 410 008,CG0051,Ashford Energy Works,Chemicals,NL,NIG-410,DIRECT,60,2021-08-30,FALSE,TRUE
+C4100009,Larkfield Industrial B.V. - 410 009,CG0012,Larkfield Industrial B.V.,General Industrial,NL,NIG-410,DIRECT,75,2019-05-11,TRUE,TRUE
+C4100010,Baytown Industrial B.V. - 410 010,CG0252,Baytown Industrial B.V.,Water Treatment,NL,NIG-410,DIRECT,90,2024-02-27,FALSE,TRUE
+C4100011,Upton Utilities Ltd. - 410 011,CG0146,Upton Utilities Ltd.,Refining & Petrochemical,NL,NIG-410,DIRECT,60,2021-11-14,FALSE,TRUE
+C4100012,Baytown Utilities Ltd. - 410 012,CG0002,Baytown Utilities Ltd.,Water Treatment,NL,NIG-410,DIRECT,30,2020-01-17,TRUE,TRUE
+C4100013,Thornbury Industrial B.V. - 410 013,CG0120,Thornbury Industrial B.V.,Chemicals,NL,NIG-410,DIRECT,45,2025-07-06,FALSE,TRUE
+C4100014,Stonebridge Utilities Ltd. - 410 014,CG0194,Stonebridge Utilities Ltd.,Pharmaceutical,NL,NIG-410,DIRECT,30,2019-03-17,FALSE,TRUE
+C4100015,Baytown Foods Group - 410 015,CG0052,Baytown Foods Group,Chemicals,NL,NIG-410,DIRECT,75,2021-04-10,FALSE,TRUE
+C4100016,Foxbridge Metals LLC - 410 016,CG0006,Foxbridge Metals LLC,Chemicals,NL,NIG-410,DISTRIBUTOR,60,2020-05-19,TRUE,TRUE
+C4100017,Ashford Chemicals Corporation - 410 017,CG0001,Ashford Chemicals Corporation,Food & Beverage,NL,NIG-410,DIRECT,30,2022-06-25,TRUE,TRUE
+C4100018,Foxbridge Metals LLC - 410 018,CG0006,Foxbridge Metals LLC,General Industrial,NL,NIG-410,DIRECT,90,2023-07-09,TRUE,TRUE
+C4100019,Ironside Minerals Holdings - 410 019,CG0009,Ironside Minerals Holdings,General Industrial,NL,NIG-410,DIRECT,60,2024-01-27,TRUE,TRUE
+C4100020,Pinehurst Minerals Holdings - 410 020,CG0141,Pinehurst Minerals Holdings,Power Generation,NL,NIG-410,DIRECT,60,2021-12-17,FALSE,TRUE
+C4100021,Delta Point Foods Group - 410 021,CG0004,Delta Point Foods Group,General Industrial,NL,NIG-410,DISTRIBUTOR,90,2020-04-28,TRUE,TRUE
+C4100022,Meridian Park Processing GmbH - 410 022,CG0163,Meridian Park Processing GmbH,General Industrial,NL,NIG-410,DIRECT,60,2023-05-03,FALSE,TRUE
+C4100023,Ashford Paper Inc. - 410 023,CG0251,Ashford Paper Inc.,Mining & Minerals,NL,NIG-410,DIRECT,75,2020-10-27,FALSE,TRUE
+C4100024,Foxbridge Metals LLC - 410 024,CG0006,Foxbridge Metals LLC,Refining & Petrochemical,NL,NIG-410,DISTRIBUTOR,45,2022-03-13,TRUE,TRUE
+C4100025,Kestrel Bay Paper Inc. - 410 025,CG0011,Kestrel Bay Paper Inc.,Mining & Minerals,NL,NIG-410,DIRECT,45,2022-07-15,TRUE,TRUE
+C4100026,Baytown Energy Works - 410 026,CG0027,Baytown Energy Works,Mining & Minerals,NL,NIG-410,DISTRIBUTOR,75,2021-05-27,FALSE,TRUE
+C4100027,Ashford Chemicals Corporation - 410 027,CG0001,Ashford Chemicals Corporation,Refining & Petrochemical,NL,NIG-410,DISTRIBUTOR,30,2019-04-05,TRUE,TRUE
+C4100028,Upton Minerals Holdings - 410 028,CG0021,Upton Minerals Holdings,Food & Beverage,NL,NIG-410,DIRECT,60,2019-03-11,TRUE,TRUE
+C4100029,Granville Processing GmbH - 410 029,CG0007,Granville Processing GmbH,Water Treatment,NL,NIG-410,DISTRIBUTOR,75,2021-03-13,TRUE,TRUE
+C4100030,Vale Chemicals Corporation - 410 030,CG0097,Vale Chemicals Corporation,Mining & Minerals,NL,NIG-410,DIRECT,60,2020-08-07,FALSE,TRUE
+C4100031,Meridian Park Utilities Ltd. - 410 031,CG0038,Meridian Park Utilities Ltd.,Pharmaceutical,NL,NIG-410,DIRECT,75,2019-08-17,FALSE,TRUE
+C4100032,Granville Petrochemical plc - 410 032,CG0257,Granville Petrochemical plc,General Industrial,NL,NIG-410,DIRECT,60,2020-05-27,FALSE,TRUE
+C4100033,Meridian Park Chemicals Corporation - 410 033,CG0013,Meridian Park Chemicals Corporation,Chemicals,NL,NIG-410,DIRECT,90,2019-04-07,TRUE,TRUE
+C4100034,Cedar Ridge Processing GmbH - 410 034,CG0103,Cedar Ridge Processing GmbH,Pulp & Paper,NL,NIG-410,DISTRIBUTOR,90,2020-07-09,FALSE,TRUE
+C4100035,Baytown Utilities Ltd. - 410 035,CG0002,Baytown Utilities Ltd.,Food & Beverage,NL,NIG-410,DIRECT,75,2021-11-27,TRUE,TRUE
+C4100036,Upton Minerals Holdings - 410 036,CG0021,Upton Minerals Holdings,Water Treatment,NL,NIG-410,DIRECT,90,2022-10-29,TRUE,TRUE
+C4100037,Ironside Minerals Holdings - 410 037,CG0009,Ironside Minerals Holdings,Pulp & Paper,NL,NIG-410,DIRECT,75,2023-09-23,TRUE,TRUE
+C4100038,Vale Water Partners - 410 038,CG0022,Vale Water Partners,Food & Beverage,NL,NIG-410,DISTRIBUTOR,30,2019-03-16,TRUE,TRUE
+C4100039,Foxbridge Metals LLC - 410 039,CG0006,Foxbridge Metals LLC,Refining & Petrochemical,NL,NIG-410,DIRECT,45,2024-12-01,TRUE,TRUE
+C4100040,Harlow Minerals Holdings - 410 040,CG0033,Harlow Minerals Holdings,Refining & Petrochemical,NL,NIG-410,DIRECT,75,2020-12-26,FALSE,TRUE
+C4100041,Oakfield Foods Group - 410 041,CG0040,Oakfield Foods Group,Pharmaceutical,NL,NIG-410,DIRECT,30,2021-09-19,FALSE,TRUE
+C4100042,Kestrel Bay Utilities Ltd. - 410 042,CG0086,Kestrel Bay Utilities Ltd.,Power Generation,NL,NIG-410,DIRECT,60,2024-01-08,FALSE,TRUE
+C4100043,Foxbridge Metals LLC - 410 043,CG0006,Foxbridge Metals LLC,Mining & Minerals,NL,NIG-410,DISTRIBUTOR,75,2020-03-09,TRUE,TRUE
+C4100044,Meridian Park Utilities Ltd. - 410 044,CG0038,Meridian Park Utilities Ltd.,Water Treatment,NL,NIG-410,DISTRIBUTOR,30,2024-10-08,FALSE,TRUE
+C4100045,Oakfield Metals LLC - 410 045,CG0090,Oakfield Metals LLC,Power Generation,NL,NIG-410,DIRECT,90,2020-10-21,FALSE,TRUE
+C4100046,Northbrook Foods Group - 410 046,CG0064,Northbrook Foods Group,Water Treatment,NL,NIG-410,DISTRIBUTOR,45,2024-07-16,FALSE,TRUE
+C4100047,Ashford Chemicals Corporation - 410 047,CG0001,Ashford Chemicals Corporation,Chemicals,NL,NIG-410,DIRECT,30,2019-11-28,TRUE,TRUE
+C4100048,Northbrook Energy Works - 410 048,CG0039,Northbrook Energy Works,Power Generation,NL,NIG-410,DIRECT,75,2024-06-06,FALSE,TRUE
+C4100049,Yarrow Industrial B.V. - 410 049,CG0024,Yarrow Industrial B.V.,Refining & Petrochemical,NL,NIG-410,DIRECT,60,2019-12-24,TRUE,TRUE
+C4100050,Harlow Paper Inc. - 410 050,CG0083,Harlow Paper Inc.,Pharmaceutical,NL,NIG-410,DISTRIBUTOR,30,2024-05-28,FALSE,TRUE
+C4100051,Foxbridge Metals LLC - 410 051,CG0006,Foxbridge Metals LLC,Power Generation,NL,NIG-410,DIRECT,45,2022-06-21,TRUE,TRUE
+C4100052,Granville Processing GmbH - 410 052,CG0007,Granville Processing GmbH,Water Treatment,NL,NIG-410,DIRECT,30,2023-10-06,TRUE,TRUE
+C4100053,Larkfield Chemicals Corporation - 410 053,CG0037,Larkfield Chemicals Corporation,Water Treatment,NL,NIG-410,DIRECT,30,2024-05-18,FALSE,TRUE
+C4100054,Ashford Chemicals Corporation - 410 054,CG0001,Ashford Chemicals Corporation,Chemicals,NL,NIG-410,DIRECT,30,2024-04-18,TRUE,TRUE
+C4100055,Ashford Chemicals Corporation - 410 055,CG0001,Ashford Chemicals Corporation,Mining & Minerals,NL,NIG-410,DIRECT,30,2023-11-09,TRUE,TRUE
+C4100056,Yarrow Industrial B.V. - 410 056,CG0024,Yarrow Industrial B.V.,General Industrial,NL,NIG-410,DIRECT,60,2020-09-11,TRUE,TRUE
+C4100057,Ashford Chemicals Corporation - 410 057,CG0001,Ashford Chemicals Corporation,Water Treatment,NL,NIG-410,DIRECT,75,2023-01-08,TRUE,TRUE
+C4100058,Foxbridge Utilities Ltd. - 410 058,CG0206,Foxbridge Utilities Ltd.,General Industrial,NL,NIG-410,DIRECT,30,2020-08-14,FALSE,TRUE
+C4100059,Baytown Energy Works - 410 059,CG0027,Baytown Energy Works,Pharmaceutical,NL,NIG-410,DISTRIBUTOR,45,2019-10-03,FALSE,TRUE
+C4100060,Baytown Utilities Ltd. - 410 060,CG0002,Baytown Utilities Ltd.,General Industrial,NL,NIG-410,DIRECT,30,2022-12-29,TRUE,TRUE
+C4100061,Redmond Metals LLC - 410 061,CG0018,Redmond Metals LLC,Refining & Petrochemical,NL,NIG-410,DISTRIBUTOR,30,2021-06-21,TRUE,TRUE
+C4100062,Oakfield Minerals Holdings - 410 062,CG0165,Oakfield Minerals Holdings,General Industrial,NL,NIG-410,DIRECT,75,2020-11-28,FALSE,TRUE
+C4100063,Redmond Minerals Holdings - 410 063,CG0093,Redmond Minerals Holdings,Food & Beverage,NL,NIG-410,DIRECT,45,2024-04-09,FALSE,TRUE
+C4100064,Zenith Chemicals Corporation - 410 064,CG0025,Zenith Chemicals Corporation,Water Treatment,NL,NIG-410,DISTRIBUTOR,45,2021-03-27,TRUE,TRUE
+C4100065,Baytown Energy Works - 410 065,CG0027,Baytown Energy Works,Pulp & Paper,NL,NIG-410,DIRECT,45,2023-03-28,FALSE,TRUE
+C4100066,Pinehurst Foods Group - 410 066,CG0016,Pinehurst Foods Group,Food & Beverage,NL,NIG-410,DIRECT,90,2021-07-23,TRUE,TRUE
+C4100067,Foxbridge Utilities Ltd. - 410 067,CG0206,Foxbridge Utilities Ltd.,Pharmaceutical,NL,NIG-410,DIRECT,75,2023-04-20,FALSE,TRUE
+C4100068,Meridian Park Chemicals Corporation - 410 068,CG0013,Meridian Park Chemicals Corporation,Mining & Minerals,NL,NIG-410,DIRECT,60,2020-08-22,TRUE,TRUE
+C4100069,Ironside Metals LLC - 410 069,CG0234,Ironside Metals LLC,Refining & Petrochemical,NL,NIG-410,DIRECT,45,2025-01-28,FALSE,TRUE
+C4100070,Eastgate Petrochemical plc - 410 070,CG0005,Eastgate Petrochemical plc,Pulp & Paper,NL,NIG-410,DISTRIBUTOR,30,2020-01-13,TRUE,TRUE
+C4100071,Juniper Chemicals Corporation - 410 071,CG0085,Juniper Chemicals Corporation,Water Treatment,NL,NIG-410,DISTRIBUTOR,60,2025-02-14,FALSE,TRUE
+C4100072,Larkfield Industrial B.V. - 410 072,CG0012,Larkfield Industrial B.V.,Pharmaceutical,NL,NIG-410,DIRECT,90,2020-08-23,TRUE,TRUE
+C4100073,Larkfield Industrial B.V. - 410 073,CG0012,Larkfield Industrial B.V.,Pulp & Paper,NL,NIG-410,DIRECT,45,2020-06-07,TRUE,TRUE
+C4100074,Ashford Chemicals Corporation - 410 074,CG0001,Ashford Chemicals Corporation,Water Treatment,NL,NIG-410,DIRECT,60,2020-06-17,TRUE,TRUE
+C4100075,Ashford Chemicals Corporation - 410 075,CG0001,Ashford Chemicals Corporation,Mining & Minerals,NL,NIG-410,DIRECT,75,2023-09-19,TRUE,TRUE
+C4100076,Foxbridge Metals LLC - 410 076,CG0006,Foxbridge Metals LLC,Pulp & Paper,NL,NIG-410,DIRECT,90,2020-03-12,TRUE,TRUE
+C4100077,Zenith Chemicals Corporation - 410 077,CG0025,Zenith Chemicals Corporation,Chemicals,NL,NIG-410,DIRECT,30,2020-12-07,TRUE,TRUE
+C4100078,Baytown Utilities Ltd. - 410 078,CG0002,Baytown Utilities Ltd.,Food & Beverage,NL,NIG-410,DISTRIBUTOR,60,2020-11-10,TRUE,TRUE

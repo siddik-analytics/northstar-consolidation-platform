@@ -20,8 +20,8 @@ figure back to the source journal that produced it.
 |---|---|---|
 | **1 — Business design & architecture** | ✅ **Complete** | [Report](docs/phases/phase-01-report.md) |
 | **1.1 — Architecture correction pass** | ✅ **Complete** | [Report](docs/phases/phase-01-1-report.md) |
-| 2 — Synthetic source systems & reference data | ⏸ Awaiting approval | |
-| 3 — Ingestion, staging & COA harmonisation | ⏸ | |
+| **2 — Synthetic source systems & reference data** | ✅ **Complete** | [Report](docs/phases/phase-02-report.md) |
+| 3 — Ingestion, staging & COA harmonisation | ⏸ Awaiting approval | |
 | 4 — Consolidation engine | ⏸ | |
 | 5 — Reporting marts & control suite | ⏸ | |
 | 6 — Excel FP&A models | ⏸ | |
@@ -64,19 +64,27 @@ controls, 66 of them blocking, run at the point of the transformation they prote
 ```bash
 git clone <repository>
 cd northstar-consolidation-platform
-
 python -m pip install -r requirements.txt
 
 python src/anchors/build_anchors.py    # rebuild the financial anchors and their documentation
-python -m pytest tests -q              # validate every accounting identity and config seed
+python -m src.generation.build         # generate the source systems (~25 s, 1.08m journal lines)
+python -m src.generation.validate      # run the 57 source controls
+python -m src.generation.faults        # inject and detect the fault fixtures
+python -m pytest tests -q              # validate every accounting identity, seed and dataset
 ```
 
 Expected output:
 
 ```
 All integrity assertions passed (BS balances; CF ties to BS cash).
-197 passed
+57/57 controls passed
+10 fault fixtures written to data/faults/ ... all DETECTED
+258 passed
 ```
+
+The generated data is ~166 MB and is not committed — it rebuilds byte-for-byte from a fixed
+seed. The manifest, per-file checksums, control results and samples that prove that **are**
+committed.
 
 ---
 
@@ -92,7 +100,12 @@ config/          Version-controlled configuration — the platform's inputs
   entities/      Legal entity master and effective-dated ownership register
   fx/            FX translation policy
   ic/            Intercompany flow matrix
-data/            00_raw → 10_staging → 20_warehouse → 30_marts → 90_exports
+data/
+  raw/           Native ERP extracts, 507 files (generated, not committed)
+  reference/     Source masters, planning and subledger data
+  samples/       Committed extract samples and the build digest
+  faults/        Injected-fault variants and expected results
+  10_staging/    → 20_warehouse/ → 30_marts/ → 90_exports/  (Phases 3-5)
 docs/            Design documentation
   adr/           15 architecture decision records
   phases/        Roadmap and per-phase reports
@@ -117,6 +130,7 @@ tests/           Automated validation
 | [Financial anchors](docs/financial-anchors.md) | *Generated.* Three statements, KPIs, BU and entity anchors, FX, intercompany |
 | [Phase 1 report](docs/phases/phase-01-report.md) | What was built, and a critical self-audit that found nine defects |
 | [Phase 1.1 report](docs/phases/phase-01-1-report.md) | Architecture corrections applied at the approval gate |
+| [Phase 2 report](docs/phases/phase-02-report.md) | 1.08m journal lines generated, reconciled and controlled |
 
 | Design | |
 |---|---|
@@ -128,6 +142,9 @@ tests/           Automated validation
 | [FX and CTA policy](docs/fx-cta-policy.md) | Full translation policy and the deterministic CTA roll-forward |
 | [ADRs](docs/adr/README.md) | 15 decisions with their alternatives and consequences |
 | [Open questions](docs/open-questions.md) | 12 decisions; 4 closed at the Phase 1.1 review, 8 open with working assumptions |
+| [Source system design](docs/source-system-design.md) | The three ERPs, their formats and every deliberate difference |
+| [Synthetic data methodology](docs/synthetic-data-methodology.md) | How 1.08m balanced journal lines are generated deterministically |
+| [Source data dictionary](docs/source-data-dictionary.md) | Every generated dataset, its grain and its columns |
 | [Glossary](docs/glossary.md) | Terms and metric definitions |
 
 ---

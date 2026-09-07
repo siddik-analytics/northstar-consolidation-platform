@@ -599,6 +599,14 @@ PL_ROWS = [
     ("pbt", "Profit before tax"), ("tax", "Income tax expense/(benefit)"),
     ("net_income", "Net income"), ("nci", "Less: non-controlling interests"),
     ("ni_parent", "Net income attributable to the group"),
+    # Memo: the components of net interest, needed to build the instrument-level debt
+    # schedule and to allocate interest between Topco and the lessee entities.
+    ("interest_tlb", "Memo: interest expense - term loan"),
+    ("interest_rcf", "Memo: interest expense - revolving facility"),
+    ("interest_lease", "Memo: interest expense - finance leases"),
+    ("commitment_fee", "Memo: commitment and agency fees"),
+    ("dff_amortisation", "Memo: amortisation of deferred financing costs"),
+    ("interest_income", "Memo: interest income"),
 ]
 BS_ROWS = [
     ("cash", "Cash and cash equivalents"), ("ar", "Trade accounts receivable, net"),
@@ -754,6 +762,11 @@ def main():
     write_csv(ANCHOR_DIR / "anchor_intercompany.csv", ["measure"] + COLS,
               [[k] + [f"{v[c]:.3f}" for c in COLS] for k, v in IC_ANCHORS.items()])
 
+    # Opening balance sheet: already computed internally, now exported because Phase 2
+    # allocates it to entities as the starting point for the source ledgers.
+    write_csv(ANCHOR_DIR / "anchor_opening_balance_sheet.csv", ["line_item", "amount_usd_m"],
+              [[k, f"{v:.6f}"] for k, v in sorted(ob.items())])
+
     write_csv(ANCHOR_DIR / "anchor_cta_rollforward.csv", ["line_item", "label"] + COLS,
               [[k, lbl] + [f"{r.cta[k]:.6f}" for r in results] for k, lbl in CTA_ROWS])
 
@@ -790,7 +803,7 @@ def main():
     print("\nAll integrity assertions passed (BS balances; CF ties to BS cash).")
 
     render_markdown(results, ob)
-    print(f"Wrote docs/financial-anchors.md and 9 anchor CSVs to config/anchors/")
+    print(f"Wrote docs/financial-anchors.md and 10 anchor CSVs to config/anchors/")
 
 
 def render_markdown(results, ob):

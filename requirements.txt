@@ -1,9 +1,12 @@
-# Phase 1 dependencies. Pinned for reproducible builds.
+# Pinned for reproducible builds.
 pytest==8.3.4
 
-# Phase 2 onward (installed when those phases begin):
-# duckdb==1.1.3
-# pandas==2.2.3
-# pyarrow==18.1.0
+# Phase 2 generation
+numpy==2.5.3
+pandas==3.0.5
+pyarrow==25.0.1
+
+# Phase 3 onward (installed when those phases begin):
+duckdb==1.5.5
 # openpyxl==3.1.5
 # PyYAML==6.0.2

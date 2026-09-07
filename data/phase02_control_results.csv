@@ -1,0 +1,58 @@
+control_id,control_name,severity,status,measured,threshold,detail
+P2-SRC-01,Every journal entry balances,BLOCKING,PASS,0.0000,0.011,0 unbalanced of 540070
+P2-SRC-02,Entity trial balance closes to zero (generated),BLOCKING,PASS,0.0000,0.02,0 entity-periods out of balance of 507
+P2-SRC-03,Trial balance closes when re-derived from the NATIVE extracts,BLOCKING,PASS,0.0000,0.02,0 of 507 entity-periods; parses all three sign conventions
+P2-SRC-04,No duplicate journal line identifiers,BLOCKING,PASS,0,0,
+P2-SRC-05,All accounting periods valid and in range,BLOCKING,PASS,202301-202608,202301-202608,
+P2-REF-01,Every source account exists in its ERP chart,BLOCKING,PASS,0,0,
+P2-REF-02,Every entity is a real operating legal entity,BLOCKING,PASS,[],none,virtual elimination entities must never appear in a source extract
+P2-REF-03,Every cost centre exists in the cost centre master,BLOCKING,PASS,[],none,
+P2-REF-04,Intercompany partners valid and never self-referencing,BLOCKING,PASS,invalid=[] self=0,0,
+P2-REF-05,Currencies limited to the approved set,BLOCKING,PASS,[],USD/CAD/GBP/EUR,
+P2-CMP-01,Every entity has every period from its effective date,BLOCKING,PASS,0,0,[]
+P2-CMP-02,No entity posts before its consolidation effective date,BLOCKING,PASS,0,0,
+P2-CMP-03,All approved plan versions generated,BLOCKING,PASS,"['BUD_FY26_V1', 'FC_FY26_02', 'FC_FY26_05', 'FC_FY26_08']","['BUD_FY26_V1', 'FC_FY26_02', 'FC_FY26_05', 'FC_FY26_08']",
+P2-CMP-04,Reserved Downside scenario not populated,BLOCKING,PASS,[],none,
+P2-CMP-05,FX rates complete for every currency and period,BLOCKING,PASS,0,0,
+P2-ANC-REV-2023,revenue reconciles to the source-layer target (2023),BLOCKING,PASS,365.780,365.780,deviation 0.0000% (tolerance 0.5%)
+P2-ANC-COS-2023,cost_of_sales reconciles to the source-layer target (2023),BLOCKING,PASS,265.560,265.560,deviation 0.0000% (tolerance 0.5%)
+P2-ANC-OPE-2023,opex reconciles to the source-layer target (2023),BLOCKING,PASS,70.980,70.980,deviation 0.0000% (tolerance 0.5%)
+P2-ANC-REV-2024,revenue reconciles to the source-layer target (2024),BLOCKING,PASS,415.774,415.774,deviation 0.0000% (tolerance 0.5%)
+P2-ANC-COS-2024,cost_of_sales reconciles to the source-layer target (2024),BLOCKING,PASS,300.726,300.726,deviation 0.0000% (tolerance 0.5%)
+P2-ANC-OPE-2024,opex reconciles to the source-layer target (2024),BLOCKING,PASS,76.074,76.074,deviation 0.0000% (tolerance 0.5%)
+P2-ANC-REV-2025,revenue reconciles to the source-layer target (2025),BLOCKING,PASS,462.635,462.635,deviation 0.0000% (tolerance 0.5%)
+P2-ANC-COS-2025,cost_of_sales reconciles to the source-layer target (2025),BLOCKING,PASS,332.555,332.555,deviation 0.0000% (tolerance 0.5%)
+P2-ANC-OPE-2025,opex reconciles to the source-layer target (2025),BLOCKING,PASS,78.735,78.735,deviation 0.0000% (tolerance 0.5%)
+P2-ANC-BS-AR-2023,ar reconciles to the source-layer target (2023),BLOCKING,PASS,55.715,55.715,deviation 0.0000% (tolerance 1.0%)
+P2-ANC-BS-INVE-2023,inventory reconciles to the source-layer target (2023),BLOCKING,PASS,36.161,36.161,deviation 0.0000% (tolerance 1.0%)
+P2-ANC-BS-AP-2023,ap reconciles to the source-layer target (2023),BLOCKING,PASS,-29.775,29.775,deviation 0.0000% (tolerance 1.0%)
+P2-ANC-BS-CASH-2023,cash reconciles to the source-layer target (2023),BLOCKING,PASS,15.000,15.000,deviation 0.0000% (tolerance 1.0%)
+P2-ANC-BS-PPE_-2023,ppe_net reconciles to the source-layer target (2023),BLOCKING,PASS,77.200,77.200,deviation 0.0000% (tolerance 1.0%)
+P2-ANC-BS-CONT-2023,contract_assets reconciles to the source-layer target (2023),BLOCKING,PASS,7.512,7.512,deviation 0.0000% (tolerance 1.0%)
+P2-ANC-BS-PREP-2023,prepaid reconciles to the source-layer target (2023),BLOCKING,PASS,6.560,6.560,deviation 0.0000% (tolerance 1.0%)
+P2-ANC-BS-AR-2024,ar reconciles to the source-layer target (2024),BLOCKING,PASS,61.052,61.052,deviation 0.0000% (tolerance 1.0%)
+P2-ANC-BS-INVE-2024,inventory reconciles to the source-layer target (2024),BLOCKING,PASS,39.268,39.268,deviation 0.0000% (tolerance 1.0%)
+P2-ANC-BS-AP-2024,ap reconciles to the source-layer target (2024),BLOCKING,PASS,-34.984,34.984,deviation 0.0000% (tolerance 1.0%)
+P2-ANC-BS-CASH-2024,cash reconciles to the source-layer target (2024),BLOCKING,PASS,15.000,15.000,deviation 0.0000% (tolerance 1.0%)
+P2-ANC-BS-PPE_-2024,ppe_net reconciles to the source-layer target (2024),BLOCKING,PASS,87.500,87.500,deviation 0.0000% (tolerance 1.0%)
+P2-ANC-BS-CONT-2024,contract_assets reconciles to the source-layer target (2024),BLOCKING,PASS,8.206,8.206,deviation 0.0000% (tolerance 1.0%)
+P2-ANC-BS-PREP-2024,prepaid reconciles to the source-layer target (2024),BLOCKING,PASS,7.428,7.428,deviation 0.0000% (tolerance 1.0%)
+P2-ANC-BS-AR-2025,ar reconciles to the source-layer target (2025),BLOCKING,PASS,65.484,65.484,deviation 0.0000% (tolerance 1.0%)
+P2-ANC-BS-INVE-2025,inventory reconciles to the source-layer target (2025),BLOCKING,PASS,40.803,40.803,deviation 0.0000% (tolerance 1.0%)
+P2-ANC-BS-AP-2025,ap reconciles to the source-layer target (2025),BLOCKING,PASS,-40.103,40.103,deviation 0.0000% (tolerance 1.0%)
+P2-ANC-BS-CASH-2025,cash reconciles to the source-layer target (2025),BLOCKING,PASS,22.000,22.000,deviation 0.0000% (tolerance 1.0%)
+P2-ANC-BS-PPE_-2025,ppe_net reconciles to the source-layer target (2025),BLOCKING,PASS,95.200,95.200,deviation 0.0000% (tolerance 1.0%)
+P2-ANC-BS-CONT-2025,contract_assets reconciles to the source-layer target (2025),BLOCKING,PASS,8.901,8.901,deviation 0.0000% (tolerance 1.0%)
+P2-ANC-BS-PREP-2025,prepaid reconciles to the source-layer target (2025),BLOCKING,PASS,8.242,8.242,deviation 0.0000% (tolerance 1.0%)
+P2-REC-01,Revenue detail reconciles to the general ledger,BLOCKING,PASS,0.0000,0.05,"per entity and period, ADR-0008"
+P2-REC-02,Headcount reconciles to the anchor,WARNING,PASS,2467,2450,deviation 0.69% (tolerance 5%)
+P2-REC-03,Fixed asset register agrees with capital project spend,BLOCKING,PASS,42353508.58,42353508.58,
+P2-REC-04,Debt schedule agrees with the anchored term loan balance,BLOCKING,PASS,226.600,226.600,
+P2-IC-01,Intercompany pairs match in USD before injected faults,BLOCKING,PASS,0.0000,1.00,905 entity-pair-periods
+P2-SCN-01,Forecast actual months equal the Actual scenario,BLOCKING,PASS,0.0100,0.05,CTL-SCN-02
+P2-FMT-01,Kestrel uses special period 13 for year-end adjustments,BLOCKING,PASS,542,>0,
+P2-FMT-02,Kestrel account keys retain leading zeros,BLOCKING,PASS,1737,>0,
+P2-FMT-03,The three source charts remain genuinely different,BLOCKING,PASS,[],no shared codes,
+P2-BR-01,No entity runs a materially negative bank balance,WARNING,PASS,0,0,
+P2-BR-02,Amounts are not implausibly round,WARNING,PASS,0.01%,<5%,round-thousand postings as a share of all lines
+P2-BR-03,Posting dates concentrate on working days,WARNING,PASS,1.63%,<12%,
