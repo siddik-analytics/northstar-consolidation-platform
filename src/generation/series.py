@@ -15,9 +15,20 @@ import numpy as np
 
 from .common import (ACTUAL_PERIODS, Period, allocate_exact, build_periods,
                      plan_periods, rng, seasonal_shape)
-from .ledger import (CAPTION_SPLIT, ENTITY_CAPITAL, INVESTMENTS, KESTREL_ENTITIES,
+from . import bsdrivers as bd
+from .ledger import (CAPTION_SPLIT, ENTITY_CAPITAL, KESTREL_ENTITIES, split_for,
                      LedgerBuilder, PPE_CLASSES)
-from .model import EconomicModel
+from .investments import investments_at
+from .model import DPO_TILT, DSO_TILT, EconomicModel
+
+# Minimum operating liquidity the group holds at any month end, and the headroom it keeps
+# above that when it goes to the facility.  A borrowing request is not made for the exact
+# shortfall; it is made for the shortfall plus a working buffer.
+MIN_GROUP_CASH_USD = 8_000_000.0
+CASH_BUFFER_USD = 4_000_000.0
+
+# Facility size from the credit agreement, mirrored in the anchor model.
+RCF_COMMITMENT_USD = 60_000_000.0
 
 OPENING_PERIOD = 202212          # the 2022 opening balance sheet date
 PL_PREFIXES = ("4", "5", "6", "7", "8")
@@ -49,6 +60,7 @@ class SeriesBuilder:
         self.m = self.lb.m
         self.ent = self.m.entities
         self._ic_cache: dict = {}
+        self._bs_factor_carry: dict[str, dict[str, float]] = {}
         self.ic_legs: dict[tuple[str, int], list[tuple]] = {}
 
     # ------------------------------------------------------------------ opening
@@ -97,7 +109,7 @@ class SeriesBuilder:
                 continue
             amounts = allocate_exact(target, np.array([abs(net(e, wacc)) for e in members]), 6)
             for e, amt in zip(members, amounts):
-                for a, share in split.items():
+                for a, share in split_for(e, split).items():
                     out[e][a] = out[e].get(a, 0.0) + sign * amt * share
 
         # Property, plant and equipment: allocate the NET, then gross up consistently
@@ -141,7 +153,8 @@ class SeriesBuilder:
         out["NIG-100"]["230100"] = -ob["tlb_gross"]
         out["NIG-100"]["230200"] = ob["dff"]
         out["NIG-100"]["220200"] = -ob["rcf"]
-        for (parent, sub), amt in INVESTMENTS.items():
+        import datetime as _dt2
+        for (parent, sub), amt in investments_at(_dt2.date(2022, 12, 31)).items():
             if parent in out and sub in out:
                 out[parent]["178100"] = out[parent].get("178100", 0.0) + amt
         for e in live:
@@ -198,39 +211,165 @@ class SeriesBuilder:
             out[acct] = local_annual * shapes[stream]
         return out
 
-    def _bs_local_path(self, code: str, col: str, periods: list[Period],
-                       open_local: dict[str, float], activity: np.ndarray
-                       ) -> list[dict[str, float]]:
-        """Interpolate each balance sheet account between year ends, modulated by activity."""
-        ye_usd = self.lb.year_end_bs_usd(col).get(code, {})
-        last = periods[-1]
-        rate_ye = self.lb.close_rate(code, last.period_key, col)
-        ye_local = {a: v * 1_000_000.0 / rate_ye for a, v in ye_usd.items()}
+    # ------------------------------------------------------------- driver paths
+    #: Accounts whose interim months come from an economic driver rather than a line.
+    DRIVEN = bd.DRIVEN_CAPTIONS
 
-        # Cash and retained earnings are never interpolated: cash is the residual of the
-        # balanced journals, and retained earnings rolls forward from net income.
-        excluded = {"110100", "320100", "320200"}
-        accounts = sorted((set(open_local) | set(ye_local)) - excluded)
+    def _bs_driver_path(self, code: str, col: str, periods: list[Period],
+                        open_local: dict[str, float], pl: dict[str, np.ndarray]
+                        ) -> list[dict[str, float]]:
+        """
+        Monthly balances generated from the economics that move them, then scaled so the
+        December balance lands exactly on the anchored year-end target.
+
+        Slow-moving captions with no meaningful intra-year driver -- other non-current
+        assets, other long-term liabilities, right-of-use assets, intercompany positions,
+        equity -- continue to interpolate, which is documented rather than hidden.
+        """
+        e = self.ent[code]
         n = len(periods)
-        act = activity / max(activity.mean(), 1e-9)
-        act_last = act[-1] if n else 1.0
-        mod = (act / act_last) ** 0.55
+        g = rng("bs", code, col)
+        ye_usd = self.lb.year_end_bs_usd(col).get(code, {})
+        rate_ye = self.lb.close_rate(code, periods[-1].period_key, col)
+        ye = {a: v * 1_000_000.0 / rate_ye for a, v in ye_usd.items()}
 
-        wc = {"120100", "120200", "121100", "130100", "130200", "130300", "130400",
-              "210100", "210200", "211100", "215100", "215600"}
-        path = []
-        for i, p in enumerate(periods):
-            frac = (i + 1) / n
-            row = {}
-            for a in accounts:
-                o = open_local.get(a, 0.0)
-                c = ye_local.get(a, 0.0)
-                v = o + (c - o) * frac
-                if a in wc and i < n - 1:
-                    v *= mod[i]
-                row[a] = v
-            path.append(row)
-        return path
+        def stream(prefixes, exclude=()) -> np.ndarray:
+            out = np.zeros(n)
+            for a, arr in pl.items():
+                if a.startswith(prefixes) and not a.startswith(exclude):
+                    out += arr[:n]
+            return out
+
+        revenue = -stream(("4",), ("44", "49"))
+        cos = stream(("5",), ("59",))
+        opex = stream(("6",), ("695",))
+        payroll = sum((pl[a][:n] for a in ("610100", "610200", "610300", "610600",
+                                           "515100", "515200", "515300", "520100")
+                       if a in pl), start=np.zeros(n))
+        bonus = pl.get("610400", np.zeros(n))[:n]
+        # Intercompany interest accrues and settles exactly like external interest, and at
+        # the service and holding entities it is the whole of the charge.
+        interest = sum((pl[a][:n] for a in ("730100", "730200", "730300", "730500",
+                                            "795200")
+                        if a in pl), start=np.zeros(n))
+        tax = stream(("8",))
+        dep = stream(("710",))
+        # Operating expenditure settled in cash, used to size prepaid policies.  Only the
+        # payroll that sits inside operating expenses is removed -- the production payroll
+        # in cost of sales was never part of `opex` to begin with.
+        opex_payroll = sum((pl[a][:n] for a in ("610100", "610200", "610300", "610600")
+                            if a in pl), start=np.zeros(n))
+        cash_opex = np.maximum(opex - opex_payroll - bonus, 0.0)
+
+        prior_rev = np.full(3, revenue.mean() if revenue.sum() else 0.0)
+        prior_spend = np.full(3, (cos + cash_opex).mean() if cos.sum() else 0.0)
+
+        paths: dict[str, np.ndarray] = {}
+        # paths that are already the answer and must not be scaled onto an anchor
+        exact: dict[str, np.ndarray] = {}
+
+        # --- receivables: an ageing profile over recent revenue --------------
+        if revenue.sum() > 0:
+            dso = 58.0 * DSO_TILT.get(code, 1.0)
+            paths["120100"] = bd.ageing_balance(revenue, prior_rev, bd.ageing_profile(dso))
+            # The allowance is assessed against the ledger it provides for, so it moves
+            # with receivables rather than drifting between year ends on its own line.
+            paths["120200"] = -paths["120100"]
+        # --- payables: an ageing profile over recent purchases and cash costs -
+        spend = cos + cash_opex
+        if spend.sum() > 0:
+            dpo = 50.0 * DPO_TILT.get(code, 1.0)
+            paths["210100"] = bd.ageing_balance(spend, prior_spend, bd.ageing_profile(dpo))
+            paths["210200"] = paths["210100"] * 0.163
+        # --- inventory: opening + purchases - consumption ---------------------
+        inv_open = sum(open_local.get(a, 0.0) for a in ("130100", "130200", "130300"))
+        if inv_open > 0 or ye.get("130300", 0.0) > 0:
+            inv, _purch = bd.inventory_path(inv_open, cos, periods, g)
+            for acct, share in (("130100", 0.34), ("130200", 0.21), ("130300", 0.48)):
+                paths[acct] = inv * share / 1.03
+        # --- accruals: real sawtooths ----------------------------------------
+        if payroll.sum() > 0:
+            paths["215100"] = -bd.payroll_accrual(payroll, periods)
+        if bonus.sum() > 0:
+            paths["215200"] = -bd.sawtooth_accrual(bonus, periods, {3},
+                                                   -open_local.get("215200", 0.0))
+        if interest.sum() > 0:
+            # Interest is paid quarterly in arrears, settling in the month after each
+            # interest period ends, so a quarter's accrual is always outstanding at the
+            # balance sheet date.  Settling on the quarter end itself would leave December
+            # at a trough and make the year-end accrual unexplainable.
+            paths["216100"] = -bd.sawtooth_accrual(interest, periods, {1, 4, 7, 10},
+                                                   -open_local.get("216100", 0.0))
+        if tax.sum() > 0:
+            paths["218100"] = -bd.sawtooth_accrual(tax, periods, {1, 4, 7, 10},
+                                                   -open_local.get("218100", 0.0))
+        # --- prepaid: annual policies paid at renewal, then amortised ---------
+        if cash_opex.sum() > 0:
+            paths["140100"] = bd.prepaid_path(cash_opex * 0.055, periods)
+        # --- property, plant and equipment: lumpy additions less depreciation -
+        gross_open = sum(open_local.get(a, 0.0) for a in PPE_CLASSES)
+        accum_open = open_local.get("155100", 0.0)
+        gross_ye = sum(ye.get(a, 0.0) for a in PPE_CLASSES)
+        capex_total = max(gross_ye - gross_open + dep.sum(), 0.0)
+        if gross_open > 0 or gross_ye > 0:
+            capex = np.full(n, capex_total / max(n, 1))
+            gross, accum = bd.ppe_path(gross_open, accum_open, capex, dep, g)
+            denom = max(gross[-1], 1e-9)
+            for acct, share in PPE_CLASSES.items():
+                paths[acct] = gross * share
+            paths["155100"] = accum
+        # --- investment in subsidiaries: a step on each acquisition date -----
+        # The balance is the sum of the considerations actually paid, so it moves only when
+        # a transaction completes.  Interpolating it between year ends would spread a
+        # single acquisition across twelve months and make the balance unexplainable.
+        # Every holding entity is USD-functional and the register carries USD cost, so no
+        # translation is involved and the path needs no anchor scaling.
+        inv = np.array([sum(amt for (par, sub), amt in investments_at(p.end).items()
+                            if par == code and self.lb.live_at(sub, p.end))
+                        for p in periods]) * 1e6      # the register is in USD millions
+        if inv.any():
+            assert self.ent[code].currency == "USD", (
+                f"{code} holds investments but is not USD-functional")
+            exact["178100"] = inv
+
+        # --- external debt: an instrument schedule ---------------------------
+        if code == "NIG-100":
+            fy = 2026 if col.startswith("FY2026") else int(col[2:6])
+            draws = {2023: (4, 25.0), 2024: (7, 30.0)}
+            month, amount = draws.get(fy, (None, 0.0))
+            rate = self.lb.close_rate(code, periods[-1].period_key, col)
+            paths["230100"] = bd.debt_path(
+                open_local.get("230100", 0.0), ye.get("230100", 0.0), periods,
+                scheduled_quarterly=-0.575e6, draw_month=month,
+                draw_amount=-amount * 1e6)
+            paths["220200"] = bd.debt_path(
+                open_local.get("220200", 0.0), ye.get("220200", 0.0), periods,
+                scheduled_quarterly=0.0, draw_month=None, draw_amount=0.0)
+
+        # --- assemble: driven where we have a driver, interpolated otherwise --
+        excluded = {"110100", "320100", "320200"}
+        accounts = sorted((set(open_local) | set(ye)) - excluded)
+        factors = self._bs_factor_carry.setdefault(code, {})
+        rows: list[dict[str, float]] = []
+        scaled: dict[str, np.ndarray] = {}
+        for a in accounts:
+            target = ye.get(a, 0.0)
+            if a in exact:
+                scaled[a] = exact[a]
+            elif a in paths and abs(target) > 1e-6:
+                try:
+                    path, factor = bd.apply_year_end_anchor(
+                        paths[a], target, factors.get(a))
+                except ValueError as exc:
+                    raise ValueError(f"{code} {col} account {a}: {exc}") from None
+                factors[a] = factor
+                scaled[a] = path
+            else:
+                o, c = open_local.get(a, 0.0), target
+                scaled[a] = o + (c - o) * (np.arange(1, n + 1) / n)
+        for i in range(n):
+            rows.append({a: float(scaled[a][i]) for a in accounts})
+        return rows
 
     # ------------------------------------------------------------------ intercompany
     def ic_monthly(self, col: str, periods: list[Period]):
@@ -275,6 +414,103 @@ class SeriesBuilder:
         return pl, legs
 
     # ------------------------------------------------------------------ treasury
+    def apply_measurement_reserve(self, rows: list[EntityMonth]) -> dict[int, float]:
+        """
+        Reconcile layer-1 cash to the approved anchor through a disclosed equity reserve.
+
+        Every balance sheet caption other than cash is pinned to an approved anchor, and
+        retained earnings rolls forward from each entity's own locally-measured result.
+        Those two facts over-determine the balance sheet, so a difference remains, and with
+        everything else pinned it would otherwise fall into cash.
+
+        The difference is an equity measurement effect.  The anchor model accumulates group
+        results at the rates ruling when they were earned and carries the group's own
+        cumulative translation adjustment; the entity ledgers accumulate local results and
+        are translated at closing rates.  It is not a cash effect, and letting it sit in
+        cash would misstate the one balance in the group that is externally verifiable and
+        would leave the generated revolver drawn against a shortfall that does not exist.
+
+        So it is posted where it belongs and named for what it is: a holding-company equity
+        reserve (329100), measured at each year end when the anchor is struck, disclosed
+        line by line in `data/reference/translation_difference.csv`, and carried at Topco,
+        which is USD-functional so the reserve is not itself retranslated.  Phase 4 removes
+        it and replaces it with a CTA computed from the entity ledgers; it must never be
+        treated as a consolidation input (ADR-0004, CTL-FX-04).
+
+        This is deliberately not a plug in a real balance.  It is a single named line whose
+        whole purpose is to make the unexplained residual visible and measurable, and a
+        control caps it as a share of layer-1 total assets.
+        """
+        TOPCO, RESERVE = "NIG-100", "329100"
+        by_period: dict[int, list[EntityMonth]] = {}
+        for em in rows:
+            by_period.setdefault(em.period_key, []).append(em)
+
+        def group_cash(pk: int) -> float:
+            rs = "FORECAST" if pk // 100 == 2026 else "ACTUAL"
+            return sum(em.bs_close["110100"] * self.m.rate(em.currency, pk, "CLOSE", rs)
+                       for em in by_period[pk])
+
+        bs = self.m.bs_anchor
+        reserve: dict[int, float] = {}
+        carry = 0.0
+        for year in (2023, 2024, 2025, 2026):
+            pk = year * 100 + 12
+            col = "FY2026F" if year == 2026 else f"FY{year}A"
+            if pk in by_period:
+                # the reserve is struck at the year end, against the anchored cash balance
+                carry = bs["cash"][col] * 1e6 - group_cash(pk)
+            for p in sorted(k for k in by_period if k // 100 == year):
+                reserve[p] = carry
+        # 2026 closes in August, so its reserve is the one struck at December 2025
+        for pk, amt in reserve.items():
+            em = next(e for e in by_period[pk] if e.entity == TOPCO)
+            em.bs_close["110100"] += amt
+            em.bs_close[RESERVE] = em.bs_close.get(RESERVE, 0.0) - amt
+        return reserve
+
+    def apply_revolver_sweep(self, rows: list[EntityMonth]) -> dict[int, float]:
+        """
+        Manage the revolving credit facility against the group's monthly liquidity need.
+
+        Cash is the residual of the balanced entity journals, so a month in which working
+        capital builds faster than the business collects leaves the group short.  A real
+        group draws its revolver, and repays it as soon as collections allow, because
+        utilisation costs margin.  The draw is booked at Topco, which holds all external
+        debt: cash up, facility utilisation up.  December is set to the approved year-end
+        anchor, so every anchored balance is unchanged.
+        """
+        TOPCO, RCF = "NIG-100", "220200"
+        by_period: dict[int, list[EntityMonth]] = {}
+        for em in rows:
+            by_period.setdefault(em.period_key, []).append(em)
+
+        def group_cash(pk: int) -> float:
+            rs = "FORECAST" if pk // 100 == 2026 else "ACTUAL"
+            return sum(em.bs_close["110100"] * self.m.rate(em.currency, pk, "CLOSE", rs)
+                       for em in by_period[pk])
+
+        topco_of = {pk: next(em for em in g if em.entity == TOPCO)
+                    for pk, g in by_period.items()}
+        drawn_now = {pk: -topco_of[pk].bs_close.get(RCF, 0.0) for pk in by_period}
+        # the position the ledgers produce with the facility undrawn
+        pre = {pk: group_cash(pk) - drawn_now[pk] for pk in by_period}
+        year_end = {pk // 100: drawn_now[pk] for pk in by_period if pk % 100 == 12}
+        activity = {pk: sum(em.context.get("activity", 0.0)
+                            * self.m.rate(em.currency, pk, "AVG",
+                                          "FORECAST" if pk // 100 == 2026 else "ACTUAL")
+                            for em in g) for pk, g in by_period.items()}
+        target = bd.revolver_path(pre, year_end, activity, MIN_GROUP_CASH_USD,
+                                  CASH_BUFFER_USD, RCF_COMMITMENT_USD)
+        for pk, want in target.items():
+            move = want - drawn_now[pk]
+            if abs(move) < 1e-6:
+                continue
+            em = topco_of[pk]
+            em.bs_close["110100"] += move
+            em.bs_close[RCF] = em.bs_close.get(RCF, 0.0) - move
+        return target
+
     def apply_cash_pooling(self, rows: list[EntityMonth]) -> None:
         """
         Group cash pooling: operating entities sweep surplus cash to Topco through an
@@ -319,37 +555,6 @@ class SeriesBuilder:
             if em.entity in prev:
                 em.bs_open = prev[em.entity]
             prev[em.entity] = dict(em.bs_close)
-
-    # ------------------------------------------------------------------ calibration
-    def calibrate(self) -> dict[str, float]:
-        """
-        One corrective pass on investment-at-cost so the layer-1 group balance sheet
-        reproduces the anchored cash position exactly.
-
-        Cash is the residual of balanced journals, so any mismatch between the parents'
-        investment in subsidiaries and the subsidiaries' net assets lands in cash.  The
-        adjustment is linear and exact, so a single pass converges.  The resulting
-        year-on-year movement in investment is the amortisation of the purchase-price
-        allocation, which layer 1 legitimately does not carry (that is a Phase 4 item).
-        """
-        self.lb.investment_adjustment = {}
-        rows = self.build_actuals(pool=False)
-        bs = self.m.bs_anchor
-        adj: dict[str, float] = {}
-        for year, col in ((2023, "FY2023A"), (2024, "FY2024A"), (2025, "FY2025A"),
-                          (2026, "FY2026F")):
-            pk = year * 100 + 12
-            rs = self.m.rate_set_for(col)
-            got = sum(em.bs_close["110100"]
-                      * self.m.rate(em.currency, em.period_key, "CLOSE", rs) / 1e6
-                      for em in rows if em.period_key == pk)
-            if year == 2026:
-                adj[col] = adj["FY2025A"]          # no FY2026 year end in the actual series
-                continue
-            adj[col] = got - bs["cash"][col]
-        self.lb.investment_adjustment = adj
-        self.lb._cache = {k: v for k, v in self.lb._cache.items() if k[0] != "bs"}
-        return adj
 
     # ------------------------------------------------------------------ build
     def build_actuals(self, pool: bool = True) -> list[EntityMonth]:
@@ -396,7 +601,7 @@ class SeriesBuilder:
                                 for i in range(len(full))])
                 if act.sum() <= 0:
                     act = np.ones(len(full))
-                bs_full = self._bs_local_path(code, col, full, carry, act)
+                bs_full = self._bs_driver_path(code, col, full, carry, pl_full)
 
                 re_account = "320200" if e.erp == "KESTREL" else "320100"
                 re_open = carry.get(re_account, 0.0) + carry.get(
@@ -425,5 +630,7 @@ class SeriesBuilder:
                 if year == 2026:
                     break
         if pool:
+            self.measurement_reserve = self.apply_measurement_reserve(out)
+            self.revolver_draws = self.apply_revolver_sweep(out)
             self.apply_cash_pooling(out)
         return out

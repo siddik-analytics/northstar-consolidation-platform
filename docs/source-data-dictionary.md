@@ -187,6 +187,90 @@ finance leases. `covenant_reference` points at the clause in
 
 ---
 
+## 9a. `investment_register.csv` and `investment_rollforward.csv`
+
+`config/entities/investment_register.csv` is **configuration**: the eleven ownership events in
+the group's history, each an actual transaction rather than a modelling assumption.
+
+`investment_id`, `parent_entity`, `subsidiary_entity`, `event_date`,
+`consolidation_effective_date`, `event_type`, `ownership_pct_acquired`,
+`cumulative_ownership_pct`, `consideration_currency`, `consideration_local`,
+`consideration_usd_m`, `carrying_currency`, `notes`.
+
+`event_type` is one of `PLATFORM_ACQUISITION`, `ACQUISITION`, `ACQUIRED_WITH_PARENT`,
+`FORMATION` or `CARVE_OUT`. `event_date` and `consolidation_effective_date` are **separate**
+columns and genuinely differ: the Northstar Parts UK acquisition completed on 31 December
+2022, so its investment and the resulting NCI sit in the group's opening balance sheet while
+its results consolidate from 1 January 2023.
+
+`data/reference/investment_rollforward.csv` is the generated roll-forward that Phase 4's
+investment elimination consumes.
+
+**Grain**: parent × subsidiary × period. 463 rows.
+
+`parent_entity`, `subsidiary_entity`, `period_key`, `opening_cost_usd`, `additions_usd`,
+`disposals_usd`, `closing_cost_usd`, `ownership_pct`, `nci_pct`, `carrying_currency`,
+`event_type`, `investment_id`, `first_consolidated_period`.
+
+Every ledger balance in every month reconciles to `closing_cost_usd` (`P2-INV-01`). There is
+no calibration and no plug: a balance is the sum of the considerations actually paid, and it
+steps on acquisition dates rather than drifting between year ends. See §3.6 of the
+methodology.
+
+---
+
+## 9b. `translation_difference.csv`
+
+**Grain**: fiscal year. 3 rows. The disclosure required by ADR-0016.
+
+| Column | Notes |
+|---|---|
+| `generated_cta_movement` | CTA the generated entity ledgers imply for the year, computed independently by the standard formula rather than by reference to any gap |
+| `generated_cta_on_net_assets` | the component from opening net assets × the change in closing rate |
+| `generated_cta_on_result` | the component from the result × (closing − average rate) |
+| `generated_cta_cumulative` | cumulative generated CTA |
+| `anchor_cta_cumulative` | the anchored CTA roll-forward, for comparison |
+| `cta_variance_vs_anchor` | difference between the two |
+| `layer1_cash`, `anchor_cash`, `cash_variance_vs_anchor` | cash ties exactly; the variance is nil by design (`P2-RES-02`) |
+| `measurement_reserve_closing` | the `329100` balance at the year end |
+| `layer1_total_assets`, `reserve_pct_of_total_assets` | the materiality measure control `P2-RES-01` caps at 2% |
+
+Phase 4 must reproduce the generated CTA and remove the reserve. It is never a consolidation
+input.
+
+---
+
+## 9c. `ic_inventory_transactions.csv` and `ic_inventory_holdings.csv`
+
+Source support for the Phase 4 unrealised profit elimination. **Phase 2 does not eliminate
+anything** — these datasets exist so Phase 4 can compute the elimination from evidence rather
+than from an assumption.
+
+`ic_inventory_transactions.csv` — **grain**: intercompany goods flow × period. 173 rows.
+
+`ic_transaction_id`, `period_key`, `seller_entity`, `buyer_entity`, `product_category`,
+`transfer_price_seller_local`, `seller_currency`, `seller_cost_local`,
+`ic_gross_profit_seller_local`, `ic_margin_pct`, `transfer_price_buyer_local`,
+`buyer_currency`, `transfer_price_usd`, `ic_gross_profit_usd`, `quantity`,
+`buyer_inventory_account`.
+
+`ic_inventory_holdings.csv` — **grain**: holding period × flow × **surviving FIFO purchase
+layer**. 470 rows.
+
+`holding_period`, `transaction_period`, `months_held`, `seller_entity`, `buyer_entity`,
+`inventory_category`, `buyer_inventory_account`, `transfer_price_usd`, `seller_cost_usd`,
+`ic_gross_profit_usd`, `ic_margin_pct`, `quantity_transferred`, `pct_remaining`,
+`quantity_remaining`, `value_remaining_usd`, `value_remaining_buyer_local`, `buyer_currency`,
+`unrealised_profit_usd`, `months_on_hand`.
+
+One row per surviving layer rather than one per month end, so Phase 4 can eliminate at the
+margin actually earned on each layer instead of at a blended rate. Goods are consumed
+first-in-first-out over the flow's months-on-hand, so a closing holding is a function of
+recent purchases rather than a percentage of the balance. Source inventory is carried **gross**
+of unrealised profit; the anchor bridge adds PUP back to the inventory target accordingly.
+
+---
+
 ## 10. `fx_rates_monthly.csv` and `fx_rates_historical.csv`
 
 **Grain**: currency × period × rate type × rate set.

@@ -322,3 +322,125 @@ def build_revenue_detail(sb: SeriesBuilder, customers: list[dict],
                     order_count=int(max(1, g.integers(1, 5))),
                     is_intercompany="FALSE"))
     return rows
+
+
+# --------------------------------------------------------------------- intercompany stock
+#: Which intercompany product flows leave goods in the buyer's closing inventory, and how
+#: long those goods sit there.  Service recharges, management fees, royalties and loan
+#: interest are consumed as incurred and leave nothing on a balance sheet, so they are
+#: deliberately excluded rather than padded out.
+#: `months_on_hand` is the FIFO turn on intercompany stock at the buying entity. The values
+#: are set so the resulting unrealised profit reproduces the approved anchor -- Canadian
+#: distribution turns slowest, the German components flow into US production fastest.
+IC_STOCK_FLOWS = {
+    ("NIG-200", "NIG-210"): dict(margin=0.12, months_on_hand=2.97, category="FINISHED_GOODS"),
+    ("NIG-200", "NIG-500"): dict(margin=0.12, months_on_hand=2.43, category="SPARE_PARTS"),
+    ("NIG-200", "NIG-510"): dict(margin=0.12, months_on_hand=3.38, category="SPARE_PARTS"),
+    ("NIG-220", "NIG-200"): dict(margin=0.10, months_on_hand=1.89, category="COMPONENTS"),
+}
+
+
+def build_ic_inventory(sb: SeriesBuilder) -> tuple[list[dict], list[dict]]:
+    """
+    Source detail for the Phase 4 unrealised profit elimination.
+
+    Phase 2 does NOT eliminate anything.  It records enough about each intercompany goods
+    transaction -- seller, buyer, transfer price, seller cost, margin, category, period,
+    quantity -- and how much of it remains in the buyer's closing inventory, for Phase 4 to
+    compute the unrealised profit deterministically rather than by assumption.
+
+    Goods are consumed on a first-in-first-out basis over the flow's months-on-hand, so the
+    closing holding is a genuine function of recent purchases rather than a percentage.
+    """
+    transactions: list[dict] = []
+    holdings: list[dict] = []
+
+    for col, year in (("FY2023A", 2023), ("FY2024A", 2024), ("FY2025A", 2025),
+                      ("FY2026F", 2026)):
+        periods = [p for p in build_periods((year, 1), (year, 12))
+                   if p.period_key <= 202608 or year < 2026]
+        ic_pl, legs = sb.ic_monthly(col, periods)
+        for (seller, buyer), cfg in IC_STOCK_FLOWS.items():
+            if not (sb.lb.live(seller, col) and sb.lb.live(buyer, col)):
+                continue
+            g = rng("icstock", seller, buyer, col)
+            # the seller's intercompany product revenue for this pair, month by month
+            monthly = []
+            for p in periods:
+                amt = 0.0
+                for acct, cp, value, partner, kind in legs.get((seller, p.period_key), []):
+                    if partner == buyer and kind == "PRODUCT":
+                        amt += value
+                monthly.append((p, amt))
+            if not any(a for _p, a in monthly):
+                continue
+            margin = cfg["margin"]
+            seller_ccy = sb.ent[seller].currency
+            buyer_ccy = sb.ent[buyer].currency
+            rs = sb.m.rate_set_for(col)
+            for p, transfer_local in monthly:
+                if transfer_local <= 0:
+                    continue
+                rate_s = sb.m.rate(seller_ccy, p.period_key, "AVG", rs)
+                rate_b = sb.m.rate(buyer_ccy, p.period_key, "AVG", rs)
+                transfer_usd = transfer_local * rate_s
+                units = int(max(1, transfer_usd / float(g.uniform(1800, 4200))))
+                transactions.append(dict(
+                    ic_transaction_id=f"ICS-{seller[-3:]}{buyer[-3:]}-{p.period_key}",
+                    period_key=p.period_key, seller_entity=seller, buyer_entity=buyer,
+                    product_category=cfg["category"],
+                    transfer_price_seller_local=round(transfer_local, 2),
+                    seller_currency=seller_ccy,
+                    seller_cost_local=round(transfer_local * (1 - margin), 2),
+                    ic_gross_profit_seller_local=round(transfer_local * margin, 2),
+                    ic_margin_pct=margin,
+                    transfer_price_buyer_local=round(transfer_usd / rate_b, 2),
+                    buyer_currency=buyer_ccy,
+                    transfer_price_usd=round(transfer_usd, 2),
+                    ic_gross_profit_usd=round(transfer_usd * margin, 2),
+                    quantity=units,
+                    buyer_inventory_account="130300"
+                    if cfg["category"] != "COMPONENTS" else "130100"))
+            # closing holdings: FIFO consumption over the flow's months on hand.
+            # One row per surviving purchase layer, so Phase 4 can eliminate at the margin
+            # actually earned on each layer rather than at a blended assumption.
+            moh = cfg["months_on_hand"]
+            for i, (p, _amt) in enumerate(monthly):
+                rate_b = sb.m.rate(buyer_ccy, p.period_key, "CLOSE", rs)
+                for k in range(int(np.ceil(moh))):
+                    j = i - k
+                    if j < 0:
+                        continue
+                    pj, aj = monthly[j]
+                    if aj <= 0:
+                        continue
+                    unconsumed = max(0.0, 1.0 - k / moh)
+                    if unconsumed <= 0:
+                        continue
+                    rate_j = sb.m.rate(seller_ccy, pj.period_key, "AVG", rs)
+                    layer_usd = aj * rate_j
+                    remaining_usd = layer_usd * unconsumed
+                    if remaining_usd < 1.0:
+                        continue
+                    units = int(max(1, layer_usd / float(g.uniform(1800, 4200))))
+                    holdings.append(dict(
+                        holding_period=p.period_key,
+                        transaction_period=pj.period_key,
+                        months_held=k,
+                        seller_entity=seller, buyer_entity=buyer,
+                        inventory_category=cfg["category"],
+                        buyer_inventory_account="130300"
+                        if cfg["category"] != "COMPONENTS" else "130100",
+                        transfer_price_usd=round(layer_usd, 2),
+                        seller_cost_usd=round(layer_usd * (1 - margin), 2),
+                        ic_gross_profit_usd=round(layer_usd * margin, 2),
+                        ic_margin_pct=margin,
+                        quantity_transferred=units,
+                        pct_remaining=round(unconsumed, 6),
+                        quantity_remaining=int(units * unconsumed),
+                        value_remaining_usd=round(remaining_usd, 2),
+                        value_remaining_buyer_local=round(remaining_usd / rate_b, 2),
+                        buyer_currency=buyer_ccy,
+                        unrealised_profit_usd=round(remaining_usd * margin, 2),
+                        months_on_hand=moh))
+    return transactions, holdings

@@ -86,36 +86,184 @@ September with turnaround season, Flow Control in November, Engineered Systems i
 on project completions, Aftermarket is nearly flat. Costs are smoother than revenue.
 Month-to-month noise is applied on top so the series is not drawn with a ruler.
 
-### 3.4 Balance sheet
+### 3.4 Balance sheet — driver-generated months
 
 Year-end balances are the anchored group captions, allocated to entities by economic driver
 (receivables by revenue × entity DSO tilt, inventory only where goods are actually held,
 payables by cost × DPO tilt, and so on) and converted to local at that entity's closing
-rate. Interim months interpolate between year ends, modulated by the entity's own trailing
-activity so working capital breathes with the business.
+rate.
 
-Retained earnings roll forward from net income. Cash is the residual.
+**Interim months are generated from the economics that move each balance, not interpolated
+between year ends.** Phase 2.0 interpolated, and the result was a visible straight line
+month to month — the single most obvious tell that a dataset is manufactured, and the first
+thing a reviewer opening a monthly balance sheet would notice. Each caption now has a driver:
 
-### 3.5 Treasury pooling
+| Caption | What moves it |
+|---|---|
+| Trade receivables | an ageing profile applied to recent billing, with the tail length set by the entity's DSO |
+| Allowance for doubtful debts | assessed against the receivables ledger, so it moves with the ledger it provides for |
+| Inventory | opening + purchases − cost of sales, with a seasonal build ahead of demand |
+| Trade payables and goods received | an ageing profile over recent purchases and cash expenses, from the entity's DPO |
+| Accrued payroll | the unpaid portion of the month's payroll on a real payday calendar |
+| Accrued bonus | accretes monthly, paid out in March — a sawtooth, not a line |
+| Accrued interest | accretes monthly, settled quarterly **in arrears** in the month after each interest period, so a quarter's accrual is always outstanding at the balance sheet date |
+| Tax payable | accretes monthly, paid quarterly |
+| Prepayments | annual contracts paid up front at staggered renewals (insurance January, software April, maintenance July, licences October) and released a twelfth a month |
+| PP&E | opening + lumpy project completions − depreciation; capital spend steps, it does not ramp |
+| Term loan | an instrument schedule: scheduled quarterly amortisation, drawdowns on their actual dates, voluntary prepayment at the year end |
+| Revolving facility | drawn to the group's own liquidity need and repaid out of collections (§3.5) |
+
+Each path is then scaled by a single factor per year so **December lands exactly on the
+anchored year-end balance**. Drivers supply the shape; the approved anchor supplies the
+level. The factor is blended from the prior year's factor across the twelve months so the
+anchor is imposed without a step at the year boundary and without flattening the shape.
+
+Two guards make this safe rather than merely convenient. A path is first *oriented* to the
+sign of the caption it represents, because the drivers produce magnitudes — without that, a
+credit caption such as payables receives a negative factor and, blended against the prior
+year, crosses zero mid-year, producing a payables balance that starts the year as a debit.
+And the build **fails** if December sits at a trough of its own driver path (below 20% of
+the path's average magnitude), because scaling a trough onto the anchor would inflate the
+other eleven months absurdly. That guard is not decorative: during Phase 2.1 it caught
+accrued interest settling on the balance sheet date and prepayments whose every policy
+expired in December, both of which are modelling errors in the driver rather than something
+to scale away.
+
+Control `P2-BR-04` measures this. `linearity` is 0.0 for a perfect straight line and rises
+with genuine driver-generated movement; every working-capital and accrual caption now scores
+between 0.09 and 0.86, against 0.00 for the Phase 2.0 interpolation. Accumulated
+depreciation and scheduled term debt amortisation are deliberately **excluded** from the
+test: a stable asset base depreciated straight-line genuinely produces a near-constant
+monthly charge, and a term loan genuinely amortises on a fixed schedule, so demanding
+curvature of them would be demanding noise.
+
+Retained earnings roll forward from each entity's own locally-measured net income. Cash is
+the residual of the balanced journals.
+
+Accounts are also restricted to the entities that can actually have them. Accrued interest
+is the clear case: an entity that borrows nothing accrues no interest, and giving it a
+balance leaves a driver-generated path with nothing to explain it. The caption's share is
+renormalised across its remaining accounts for those entities.
+
+### 3.5 Treasury pooling and the revolving facility
 
 Operating entities sweep surplus cash to Topco through an intercompany treasury current
-account. Without it, every operating entity accumulates cash while Topco — which carries
-all the external debt, paid for both acquisitions and funds the subsidiaries — runs a large
+account. Without it, every operating entity accumulates cash while Topco — which carries all
+the external debt, paid for the acquisitions and funds the subsidiaries — runs a large
 negative bank balance that no real group would tolerate. Pooling only *redistributes* cash:
 the group total is untouched, and both legs are in the operating entity's currency so the
 pair eliminates exactly.
 
-### 3.6 One calibration, disclosed
+Pooling redistributes; it does not create liquidity. A month in which working capital builds
+faster than the business collects still leaves the group short, and Phase 2.0 left 76
+entity-months with a negative bank balance as a result. A real group draws its revolver —
+which is what the facility is for, and why the anchor model carries a drawn balance at every
+year end. So the revolver is generated as the group's liquidity instrument:
 
-Investment in subsidiaries is held at cost, and the absolute level is calibrated once so the
-layer-1 group balance sheet reproduces the anchored cash position exactly. The adjustment is
-**−$4.2m, −$0.9m and −$8.9m** against roughly $415m of investment — under 2.2%. Economically
-it makes the difference between the parents' investment and the subsidiaries' net assets
-equal the anchored purchase-price allocation, which is exactly what the Phase 4 investment
-elimination will recompute as goodwill and intangibles.
+- the position the balanced ledgers produce with the facility undrawn sets the need;
+- the group targets a **minimum operating balance that moves with trading activity**, because
+  a busier month needs more cash on hand to run;
+- draws are requested in round half-millions, because that is how a borrowing notice is
+  actually submitted, and repayments are made in blocks only once there is a worthwhile
+  surplus — no treasurer repays half a million and redraws it a month later, so the balance
+  is sticky, as a real facility is;
+- **December is set to the approved year-end anchor**, so the entry and exit points of every
+  year remain exactly the balances the anchor model proved;
+- drawings never exceed the $60m commitment (`P2-BR-05`).
 
-It is recorded in `data/build_manifest.json` under `investment_calibration_usd_m` so nobody
-has to go looking for it.
+No entity now runs a materially negative bank balance in any month (`P2-BR-01`).
+
+One consequence is disclosed rather than smoothed away. The anchor model prices revolver
+interest off an *average drawn* assumption of $15.0m, $12.0m and $5.0m; the generated monthly
+path averages $6.7m, $23.9m and $11.6m, because the generated working-capital profile and the
+July 2024 acquisition demand liquidity on a different intra-year rhythm than that assumption
+implies. Reconciling the two would mean re-opening an approved anchor's interest assumption,
+which Phase 2.1 is not permitted to do. The year-end drawn balances, which are the anchored
+balance sheet figures, tie exactly.
+
+### 3.6 Investment in subsidiaries — no calibration
+
+Phase 2.0 held investment in subsidiaries at cost and calibrated the absolute level so the
+layer-1 group balance sheet reproduced the anchored cash position. That was a residual plug:
+the balances could not be explained from anything, and the review was right to reject it.
+
+Investment balances are now taken directly from `config/entities/investment_register.csv`,
+which records every ownership event in the group's history — platform acquisition, formation,
+carve-out, second-tier holdings acquired with their parent, and the one 80% acquisition that
+creates the group's only non-controlling interest. Each row carries the event date, the
+consolidation effective date, the ownership percentage acquired and cumulative, the
+consideration in its transaction currency and in USD, and a note explaining the transaction.
+
+The balance is therefore the sum of the considerations actually paid, and it **steps on
+acquisition dates** rather than drifting between year ends. Interpolating it — which Phase
+2.0 did — spreads a single acquisition across twelve months and makes the balance
+unexplainable at every month except December. Every holding entity is USD-functional and the
+register carries USD cost, so no translation is involved and the path needs no anchor
+scaling at all: it is already the answer.
+
+`data/reference/investment_rollforward.csv` presents this as a monthly roll-forward per
+parent and subsidiary — opening cost, additions, disposals, closing cost, ownership and NCI
+percentage, event type and first consolidated period — which is the form Phase 4's investment
+elimination consumes. Control `P2-INV-01` reconciles every ledger balance in every month back
+to that register.
+
+One date deserves a note. The Northstar Parts UK acquisition (INV-009) **completed on 31
+December 2022**, so the investment and the resulting non-controlling interest sit in the
+group's opening balance sheet, while results consolidate from 1 January 2023. The register
+carries `event_date` and `consolidation_effective_date` as separate columns for exactly this
+reason; collapsing them moves the investment out of the opening balance sheet and breaks it.
+
+### 3.7 The group reporting measurement reserve
+
+Every balance sheet caption other than cash is pinned to an approved anchor, and retained
+earnings rolls forward from each entity's own locally-measured result. Those two facts
+over-determine the balance sheet, so a difference remains. With everything else pinned it
+would otherwise fall into cash.
+
+That difference is an equity measurement effect, not a cash effect. The anchor model
+accumulates group results at the rates ruling when they were earned and carries the group's
+own cumulative translation adjustment; the entity ledgers accumulate locally-measured results
+and are translated at closing rates. Letting it sit in cash would misstate the one balance in
+the group that is externally verifiable, and would leave the generated revolver drawn against
+a shortfall that does not exist.
+
+So it is posted where it belongs and named for what it is: **329100 Group reporting
+measurement reserve**, a holding-company equity reserve struck at each year end when the
+anchor is measured, carried at Topco, which is USD-functional so the reserve is not itself
+retranslated. It is disclosed line by line in `data/reference/translation_difference.csv`
+alongside the CTA the generated ledgers independently imply, and it is capped by control
+`P2-RES-01` at 2% of layer-1 total assets. It stands at **$4.24m, $0.92m and $8.93m —
+0.56%, 0.11% and 1.03% of layer-1 total assets**.
+
+Cash consequently ties to the anchored balance exactly in every year (`P2-RES-02`), and
+investments tie to the register exactly (`P2-INV-01`).
+
+This is deliberately *not* a plug hidden in a real balance. It is a single named line whose
+entire purpose is to make an unexplained residual visible and measurable. Phase 4 removes it
+and replaces it with a CTA computed from the entity ledgers; it must never be treated as a
+consolidation input (ADR-0004, CTL-FX-04). See ADR-0016.
+
+### 3.8 Unrealised intercompany profit — support only
+
+Phase 2 does **not** eliminate unrealised intercompany profit. That is a layer-3 construct
+and belongs to Phase 4. What Phase 2 does is retain enough source detail for Phase 4 to
+compute the elimination deterministically rather than by assumption.
+
+Four intercompany goods flows carry stock that is still on hand at the buyer at a month end.
+`data/reference/ic_inventory_transactions.csv` records each transfer — seller, buyer, transfer
+price in both entities' currencies and in USD, seller cost, intercompany gross profit, margin,
+product category, period, quantity and the buyer's inventory account.
+`data/reference/ic_inventory_holdings.csv` then records, for each month end, **one row per
+surviving FIFO purchase layer**: the transaction period it came from, how many months it has
+been held, the percentage and quantity still unconsumed, and the value and unrealised profit
+remaining. Goods are consumed first-in-first-out over the flow's months-on-hand, so a closing
+holding is a genuine function of recent purchases rather than a percentage of the balance.
+
+Layer-level detail matters because it lets Phase 4 eliminate at the margin actually earned on
+each layer rather than at a blended assumption. Control `P2-ICP-01` proves the required fields
+are present; `P2-ICP-02` proves the implied unrealised profit tracks the anchored PUP within
+10%. Source inventory is carried **gross** of unrealised profit, which is why the anchor
+bridge adds PUP back to the inventory target (§6).
 
 ---
 

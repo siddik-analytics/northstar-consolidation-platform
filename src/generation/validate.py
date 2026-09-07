@@ -21,8 +21,10 @@ from pathlib import Path
 
 import pandas as pd
 
-from .common import (ANCHORS, COLS, DATA, RAW, REFERENCE, SAMPLES, load_anchor,
-                     load_source_coa, operating_entities, read_csv)
+from .common import (ANCHORS, COLS, CONFIG, DATA, RAW, REFERENCE, SAMPLES, load_anchor,
+                     load_ic_anchor, load_source_coa, operating_entities, read_csv)
+from .bsdrivers import NONLINEAR_CAPTIONS, linearity
+from .series import RCF_COMMITMENT_USD
 
 TOL_PL = 0.005        # 0.5% on income statement aggregates
 TOL_BS = 0.010        # 1.0% on balance sheet captions
@@ -312,6 +314,55 @@ def run() -> Result:
     r.add("P2-FMT-01", "Kestrel uses special period 13 for year-end adjustments", "BLOCKING",
           "PASS" if p13 > 0 else "FAIL", str(p13), ">0")
 
+    # ---------------- Kestrel special periods 13-16 --------------------------
+    # Phase 1 specified four special periods; Phase 2.0 generated only period 13.  These
+    # controls prove all four exist and follow the population rules declared in
+    # config/coa/kestrel_special_periods.csv.
+    spec_rules = {int(row["special_period"]): row
+                  for row in read_csv(CONFIG / "coa" / "kestrel_special_periods.csv")}
+    spec = defaultdict(set)
+    spec_lines = defaultdict(int)
+    for path in k:
+        with open(path, newline="", encoding="cp1252") as f:
+            for row in csv.DictReader(f, delimiter=";"):
+                mth = int(row["MONAT"])
+                if mth > 12:
+                    spec[mth].add((row["BUKRS"], int(row["GJAHR"])))
+                    spec_lines[mth] += 1
+    missing = sorted(set(spec_rules) - {m for m in spec if spec_lines[m] > 0})
+    r.add("P2-FMT-06", "Every declared Kestrel special period is populated", "BLOCKING",
+          "PASS" if not missing else "FAIL",
+          str(sorted(spec_lines)), str(sorted(spec_rules)),
+          "13 statutory close, 14 audit, 15 tax, 16 local GAAP to group reporting")
+
+    # Period 13 closes every Kestrel company-year; 14 and 16 are conditional, so they must
+    # be present but not universal, or they are not modelling a real population rule.
+    universe = spec[13]
+    cond_ok = bool(universe) and all(0 < len(spec[m]) < len(universe) for m in (14, 16))
+    r.add("P2-FMT-07", "Conditional special periods follow their population rule",
+          "BLOCKING", "PASS" if cond_ok else "FAIL",
+          f"13:{len(spec[13])} 14:{len(spec[14])} 15:{len(spec[15])} 16:{len(spec[16])}",
+          "13 universal; 14 and 16 a subset",
+          "audit findings and local-GAAP provisions do not arise at every entity every year")
+
+    # Nothing is audited or filed for a year that has not closed, so FY2026 carries none.
+    unfiled = {(c, y) for m in (14, 15) for (c, y) in spec[m] if y >= 2026}
+    r.add("P2-FMT-08", "Unfiled years carry no audit or tax special period", "BLOCKING",
+          "PASS" if not unfiled else "FAIL", str(sorted(unfiled)), "none",
+          "FY2026 is neither audited nor filed at the reporting date")
+
+    # Special periods 14-16 are reclassifications: they must not move the year's result.
+    sp = jl[jl["line_attributes"].astype(str).str.contains("special_period=", na=False)]
+    res_move = 0.0
+    if len(sp):
+        pl = sp[sp["expected_group_account"].astype(str).str[0].isin(list("45678"))]
+        if len(pl):
+            res_move = float(pl.groupby(["entity_code", "period_key"])["amount_local"]
+                             .sum().abs().max())
+    r.add("P2-FMT-09", "Special period entries do not change the reported result",
+          "BLOCKING", "PASS" if res_move <= 0.02 else "FAIL", f"{res_move:.4f}", "0.02",
+          "periods 14-16 reclassify within a caption; the anchored result is unchanged")
+
     zero_pad = 0
     if k:
         with open(k[0], newline="", encoding="cp1252") as f:
@@ -334,6 +385,98 @@ def run() -> Result:
     neg = int((bal < -1000).sum())
     r.add("P2-BR-01", "No entity runs a materially negative bank balance", "WARNING",
           "PASS" if neg == 0 else "FAIL", str(neg), "0")
+
+    # ---------------- monthly balance sheet realism --------------------------
+    # Phase 2.0 interpolated interim balances between anchored year ends, which produced a
+    # visible straight line.  `linearity` is 0.0 for a perfect straight line and rises with
+    # genuine driver-generated movement.
+    bsj = jl[jl["expected_group_account"].isin(sorted(NONLINEAR_CAPTIONS))]
+    monthly = (bsj.groupby(["entity_code", "expected_group_account", "period_key"])
+               ["amount_local"].sum().groupby(level=[0, 1]).cumsum())
+    scores, flat = [], []
+    for (ent, acct), ser in monthly.groupby(level=[0, 1]):
+        for year in (2023, 2024, 2025):
+            vals = ser[ser.index.get_level_values(2) // 100 == year].to_numpy()
+            if len(vals) < 12 or abs(vals).max() < 50_000:
+                continue
+            score = linearity(vals)
+            scores.append(score)
+            if score < 0.02:
+                flat.append(f"{ent}/{acct}/{year}")
+    worst_lin = min(scores) if scores else 1.0
+    r.add("P2-BR-04", "Interim balances are driver-generated, not interpolated",
+          "BLOCKING", "PASS" if not flat else "FAIL",
+          f"{len(flat)} flat of {len(scores)}; min {worst_lin:.3f}", "0 flat",
+          "linearity 0.0 would be a straight line between anchored year ends")
+
+    # The revolver is the group's liquidity instrument and must stay within its commitment.
+    rcfj = jl[jl["expected_group_account"] == "220200"]
+    drawn = -rcfj.groupby("period_key")["amount_local"].sum().cumsum()
+    worst_rcf = float(drawn.max()) if len(drawn) else 0.0
+    r.add("P2-BR-05", "Revolver drawings stay within the committed facility", "BLOCKING",
+          "PASS" if worst_rcf <= RCF_COMMITMENT_USD + 1 else "FAIL",
+          f"{worst_rcf / 1e6:.1f}m", f"{RCF_COMMITMENT_USD / 1e6:.0f}m",
+          "CA-016; drawings are booked at Topco in USD")
+
+    # ---------------- investment in subsidiaries -----------------------------
+    # Phase 2.0 calibrated investment-at-cost to absorb a residual, which left the balances
+    # unexplainable.  Every balance must now reconcile to the investment register.
+    roll = read_csv(REFERENCE / "investment_rollforward.csv")
+    reg_close = defaultdict(float)
+    for row in roll:
+        reg_close[(row["parent_entity"], int(row["period_key"]))] += float(
+            row["closing_cost_usd"])
+    invj = jl[jl["expected_group_account"] == "178100"]
+    led = invj.groupby(["entity_code", "period_key"])["amount_local"].sum().groupby(
+        level=0).cumsum()
+    worst_inv = 0.0
+    for (ent, pk), v in led.items():
+        worst_inv = max(worst_inv, abs(float(v) - reg_close[(ent, int(pk))]))
+    r.add("P2-INV-01", "Investment balances reconcile to the investment register",
+          "BLOCKING", "PASS" if worst_inv <= 1.0 else "FAIL", f"{worst_inv:.4f}", "1.00",
+          "every balance is the sum of the considerations actually paid; there is no plug")
+
+    events = read_csv(CONFIG / "entities" / "investment_register.csv")
+    unexplained = [row["investment_id"] for row in events
+                   if not row["event_type"] or float(row["consideration_usd_m"]) <= 0]
+    r.add("P2-INV-02", "Every register event has a consideration and an event type",
+          "BLOCKING", "PASS" if not unexplained else "FAIL", str(unexplained), "none")
+
+    # ---------------- unrealised intercompany profit support -----------------
+    # Phase 2 retains the detail; the elimination itself belongs to Phase 4.
+    hold = read_csv(REFERENCE / "ic_inventory_holdings.csv")
+    need = {"seller_entity", "buyer_entity", "transfer_price_usd", "seller_cost_usd",
+            "ic_gross_profit_usd", "inventory_category", "transaction_period",
+            "quantity_remaining", "value_remaining_usd", "unrealised_profit_usd"}
+    have = set(hold[0]) if hold else set()
+    r.add("P2-ICP-01", "Intercompany inventory detail supports a PUP calculation",
+          "BLOCKING", "PASS" if need <= have else "FAIL",
+          str(sorted(need - have)) if need - have else "complete", "all fields present")
+
+    pup_anchor = load_ic_anchor()["pup_in_inventory"]
+    worst_pup = 0.0
+    for year, col in ((2023, "FY2023A"), (2024, "FY2024A"), (2025, "FY2025A")):
+        implied = sum(float(h["unrealised_profit_usd"]) for h in hold
+                      if int(h["holding_period"]) == year * 100 + 12) / 1e6
+        target = pup_anchor[col]
+        worst_pup = max(worst_pup, abs(implied - target) / max(target, 1e-9) * 100)
+    r.add("P2-ICP-02", "Implied unrealised profit tracks the anchored PUP", "BLOCKING",
+          "PASS" if worst_pup <= 10.0 else "FAIL", f"{worst_pup:.2f}%", "10%",
+          "Phase 4 performs the elimination; Phase 2 carries only the support")
+
+    # ---------------- group reporting measurement reserve --------------------
+    tdiff = read_csv(REFERENCE / "translation_difference.csv")
+    worst_res = max((abs(float(row["reserve_pct_of_total_assets"])) for row in tdiff),
+                    default=0.0)
+    r.add("P2-RES-01", "Measurement reserve stays immaterial to layer-1 assets",
+          "BLOCKING", "PASS" if worst_res <= 2.0 else "FAIL", f"{worst_res:.2f}%", "2.00%",
+          "329100 is disclosed, not hidden; Phase 4 replaces it with a computed CTA")
+
+    worst_cash = max((abs(float(row["cash_variance_vs_anchor"])) for row in tdiff),
+                     default=0.0)
+    r.add("P2-RES-02", "Cash carries none of the measurement difference", "BLOCKING",
+          "PASS" if worst_cash <= 0.01 else "FAIL", f"{worst_cash:.4f}", "0.01",
+          "cash is externally verifiable and ties to the anchor exactly")
 
     round_amounts = int((jl["amount_local"] % 1000 == 0).sum())
     pct = round_amounts / len(jl) * 100

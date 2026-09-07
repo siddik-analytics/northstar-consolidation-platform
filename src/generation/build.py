@@ -20,7 +20,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-from . import datasets, masters
+from . import datasets, investments, masters, translation
 from .common import (DATA, FAULTS, RAW, REFERENCE, SAMPLES, ROOT, load_anchor, write_csv)
 from .erp import make_writers
 from .fx import build_rate_series, rate_lookup, write_reference as write_fx
@@ -54,7 +54,6 @@ def run(quick: bool = False) -> dict:
     t0 = time.time()
     counts: dict[str, int] = {}
     sb = SeriesBuilder()
-    adj = sb.calibrate()
     rows = sb.build_actuals()
     counts["entity_months"] = len(rows)
 
@@ -97,6 +96,16 @@ def run(quick: bool = False) -> dict:
     write_csv(REFERENCE / "debt_schedule.csv", list(debt[0]), [list(r.values()) for r in debt])
     counts["debt_schedule"] = len(debt)
 
+    counts["investment_rollforward"] = investments.write_reference()
+    counts["translation_difference"] = translation.write_reference(sb, rows)
+    icx, ich = datasets.build_ic_inventory(sb)
+    write_csv(REFERENCE / "ic_inventory_transactions.csv", list(icx[0]),
+              [list(r.values()) for r in icx])
+    write_csv(REFERENCE / "ic_inventory_holdings.csv", list(ich[0]),
+              [list(r.values()) for r in ich])
+    counts["ic_inventory_transactions"] = len(icx)
+    counts["ic_inventory_holdings"] = len(ich)
+
     rev = datasets.build_revenue_detail(sb, customers, products)
     _write_parquet(pd.DataFrame(rev), REFERENCE / "revenue_detail.parquet")
     counts["revenue_detail"] = len(rev)
@@ -111,7 +120,7 @@ def run(quick: bool = False) -> dict:
     counts["expected_mapping_manifest"] = sm.write_manifest(used)
 
     if quick:
-        return _finish(counts, adj, t0)
+        return _finish(counts, t0)
 
     # ---------------- journals -------------------------------------------
     jg = JournalGenerator(sb, sm, cost_centres)
@@ -132,6 +141,8 @@ def run(quick: bool = False) -> dict:
             acc[a] = acc.get(a, 0.0) + v
         if em.period_key % 100 == 12:
             all_lines.extend(jg.year_end_close(em.entity, em.period_key, acc))
+            all_lines.extend(jg.special_period_adjustments(
+                em.entity, em.period_key, acc, em.bs_close))
     counts["journal_lines"] = len(all_lines)
 
     df = pd.DataFrame(all_lines, columns=COLUMNS)
@@ -156,10 +167,10 @@ def run(quick: bool = False) -> dict:
             (SAMPLES / f"{erp}_extract_sample.csv").write_text(
                 "\n".join(text), encoding=enc, errors="replace")
 
-    return _finish(counts, adj, t0)
+    return _finish(counts, t0)
 
 
-def _finish(counts: dict, adj: dict, t0: float) -> dict:
+def _finish(counts: dict, t0: float) -> dict:
     write_targets()
     checksums = {}
     for base in (REFERENCE, RAW):
@@ -170,7 +181,6 @@ def _finish(counts: dict, adj: dict, t0: float) -> dict:
         "phase": 2,
         "master_seed": 20260907,
         "generated_datasets": counts,
-        "investment_calibration_usd_m": {k: round(float(v), 4) for k, v in adj.items()},
         "file_count": len(checksums),
         "checksums": checksums,
     }

@@ -134,13 +134,46 @@ Every field name is the German original, because the system is. Six deliberate h
    thousand-fold understatement that still looks like a number. Fault fixture **F06**.
 4. **Zero-padded 8-character account keys** (`00091000`). Read as an integer, `00091000`
    becomes `91000` and joins to nothing. `P2-FMT-02` asserts the leading zeros survive.
-5. **Special period 13.** Year-end adjustments — here, the closing entry to
-   `00071500 Jahresergebnis` — are filed under `MONAT = 13`, not December. Treating 13 as a
-   thirteenth month breaks every monthly comparison; treating December as missing raises a
-   false period-completeness failure. It maps to December with an adjustment flag.
+5. **Special periods 13 to 16.** Post-close adjustments are filed under `MONAT` values
+   above 12, not December. Treating them as extra months breaks every monthly comparison;
+   treating December as missing raises a false period-completeness failure. All four map to
+   December with an adjustment flag. See §5.1.
 6. **`DMBTR_KONZERN_EUR`** is a legacy group-currency column inherited from Halden Valve's
    pre-acquisition parent. It is a EUR translation at Kestrel's own rates and must never be
    used (`CTL-FX-06`).
+
+### 5.1 The four special periods
+
+A German ledger does not close once. The statutory close happens first, the auditor's
+findings arrive months later, the tax position settles only on filing, and the group
+reporting alignment is booked separately again. Each lands in its own special period, and
+each is populated by a rule that reflects when that kind of adjustment actually arises. The
+definitions are configuration, not code: `config/coa/kestrel_special_periods.csv` carries the
+purpose, who posts it, its timing, its entry nature and its population rule.
+
+| Period | German | Purpose | Posted by | Timing | Population |
+|---|---|---|---|---|---|
+| **13** | *Abschlussbuchungen* | Statutory close: the income statement is closed into `00071500 Jahresergebnis` | Local finance | Within 15 working days of the year end | **Every** Kestrel entity, every closed year — 11 company-years |
+| **14** | *Prueferbuchungen* | Audit reclassifications: misclassified accruals, professional fees against the wrong category, receivables presented gross | External auditor via local finance | Two to four months after the year end | Only where a finding actually arose — 5 of 11 company-years |
+| **15** | *Steuerbuchungen* | Tax true-up on filing: reallocation between corporate income tax and trade tax, and the same split on the balance sheet | Local tax adviser | Six to nine months after the year end, on filing | Every entity for every **filed** year — 11 company-years |
+| **16** | *Konzernanpassungen* | Local GAAP to group policy: HGB-measured warranty and restructuring provisions reclassified to the group's categories | Group financial control with local finance | Alongside the group reporting submission | Only where the provision exceeds group financial control's reporting threshold — 4 of 11 company-years |
+
+Three properties are worth stating because they are easy to get wrong and are tested:
+
+- **Periods 14 to 16 are reclassifications, not restatements.** Each entry moves an amount
+  within a single anchored caption, so the year's reported result and every anchored subtotal
+  are unchanged (`P2-FMT-09`). That is correct rather than convenient: the group's reported
+  result *is* the approved anchor, so the generated ledger is the audited outturn. Modelling a
+  pre-audit ledger that differed would require an unaudited scenario, which is out of scope.
+- **Unfiled years carry nothing.** FY2026 is neither audited nor filed at the reporting date,
+  so it has no period 14 and no period 15 (`P2-FMT-08`).
+- **Conditional periods must be conditional.** Period 13 is universal; 14 and 16 must be
+  present but not universal, or the population rule is not modelling anything (`P2-FMT-07`).
+  An audit finding at every entity every year would be as unrealistic as none at all.
+
+Period 16 deliberately excludes the operating lease right-of-use asset. The Kestrel entities
+do not recognise it locally at all, so there is nothing in their ledgers to reclassify; Phase
+3 raises it as a staging top-side entry instead (§9).
 
 **Plus the accounting-presentation difference.** Kestrel entities report on the German
 *Gesamtkostenverfahren*: `00081000 Bestandsveraenderung` (change in finished goods) and

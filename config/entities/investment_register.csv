@@ -1,0 +1,12 @@
+investment_id,parent_entity,subsidiary_entity,event_date,consolidation_effective_date,event_type,ownership_pct_acquired,cumulative_ownership_pct,consideration_currency,consideration_local,consideration_usd_m,carrying_currency,notes
+INV-001,NIG-100,NIG-200,2019-01-01,2019-01-01,PLATFORM_ACQUISITION,1.0000,1.0000,USD,118000000,118.0,USD,Platform acquisition of Meridian Flow Controls. The transaction that formed the group.
+INV-002,NIG-200,NIG-210,2019-01-01,2019-01-01,ACQUIRED_WITH_PARENT,1.0000,1.0000,USD,22000000,22.0,USD,"Meridian Canada came with the platform and is held by Meridian US, not by Topco. Second-tier holding."
+INV-003,NIG-100,NIG-110,2019-07-01,2019-07-01,FORMATION,1.0000,1.0000,USD,2000000,2.0,USD,Shared services entity incorporated and capitalised by Topco.
+INV-004,NIG-100,NIG-500,2020-01-01,2020-01-01,CARVE_OUT,1.0000,1.0000,USD,34000000,34.0,USD,Aftermarket business carved out of NIG-200 into a new entity capitalised by Topco.
+INV-005,NIG-100,NIG-300,2021-03-01,2021-03-01,ACQUISITION,1.0000,1.0000,USD,86000000,86.0,USD,Cascade Industrial Services. Entry into field services.
+INV-006,NIG-300,NIG-310,2021-03-01,2021-03-01,ACQUIRED_WITH_PARENT,1.0000,1.0000,USD,16000000,16.0,USD,Cascade Canada came with Cascade US. Second-tier holding.
+INV-007,NIG-100,NIG-320,2022-02-01,2022-02-01,ACQUISITION,1.0000,1.0000,GBP,18000000,22.3,USD,Tyneside Mechanical Services. GBP 18.0m at the 1 Feb 2022 spot of 1.2370; held at USD cost thereafter.
+INV-008,NIG-100,NIG-400,2022-09-01,2022-09-01,ACQUISITION,1.0000,1.0000,USD,44000000,44.0,USD,Vector Engineered Systems. Entry into engineered project work.
+INV-009,NIG-500,NIG-510,2022-12-31,2023-01-01,ACQUISITION,0.8000,0.8000,GBP,14000000,16.9,USD,"Northstar Parts UK, 80%. GBP 14.0m at the 2022 closing rate of 1.2083. The deal COMPLETED on 31 December 2022, so the investment and the resulting non-controlling interest are in the group's opening balance sheet, while results consolidate from 1 January 2023. The 20% retained by founding management is the group's only non-controlling interest."
+INV-010,NIG-100,NIG-220,2023-04-01,2023-04-01,ACQUISITION,1.0000,1.0000,USD,52000000,52.0,USD,Halden Valve GmbH. Funded by USD 25m incremental term loan plus USD 20m sponsor equity contribution. Consolidated from 1 April 2023.
+INV-011,NIG-400,NIG-410,2024-07-01,2024-07-01,ACQUISITION,1.0000,1.0000,USD,38000000,38.0,USD,"Vector Systems B.V. Funded by USD 30m incremental term loan and cash. Held by Vector US, not Topco. Consolidated from 1 July 2024."

@@ -15,6 +15,7 @@ from __future__ import annotations
 import numpy as np
 
 from .common import (ACTUAL_PERIODS, Period, allocate_exact, plan_periods, rng)
+from .investments import investments_at
 from .model import (CAPEX_WEIGHT, COS_MIX, EconomicModel, EntityPeriod, INVENTORY_WEIGHT,
                     DPO_TILT, DSO_TILT, REVENUE_CONTRA, REVENUE_MIX)
 
@@ -63,6 +64,24 @@ IC_LOAN_NOTIONAL = {"NIG-220": ("EUR", 24.0), "NIG-410": ("EUR", 12.0),
                     "NIG-320": ("GBP", 10.0), "NIG-510": ("GBP", 4.0),
                     "NIG-300": ("USD", 15.0)}
 
+# Some accounts within a caption belong only to the entities that can actually have them.
+# Accrued interest is the clear case: an entity that borrows nothing accrues no interest,
+# and giving it a balance leaves a driver-generated path with nothing to explain it.
+# The share is renormalised across the caption's remaining accounts for those entities.
+INTEREST_BEARERS = {"NIG-100"} | set(IC_LOAN_NOTIONAL)
+ACCOUNT_BEARERS: dict[str, set[str]] = {"216100": INTEREST_BEARERS}
+
+
+def split_for(entity: str, split: dict[str, float]) -> dict[str, float]:
+    """The caption's account split as it applies to one entity."""
+    allowed = {a: sh for a, sh in split.items()
+               if entity in ACCOUNT_BEARERS.get(a, {entity})}
+    total = sum(allowed.values())
+    if not allowed or total <= 0:
+        return split
+    return {a: sh / total for a, sh in allowed.items()}
+
+
 # Entity contributed capital (USD m) -- share capital plus additional paid-in capital
 ENTITY_CAPITAL = {
     "NIG-100": 145.0, "NIG-110": 2.0, "NIG-200": 60.0, "NIG-210": 18.0, "NIG-220": 11.8,
@@ -85,12 +104,14 @@ class LedgerBuilder:
         self.m = model or EconomicModel()
         self.ent = self.m.entities
         self._cache: dict[str, dict] = {}
-        # Filled by SeriesBuilder.calibrate(); see year_end_bs_usd.
-        self.investment_adjustment: dict[str, float] = {}
 
     # ------------------------------------------------------------------ helpers
     def live(self, code: str, col: str) -> bool:
         return self.m._entity_live(code, col)
+
+    def live_at(self, code: str, as_of) -> bool:
+        """Whether the entity is consolidated at a given date rather than a fiscal year."""
+        return self.ent[code].effective_from <= as_of
 
     def close_rate(self, code: str, period_key: int, col: str) -> float:
         return self.m.rate(self.ent[code].currency, period_key, "CLOSE", self.m.rate_set_for(col))
@@ -204,7 +225,7 @@ class LedgerBuilder:
             sign = CAPTION_SIGN[caption]
             amounts = allocate_exact(target, np.array([drv[e] for e in members]), 6)
             for e, amt in zip(members, amounts):
-                for acct, share in split.items():
+                for acct, share in split_for(e, split).items():
                     out[e][acct] = out[e].get(acct, 0.0) + sign * amt * share
 
         # ---- property, plant and equipment ---------------------------------
@@ -274,17 +295,15 @@ class LedgerBuilder:
                           if int(c[2:6]) <= (2026 if col.startswith("FY2026") else int(col[2:6])))
         out["NIG-100"]["310200"] = out["NIG-100"].get("310200", 0.0) - cum_contrib
 
-        # Investment in subsidiaries is held at cost.  The absolute level is calibrated so
-        # that the difference between the parents' investment and the subsidiaries' net
-        # assets equals the anchored purchase-price allocation -- which is exactly what the
-        # Phase 4 investment elimination will recompute as goodwill and intangibles.
-        adj = self.investment_adjustment.get(col, 0.0)
-        total_inv = sum(a for (pp, ss), a in INVESTMENTS.items()
-                        if self.live(pp, col) and self.live(ss, col))
-        factor = 1.0 + (adj / total_inv if total_inv else 0.0)
-        for (parent, sub), amt in INVESTMENTS.items():
+        # Investment in subsidiaries is held at USD cost, taken directly from the
+        # investment register.  There is no calibration: every balance is the sum of the
+        # considerations actually paid, and `investment_rollforward.csv` explains it.
+        import datetime as _dt
+        year = 2026 if col.startswith("FY2026") else int(col[2:6])
+        as_of = _dt.date(year, 12, 31)
+        for (parent, sub), amt in investments_at(as_of).items():
             if self.live(parent, col) and self.live(sub, col):
-                out[parent]["178100"] = out[parent].get("178100", 0.0) + amt * factor
+                out[parent]["178100"] = out[parent].get("178100", 0.0) + amt
 
         self._cache[("bs", col)] = out
         return out

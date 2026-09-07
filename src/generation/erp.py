@@ -150,8 +150,12 @@ class KestrelWriter(ErpWriter):
         # It is a EUR translation at Kestrel's own rate and must never be used (CTL-FX-06).
         eur = amt * self.eur_rate(ln[I_CCY], ln[I_PERIOD])
         period = ln[I_PERIOD] % 100
+        # Special periods: 13 statutory close, 14 audit, 15 tax, 16 group reporting.
+        # The period is carried on the line attributes for 14-16 and implied for 13.
         if ln[I_EVENT] == "YEAR_END_CLOSE":
-            period = 13                       # special period for year-end adjustments
+            period = 13
+        elif "special_period=" in (ln[I_ATTRS] or ""):
+            period = int(ln[I_ATTRS].split("special_period=")[1].split(";")[0])
         return [ln[I_CC], ln[I_PERIOD] // 100, period, de_date, ln[I_JID], ln[I_LINE],
                 ln[I_SRC], ln[I_DESC][:50],
                 self.local_names.get(ln[I_SRC], "")[:50],

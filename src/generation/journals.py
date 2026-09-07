@@ -105,6 +105,32 @@ DOC_TYPE = {
     "CASH_RECEIPT": "CR", "SUPPLIER_PAYMENT": "PM", "PAYROLL_PAYMENT": "PM",
     "IC_INVOICE": "IC", "IC_RECEIPT": "CR", "IC_PAYMENT": "PM", "CAPEX": "FA",
     "INVENTORY_PURCHASE": "PI", "YEAR_END_CLOSE": "CL",
+    "AUDIT_ADJUSTMENT": "AJ", "TAX_ADJUSTMENT": "AJ", "GROUP_GAAP_ADJUSTMENT": "AJ",
+}
+
+#: Local-currency provision balance below which group financial control does not require a
+#: local-GAAP to group reporting adjustment to be booked (period 16).
+GROUP_REPORTING_THRESHOLD = 100_000.0
+
+# Kestrel special periods 14-16: post-close adjustments booked after the statutory close.
+# Each is a reclassification within a single anchor caption, so the year's reported result
+# and every anchored subtotal are unchanged -- which is correct, because the generated
+# ledger IS the audited outturn. See config/coa/kestrel_special_periods.csv.
+SPECIAL_PERIOD_ADJUSTMENTS = {
+    14: ("AUDIT_ADJUSTMENT", "Audit reclassification", [
+        # (debit account, credit account, share of the driver amount)
+        ("215300", "215600", 0.55),      # accrued professional fees misclassified
+        ("630100", "630300", 0.30),      # advisory fees recorded as consulting
+        ("120300", "120100", 0.15),      # other receivables presented within trade
+    ]),
+    15: ("TAX_ADJUSTMENT", "Tax return true-up", [
+        ("810300", "830100", 0.60),      # corporate income tax versus trade tax
+        ("218100", "219100", 0.40),      # and the same split on the balance sheet
+    ]),
+    16: ("GROUP_GAAP_ADJUSTMENT", "Local GAAP to group policy", [
+        ("215600", "215400", 0.50),      # warranty provision to the group category
+        ("215600", "215500", 0.50),      # restructuring provision to the group category
+    ]),
 }
 
 
@@ -386,6 +412,63 @@ class JournalGenerator:
                         "Opening balance brought forward", src,
                         self.sm.expected_group(e.erp, acct), cc, dept, func,
                         e.currency, round(float(amt), 2), "", "", "", ""))
+        return out
+
+    def special_period_adjustments(self, entity: str, period_key: int,
+                                   ytd_pl: dict[str, float],
+                                   closing: dict[str, float]) -> list[tuple]:
+        """
+        Kestrel post-close adjustments in special periods 14, 15 and 16.
+
+        Each entry is a reclassification within one anchor caption, so no anchored subtotal
+        moves.  Which entities and years are populated follows the rules in
+        `config/coa/kestrel_special_periods.csv` -- audit findings do not arise everywhere
+        every year, and a year that is not yet audited or filed has none.
+        """
+        e = self.ent[entity]
+        if e.erp != "KESTREL":
+            return []
+        year = period_key // 100
+        p = PERIOD_BY_KEY[period_key]
+        g = rng("special", entity, year)
+        out: list[tuple] = []
+
+        for special, (event, label, legs) in SPECIAL_PERIOD_ADJUSTMENTS.items():
+            # FY2026 is neither audited nor filed at the reporting date
+            if special in (14, 15) and year >= 2026:
+                continue
+            # audit findings arise at some entities, not all, and not every year
+            if special == 14 and g.random() > 0.5:
+                continue
+            # Group financial control sets a reporting threshold below which a local-GAAP
+            # provision difference is not worth booking, so period 16 appears only at the
+            # Kestrel entities carrying a material provision in a given year.
+            if special == 16 and abs(closing.get("215600", 0.0)) < GROUP_REPORTING_THRESHOLD:
+                continue
+            driver = abs(ytd_pl.get("610100", 0.0)) * float(g.uniform(0.004, 0.012))
+            if special == 15:
+                driver = abs(sum(v for a, v in ytd_pl.items() if a.startswith("8"))) * 0.18
+            if special == 16:
+                driver = abs(closing.get("215600", 0.0)) * float(g.uniform(0.10, 0.22))
+            if driver < 500:
+                continue
+            for i, (dr, cr, share) in enumerate(legs):
+                amount = round(driver * share, 2)
+                if amount < 1:
+                    continue
+                jid = f"KE{period_key}{entity[-3:]}{special}{i:04d}"
+                for ln, (acct, amt) in enumerate(((dr, amount), (cr, -amount)), start=1):
+                    resolved = self.sm.resolve(e.erp, acct)
+                    if resolved is None:
+                        continue
+                    src, _req = resolved
+                    cc, dept, func = self._cost_centre(entity, acct)
+                    out.append((entity, e.erp, e.erp_company_code, period_key, jid, ln,
+                                p.end.isoformat(), f"AJ{special}-{year}", "AJ", event,
+                                f"{label} (special period {special})", src,
+                                self.sm.expected_group(e.erp, acct), cc, dept, func,
+                                e.currency, round(float(amt), 2), "", "", "",
+                                f"special_period={special}"))
         return out
 
     def year_end_close(self, entity: str, period_key: int, ytd_pl: dict[str, float]) -> list[tuple]:

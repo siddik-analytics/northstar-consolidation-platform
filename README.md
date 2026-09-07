@@ -21,6 +21,7 @@ figure back to the source journal that produced it.
 | **1 — Business design & architecture** | ✅ **Complete** | [Report](docs/phases/phase-01-report.md) |
 | **1.1 — Architecture correction pass** | ✅ **Complete** | [Report](docs/phases/phase-01-1-report.md) |
 | **2 — Synthetic source systems & reference data** | ✅ **Complete** | [Report](docs/phases/phase-02-report.md) |
+| **2.1 — Source data correction pass** | ✅ **Complete** | [Report](docs/phases/phase-02-1-report.md) |
 | 3 — Ingestion, staging & COA harmonisation | ⏸ Awaiting approval | |
 | 4 — Consolidation engine | ⏸ | |
 | 5 — Reporting marts & control suite | ⏸ | |
@@ -131,6 +132,7 @@ tests/           Automated validation
 | [Phase 1 report](docs/phases/phase-01-report.md) | What was built, and a critical self-audit that found nine defects |
 | [Phase 1.1 report](docs/phases/phase-01-1-report.md) | Architecture corrections applied at the approval gate |
 | [Phase 2 report](docs/phases/phase-02-report.md) | 1.08m journal lines generated, reconciled and controlled |
+| [Phase 2.1 report](docs/phases/phase-02-1-report.md) | Driver-generated monthly balance sheets, an explainable investment register, four Kestrel special periods |
 
 | Design | |
 |---|---|

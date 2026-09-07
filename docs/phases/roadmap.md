@@ -17,7 +17,8 @@ each contained two genuinely separable pieces of work with different risk profil
 |---|---|---|
 | 1 | Business design & architecture | **Complete** |
 | 1.1 | Architecture correction pass | **Complete — ready for Phase 2 approval** |
-| 2 | Synthetic source systems & reference data | **Complete — awaiting review** |
+| 2 | Synthetic source systems & reference data | **Complete** |
+| 2.1 | Source data correction pass | **Complete — ready for Phase 3 approval** |
 | 3 | Ingestion, staging & COA harmonisation | Not started |
 | 4 | Consolidation engine | Not started |
 | 5 | Reporting marts & automated control suite | Not started |
