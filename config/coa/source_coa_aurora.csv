@@ -69,7 +69,6 @@ AURORA,3010,Additional Paid In Capital,Equity,C,310200,DIRECT,,2019-01-01,,
 AURORA,3020,Stock Compensation Reserve,Equity,C,315100,DIRECT,,2019-01-01,,
 AURORA,3100,Retained Earnings,Equity,C,320100,DIRECT,,2019-01-01,,
 AURORA,3200,Distributions,Equity,D,320300,DIRECT,,2019-01-01,,
-AURORA,3250,Group Reporting Measurement Reserve,Equity,C,329100,DIRECT,,2019-01-01,,Holding-company reserve carrying the difference between the group reporting basis and the sum of the entity ledgers. Reclassified to CTA on consolidation.
 AURORA,3300,Cumulative Translation Adjustment,Equity,C,330100,DIRECT,,2019-01-01,,
 AURORA,4000,Revenue - Equipment,Income,C,410100,DIRECT,,2019-01-01,,
 AURORA,4010,Revenue - Components,Income,C,410200,DIRECT,,2019-01-01,,

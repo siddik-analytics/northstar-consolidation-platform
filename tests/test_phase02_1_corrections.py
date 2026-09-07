@@ -239,9 +239,27 @@ def test_no_entity_runs_a_negative_bank_balance(journal_lines):
 
 @needs_build
 def test_year_end_cash_ties_to_the_anchor_exactly():
-    """Cash is externally verifiable and carries none of the measurement difference."""
-    for row in read_csv(REFERENCE / "translation_difference.csv"):
-        assert abs(float(row["cash_variance_vs_anchor"])) <= 0.01, row["fiscal_year"]
+    """
+    Cash is externally verifiable and carries no residual.
+
+    Phase 2.1 held this true by moving the difference into an equity reserve. Phase 2.2
+    removed the difference itself, so the test now reads the layer-1 equity bridge that
+    replaced the reserve's disclosure — the cash tie is the consequence, not the mechanism.
+    """
+    import pandas as pd
+    jl = pd.read_parquet(REFERENCE / "journal_lines.parquet")
+    rates = {(r["currency_code"], int(r["period_key"]), r["rate_type"], r["rate_set"]):
+             float(r["rate_usd_per_unit"])
+             for r in read_csv(REFERENCE / "fx_rates_monthly.csv")}
+    bs = load_anchor("balance_sheet")
+    cash = jl[jl["expected_group_account"] == "110100"]
+    for year, col in ((2023, "FY2023A"), (2024, "FY2024A"), (2025, "FY2025A")):
+        pk = year * 100 + 12
+        upto = cash[cash["period_key"] <= pk]
+        total = sum(v * rates[(c, pk, "CLOSE", "ACTUAL")] / 1e6 for v, c in zip(
+            upto.groupby("currency_code")["amount_local"].sum(),
+            upto.groupby("currency_code")["amount_local"].sum().index))
+        assert total == pytest.approx(bs["cash"][col], abs=0.02), year
 
 
 # =====================================================================================
@@ -365,29 +383,25 @@ def test_phase_2_does_not_perform_the_elimination(journal_lines):
 
 
 # =====================================================================================
-# The approved anchors are untouched by any of the above
+# The approved anchors the Phase 2.1 corrections were not allowed to move
 # =====================================================================================
 def test_phase_21_left_every_approved_anchor_unchanged():
     """
-    Phase 2.1 corrected source construction only.  Anchor values are approved outputs of
-    the Phase 1 model and no correction here may move one.
+    Phase 2.1 corrected source construction only and moved no anchor.
+
+    Phase 2.2 revised exactly two, narrowly and with a derivation: the cumulative
+    translation adjustment (ADR-0017) and the revolver's average drawn balance (ADR-0018).
+    Those two move the year-end facility balance and total equity, so both are asserted at
+    their restated values in tests/test_phase02_2_corrections.py.  Everything Phase 2.1 was
+    forbidden to touch is still asserted here.
     """
     bs = load_anchor("balance_sheet")
     assert bs["cash"]["FY2023A"] == pytest.approx(15.0)
     assert bs["cash"]["FY2024A"] == pytest.approx(15.0)
     assert bs["cash"]["FY2025A"] == pytest.approx(22.0)
-    assert bs["rcf"]["FY2024A"] == pytest.approx(23.847882, abs=1e-6)
-    assert bs["total_equity"]["FY2025A"] == pytest.approx(102.389371, abs=1e-6)
+    assert bs["tlb_gross"]["FY2024A"] == pytest.approx(228.9, abs=1e-6)
+    assert bs["ar"]["FY2025A"] == pytest.approx(65.484384, abs=1e-6)
+    assert bs["inventory"]["FY2025A"] == pytest.approx(40.103425, abs=1e-6)
+    assert bs["total_assets"]["FY2025A"] == pytest.approx(467.530808, abs=1e-6)
     ic = load_ic_anchor()
     assert ic["pup_in_inventory"]["FY2025A"] > 0
-
-
-@needs_build
-def test_the_measurement_reserve_is_disclosed_and_immaterial():
-    """ADR-0016: the residual is a named, bounded, disclosed reserve -- never a plug."""
-    rows = read_csv(REFERENCE / "translation_difference.csv")
-    assert len(rows) == 3
-    for row in rows:
-        assert float(row["reserve_pct_of_total_assets"]) <= 2.0, row["fiscal_year"]
-        # the generated CTA is computed independently, not derived from the gap
-        assert row["generated_cta_on_net_assets"] and row["generated_cta_on_result"]

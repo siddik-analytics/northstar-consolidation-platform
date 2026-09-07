@@ -404,12 +404,31 @@ Reconciled to the balance sheet by `CTL-REC-04`.
 ### `fact_debt_schedule`
 Grain: instrument × period × scenario × version. Measures: `opening_principal`, `drawings`,
 `scheduled_repayments`, `voluntary_prepayments`, `fx_movement`, `closing_principal`,
-`average_balance`, `interest_rate`, `interest_expense`, `commitment_fee`,
-`unamortised_fees`, `undrawn_commitment`.
+`average_daily_drawn`, `average_daily_undrawn`, `interest_rate`, `interest_expense`,
+`commitment_fee`, `unamortised_fees`, `undrawn_commitment`.
+
+The average balance is a **daily** average, not the mean of two month ends. Interest accrues
+on the daily drawn balance and the commitment fee on the daily undrawn commitment, so the two
+cannot be reconciled to the recorded charge without it (`CTL-FS-10`). The source layer
+supplies it in `data/reference/revolver_utilisation.csv`, resolved with the borrowing-notice
+and collections-sweep dates in `config/debt/treasury_policy.csv`.
 
 Covenant metrics are computed from this fact and reconciled to the balance sheet
 (`CTL-REC-05`). Modelling debt at instrument level rather than as one balance sheet line is
 what makes "what happens when the swap matures in December 2026?" answerable.
+
+### `fact_cta_expectation`
+Grain: entity × period. A **source-layer expectation**, loaded from
+`data/reference/cta_expectation.csv` and never written by the consolidation engine. Measures:
+`opening_net_assets_local`, `closing_net_assets_local`, `result_local`,
+`equity_movement_local`, `opening_rate`, `closing_rate`, `average_rate`,
+`cta_on_opening_net_assets`, `cta_on_result`, `cta_on_equity_movements`,
+`cta_movement_usd_m`, `cta_cumulative_usd_m`.
+
+Its only purpose is to be the thing the layer-5 CTA is tested against (`CTL-FX-12`). It is
+computed from source balances and the approved rate file before any translation runs, so an
+engine compared to it is genuinely compared to something. It carries no group target and must
+never be joined into a reporting measure.
 
 ### `fact_intercompany_matching`
 Grain: entity pair × account × period × currency. A **derived control fact** produced by the
@@ -491,6 +510,7 @@ across `dim_entity`, `dim_cost_center` and `dim_account`.
 | `fact_cash_flow` | ~25,000 | |
 | `fact_debt_schedule` | ~2,000 | |
 | `fact_fx_rate` | ~1,500 | |
+| `fact_cta_expectation` | ~250 | Source-layer expectation; foreign entities only |
 | `fact_ownership_interest` | ~800 | Entity × period ownership, all entities |
 | All dimensions | ~2,000 | |
 | **Total** | **~3.2m rows** | |

@@ -165,7 +165,15 @@ so its investment and the resulting NCI sit in the group's opening balance sheet
 consolidate from 1 January 2023. `event_date` and `consolidation_effective_date` are separate
 columns for exactly this reason.
 
-### 4.1 Where the residual went instead — ADR-0016
+### 4.1 Where the residual went instead — ADR-0016 · **SUPERSEDED BY PHASE 2.2**
+
+> **This section is superseded.** The reviewer rejected the measurement reserve as a
+> permanent source-layer design, and was right: the residual was not a measurement effect
+> to be disclosed but the consequence of an anchor bridge that derived a layer-1 target for
+> everything except equity. Phase 2.2 derived that target, held contributed capital at
+> historical rates so a translation adjustment could arise, and removed `329100` entirely.
+> The residual is nil, not small. See [`phase-02-2-report.md`](phase-02-2-report.md) and
+> ADR-0017.
 
 Removing the plug exposed what it had been hiding. Every caption other than cash is pinned to
 an anchor and retained earnings rolls from locally-measured net income; together these
@@ -277,12 +285,20 @@ carries none of the difference.
 
 ---
 
-## 8. Carried into Phase 3
+## 8. Carried into Phase 3 — **all three closed in Phase 2.2**
 
-1. **Generated revolver utilisation versus the anchor's interest assumption** (§3.2). Year-end
-   balances tie; average drawn does not. Closing it needs an approved anchor re-opened.
-2. **`329100` must be handled explicitly** by Phase 3 mapping and Phase 4 consolidation — it
-   has no counterpart in a real ERP chart and must never reach a consolidated result.
-3. **Generated CTA versus anchored CTA** — cumulative $1.44m / −$1.47m / $3.15m against
-   $0.00m / −$5.30m / $3.50m. Phase 4's translation engine must reproduce the generated figure
-   from the entity ledgers; the variance is the measure of how much the reserve resolves.
+1. ~~**Generated revolver utilisation versus the anchor's interest assumption** (§3.2). Year-end
+   balances tie; average drawn does not. Closing it needs an approved anchor re-opened.~~
+   **Closed.** The assumption was a defect, provable from the facility's own roll-forward
+   before any generated data is consulted. Utilisation is now resolved to a daily balance and
+   the average drawn anchor is derived from it (ADR-0018).
+2. ~~**`329100` must be handled explicitly** by Phase 3 mapping and Phase 4 consolidation.~~
+   **Closed.** The account is removed from every chart, from the mapping manifest and from the
+   generator. There is nothing for Phase 3 to handle.
+3. ~~**Generated CTA versus anchored CTA** — cumulative $1.44m / −$1.47m / $3.15m against
+   $0.00m / −$5.30m / $3.50m.~~ **Closed.** The generated figure was itself understated,
+   because contributed capital was retranslated onto a USD target each year and could not
+   generate an adjustment. With capital frozen at historical rates the layer-1 CTA is
+   $1.54m / −$2.70m / $5.04m, and the anchored roll-forward is derived from it (ADR-0017).
+
+See [`phase-02-2-report.md`](phase-02-2-report.md).

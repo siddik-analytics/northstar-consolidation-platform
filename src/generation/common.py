@@ -176,6 +176,17 @@ FY_OF_COL = {"FY2023A": 2023, "FY2024A": 2024, "FY2025A": 2025,
 ACTUAL_COLS = ["FY2023A", "FY2024A", "FY2025A"]
 
 
+def load_treasury_policy() -> dict[str, float]:
+    """Board treasury policy and the facility's mechanical terms, by parameter id."""
+    out: dict[str, float] = {}
+    for r in read_csv(CONFIG / "debt" / "treasury_policy.csv"):
+        try:
+            out[r["policy_id"]] = float(r["value"])
+        except ValueError:
+            continue                      # conventions are text, not numbers
+    return out
+
+
 def load_anchor(name: str, key: str = "line_item") -> dict[str, dict[str, float]]:
     return {r[key]: {c: float(r[c]) for c in COLS}
             for r in read_csv(ANCHORS / f"anchor_{name}.csv")}

@@ -4,10 +4,10 @@ IS,cost_of_sales,plus intercompany product and service cost borne by the buying 
 IS,opex,plus intercompany management fee and royalty expense borne by the paying entity,70.980000,76.074000,78.735000,84.073000,84.258000
 IS,depreciation,"unchanged: entities own their property, plant and equipment",9.500000,10.400000,11.300000,12.200000,12.000000
 IS,amortisation,"nil at source: all amortisation is of acquired intangibles, a layer-3 item",0.000000,0.000000,0.000000,0.000000,0.000000
-IS,net_interest,unchanged: intercompany interest income and expense net within layer 1,18.283676,20.689388,19.646631,17.533053,18.703228
+IS,net_interest,unchanged: intercompany interest income and expense net within layer 1,18.434547,21.985445,21.045501,17.524053,19.357542
 IS,intercompany_revenue,eliminated in full at layer 2,37.780000,44.374000,50.535000,55.373000,53.158000
 IS,intercompany_interest,both legs present at source; eliminated at layer 2,2.100000,2.700000,2.900000,2.850000,2.950000
-IS,current_tax,current tax only; deferred tax is a layer-3 item,2.181862,1.586537,5.361535,7.824431,5.759852
+IS,current_tax,current tax only; deferred tax is a layer-3 item,2.209019,0.873705,4.962857,7.826861,5.579916
 BS,cash,unchanged,15.000000,15.000000,22.000000,22.000000,22.000000
 BS,contract_assets,unchanged,7.512000,8.206400,8.901000,9.093000,10.137600
 BS,prepaid,unchanged,6.560000,7.428000,8.242000,8.960000,8.744000
@@ -18,7 +18,7 @@ BS,accrued,unchanged,18.040000,20.427000,22.665500,24.640000,24.046000
 BS,tax_payable,unchanged,1.968000,2.228400,2.472600,2.688000,2.623200
 BS,other_ltl,unchanged,3.500000,3.800000,4.000000,4.000000,4.200000
 BS,finance_lease,unchanged,10.268500,10.368828,10.850594,10.843234,11.343234
-BS,rcf,unchanged,15.136696,23.847882,16.321318,6.756755,11.422959
+BS,rcf,unchanged,16.237030,24.866815,19.518200,9.947067,15.127244
 BS,ar,trade receivables only; intercompany shown separately,55.715068,61.052055,65.484384,67.506849,70.670685
 BS,ap,trade payables only; intercompany shown separately,29.775233,34.984241,40.103425,44.964115,43.441716
 BS,inventory,"gross of unrealised intercompany profit, which is eliminated at layer 3",36.160822,39.268433,40.803425,41.360642,44.181716
@@ -28,3 +28,6 @@ BS,tlb_gross,all external debt sits with Topco,201.200000,228.900000,226.600000,
 BS,goodwill,nil at source: recognised only on consolidation,0.000000,0.000000,0.000000,0.000000,0.000000
 BS,intangibles_net,nil at source: recognised only on consolidation,0.000000,0.000000,0.000000,0.000000,0.000000
 BS,dtl,nil at source: arises on the purchase price allocation,0.000000,0.000000,0.000000,0.000000,0.000000
+BS,investments_in_subsidiaries,held at cost at the parent; eliminated at layer 3,413.200000,451.200000,451.200000,451.200000,451.200000
+BS,total_equity,"consolidated equity plus investment at cost, less goodwill and acquired intangibles, plus the deferred tax on them and the unrealised intercompany profit",336.834127,351.793604,372.092489,395.798075,389.355607
+BS,cumulative_translation_adjustment,nil at source: a local ledger has no CTA. It is created by translation at layer 5 and is proved against data/reference/cta_expectation.csv,0.000000,0.000000,0.000000,0.000000,0.000000

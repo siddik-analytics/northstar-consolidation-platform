@@ -219,10 +219,10 @@ Phase 1 mapping. That inversion is recorded rather than hidden, in
 | `required_line_attributes` | the attributes a conditional split has to read, e.g. `dept_function=PRODUCTION` |
 | `substituted_because_unavailable` | `TRUE` where the ERP has no equivalent account |
 
-The manifest has 313 rows. Every generated journal line also carries its own
+The manifest has 315 rows. Every generated journal line also carries its own
 `expected_group_account` in
 `data/reference/journal_lines.parquet`. **Phase 3 is graded against that column**: for
-1,082,408 lines, the mapping engine must reproduce it exactly. Phase 2 performs no
+1,080,782 lines, the mapping engine must reproduce it exactly. Phase 2 performs no
 mapping — it only records what the answer is.
 
 ---
@@ -240,3 +240,41 @@ Deliberate, and load-bearing for later phases:
   produce an extract; `P2-REF-02` asserts it.
 - **No operating lease right-of-use assets in the Kestrel entities**, which do not
   recognise them locally. Phase 3 raises them as a staging top-side entry.
+- **No cumulative translation adjustment.** A local ledger has none: it is created by the
+  consolidation, not by the entity. The adjustment each foreign entity's balances *imply* is
+  published separately as an expectation for Phase 5, in
+  `data/reference/cta_expectation.csv`.
+- **No measurement reserve, balancing account or residual of any kind.** Phase 2.1 carried
+  `329100 Group reporting measurement reserve` and its Aurora counterpart `3250`; Phase 2.2
+  removed both, along with the cause (ADR-0016 superseded by ADR-0017). `P2-EQ-03` fails the
+  build if an account named for that purpose reappears in any chart.
+
+---
+
+## 9. What the source layer *does* carry, and why
+
+Three things a synthetic source layer usually fakes, and which are modelled here as registers
+so that every balance has an event behind it:
+
+**Contributed capital is a historical-rate balance.** Each entity's share capital and paid-in
+capital are fixed amounts in its own currency, struck at the rate ruling when they were
+contributed (FX-P03), and they never move again. Every subsequent movement is a dated event in
+`src/generation/ledger.py::EQUITY_EVENTS` — the $20.0m sponsor contribution that part-funded
+the Halden Valve acquisition arrives on 1 April 2023, the day the consideration was paid, and
+the distributions to Northstar Parts UK's minority shareholder leave on the dates they were
+declared. `P2-FX-01` proves the balance is constant in local currency in every other month.
+
+**Share-based compensation is settled in equity.** The charge accretes in
+`315100 Share-based compensation reserve` at Topco and Shared Services, the two entities that
+grant it. It is non-cash, and the reserve is where the credit belongs.
+
+**Investment in subsidiaries steps on acquisition dates**, from
+`config/entities/investment_register.csv`, and reconciles in every month to
+`data/reference/investment_rollforward.csv` (`P2-INV-01`).
+
+The external facilities are the same idea applied to debt. Balances come from Topco's own
+ledger, and `data/reference/revolver_utilisation.csv` resolves the revolver to the daily
+position that interest and the commitment fee actually accrue on, using the borrowing-notice
+and collections-sweep dates fixed in `config/debt/treasury_policy.csv`. `P2-DBT-01` proves the
+roll-forward, `P2-DBT-02` proves the charge, and `P2-DBT-03` proves the schedule agrees with
+the general ledger month by month.

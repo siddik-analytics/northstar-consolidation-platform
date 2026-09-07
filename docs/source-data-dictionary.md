@@ -178,12 +178,21 @@ and liquidity analysis possible.
 `closing_principal`, `interest_rate_basis`, `rate_type`, `is_hedged`,
 `hedge_notional_usd`, `hedge_maturity`, `maturity_date`, `interest_expense_local`,
 `commitment_fee_local`, `unamortised_fees`, `undrawn_commitment`,
-`counts_toward_covenant_debt`, `covenant_reference`.
+`counts_toward_covenant_debt`, `covenant_reference`, `average_daily_drawn`,
+`average_daily_undrawn`, `movement_day`, `days_in_month`.
 
 Instruments: the 2021 Term Loan B and the revolving facility at Topco, plus per-entity
 finance leases. `covenant_reference` points at the clause in
 `config/debt/credit_agreement_terms.csv` that brings each instrument into covenant debt, and
 `hedge_maturity` carries the December 2026 swap expiry that the board pack has to surface.
+
+Balances are **read from the general ledger**, not interpolated between anchored year ends, so
+`opening + drawings − repayments = closing` is the ledger's own arithmetic and `P2-DBT-03`
+tests the schedule against the ledger month by month. `interest_rate_basis` names the
+components rather than a blended rate: the term loan is 50% swapped at 3.00% plus 425bps with
+the balance floating at SOFR plus 425bps (CA-003, CA-008, CA-034); the revolver is SOFR plus
+425bps on the daily drawn balance (CA-033). The four utilisation columns carry the daily
+position the charge accrues on — see `revolver_utilisation.csv` at §9e.
 
 ---
 
@@ -219,28 +228,84 @@ methodology.
 
 ---
 
-## 9b. `translation_difference.csv`
+## 9b. `cta_expectation.csv`
 
-**Grain**: fiscal year. 3 rows. The disclosure required by ADR-0016.
+**Grain**: foreign entity × period. 243 rows. The **expected result** for the Phase 5
+translation engine, computed from source balances and the approved rate file alone. It
+replaces `translation_difference.csv`, which disclosed a residual that no longer exists
+(ADR-0016 superseded by ADR-0017).
 
 | Column | Notes |
 |---|---|
-| `generated_cta_movement` | CTA the generated entity ledgers imply for the year, computed independently by the standard formula rather than by reference to any gap |
-| `generated_cta_on_net_assets` | the component from opening net assets × the change in closing rate |
-| `generated_cta_on_result` | the component from the result × (closing − average rate) |
-| `generated_cta_cumulative` | cumulative generated CTA |
-| `anchor_cta_cumulative` | the anchored CTA roll-forward, for comparison |
-| `cta_variance_vs_anchor` | difference between the two |
-| `layer1_cash`, `anchor_cash`, `cash_variance_vs_anchor` | cash ties exactly; the variance is nil by design (`P2-RES-02`) |
-| `measurement_reserve_closing` | the `329100` balance at the year end |
-| `layer1_total_assets`, `reserve_pct_of_total_assets` | the materiality measure control `P2-RES-01` caps at 2% |
+| `entity_code`, `period_key`, `currency_code` | USD-functional entities generate no CTA and do not appear |
+| `opening_net_assets_local`, `closing_net_assets_local` | net assets in the entity's own currency. Closing = opening + result + equity movements, exactly |
+| `result_local` | the month's result in local currency |
+| `equity_movement_local` | contributions and distributions dated in the month, credit-positive |
+| `opening_rate`, `closing_rate`, `average_rate` | the prior closing spot, this month's closing spot, and the monthly average |
+| `cta_on_opening_net_assets` | opening net assets × (closing − prior closing) |
+| `cta_on_result` | result × (closing − average) |
+| `cta_on_equity_movements` | equity movements × (closing − transaction rate) |
+| `cta_movement_usd_m`, `cta_cumulative_usd_m` | the movement and the running balance |
 
-Phase 4 must reproduce the generated CTA and remove the reserve. It is never a consolidation
-input.
+Every row is reconstructible from the three balances and the three rates in it (`P2-FX-03`).
+Phase 5's translation engine must reproduce this table; it is never given it.
+
+## 9c. `layer1_equity_bridge.csv`
+
+**Grain**: fiscal year. 3 rows. The proof that the layer-1 balance sheet closes without a plug.
+
+| Column | Notes |
+|---|---|
+| `opening_equity_usd_m` | prior year's closing layer-1 equity, translated at closing rates |
+| `result_for_the_year_usd_m` | local results at the monthly average rates |
+| `share_based_compensation_usd_m` | equity-settled, credited to `315100` |
+| `capital_contributed_usd_m` | at the rate on the contribution date |
+| `equity_acquired_usd_m` | equity an entity brought with it on the date it joined the group |
+| `distributions_usd_m` | to the non-controlling shareholder, at the payment-date rate |
+| `cta_movement_usd_m` | the computed translation adjustment, from `cta_expectation.csv` |
+| `closing_equity_rolled_usd_m`, `closing_equity_generated_usd_m` | the roll-forward, and what the ledgers actually say |
+| `unexplained_usd_m` | **nil.** `P2-EQ-01` fails the build if it is not |
+| `anchor_layer1_equity_target_usd_m` | derived by `targets.py` from the approved anchors |
+| `variance_vs_anchor_usd_m` | **nil.** `P2-EQ-02` fails the build if it is not |
+
+The columns are fixed and asserted: a line here that is not a transaction or the computed CTA
+would be the measurement reserve returning under a new name.
+
+## 9d. `cta_group_bridge.csv`
+
+**Grain**: fiscal year. 3 rows. The bridge from the layer-1 CTA to the anchored consolidated
+CTA roll-forward, and the statement that supersedes the provisional Phase 1 target.
+
+| Column | Notes |
+|---|---|
+| `layer1_cta_movement_usd_m` | the total from `cta_expectation.csv` |
+| `fx_on_goodwill_usd_m`, `fx_on_intangibles_usd_m` | retranslation of layer-3 balances that exist in no source ledger. The only estimates left in the CTA |
+| `nci_share_of_cta_usd_m` | 20% of the adjustment arising in NIG-510 |
+| `movement_in_unrealised_profit_usd_m` | the layer-3 elimination's movement |
+| `derived_group_cta_movement_usd_m` | the sum of the above |
+| `anchored_group_cta_movement_usd_m`, `derivation_variance_usd_m` | the anchor, and the variance. **Nil** (`P2-FX-02`) |
+| `anchored_cta_closing_usd_m` | the closing balance the roll-forward carries |
+
+## 9e. `revolver_utilisation.csv`
+
+**Grain**: period. 44 rows, one per month from January 2023 to August 2026. The facility
+resolved to a daily balance, which is what interest and the commitment fee accrue on.
+
+| Column | Notes |
+|---|---|
+| `period_key`, `instrument_id` | `RCF-2021`, the 2021 revolving credit facility |
+| `opening_drawn`, `drawings`, `repayments`, `closing_drawn` | USD. `opening + drawings − repayments = closing` to the cent (`P2-DBT-01`), chained month to month without a break. A month draws or repays, never both |
+| `movement_day` | day 3 for a drawing (the borrowing-notice date, CA S2.3(a)); day 25 for a repayment (the collections sweep, treasury policy TP-009) |
+| `days_in_month`, `average_daily_drawn`, `average_daily_undrawn` | the step-function average, exact rather than approximated |
+| `commitment_usd`, `utilisation_pct`, `headroom_usd` | against the $60.0m commitment (CA-006) |
+| `commitment_fee_accrued` | 50bps (CA-007) on the average daily undrawn, actual/365 |
+
+The annual total of `average_daily_drawn` **is** the `RCF_AVG_DRAWN` anchor. It is derived by
+`tools/derive_anchor_inputs.py`, not asserted alongside this table. See ADR-0018.
 
 ---
 
-## 9c. `ic_inventory_transactions.csv` and `ic_inventory_holdings.csv`
+## 9f. `ic_inventory_transactions.csv` and `ic_inventory_holdings.csv`
 
 Source support for the Phase 4 unrealised profit elimination. **Phase 2 does not eliminate
 anything** — these datasets exist so Phase 4 can compute the elimination from evidence rather
@@ -307,7 +372,7 @@ charts.
 |---|---|
 | `data/build_manifest.json` | Row counts, the investment calibration, and a SHA-256 for each of the 520 generated files |
 | `data/samples/build_digest.txt` | One digest over all checksums — the reproducibility fingerprint |
-| `data/phase02_control_results.csv` | All 57 source controls with measured value, threshold and status |
+| `data/phase02_control_results.csv` | All 77 source controls with measured value, threshold and status |
 | `data/faults/expected_results.json` | The ten fault fixtures and the control each must trip |
 | `data/samples/*.csv` | Extract samples from all three systems, plus a journal line sample |
 | `config/generation/expected_mapping_manifest.csv` | The mapping fixture Phase 3 is graded against |

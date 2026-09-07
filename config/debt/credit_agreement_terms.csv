@@ -31,3 +31,6 @@ CA-029,ADDBACK,Share-based compensation,FALSE,NOT_PERMITTED,2021-06-15,,S1.1,"NO
 CA-030,ADDBACK,Unrealised foreign exchange gains and losses,TRUE,PERMITTED,2021-06-15,,S1.1 (iii),"Non-cash. Below EBITDA in the group presentation (740200), so no add-back is required in practice."
 CA-031,REPORTING,Compliance certificate due,45,DAYS,2021-06-15,,S6.1(c),"Within 45 days of each quarter end, signed by the CFO."
 CA-032,REPORTING,Annual audited accounts due,120,DAYS,2021-06-15,,S6.1(a),"Within 120 days of the fiscal year end."
+CA-033,FACILITY,Revolving facility margin over SOFR,0.0425,DECIMAL,2021-06-15,,S2.8(b),"425 basis points. The revolving facility ranks pari passu with the term loan and carries the same margin; it is unhedged, so it floats in full."
+CA-034,HEDGING,Interest rate swap fixed rate,0.0300,DECIMAL,2021-06-15,,S6.12,"The USD 100m notional swap fixes SOFR at 3.00% until 31 December 2026. The hedged portion of the term loan therefore pays 3.00% plus the margin."
+CA-035,HEDGING,Interest rate swap notional,100.000,USD_MILLIONS,2021-06-15,,S6.12,"Approximately half the term loan, satisfying the minimum hedged proportion at CA-008."

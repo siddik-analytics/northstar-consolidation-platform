@@ -173,13 +173,43 @@ year end. So the revolver is generated as the group's liquidity instrument:
 
 No entity now runs a materially negative bank balance in any month (`P2-BR-01`).
 
-One consequence is disclosed rather than smoothed away. The anchor model prices revolver
-interest off an *average drawn* assumption of $15.0m, $12.0m and $5.0m; the generated monthly
-path averages $6.7m, $23.9m and $11.6m, because the generated working-capital profile and the
-July 2024 acquisition demand liquidity on a different intra-year rhythm than that assumption
-implies. Reconciling the two would mean re-opening an approved anchor's interest assumption,
-which Phase 2.1 is not permitted to do. The year-end drawn balances, which are the anchored
-balance sheet figures, tie exactly.
+Treasury policy is **configuration, not a constant buried in the generator**.
+`config/debt/treasury_policy.csv` holds the year-end minimum and target cash balances, the
+intra-year operating floor and the headroom requested above it, the borrowing-notice
+increment, the repayment block, the minimum surplus before repaying, and the two dates on
+which the facility actually moves. Both the anchor model and this generator read it, so a
+policy cannot be changed in one layer and left in the other.
+
+#### The facility resolved to a daily balance
+
+A month-end balance cannot price a facility. Interest accrues on the **daily drawn** balance
+and the commitment fee on the **daily undrawn** commitment, so the intra-month position has to
+exist. It follows the dates the credit agreement and the board policy already fix: a drawing
+is taken on the borrowing-notice date early in the month, because it funds the supplier
+payment run and the payroll disbursement; a repayment is made on the collections sweep date
+late in the month, once the month's receipts have cleared. The balance is therefore a step
+function with one step, which makes the average daily balance exact rather than approximated.
+
+`data/reference/revolver_utilisation.csv` publishes all 44 months — opening drawn, drawings,
+repayments, closing drawn, the day the balance moved, days in month, average daily drawn,
+average daily undrawn, utilisation and the fee accrued on it. Two identities are proved
+against it:
+
+```
+opening drawn + drawings - repayments             = closing drawn          (P2-DBT-01)
+average daily drawn x (base rate + margin)
+   + commitment fee on the average daily undrawn  = the recorded charge    (P2-DBT-02)
+```
+
+Both hold to the cent in every year. Phase 2.1 could prove neither, because it priced the
+facility off an assumed average drawn balance of $15.0m, $12.0m and $5.0m that the facility's
+own roll-forward ($8.0m → $15.1m → $23.8m → $16.3m) contradicted. That assumption is
+superseded by the derived average daily balance — see ADR-0018 and
+`docs/phases/phase-02-2-report.md`.
+
+The debt schedule reads Topco's balances from the ledger rather than interpolating between
+year ends, so `data/reference/debt_schedule.csv` and the general ledger agree in every month
+(`P2-DBT-03`).
 
 ### 3.6 Investment in subsidiaries — no calibration
 
@@ -213,35 +243,105 @@ group's opening balance sheet, while results consolidate from 1 January 2023. Th
 carries `event_date` and `consolidation_effective_date` as separate columns for exactly this
 reason; collapsing them moves the investment out of the opening balance sheet and breaks it.
 
-### 3.7 The group reporting measurement reserve
+### 3.7 Equity, and the translation adjustment it generates
 
-Every balance sheet caption other than cash is pinned to an approved anchor, and retained
-earnings rolls forward from each entity's own locally-measured result. Those two facts
-over-determine the balance sheet, so a difference remains. With everything else pinned it
-would otherwise fall into cash.
+Equity is where a synthetic group most easily stops being a ledger and starts being a
+spreadsheet, so it is worth setting out exactly what each account is.
 
-That difference is an equity measurement effect, not a cash effect. The anchor model
-accumulates group results at the rates ruling when they were earned and carries the group's
-own cumulative translation adjustment; the entity ledgers accumulate locally-measured results
-and are translated at closing rates. Letting it sit in cash would misstate the one balance in
-the group that is externally verifiable, and would leave the generated revolver drawn against
-a shortfall that does not exist.
+**Contributed capital is a historical-rate balance.** A subsidiary's share capital and
+paid-in capital are fixed amounts *in its own currency*, struck at the rate ruling when the
+capital was contributed (FX-P03). They do not move because a spot rate moved. Phase 2.1
+carried them at a closing-rate USD target recomputed every year, which meant Halden Valve's
+Stammkapital changed whenever EUR/USD changed — and, worse, left the entity ledgers unable to
+generate any translation adjustment at all, because under the closing-rate method the CTA
+*is* the difference between net assets at closing rates and capital at historical rates.
 
-So it is posted where it belongs and named for what it is: **329100 Group reporting
-measurement reserve**, a holding-company equity reserve struck at each year end when the
-anchor is measured, carried at Topco, which is USD-functional so the reserve is not itself
-retranslated. It is disclosed line by line in `data/reference/translation_difference.csv`
-alongside the CTA the generated ledgers independently imply, and it is capped by control
-`P2-RES-01` at 2% of layer-1 total assets. It stands at **$4.24m, $0.92m and $8.93m —
-0.56%, 0.11% and 1.03% of layer-1 total assets**.
+**Every other movement in equity is a dated event.** `src/generation/ledger.py::EQUITY_EVENTS`
+is the register, mirroring the investment register: the \$20.0m sponsor contribution that
+part-funded the Halden acquisition arrives on 1 April 2023, the day it was needed, not a
+twelfth at a time; and the distributions to the non-controlling shareholder of Northstar
+Parts UK leave on the dates they were declared.
 
-Cash consequently ties to the anchored balance exactly in every year (`P2-RES-02`), and
-investments tie to the register exactly (`P2-INV-01`).
+**Share-based compensation is settled in equity.** The charge accretes in `315100 Share-based
+compensation reserve` at the granting entity. It is non-cash, and Phase 2.1 let it leave the
+group as cash because the reserve carried no balance for the credit to land in.
 
-This is deliberately *not* a plug hidden in a real balance. It is a single named line whose
-entire purpose is to make an unexplained residual visible and measurable. Phase 4 removes it
-and replaces it with a CTA computed from the entity ledgers; it must never be treated as a
-consolidation input (ADR-0004, CTL-FX-04). See ADR-0016.
+**Retained earnings rolls forward from the local result**, and the year-end close moves the
+income statement into it — into `320200 Jahresergebnis` in the Kestrel entities, which close
+the year into a dedicated account, and into `320100` elsewhere.
+
+**There is no CTA account and no reserve in any source ledger**, because a local ledger has
+neither. Both are created by the consolidation, not by the entity.
+
+Those five statements make the layer-1 equity roll-forward close on its own arithmetic:
+
+```
+opening equity (at historical rates)
+  + result for the period            (at the rates when it was earned)
+  + share-based compensation
+  + capital contributed              (at the rate on the contribution date)
+  + equity brought in on acquisition
+  - distributions                    (at the rate on the payment date)
+  + the translation adjustment
+  = closing equity translated at closing rates
+```
+
+`data/reference/layer1_equity_bridge.csv` publishes it year by year with an
+`unexplained_usd_m` column, and control `P2-EQ-01` fails the build if that column is not nil.
+It has been nil in every year since the reserve was removed.
+
+The translation adjustment in that bridge is computed from the ledgers alone:
+
+```
+CTA movement = opening net assets    x (closing rate - prior closing rate)
+             + result for the period x (closing rate - average rate)
+             + equity movements      x (closing rate - transaction rate)
+```
+
+Every term is a balance in the entity's own books or a rate in the approved rate file.
+`data/reference/cta_expectation.csv` carries one row per foreign entity and month — 243 rows —
+and it is the **expected result** the Phase 5 translation engine will be tested against
+rather than a number it will be given. `P2-FX-03` recomputes every row from the balances and
+rates in it; `P2-FX-01` proves contributed capital never moved in local currency.
+
+The consolidated CTA anchor is then derived from the layer-1 figure plus the retranslation of
+the two balances that exist only on consolidation:
+
+```
+CTA(group) = CTA(layer 1)
+           + FX on goodwill + FX on acquired intangibles
+           - the non-controlling interest's share
+           - the movement in unrealised intercompany profit
+```
+
+`tools/derive_anchor_inputs.py` regenerates it and `P2-FX-02` proves it. This superseded the
+provisional Phase 1 CTA target — see ADR-0017 and `docs/phases/phase-02-2-report.md`.
+
+#### The bridge line that made all of this possible
+
+None of it would close without a **derived layer-1 equity target**. Phase 2's anchor bridge
+derived a target for every asset, every liability and every income statement line, but not for
+equity — and a balance sheet with a target for everything except equity has one free variable,
+which a generator will always close with whatever is left over. Phase 2.0 left it in
+investment at cost. Phase 2.1 named it `329100 Group reporting measurement reserve`, capped it
+and disclosed it. Both were the same defect.
+
+`targets.py` now derives it:
+
+```
+layer-1 equity = consolidated total equity
+               + investment in subsidiaries, at cost
+               - goodwill
+               - acquired intangibles, net
+               + deferred tax on the purchase price allocation
+               + unrealised intercompany profit in inventory
+```
+
+The identity holds **exactly at the 31 December 2022 opening balance sheet**, before a single
+generated period — which is how it was established as the right bridge rather than a fitted
+one. With it in place, layer-1 cash lands on the approved anchor to the cent with nothing
+added to any ledger. There is no measurement reserve and no equivalent account anywhere in
+the source architecture, and `P2-EQ-03` fails the build if one reappears under any name.
 
 ### 3.8 Unrealised intercompany profit — support only
 
@@ -409,7 +509,7 @@ three systems, and the small reference masters — about 1.8 MB.
 
 Two ideas kept strictly apart:
 
-- **`data/raw/`** — the clean baseline. It passes all 57 source controls. It is never
+- **`data/raw/`** — the clean baseline. It passes all 77 source controls. It is never
   corrupted.
 - **`data/faults/<id>/`** — a separate copy of only the file each fault touches, with
   `expected_results.json` naming the control that must catch it.

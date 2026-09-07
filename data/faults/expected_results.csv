@@ -7,5 +7,5 @@ F05,Invalid cost centre,DATA_QUALITY,CTL-DQ-08,3,F05/KESTREL_BSEG_1000_202412.cs
 F06,Malformed localised amount,DATA_QUALITY,CTL-DQ-09,3,F06/KESTREL_BSEG_1000_202412.csv,4,amount does not parse under the declared locale,German comma decimal replaced by a period separator
 F07,Posting date outside its period,DATA_QUALITY,CTL-DQ-06,3,F07/AURORA_GL_NIG200_202411.csv,2,posting date month does not match the fiscal period,posting date moved into the following month
 F08,Payroll misclassified across the gross margin line,MAPPING,CTL-MAP-04,3,F08/AURORA_GL_NIG200_202411.csv,8,payroll line whose department contradicts its cost centre function,"production payroll re-tagged to an SGA department; gross margin moves, every balancing control still passes"
-F09,Unbalanced journal,TRIAL_BALANCE,CTL-TB-01,3,F09/AURORA_GL_NIG200_202411.csv,1,journal whose lines do not sum to zero,one leg of journal AU202411200001154 removed
+F09,Unbalanced journal,TRIAL_BALANCE,CTL-TB-01,3,F09/AURORA_GL_NIG200_202411.csv,1,journal whose lines do not sum to zero,one leg of journal AU202411200001155 removed
 F10,Posting before the consolidation effective date,CONSOLIDATION,CTL-CON-02,4,F10/KESTREL_BSEG_1000_202304.csv,5,period earlier than the entity's consolidation effective date,"Halden Valve posts February 2023, before its 1 April 2023 acquisition"

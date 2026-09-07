@@ -22,6 +22,7 @@ figure back to the source journal that produced it.
 | **1.1 — Architecture correction pass** | ✅ **Complete** | [Report](docs/phases/phase-01-1-report.md) |
 | **2 — Synthetic source systems & reference data** | ✅ **Complete** | [Report](docs/phases/phase-02-report.md) |
 | **2.1 — Source data correction pass** | ✅ **Complete** | [Report](docs/phases/phase-02-1-report.md) |
+| **2.2 — Source-layer integrity pass** | ✅ **Complete** | [Report](docs/phases/phase-02-2-report.md) |
 | 3 — Ingestion, staging & COA harmonisation | ⏸ Awaiting approval | |
 | 4 — Consolidation engine | ⏸ | |
 | 5 — Reporting marts & control suite | ⏸ | |
@@ -55,8 +56,13 @@ version-controlled configuration validated in CI — not code, and not tribal kn
 
 **What makes it defensible.** Every transformation between the source trial balance and the
 board number is a separately identifiable layer, so the reconciliation from "what the ERPs
-said" to "what the board sees" is a standing output rather than an investigation. 81 automated
-controls, 66 of them blocking, run at the point of the transformation they protect.
+said" to "what the board sees" is a standing output rather than an investigation. 84 automated
+controls, 69 of them blocking, run at the point of the transformation they protect.
+
+There are no plugs. The layer-1 balance sheet closes on its own roll-forward, the cumulative
+translation adjustment is computed from source balances and published as the expectation the
+consolidation engine will be tested against, and the revolving facility's interest is
+reconciled to the daily balance it accrued on.
 
 ---
 
@@ -69,7 +75,7 @@ python -m pip install -r requirements.txt
 
 python src/anchors/build_anchors.py    # rebuild the financial anchors and their documentation
 python -m src.generation.build         # generate the source systems (~25 s, 1.08m journal lines)
-python -m src.generation.validate      # run the 57 source controls
+python -m src.generation.validate      # run the 77 source controls
 python -m src.generation.faults        # inject and detect the fault fixtures
 python -m pytest tests -q              # validate every accounting identity, seed and dataset
 ```
@@ -78,9 +84,9 @@ Expected output:
 
 ```
 All integrity assertions passed (BS balances; CF ties to BS cash).
-57/57 controls passed
+77/77 controls passed
 10 fault fixtures written to data/faults/ ... all DETECTED
-258 passed
+317 passed
 ```
 
 The generated data is ~166 MB and is not committed — it rebuilds byte-for-byte from a fixed
@@ -95,8 +101,8 @@ committed.
 config/          Version-controlled configuration — the platform's inputs
   anchors/       Generated financial anchors (the contract for Phases 2 and 9)
   coa/           Group chart of accounts, three source charts, ERP profiles
-  debt/          Synthetic credit agreement terms, covenants and permitted add-backs
-  controls/      The 81-control register
+  debt/          Synthetic credit agreement terms, covenants, add-backs and treasury policy
+  controls/      The 84-control register
   dimensions/    Business units, departments, scenarios, versions, consolidation layers
   entities/      Legal entity master and effective-dated ownership register
   fx/            FX translation policy
@@ -108,15 +114,16 @@ data/
   faults/        Injected-fault variants and expected results
   10_staging/    → 20_warehouse/ → 30_marts/ → 90_exports/  (Phases 3-5)
 docs/            Design documentation
-  adr/           15 architecture decision records
+  adr/           18 architecture decision records
   phases/        Roadmap and per-phase reports
 excel/           Excel deliverables (Phase 6)
 powerbi/         PBIP project (Phase 7)
 sql/             Transformation layer, ordered by pipeline stage (Phases 3–5)
 src/
   anchors/       The financial anchor model (Phase 1)
-  generators/    Synthetic source system generators (Phase 2)
+  generation/    Synthetic source system generators (Phase 2)
   pipeline/      Orchestration (Phases 3–5)
+tools/           Maintenance utilities (anchor input derivation)
 tests/           Automated validation
 ```
 
@@ -133,16 +140,17 @@ tests/           Automated validation
 | [Phase 1.1 report](docs/phases/phase-01-1-report.md) | Architecture corrections applied at the approval gate |
 | [Phase 2 report](docs/phases/phase-02-report.md) | 1.08m journal lines generated, reconciled and controlled |
 | [Phase 2.1 report](docs/phases/phase-02-1-report.md) | Driver-generated monthly balance sheets, an explainable investment register, four Kestrel special periods |
+| [Phase 2.2 report](docs/phases/phase-02-2-report.md) | The measurement reserve removed, a CTA derived from source balances, revolver interest reconciled to daily utilisation |
 
 | Design | |
 |---|---|
 | [Consolidation design](docs/consolidation-design.md) | Layers, COA harmonisation, FX, elimination, adjustments, cash flow |
 | [Data contract](docs/data-contract.md) | Dimensions, facts, grain, relationships, volumes |
 | [Reporting design](docs/reporting-design.md) | Excel workbooks, Power BI pages, metric definitions |
-| [Control framework](docs/control-framework.md) | 81 controls and why they are placed where they are |
+| [Control framework](docs/control-framework.md) | 84 controls and why they are placed where they are |
 | [NCI policy](docs/nci-policy.md) | Complete non-controlling interest treatment, end to end |
 | [FX and CTA policy](docs/fx-cta-policy.md) | Full translation policy and the deterministic CTA roll-forward |
-| [ADRs](docs/adr/README.md) | 15 decisions with their alternatives and consequences |
+| [ADRs](docs/adr/README.md) | 17 live decisions with their alternatives and consequences, and 1 superseded |
 | [Open questions](docs/open-questions.md) | 12 decisions; 4 closed at the Phase 1.1 review, 8 open with working assumptions |
 | [Source system design](docs/source-system-design.md) | The three ERPs, their formats and every deliberate difference |
 | [Synthetic data methodology](docs/synthetic-data-methodology.md) | How 1.08m balanced journal lines are generated deterministically |
@@ -158,8 +166,8 @@ tests/           Automated validation
 | Revenue ($m) | 328.0 | 371.4 | 412.1 | 448.0 | 437.2 |
 | Adjusted EBITDA ($m) | 39.0 | 47.2 | 57.8 | 63.5 | 59.2 |
 | Adj. EBITDA margin | 11.9% | 12.7% | 14.0% | 14.2% | 13.5% |
-| Net leverage (covenant) | 5.42x | 5.26x | 4.01x | 3.31x | 3.80x |
-| Economic net leverage | 5.98x | 5.77x | 4.43x | 3.68x | 4.23x |
+| Net leverage (covenant) | 5.45x | 5.28x | 4.06x | 3.36x | 3.86x |
+| Economic net leverage | 6.01x | 5.79x | 4.49x | 3.73x | 4.30x |
 | Headcount | 2,180 | 2,340 | 2,450 | 2,530 | 2,486 |
 
 Four business units — Flow Control & Components, Industrial Services, Engineered Systems,

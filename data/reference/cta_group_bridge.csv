@@ -1,0 +1,4 @@
+fiscal_year,layer1_cta_movement_usd_m,fx_on_goodwill_usd_m,fx_on_intangibles_usd_m,nci_share_of_cta_usd_m,movement_in_unrealised_profit_usd_m,derived_group_cta_movement_usd_m,anchored_group_cta_movement_usd_m,derivation_variance_usd_m,anchored_cta_closing_usd_m
+2023,1.537693,0.8,0.4,0.070689,0.06,2.607004,2.607004,0.0,-0.892996
+2024,-2.705373,-1.2,-0.7,-0.019401,0.08,-4.665972,-4.665972,0.0,-5.558968
+2025,5.062238,1.9,0.9,0.059132,0.06,7.743106,7.743111,-5e-06,2.184143

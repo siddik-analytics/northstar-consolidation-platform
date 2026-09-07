@@ -12,6 +12,8 @@ unrealised intercompany profit are Phase 4 constructs and appear in no source le
 
 from __future__ import annotations
 
+from dataclasses import dataclass
+
 import numpy as np
 
 from .common import (ACTUAL_PERIODS, Period, allocate_exact, plan_periods, rng)
@@ -88,6 +90,41 @@ ENTITY_CAPITAL = {
     "NIG-300": 40.0, "NIG-310": 12.0, "NIG-320": 14.0, "NIG-400": 26.0, "NIG-410": 10.9,
     "NIG-500": 20.0, "NIG-510": 9.0,
 }
+
+@dataclass(frozen=True)
+class EquityEvent:
+    """A movement in contributed capital or distributed reserves, on its own date."""
+    entity: str
+    period_key: int
+    account: str
+    amount_usd_m: float
+    sign: int                 # -1 credits equity (contribution), +1 debits it (distribution)
+    rate_type: str            # the rate ruling on the transaction date
+    event_type: str
+    note: str
+
+
+# Every movement in contributed capital and distributed reserves after the opening balance
+# sheet, on the date it actually happened.  Founding and acquisition capital is not listed:
+# it is already in the opening balance sheet, frozen in the entity's own currency at the
+# rate ruling then (FX-P03), and it never moves again.
+#
+# Phase 2.1 interpolated the sponsor contribution across twelve months, which meant the
+# equity that funded an April acquisition arrived a twelfth at a time and the revolver
+# covered the difference.  A capital contribution has a date; see ADR-0017.
+EQUITY_EVENTS: list[EquityEvent] = [
+    EquityEvent("NIG-100", 202304, "310200", 20.000, -1, "CLOSE", "SPONSOR_CONTRIBUTION",
+                "Sponsor equity contribution part-funding the Halden Valve acquisition "
+                "(INV-010), received on completion."),
+    EquityEvent("NIG-510", 202406, "320300", 0.150, +1, "AVG", "NCI_DISTRIBUTION",
+                "Distribution to the non-controlling shareholder of Northstar Parts UK, "
+                "declared after the FY2023 accounts were approved."),
+    EquityEvent("NIG-510", 202506, "320300", 0.200, +1, "AVG", "NCI_DISTRIBUTION",
+                "Distribution to the non-controlling shareholder of Northstar Parts UK."),
+    EquityEvent("NIG-510", 202606, "320300", 0.250, +1, "AVG", "NCI_DISTRIBUTION",
+                "Distribution to the non-controlling shareholder of Northstar Parts UK."),
+]
+
 # Investment in subsidiaries held by each parent (USD m, at cost)
 INVESTMENTS = {
     ("NIG-100", "NIG-110"): 2.0, ("NIG-100", "NIG-200"): 118.0,
@@ -288,12 +325,10 @@ class LedgerBuilder:
             cap = ENTITY_CAPITAL[e]
             out[e]["310100"] = -cap * 0.10
             out[e]["310200"] = -cap * 0.90
-        # Sponsor equity contributions are cumulative additional paid-in capital at Topco.
-        # FY2023 carried a USD 20.0m contribution to part-fund the Halden acquisition.
-        cum_contrib = sum(self.m.cf_anchor["equity_contribution"][c]
-                          for c in ("FY2023A", "FY2024A", "FY2025A")
-                          if int(c[2:6]) <= (2026 if col.startswith("FY2026") else int(col[2:6])))
-        out["NIG-100"]["310200"] = out["NIG-100"].get("310200", 0.0) - cum_contrib
+        # Contributed capital is held at historical rates and moves only on the dates in
+        # EQUITY_EVENTS, so it is not anchored here.  These amounts are the entity's
+        # founding capital in USD and exist only to keep the account in the balance sheet's
+        # account set; `series.py` supplies the local-currency path.
 
         # Investment in subsidiaries is held at USD cost, taken directly from the
         # investment register.  There is no calibration: every balance is the sum of the

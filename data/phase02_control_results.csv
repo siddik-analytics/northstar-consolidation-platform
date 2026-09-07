@@ -1,5 +1,5 @@
 control_id,control_name,severity,status,measured,threshold,detail
-P2-SRC-01,Every journal entry balances,BLOCKING,PASS,0.0000,0.011,0 unbalanced of 539846
+P2-SRC-01,Every journal entry balances,BLOCKING,PASS,0.0000,0.011,0 unbalanced of 539260
 P2-SRC-02,Entity trial balance closes to zero (generated),BLOCKING,PASS,0.0000,0.02,0 entity-periods out of balance of 507
 P2-SRC-03,Trial balance closes when re-derived from the NATIVE extracts,BLOCKING,PASS,0.0000,0.02,0 of 507 entity-periods; parses all three sign conventions
 P2-SRC-04,No duplicate journal line identifiers,BLOCKING,PASS,0,0,
@@ -46,25 +46,33 @@ P2-ANC-BS-CONT-2025,contract_assets reconciles to the source-layer target (2025)
 P2-ANC-BS-PREP-2025,prepaid reconciles to the source-layer target (2025),BLOCKING,PASS,8.242,8.242,deviation 0.0000% (tolerance 1.0%)
 P2-REC-01,Revenue detail reconciles to the general ledger,BLOCKING,PASS,0.0000,0.05,"per entity and period, ADR-0008"
 P2-REC-02,Headcount reconciles to the anchor,WARNING,PASS,2467,2450,deviation 0.69% (tolerance 5%)
-P2-REC-03,Fixed asset register agrees with capital project spend,BLOCKING,PASS,73213273.25,73213273.25,
+P2-REC-03,Fixed asset register agrees with capital project spend,BLOCKING,PASS,71937380.13,71937380.13,
 P2-REC-04,Debt schedule agrees with the anchored term loan balance,BLOCKING,PASS,226.600,226.600,
 P2-IC-01,Intercompany pairs match in USD before injected faults,BLOCKING,PASS,0.0000,1.00,905 entity-pair-periods
 P2-SCN-01,Forecast actual months equal the Actual scenario,BLOCKING,PASS,0.0100,0.05,CTL-SCN-02
 P2-FMT-01,Kestrel uses special period 13 for year-end adjustments,BLOCKING,PASS,542,>0,
 P2-FMT-06,Every declared Kestrel special period is populated,BLOCKING,PASS,"[13, 14, 15, 16]","[13, 14, 15, 16]","13 statutory close, 14 audit, 15 tax, 16 local GAAP to group reporting"
-P2-FMT-07,Conditional special periods follow their population rule,BLOCKING,PASS,13:11 14:5 15:11 16:4,13 universal; 14 and 16 a subset,audit findings and local-GAAP provisions do not arise at every entity every year
+P2-FMT-07,Conditional special periods follow their population rule,BLOCKING,PASS,13:11 14:5 15:10 16:4,13 universal; 14 and 16 a subset,audit findings and local-GAAP provisions do not arise at every entity every year
 P2-FMT-08,Unfiled years carry no audit or tax special period,BLOCKING,PASS,[],none,FY2026 is neither audited nor filed at the reporting date
 P2-FMT-09,Special period entries do not change the reported result,BLOCKING,PASS,0.0000,0.02,periods 14-16 reclassify within a caption; the anchored result is unchanged
-P2-FMT-02,Kestrel account keys retain leading zeros,BLOCKING,PASS,1737,>0,
+P2-FMT-02,Kestrel account keys retain leading zeros,BLOCKING,PASS,1733,>0,
 P2-FMT-03,The three source charts remain genuinely different,BLOCKING,PASS,[],no shared codes,
 P2-BR-01,No entity runs a materially negative bank balance,WARNING,PASS,0,0,
-P2-BR-04,"Interim balances are driver-generated, not interpolated",BLOCKING,PASS,0 flat of 317; min 0.090,0 flat,linearity 0.0 would be a straight line between anchored year ends
-P2-BR-05,Revolver drawings stay within the committed facility,BLOCKING,PASS,36.6m,60m,CA-016; drawings are booked at Topco in USD
+P2-BR-04,"Interim balances are driver-generated, not interpolated",BLOCKING,PASS,0 flat of 318; min 0.090,0 flat,linearity 0.0 would be a straight line between anchored year ends
+P2-BR-05,Revolver drawings stay within the committed facility,BLOCKING,PASS,36.2m,60m,CA-016; drawings are booked at Topco in USD
 P2-INV-01,Investment balances reconcile to the investment register,BLOCKING,PASS,0.0000,1.00,every balance is the sum of the considerations actually paid; there is no plug
 P2-INV-02,Every register event has a consideration and an event type,BLOCKING,PASS,[],none,
 P2-ICP-01,Intercompany inventory detail supports a PUP calculation,BLOCKING,PASS,complete,all fields present,
 P2-ICP-02,Implied unrealised profit tracks the anchored PUP,BLOCKING,PASS,4.40%,10%,Phase 4 performs the elimination; Phase 2 carries only the support
-P2-RES-01,Measurement reserve stays immaterial to layer-1 assets,BLOCKING,PASS,1.03%,2.00%,"329100 is disclosed, not hidden; Phase 4 replaces it with a computed CTA"
-P2-RES-02,Cash carries none of the measurement difference,BLOCKING,PASS,0.0000,0.01,cash is externally verifiable and ties to the anchor exactly
+P2-EQ-01,Layer-1 equity roll-forward has nothing unexplained,BLOCKING,PASS,0.000003,0.001,"opening + result + share-based compensation + contributions + equity acquired - distributions + CTA = closing, in USD at closing rates"
+P2-EQ-02,Layer-1 equity equals the anchor-derived target,BLOCKING,PASS,0.000005,0.001,consolidated equity + investment at cost - goodwill - intangibles + PPA deferred tax + unrealised intercompany profit (ADR-0017)
+P2-EQ-03,No measurement reserve or equivalent residual account exists,BLOCKING,PASS,[],none,ADR-0016 is superseded; a balance whose purpose is to make the model agree is not source data
+P2-EQ-04,Layer-1 cash ties to the anchor with no reserve in the ledger,BLOCKING,PASS,0.0000,0.02,"re-derived from the journal lines, not from the generator's memory"
+P2-FX-01,Contributed capital is constant in local currency,BLOCKING,PASS,0.00,1.00,FX-P03: capital is frozen at the rate ruling when it was contributed and moves only when capital is actually contributed
+P2-FX-02,Anchored CTA is reproduced from source balances and FX policy,BLOCKING,PASS,0.000005,0.001,layer-1 CTA + FX on goodwill and intangibles - the minority's share - the movement in unrealised profit = the anchored group CTA movement
+P2-FX-03,Every CTA row is derivable from source balances and rates,BLOCKING,PASS,0.000000,0.0001,243 entity-periods; the presentation currency generates none
+P2-DBT-01,Revolver roll-forward: opening + draws - repayments = closing,BLOCKING,PASS,0.0000,0.01,"44 months, chained without a break"
+P2-DBT-02,Revolver charge is supported by the daily drawn balance,BLOCKING,PASS,0.001%,0.5%,average daily drawn x (SOFR + 425bps) + commitment fee on the average daily undrawn versus the recorded charge: 2023 1.763v1.763; 2024 2.658v2.658; 2025 2.091v2.091
+P2-DBT-03,Debt schedule agrees with the general ledger every month,BLOCKING,PASS,0.0000,0.05,"balances are read from the ledger, not interpolated between year ends"
 P2-BR-02,Amounts are not implausibly round,WARNING,PASS,0.02%,<5%,round-thousand postings as a share of all lines
 P2-BR-03,Posting dates concentrate on working days,WARNING,PASS,1.63%,<12%,

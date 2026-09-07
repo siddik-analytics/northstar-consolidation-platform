@@ -18,7 +18,8 @@ each contained two genuinely separable pieces of work with different risk profil
 | 1 | Business design & architecture | **Complete** |
 | 1.1 | Architecture correction pass | **Complete — ready for Phase 2 approval** |
 | 2 | Synthetic source systems & reference data | **Complete** |
-| 2.1 | Source data correction pass | **Complete — ready for Phase 3 approval** |
+| 2.1 | Source data correction pass | **Complete** |
+| 2.2 | Source-layer integrity pass | **Complete — ready for Phase 3 approval** |
 | 3 | Ingestion, staging & COA harmonisation | Not started |
 | 4 | Consolidation engine | Not started |
 | 5 | Reporting marts & automated control suite | Not started |
@@ -59,7 +60,7 @@ Generate the raw material: three ERPs' worth of extracts that look and behave li
 exports, calibrated to hit the Phase 1 anchors.
 
 **Deliverables**
-- Deterministic, seeded generators in `src/generators/`
+- Deterministic, seeded generators in `src/generation/`
 - ~1.5m journal lines across 12 entities and 45 months, in each ERP's own format, sign
   convention, locale and encoding — including Kestrel's Windows-1252 encoding, comma decimals
   and periods 13–16
@@ -95,6 +96,49 @@ See [`phase-02-report.md`](phase-02-report.md).
 
 ---
 
+## Phase 2.1 — Source data correction pass ✅
+
+Corrections required at the Phase 2 approval gate: all four Kestrel special periods generated
+with declared population rules; twelve balance sheet captions moved from interpolation to
+economic drivers; the investment-at-cost calibration removed in favour of an investment
+register; and the source detail Phase 4 needs to compute the unrealised-profit elimination
+from evidence.
+
+**Delivered:** 12 new controls, 26 new tests, 3 new generation modules, 4 new reference
+datasets. No approved anchor changed. Two further defects found by the new guards — credit
+captions starting the year as debits, and a group that ran a negative bank balance for 76
+entity-months. See [`phase-02-1-report.md`](phase-02-1-report.md).
+
+---
+
+## Phase 2.2 — Source-layer integrity pass ✅
+
+The two architecture issues left open at the Phase 2.1 gate, settled before the source data
+was frozen.
+
+**The measurement reserve is removed, not relocated.** `329100` existed because the Phase 2
+anchor bridge derived a layer-1 target for every asset, every liability and every income
+statement line — but not for equity, leaving the balance sheet one free variable that the
+generator closed with a plug. The bridge now derives equity, contributed capital is held at
+historical rates in each entity's own currency so a translation adjustment can actually arise,
+and layer-1 cash lands on the anchor to the cent with nothing added to any ledger. The CTA is
+computed from source balances and published as the expectation Phase 5's translation engine
+will be tested against (ADR-0016 superseded by ADR-0017).
+
+**The revolver pays for itself.** Utilisation is resolved to a daily balance on the borrowing
+notice and collections sweep dates fixed in a shared treasury policy, and interest is built
+from a base rate, a margin and a commitment fee that each trace to a clause. The Phase 1
+average-drawn assumption, which the facility's own roll-forward contradicted, is superseded by
+the derived average daily balance (ADR-0018).
+
+**Delivered:** 2 new ADRs and 1 retired, 11 new controls, 34 new tests, 4 new reference
+datasets, 1 new configuration register, 1 derivation tool. Two anchors narrowly revised with a
+full quantification; revenue, EBITDA, cash, total assets, term debt and every working-capital
+caption unchanged; no covenant breached. See
+[`phase-02-2-report.md`](phase-02-2-report.md).
+
+---
+
 ## Phase 3 — Ingestion, staging & COA harmonisation
 
 Consume the extracts. This is where the chart-of-accounts risk is concentrated.
@@ -118,7 +162,9 @@ Consume the extracts. This is where the chart-of-accounts risk is concentrated.
 ## Phase 4 — Consolidation engine
 
 **Deliverables**
-- FX translation: monthly average P&L, closing balance sheet, historical equity, computed CTA
+- FX translation: monthly average P&L, closing balance sheet, historical equity, computed
+  CTA — tested against `data/reference/cta_expectation.csv`, the per-entity, per-month
+  expectation Phase 2.2 derived from source balances before the engine existed (`CTL-FX-12`)
 - Constant-currency amount column
 - Intercompany elimination by entity pair, including unrealised profit in inventory
 - Investment elimination walking the full multi-tier ownership tree
@@ -152,7 +198,7 @@ Consume the extracts. This is where the chart-of-accounts risk is concentrated.
 
 **Exit criteria**
 - One command rebuilds everything from raw in under five minutes
-- All 81 controls execute and report; no blocking failure on any period
+- All 84 controls execute and report; no blocking failure on any period
 - No mart publishes from a period with a failed blocking control
 
 ---

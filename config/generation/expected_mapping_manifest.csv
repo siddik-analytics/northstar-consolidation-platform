@@ -42,8 +42,8 @@ AURORA,2530,Operating Lease Liability - Long Term,DIRECT,230400,230400,,Operatin
 AURORA,2690,Other Long Term Liabilities,DIRECT,245100,245100,,Other long-term liabilities,BS,FALSE
 AURORA,3000,Common Stock,DIRECT,310100,310100,,Common stock,BS,FALSE
 AURORA,3010,Additional Paid In Capital,DIRECT,310200,310200,,Additional paid-in capital,BS,FALSE
+AURORA,3020,Stock Compensation Reserve,DIRECT,315100,315100,,Share-based compensation reserve,BS,FALSE
 AURORA,3100,Retained Earnings,DIRECT,320100,320100,,Retained earnings - opening,BS,FALSE
-AURORA,3250,Group Reporting Measurement Reserve,DIRECT,329100,329100,,Group reporting measurement reserve,BS,FALSE
 AURORA,4000,Revenue - Equipment,DIRECT,410100,410100,,Product revenue - equipment,IS,FALSE
 AURORA,4010,Revenue - Components,DIRECT,410200,410200,,Product revenue - components,IS,FALSE
 AURORA,4020,Revenue - Spare Parts,DIRECT,415100,415100,,Aftermarket parts revenue,IS,FALSE
@@ -247,6 +247,7 @@ KESTREL,00069500,Pension and Other Long Term,DIRECT,245100,245100,,Other long-te
 KESTREL,00070000,Share Capital,DIRECT,310100,310100,,Common stock,BS,FALSE
 KESTREL,00070500,Capital Reserve,DIRECT,310200,310200,,Additional paid-in capital,BS,FALSE
 KESTREL,00071500,Result for the Year,DIRECT,320200,320200,,Current year result attributable to the group,BS,FALSE
+KESTREL,00072000,Dividends Paid,DIRECT,320300,320300,,Dividends and distributions,BS,FALSE
 KESTREL,00080000,Revenue - Products,SPLIT,410100,410100,product_group=EQUIPMENT,Product revenue - equipment,IS,FALSE
 KESTREL,00080000,Revenue - Products,SPLIT,410200,410200,product_group=COMPONENT,Product revenue - components,IS,FALSE
 KESTREL,00080200,Revenue - Spare Parts,DIRECT,415100,415100,,Aftermarket parts revenue,IS,FALSE

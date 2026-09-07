@@ -295,7 +295,9 @@ def linearity(series: np.ndarray) -> float:
 
 def revolver_path(pre_rcf_cash: dict[int, float], year_end_drawn: dict[int, float],
                   activity: dict[int, float], min_cash_usd: float, buffer_usd: float,
-                  commitment_usd: float) -> dict[int, float]:
+                  commitment_usd: float, draw_increment: float = 0.5e6,
+                  repay_block: float = 2.5e6, min_surplus: float = 3.0e6
+                  ) -> dict[int, float]:
     """
     Monthly revolving credit facility utilisation, managed against the group's own need.
 
@@ -331,10 +333,50 @@ def revolver_path(pre_rcf_cash: dict[int, float], year_end_drawn: dict[int, floa
         available = pre_rcf_cash[pk] + drawn
         if available < floor:
             need = floor + buffer_usd - available
-            drawn = min(drawn + math.ceil(need / 0.5e6) * 0.5e6, commitment_usd)
+            drawn = min(drawn + math.ceil(need / draw_increment) * draw_increment,
+                        commitment_usd)
         else:
             surplus = available - floor - buffer_usd
-            if surplus > 3e6 and drawn > 0:      # repay in blocks, not in dribbles
-                drawn -= min(drawn, math.floor(surplus / 2.5e6) * 2.5e6)
+            if surplus > min_surplus and drawn > 0:   # in blocks, not in dribbles
+                drawn -= min(drawn, math.floor(surplus / repay_block) * repay_block)
         out[pk] = drawn
     return out
+
+
+def daily_utilisation(opening: float, closing: float, days: int,
+                      draw_day: int, sweep_day: int) -> dict[str, float]:
+    """
+    One month of revolving facility utilisation, resolved to a daily balance.
+
+    A month-end balance is not what a facility costs.  Interest accrues on the daily drawn
+    balance, and the commitment fee on the daily undrawn commitment, so the two need an
+    intra-month position rather than the two endpoints.  The credit agreement and the board
+    treasury policy already fix the dates that matter (`config/debt/treasury_policy.csv`):
+
+      * a **drawing** is taken on the borrowing-notice date early in the month, because it
+        is drawn to fund the supplier payment run and the payroll disbursement.  A month
+        that draws is therefore drawn for substantially the whole month.
+      * a **repayment** is made on the collections sweep date late in the month, once the
+        month's receipts have cleared.  A month that repays is drawn for most of the month
+        and repaid only at the end.
+
+    The balance is a step function with one step, so the average daily balance is exact
+    rather than an approximation, and `opening + draws - repayments = closing` holds to the
+    cent.  Returns the movement and the average daily drawn balance.
+    """
+    move = closing - opening
+    step_day = draw_day if move > 0 else sweep_day
+    step_day = max(1, min(step_day, days))
+    # `step_day` is the first day on which the new balance stands
+    days_at_open = step_day - 1
+    days_at_close = days - days_at_open
+    average = (opening * days_at_open + closing * days_at_close) / days
+    return {
+        "opening_drawn": opening,
+        "draws": max(move, 0.0),
+        "repayments": max(-move, 0.0),
+        "closing_drawn": closing,
+        "movement_day": step_day if move else 0,
+        "days_in_month": days,
+        "average_daily_drawn": average,
+    }

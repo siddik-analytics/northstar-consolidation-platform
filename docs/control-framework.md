@@ -1,6 +1,6 @@
 # Control Framework
 
-**81 controls across 10 categories.** The full machine-readable register is
+**84 controls across 10 categories.** The full machine-readable register is
 [`config/controls/control_register.csv`](../config/controls/control_register.csv); this
 document explains the design.
 
@@ -106,6 +106,53 @@ opening net assets × Δ(closing rate)  +  current year result × (closing − a
 CTA entered as a plug is the classic way a consolidation hides a translation defect: the
 balance sheet balances, so nobody looks, and the error sits in equity indefinitely. This
 control makes plugging impossible.
+
+### `CTL-FX-12` — CTA reproduces the source-layer expectation
+
+`CTL-FX-04` compares the engine's CTA to a formula. `CTL-FX-12` compares it to a **number
+produced before the engine existed**, from the source ledgers alone:
+`data/reference/cta_expectation.csv`, one row per foreign entity and month, carrying opening
+net assets in local currency, the three rates applied, the result, and the movement each
+component generates. It references no group target, which is the whole point — a consolidation
+engine tested against a figure derived from its own output tests nothing.
+
+The group figure bridges to it by adding the retranslation of goodwill and acquired
+intangibles, which exist in no source ledger, and deducting the non-controlling interest's
+share and the movement in unrealised intercompany profit. Phase 2.2 derived the approved CTA
+anchor from that bridge, superseding the provisional Phase 1 target (ADR-0017).
+
+### `CTL-CON-14` — No residual or balancing account in any layer
+
+The control is written against an **idea**, not an account number. No account in any chart,
+and no posting in any layer, may exist to absorb a difference between a computed result and an
+expected one. Equity must close on its own roll-forward: opening, plus the result, plus
+contributions, less distributions, plus the computed CTA.
+
+It exists because the project made the same mistake twice. Phase 2.0 absorbed a residual into
+investment at cost, which left investment balances unexplainable. Phase 2.1 moved it to a
+named, capped, disclosed equity reserve — better, but still a balance whose only purpose was
+to make the model agree. Phase 2.2 found the real cause: the anchor bridge derived a layer-1
+target for every asset, every liability and every income statement line, but not for equity, so
+the balance sheet had one free variable. Deriving that target removed the residual entirely
+(ADR-0016 superseded by ADR-0017). A control that catches a class of defect the project has
+already committed twice is worth more than one that catches a hypothetical.
+
+### `CTL-FS-10` — Facility charge supported by the daily drawn balance
+
+Two identities, both of which a revolving facility must satisfy:
+
+```
+opening drawn + drawings - repayments                  = closing drawn
+average daily drawn x (base rate + margin)
+    + commitment fee on the average daily undrawn      = the recorded charge
+```
+
+Interest accrues on a daily balance, not a month-end one, so the second identity needs an
+intra-month position — which is why `config/debt/treasury_policy.csv` fixes the borrowing
+notice date and the collections sweep date as policy rather than leaving them implicit. An
+average-drawn assumption that the facility's own roll-forward contradicts misstates the
+interest cost and the covenant coverage ratio at the same time, and neither the balance sheet
+nor the cash flow statement will notice. See ADR-0018.
 
 ### `CTL-CON-09` — Consolidation layer integrity
 Every fact row carries a `layer_id` from the defined set of five. This is a small control

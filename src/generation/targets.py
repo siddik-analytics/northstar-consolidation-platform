@@ -24,7 +24,10 @@ statement a reviewer needs in order to check the numbers themselves.
 
 from __future__ import annotations
 
+import datetime as dt
+
 from .common import ANCHORS, COLS, load_anchor, write_csv
+from .investments import investments_at
 
 # Source ledgers carry current tax only; the entire deferred tax balance and movement is a
 # Phase 4 consolidation item, consistent with the effective-rate scope decision in OQ-05.
@@ -103,6 +106,28 @@ def build_targets() -> list[dict]:
     add("BS", "goodwill", {c: 0.0 for c in COLS}, BRIDGE_NOTES["goodwill"])
     add("BS", "intangibles_net", {c: 0.0 for c in COLS}, BRIDGE_NOTES["intangibles_net"])
     add("BS", "dtl", {c: 0.0 for c in COLS}, BRIDGE_NOTES["dtl"])
+
+    # ---- equity: the line the Phase 2.1 bridge was missing -------------------
+    # Without a derived equity target the layer-1 balance sheet has one unconstrained
+    # degree of freedom, and the generator can only close it with a plug -- which is what
+    # `329100 Group reporting measurement reserve` was.  Consolidation replaces each
+    # subsidiary's equity with the parent's investment, recognises the goodwill and
+    # intangibles that investment bought, provides deferred tax on those intangibles and
+    # eliminates the unrealised profit in intercompany inventory.  Reverse those four and
+    # the consolidated equity becomes the layer-1 equity (ADR-0017).
+    invest = {c: sum(investments_at(dt.date(
+        2026 if c.startswith("FY2026") else int(c[2:6]), 12, 31)).values()) for c in COLS}
+    add("BS", "investments_in_subsidiaries", invest,
+        BRIDGE_NOTES["investments_in_subsidiaries"])
+    add("BS", "total_equity",
+        {c: (s(bs, "total_equity", c) + invest[c] - s(bs, "goodwill", c)
+             - s(bs, "intangibles_net", c) + s(bs, "dtl", c)
+             + s(ic, "pup_in_inventory", c)) for c in COLS},
+        "consolidated equity plus investment at cost, less goodwill and acquired "
+        "intangibles, plus the deferred tax on them and the unrealised intercompany profit")
+    add("BS", "cumulative_translation_adjustment", {c: 0.0 for c in COLS},
+        "nil at source: a local ledger has no CTA. It is created by translation at "
+        "layer 5 and is proved against data/reference/cta_expectation.csv")
     return rows
 
 

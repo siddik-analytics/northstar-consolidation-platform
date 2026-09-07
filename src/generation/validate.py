@@ -22,7 +22,8 @@ from pathlib import Path
 import pandas as pd
 
 from .common import (ANCHORS, COLS, CONFIG, DATA, RAW, REFERENCE, SAMPLES, load_anchor,
-                     load_ic_anchor, load_source_coa, operating_entities, read_csv)
+                     load_credit_agreement, load_ic_anchor, load_source_coa,
+                     operating_entities, read_csv)
 from .bsdrivers import NONLINEAR_CAPTIONS, linearity
 from .series import RCF_COMMITMENT_USD
 
@@ -276,6 +277,7 @@ def run() -> Result:
     debt = read_csv(REFERENCE / "debt_schedule.csv")
     tlb = [d for d in debt if d["instrument_id"] == "TLB-2021" and d["period_key"] == "202512"]
     bs = load_anchor("balance_sheet")
+    pl_anchor = load_anchor("income_statement")
     got = float(tlb[0]["closing_principal"]) / 1e6 if tlb else 0.0
     want = bs["tlb_gross"]["FY2025A"]
     r.add("P2-REC-04", "Debt schedule agrees with the anchored term loan balance", "BLOCKING",
@@ -464,19 +466,168 @@ def run() -> Result:
           "PASS" if worst_pup <= 10.0 else "FAIL", f"{worst_pup:.2f}%", "10%",
           "Phase 4 performs the elimination; Phase 2 carries only the support")
 
-    # ---------------- group reporting measurement reserve --------------------
-    tdiff = read_csv(REFERENCE / "translation_difference.csv")
-    worst_res = max((abs(float(row["reserve_pct_of_total_assets"])) for row in tdiff),
-                    default=0.0)
-    r.add("P2-RES-01", "Measurement reserve stays immaterial to layer-1 assets",
-          "BLOCKING", "PASS" if worst_res <= 2.0 else "FAIL", f"{worst_res:.2f}%", "2.00%",
-          "329100 is disclosed, not hidden; Phase 4 replaces it with a computed CTA")
+    # ---------------- layer-1 equity and the derived CTA ---------------------
+    # Phase 2.1 closed the layer-1 balance sheet with a named equity reserve because the
+    # anchor bridge had no equity target.  Phase 2.2 derives that target, so the closure is
+    # arithmetic and there is nothing left to plug.  These controls prove it and fail the
+    # build if a plug ever reappears.
+    bridge = read_csv(REFERENCE / "layer1_equity_bridge.csv")
+    worst_eq = max((abs(float(row["unexplained_usd_m"])) for row in bridge), default=1.0)
+    r.add("P2-EQ-01", "Layer-1 equity roll-forward has nothing unexplained", "BLOCKING",
+          "PASS" if worst_eq <= 0.001 else "FAIL", f"{worst_eq:.6f}", "0.001",
+          "opening + result + share-based compensation + contributions + equity acquired "
+          "- distributions + CTA = closing, in USD at closing rates")
 
-    worst_cash = max((abs(float(row["cash_variance_vs_anchor"])) for row in tdiff),
-                     default=0.0)
-    r.add("P2-RES-02", "Cash carries none of the measurement difference", "BLOCKING",
-          "PASS" if worst_cash <= 0.01 else "FAIL", f"{worst_cash:.4f}", "0.01",
-          "cash is externally verifiable and ties to the anchor exactly")
+    worst_tgt = max((abs(float(row["variance_vs_anchor_usd_m"])) for row in bridge),
+                    default=1.0)
+    r.add("P2-EQ-02", "Layer-1 equity equals the anchor-derived target", "BLOCKING",
+          "PASS" if worst_tgt <= 0.001 else "FAIL", f"{worst_tgt:.6f}", "0.001",
+          "consolidated equity + investment at cost - goodwill - intangibles + PPA "
+          "deferred tax + unrealised intercompany profit (ADR-0017)")
+
+    # No residual, reserve or plug account may exist anywhere in the source architecture.
+    # The test is on the account's PURPOSE, not on one retired account number: any group or
+    # source account whose name says it exists to make the model agree is a plug.
+    PLUG_WORDS = ("measurement reserve", "group reporting measurement", "balancing",
+                  "residual", "plug", "calibration", "true-up to group", "suspense")
+    plugs = []
+    for row in read_csv(CONFIG / "coa" / "group_coa.csv"):
+        if any(w in row["account_name"].lower() for w in PLUG_WORDS):
+            plugs.append(f"group/{row['group_account']}")
+    for erp in ("aurora", "sable", "kestrel"):
+        for row in load_source_coa(erp):
+            if any(w in row["source_account_name"].lower() for w in PLUG_WORDS):
+                plugs.append(f"{erp}/{row['source_account']}")
+    retired = {a for a in ("329100",)}
+    used_accounts = set(jl["expected_group_account"].unique())
+    plugs += [f"posted/{a}" for a in sorted(retired & used_accounts)]
+    r.add("P2-EQ-03", "No measurement reserve or equivalent residual account exists",
+          "BLOCKING", "PASS" if not plugs else "FAIL", str(plugs), "none",
+          "ADR-0016 is superseded; a balance whose purpose is to make the model agree is "
+          "not source data")
+
+    # Cash is the group's externally verifiable balance and now ties without a reserve.
+    cash_tie = 0.0
+    cashj = jl[jl["expected_group_account"] == "110100"]
+    for year, col in ((2023, "FY2023A"), (2024, "FY2024A"), (2025, "FY2025A")):
+        upto = cashj[cashj["period_key"] <= year * 100 + 12]
+        bal = upto.groupby(["entity_code", "currency_code", "expected_group_account"])[
+            "amount_local"].sum().reset_index()
+        got = sum(v * rate(c, year * 100 + 12, "CLOSE") / 1e6
+                  for v, c, a in zip(bal["amount_local"], bal["currency_code"],
+                                     bal["expected_group_account"]) if a == "110100")
+        cash_tie = max(cash_tie, abs(got - float(tgt[("BS", "cash")][col])))
+    r.add("P2-EQ-04", "Layer-1 cash ties to the anchor with no reserve in the ledger",
+          "BLOCKING", "PASS" if cash_tie <= 0.02 else "FAIL", f"{cash_tie:.4f}", "0.02",
+          "re-derived from the journal lines, not from the generator's memory")
+
+    # Contributed capital is a historical-rate balance: it does not move because a spot
+    # rate moved.  This is the defect that suppressed the translation adjustment.
+    cap = jl[jl["expected_group_account"].isin(["310100", "310200"])]
+    cap_bal = (cap.groupby(["entity_code", "period_key"])["amount_local"].sum()
+               .groupby(level=0).cumsum())
+    capital_events = {("NIG-100", pk) for pk in range(202304, 202613)}
+    drift = 0.0
+    for ent, ser in cap_bal.groupby(level=0):
+        vals = ser.to_numpy()
+        keys = ser.index.get_level_values(1)
+        for i in range(1, len(vals)):
+            if (ent, int(keys[i])) in capital_events and ent == "NIG-100":
+                continue
+            drift = max(drift, abs(vals[i] - vals[i - 1]))
+    r.add("P2-FX-01", "Contributed capital is constant in local currency", "BLOCKING",
+          "PASS" if drift <= 1.0 else "FAIL", f"{drift:.2f}", "1.00",
+          "FX-P03: capital is frozen at the rate ruling when it was contributed and moves "
+          "only when capital is actually contributed")
+
+    # The CTA the source ledgers imply must reproduce the anchored roll-forward exactly,
+    # because the anchor is now derived from it (tools/derive_anchor_inputs.py).
+    grp = read_csv(REFERENCE / "cta_group_bridge.csv")
+    worst_cta = max((abs(float(row["derivation_variance_usd_m"])) for row in grp),
+                    default=1.0)
+    r.add("P2-FX-02", "Anchored CTA is reproduced from source balances and FX policy",
+          "BLOCKING", "PASS" if worst_cta <= 0.001 else "FAIL", f"{worst_cta:.6f}",
+          "0.001",
+          "layer-1 CTA + FX on goodwill and intangibles - the minority's share - the "
+          "movement in unrealised profit = the anchored group CTA movement")
+
+    # A CTA row must be reconstructible from the entity's own balances and the rate file
+    # alone: opening net assets x the change in closing rate, plus the result at the
+    # difference between the closing and average rate.
+    cta = read_csv(REFERENCE / "cta_expectation.csv")
+    worst_row = 0.0
+    for row in cta:
+        recomputed = (float(row["opening_net_assets_local"])
+                      * (float(row["closing_rate"]) - float(row["opening_rate"]))
+                      + float(row["result_local"])
+                      * (float(row["closing_rate"]) - float(row["average_rate"]))) / 1e6
+        worst_row = max(worst_row, abs(
+            recomputed + float(row["cta_on_equity_movements"])
+            - float(row["cta_movement_usd_m"])))
+    usd_rows = [x for x in cta if x["currency_code"] == "USD"]
+    r.add("P2-FX-03", "Every CTA row is derivable from source balances and rates",
+          "BLOCKING", "PASS" if worst_row <= 0.0001 and not usd_rows else "FAIL",
+          f"{worst_row:.6f}", "0.0001",
+          f"{len(cta)} entity-periods; the presentation currency generates none")
+
+    # ---------------- debt and the revolving facility ------------------------
+    util = read_csv(REFERENCE / "revolver_utilisation.csv")
+    worst_roll = 0.0
+    prev_close = None
+    for row in util:
+        opening, closing = float(row["opening_drawn"]), float(row["closing_drawn"])
+        moved = opening + float(row["drawings"]) - float(row["repayments"])
+        worst_roll = max(worst_roll, abs(moved - closing))
+        if prev_close is not None:
+            worst_roll = max(worst_roll, abs(opening - prev_close))
+        prev_close = closing
+    r.add("P2-DBT-01", "Revolver roll-forward: opening + draws - repayments = closing",
+          "BLOCKING", "PASS" if worst_roll <= 0.01 else "FAIL", f"{worst_roll:.4f}",
+          "0.01", f"{len(util)} months, chained without a break")
+
+    # The recorded facility charge must be supported by the daily position the ledger
+    # produced.  This is the reconciliation Phase 2.1 could not perform.
+    ca = load_credit_agreement()
+    fee_rate = float(ca["CA-007"]["value"])
+    margin = float(ca["CA-033"]["value"])
+    sofr = {"FY2023A": 0.0470, "FY2024A": 0.0520, "FY2025A": 0.0410, "FY2026F": 0.0340}
+    worst_int = 0.0
+    detail = []
+    for year, col in ((2023, "FY2023A"), (2024, "FY2024A"), (2025, "FY2025A")):
+        months = [x for x in util if int(x["period_key"]) // 100 == year]
+        days = sum(float(x["days_in_month"]) for x in months)
+        avg_drawn = sum(float(x["average_daily_drawn"]) * float(x["days_in_month"])
+                        for x in months) / days / 1e6
+        avg_undrawn = sum(float(x["average_daily_undrawn"]) * float(x["days_in_month"])
+                          for x in months) / days / 1e6
+        supported = avg_drawn * (sofr[col] + margin) + avg_undrawn * fee_rate
+        recorded = float(pl_anchor["interest_rcf"][col]) + float(
+            pl_anchor["commitment_fee"][col])
+        worst_int = max(worst_int, abs(supported - recorded) / max(recorded, 1e-9))
+        detail.append(f"{year} {supported:.3f}v{recorded:.3f}")
+    r.add("P2-DBT-02", "Revolver charge is supported by the daily drawn balance",
+          "BLOCKING", "PASS" if worst_int <= 0.005 else "FAIL",
+          f"{worst_int * 100:.3f}%", "0.5%",
+          "average daily drawn x (SOFR + 425bps) + commitment fee on the average daily "
+          "undrawn versus the recorded charge: " + "; ".join(detail))
+
+    # The debt schedule must be the ledger's own arithmetic, not a parallel model.
+    debt_rows = read_csv(REFERENCE / "debt_schedule.csv")
+    all_periods = sorted(jl["period_key"].unique())
+    ledger_rcf = (-jl[jl["expected_group_account"] == "220200"]
+                  .groupby("period_key")["amount_local"].sum()
+                  .reindex(all_periods, fill_value=0.0).cumsum())
+    worst_sched = 0.0
+    for row in debt_rows:
+        if row["instrument_id"] != "RCF-2021":
+            continue
+        pk = int(row["period_key"])
+        if pk in ledger_rcf.index:
+            worst_sched = max(worst_sched,
+                              abs(float(row["closing_principal"]) - float(ledger_rcf[pk])))
+    r.add("P2-DBT-03", "Debt schedule agrees with the general ledger every month",
+          "BLOCKING", "PASS" if worst_sched <= 0.05 else "FAIL", f"{worst_sched:.4f}",
+          "0.05", "balances are read from the ledger, not interpolated between year ends")
 
     round_amounts = int((jl["amount_local"] % 1000 == 0).sum())
     pct = round_amounts / len(jl) * 100

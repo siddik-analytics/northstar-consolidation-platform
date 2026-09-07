@@ -21,4 +21,6 @@ answer are documented in the design docs, not here.
 | [0013](0013-adjusted-ebitda-definition.md) | Adjusted EBITDA definition and add-back policy | Accepted, amended 1.1 |
 | [0014](0014-elimination-entities.md) | Eliminations posted to dedicated virtual entities | Accepted |
 | [0015](0015-covenant-and-economic-leverage.md) | Two leverage measures, and a reserved Downside scenario | Accepted |
-| [0016](0016-source-layer-measurement-reserve.md) | The source-layer difference is a disclosed equity reserve, never a plug | Accepted |
+| [0016](0016-source-layer-measurement-reserve.md) | The source-layer difference is a disclosed equity reserve, never a plug | **Superseded by 0017** |
+| [0017](0017-layer-1-equity-bridge-and-derived-cta.md) | The layer-1 equity bridge, and a CTA derived from source balances | Accepted |
+| [0018](0018-revolver-utilisation-and-interest.md) | Revolver interest priced off a daily utilisation model | Accepted |

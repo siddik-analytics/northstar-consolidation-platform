@@ -1,0 +1,4 @@
+fiscal_year,opening_equity_usd_m,result_for_the_year_usd_m,share_based_compensation_usd_m,capital_contributed_usd_m,equity_acquired_usd_m,distributions_usd_m,cta_movement_usd_m,closing_equity_rolled_usd_m,closing_equity_generated_usd_m,unexplained_usd_m,anchor_layer1_equity_target_usd_m,variance_vs_anchor_usd_m
+2023,303.4,-0.903566,1.0,20.0,11.8,-0.0,1.537693,336.834127,336.834126,-1e-06,336.834127,-1e-06
+2024,336.834126,5.714851,1.2,0.0,10.9,-0.15,-2.705373,351.793604,351.793601,-3e-06,351.793604,-3e-06
+2025,351.793601,14.036642,1.4,0.0,0.0,-0.2,5.062238,372.092481,372.092484,3e-06,372.092489,-5e-06

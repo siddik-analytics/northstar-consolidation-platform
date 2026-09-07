@@ -68,7 +68,6 @@ group_account,account_name,statement,fs_caption_l1,fs_caption_l2,account_class,n
 320100,Retained earnings - opening,BS,Equity,Retained earnings,EQUITY,C,HIST,OP_NI,FALSE,FALSE,FALSE,FALSE,TRUE,3210
 320200,Current year result attributable to the group,BS,Equity,Retained earnings,EQUITY,C,HIST,OP_NI,FALSE,FALSE,FALSE,FALSE,TRUE,3220
 320300,Dividends and distributions,BS,Equity,Retained earnings,EQUITY,D,HIST,FIN_EQUITY,FALSE,FALSE,FALSE,FALSE,TRUE,3230
-329100,Group reporting measurement reserve,BS,Equity,Retained earnings,EQUITY,C,HIST,OP_NONCASH,FALSE,FALSE,FALSE,FALSE,TRUE,3240
 330100,Cumulative translation adjustment - opening balance,BS,Equity,Cumulative translation adjustment,EQUITY,C,NONE,OP_NONCASH,FALSE,FALSE,FALSE,FALSE,TRUE,3310
 330200,Cumulative translation adjustment - movement in period,BS,Equity,Cumulative translation adjustment,EQUITY,C,NONE,OP_NONCASH,FALSE,FALSE,FALSE,FALSE,TRUE,3320
 330300,Cumulative translation adjustment - recycled on disposal,BS,Equity,Cumulative translation adjustment,EQUITY,C,NONE,OP_NONCASH,FALSE,FALSE,FALSE,FALSE,TRUE,3330

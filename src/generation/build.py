@@ -96,8 +96,13 @@ def run(quick: bool = False) -> dict:
     write_csv(REFERENCE / "debt_schedule.csv", list(debt[0]), [list(r.values()) for r in debt])
     counts["debt_schedule"] = len(debt)
 
+    util = datasets.build_revolver_utilisation(sb)
+    write_csv(REFERENCE / "revolver_utilisation.csv", list(util[0]),
+              [list(r.values()) for r in util])
+    counts["revolver_utilisation"] = len(util)
+
     counts["investment_rollforward"] = investments.write_reference()
-    counts["translation_difference"] = translation.write_reference(sb, rows)
+    counts.update(translation.write_reference(sb, rows))
     icx, ich = datasets.build_ic_inventory(sb)
     write_csv(REFERENCE / "ic_inventory_transactions.csv", list(icx[0]),
               [list(r.values()) for r in icx])

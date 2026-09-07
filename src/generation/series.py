@@ -14,21 +14,27 @@ from dataclasses import dataclass, field
 import numpy as np
 
 from .common import (ACTUAL_PERIODS, Period, allocate_exact, build_periods,
-                     plan_periods, rng, seasonal_shape)
+                     load_treasury_policy, plan_periods, rng, seasonal_shape)
 from . import bsdrivers as bd
-from .ledger import (CAPTION_SPLIT, ENTITY_CAPITAL, KESTREL_ENTITIES, split_for,
-                     LedgerBuilder, PPE_CLASSES)
+from .ledger import (CAPTION_SPLIT, ENTITY_CAPITAL, EQUITY_EVENTS, KESTREL_ENTITIES,
+                     split_for, LedgerBuilder, PPE_CLASSES)
 from .investments import investments_at
 from .model import DPO_TILT, DSO_TILT, EconomicModel
 
-# Minimum operating liquidity the group holds at any month end, and the headroom it keeps
-# above that when it goes to the facility.  A borrowing request is not made for the exact
-# shortfall; it is made for the shortfall plus a working buffer.
-MIN_GROUP_CASH_USD = 8_000_000.0
-CASH_BUFFER_USD = 4_000_000.0
+# Treasury policy and the facility's mechanical terms are configuration, not constants
+# buried in the generator: `config/debt/treasury_policy.csv` is read by the anchor model
+# and by this generator, so the two layers cannot drift apart.
+_TP = load_treasury_policy()
+MIN_GROUP_CASH_USD = _TP["TP-003"] * 1e6      # intra-year operating floor
+CASH_BUFFER_USD = _TP["TP-004"] * 1e6         # headroom requested above the floor
+DRAW_INCREMENT_USD = _TP["TP-005"] * 1e6      # borrowing notices are in round amounts
+REPAY_BLOCK_USD = _TP["TP-006"] * 1e6
+MIN_SURPLUS_USD = _TP["TP-007"] * 1e6
+DRAW_NOTICE_DAY = int(_TP["TP-008"])
+SWEEP_DAY = int(_TP["TP-009"])
 
 # Facility size from the credit agreement, mirrored in the anchor model.
-RCF_COMMITMENT_USD = 60_000_000.0
+RCF_COMMITMENT_USD = _TP.get("CA-006", 60.0) * 1e6 if "CA-006" in _TP else 60_000_000.0
 
 OPENING_PERIOD = 202212          # the 2022 opening balance sheet date
 PL_PREFIXES = ("4", "5", "6", "7", "8")
@@ -61,6 +67,7 @@ class SeriesBuilder:
         self.ent = self.m.entities
         self._ic_cache: dict = {}
         self._bs_factor_carry: dict[str, dict[str, float]] = {}
+        self._built: dict[bool, list[EntityMonth]] = {}
         self.ic_legs: dict[tuple[str, int], list[tuple]] = {}
 
     # ------------------------------------------------------------------ opening
@@ -211,6 +218,26 @@ class SeriesBuilder:
             out[acct] = local_annual * shapes[stream]
         return out
 
+    # ------------------------------------------------------------------ equity events
+    def equity_events(self, code: str) -> dict[str, list[tuple[int, float]]]:
+        """
+        {group account: [(period key, signed local amount)]} for one entity.
+
+        Contributions and distributions are translated at the rate ruling on the date of
+        the transaction, which is what fixes them in the entity's own currency for good
+        (FX-P03).  Everything else in equity is the opening balance or the roll-forward of
+        the local result.
+        """
+        out: dict[str, list[tuple[int, float]]] = {}
+        for ev in EQUITY_EVENTS:
+            if ev.entity != code:
+                continue
+            rs = "FORECAST" if ev.period_key // 100 == 2026 else "ACTUAL"
+            rate = self.m.rate(self.ent[code].currency, ev.period_key, ev.rate_type, rs)
+            out.setdefault(ev.account, []).append(
+                (ev.period_key, ev.sign * ev.amount_usd_m * 1_000_000.0 / rate))
+        return out
+
     # ------------------------------------------------------------- driver paths
     #: Accounts whose interim months come from an economic driver rather than a line.
     DRIVEN = bd.DRIVEN_CAPTIONS
@@ -346,9 +373,42 @@ class SeriesBuilder:
                 open_local.get("220200", 0.0), ye.get("220200", 0.0), periods,
                 scheduled_quarterly=0.0, draw_month=None, draw_amount=0.0)
 
+        # --- equity: historical rates, and every movement an actual event ----
+        # A subsidiary's share capital does not move because a spot rate moved.  It is a
+        # fixed amount in the entity's own currency, struck at the rate ruling when it was
+        # contributed (FX-P03), and it changes only when capital is actually contributed.
+        # Carrying it at a closing-rate USD target was what suppressed the translation
+        # adjustment the consolidation is supposed to compute -- see ADR-0017.
+        events = self.equity_events(code)
+
+        def _stepped(acct: str) -> np.ndarray:
+            """Constant local balance, stepping on each event date inside this year."""
+            path = np.full(n, open_local.get(acct, 0.0))
+            for pk, amount in events.get(acct, []):
+                if periods[0].period_key > pk:
+                    continue                      # already carried in the opening balance
+                path = path + amount * np.array(
+                    [1.0 if p.period_key >= pk else 0.0 for p in periods])
+            return path
+
+        for acct in ("310100", "310200"):
+            exact[acct] = _stepped(acct)
+
+        # Share-based compensation is settled in equity, not in cash: the charge accretes
+        # in the share-based compensation reserve at the granting entity.
+        if "610500" in pl:
+            exact["315100"] = (open_local.get("315100", 0.0)
+                               - np.cumsum(pl["610500"][:n]))
+
+        # Distributions to the non-controlling shareholder of NIG-510.  Only the
+        # distribution that leaves the group is modelled: a distribution to the parent is
+        # an intra-group transfer that eliminates in full and moves no reported figure.
+        if "320300" in events:
+            exact["320300"] = _stepped("320300")
+
         # --- assemble: driven where we have a driver, interpolated otherwise --
         excluded = {"110100", "320100", "320200"}
-        accounts = sorted((set(open_local) | set(ye)) - excluded)
+        accounts = sorted((set(open_local) | set(ye) | set(exact)) - excluded)
         factors = self._bs_factor_carry.setdefault(code, {})
         rows: list[dict[str, float]] = []
         scaled: dict[str, np.ndarray] = {}
@@ -414,61 +474,6 @@ class SeriesBuilder:
         return pl, legs
 
     # ------------------------------------------------------------------ treasury
-    def apply_measurement_reserve(self, rows: list[EntityMonth]) -> dict[int, float]:
-        """
-        Reconcile layer-1 cash to the approved anchor through a disclosed equity reserve.
-
-        Every balance sheet caption other than cash is pinned to an approved anchor, and
-        retained earnings rolls forward from each entity's own locally-measured result.
-        Those two facts over-determine the balance sheet, so a difference remains, and with
-        everything else pinned it would otherwise fall into cash.
-
-        The difference is an equity measurement effect.  The anchor model accumulates group
-        results at the rates ruling when they were earned and carries the group's own
-        cumulative translation adjustment; the entity ledgers accumulate local results and
-        are translated at closing rates.  It is not a cash effect, and letting it sit in
-        cash would misstate the one balance in the group that is externally verifiable and
-        would leave the generated revolver drawn against a shortfall that does not exist.
-
-        So it is posted where it belongs and named for what it is: a holding-company equity
-        reserve (329100), measured at each year end when the anchor is struck, disclosed
-        line by line in `data/reference/translation_difference.csv`, and carried at Topco,
-        which is USD-functional so the reserve is not itself retranslated.  Phase 4 removes
-        it and replaces it with a CTA computed from the entity ledgers; it must never be
-        treated as a consolidation input (ADR-0004, CTL-FX-04).
-
-        This is deliberately not a plug in a real balance.  It is a single named line whose
-        whole purpose is to make the unexplained residual visible and measurable, and a
-        control caps it as a share of layer-1 total assets.
-        """
-        TOPCO, RESERVE = "NIG-100", "329100"
-        by_period: dict[int, list[EntityMonth]] = {}
-        for em in rows:
-            by_period.setdefault(em.period_key, []).append(em)
-
-        def group_cash(pk: int) -> float:
-            rs = "FORECAST" if pk // 100 == 2026 else "ACTUAL"
-            return sum(em.bs_close["110100"] * self.m.rate(em.currency, pk, "CLOSE", rs)
-                       for em in by_period[pk])
-
-        bs = self.m.bs_anchor
-        reserve: dict[int, float] = {}
-        carry = 0.0
-        for year in (2023, 2024, 2025, 2026):
-            pk = year * 100 + 12
-            col = "FY2026F" if year == 2026 else f"FY{year}A"
-            if pk in by_period:
-                # the reserve is struck at the year end, against the anchored cash balance
-                carry = bs["cash"][col] * 1e6 - group_cash(pk)
-            for p in sorted(k for k in by_period if k // 100 == year):
-                reserve[p] = carry
-        # 2026 closes in August, so its reserve is the one struck at December 2025
-        for pk, amt in reserve.items():
-            em = next(e for e in by_period[pk] if e.entity == TOPCO)
-            em.bs_close["110100"] += amt
-            em.bs_close[RESERVE] = em.bs_close.get(RESERVE, 0.0) - amt
-        return reserve
-
     def apply_revolver_sweep(self, rows: list[EntityMonth]) -> dict[int, float]:
         """
         Manage the revolving credit facility against the group's monthly liquidity need.
@@ -501,7 +506,8 @@ class SeriesBuilder:
                                           "FORECAST" if pk // 100 == 2026 else "ACTUAL")
                             for em in g) for pk, g in by_period.items()}
         target = bd.revolver_path(pre, year_end, activity, MIN_GROUP_CASH_USD,
-                                  CASH_BUFFER_USD, RCF_COMMITMENT_USD)
+                                  CASH_BUFFER_USD, RCF_COMMITMENT_USD,
+                                  DRAW_INCREMENT_USD, REPAY_BLOCK_USD, MIN_SURPLUS_USD)
         for pk, want in target.items():
             move = want - drawn_now[pk]
             if abs(move) < 1e-6:
@@ -558,6 +564,23 @@ class SeriesBuilder:
 
     # ------------------------------------------------------------------ build
     def build_actuals(self, pool: bool = True) -> list[EntityMonth]:
+        """
+        Every entity's monthly ledger position, built once and memoised.
+
+        The year-end anchor factors are carried between years so that a driver path enters
+        January where December left it, which means the builder is stateful: calling it a
+        second time on the same instance would blend the factors again and return slightly
+        different balances.  Phase 2.1 called it from six places and the debt schedule
+        therefore disagreed with the general ledger it was supposed to describe.  The
+        result is cached so that every consumer sees the same ledger.
+        """
+        if pool in self._built:
+            return self._built[pool]
+        rows = self._build_actuals(pool)
+        self._built[pool] = rows
+        return rows
+
+    def _build_actuals(self, pool: bool) -> list[EntityMonth]:
         opening_usd = self.opening_bs_usd()
         out: list[EntityMonth] = []
         for code, e in sorted(self.ent.items()):
@@ -630,7 +653,6 @@ class SeriesBuilder:
                 if year == 2026:
                     break
         if pool:
-            self.measurement_reserve = self.apply_measurement_reserve(out)
             self.revolver_draws = self.apply_revolver_sweep(out)
             self.apply_cash_pooling(out)
         return out

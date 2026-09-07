@@ -240,11 +240,21 @@ class EconomicModel:
             for a, v in zip(accounts, vals):
                 out[e][a] = out[e].get(a, 0.0) + v
 
-        # Centrally-held accounts are swept to the corporate entities
+        # Centrally-held accounts are swept to the corporate entities.  Share-based
+        # compensation is not a free output of the cost mix: it is an approved anchor, it
+        # is equity-settled, and the anchored contributed capital grows by exactly that
+        # amount every year.  It is therefore set to the anchor and the remaining recurring
+        # cost mix is normalised around it, so total recurring opex is unchanged.
         for acct, split in CORPORATE_ONLY_ACCOUNTS.items():
             pooled = sum(out[e].pop(acct, 0.0) for e in out)
-            if pooled:
-                vals = allocate_exact(pooled, np.array(list(split.values())), 6)
+            target = self.cf_anchor["sbc"][col] if acct == "610500" else pooled
+            if pooled and abs(recurring - pooled) > 1e-9:
+                factor = (recurring - target) / (recurring - pooled)
+                for e in out:
+                    for a in out[e]:
+                        out[e][a] *= factor
+            if target:
+                vals = allocate_exact(target, np.array(list(split.values())), 6)
                 for e, v in zip(split, vals):
                     out[e][acct] = out[e].get(acct, 0.0) + v
 
