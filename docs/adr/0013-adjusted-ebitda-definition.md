@@ -1,6 +1,6 @@
 # ADR-0013 — Adjusted EBITDA definition and add-back policy
 
-**Status:** Accepted · **Date:** 2026-09-06 · **Phase:** 1 · **Requires owner confirmation**
+**Status:** Accepted · **Date:** 2026-09-06 · **Amended:** 2026-09-07 (Phase 1.1) · **Phase:** 1
 
 ## Context
 
@@ -74,13 +74,38 @@ list is visible on the EBITDA bridge page rather than hidden in a formula.
 must go through the management adjustment layer, which is more effort — deliberately, since a
 partial add-back is a judgement that should be individually approved.
 
-**Requires owner confirmation.** Three points need a decision from the CFO before Phase 4:
+## Amendment, Phase 1.1 — owner decisions applied
 
-1. Whether the credit agreement's "Consolidated EBITDA" permits run-rate synergy add-backs,
-   and if so how they are quantified and evidenced.
-2. Whether the sponsor monitoring fee (`630400`) is an add-back for covenant purposes as well
-   as for management reporting. It is treated as an add-back here.
-3. Whether share-based compensation should be added back. It is **not** added back in the
-   current definition; many sponsors do add it back.
+The three previously open points (OQ-01) are settled, and the synthetic credit agreement has
+been written down so that the add-back policy rests on a document rather than an assumption.
+See [`config/debt/credit_agreement_terms.csv`](../../config/debt/credit_agreement_terms.csv).
 
-Recorded as open question OQ-01 in `docs/open-questions.md`.
+| Question | Decision | Clause |
+|---|---|---|
+| Run-rate synergy add-backs | **Not permitted.** Negotiated out at closing; only costs actually incurred may be added back. | `CA-028` (S1.1 vii) |
+| Sponsor monitoring fee | **Permitted, capped at $1.5m per annum.** The actual charge is $1.0–1.2m, inside the cap in every modelled period. Any excess would not be addable. | `CA-026`, `CA-027` (S1.1 iv, S6.9) |
+| Share-based compensation | **Not added back.** Not permitted by the agreement, and correspondingly excluded from the group's own definition so that the two measures agree. | `CA-029` |
+
+This matters beyond bookkeeping: it means **Covenant EBITDA equals Adjusted EBITDA by
+construction** under the current agreement. Every add-back the group makes is permitted, and
+every add-back the agreement disallows is one the group does not make. The two are still
+**computed separately**, so that a later change to either definition surfaces as a difference
+rather than being absorbed silently.
+
+The composition is now anchored account by account
+([`config/anchors/anchor_addback_composition.csv`](../../config/anchors/anchor_addback_composition.csv))
+and asserted to equal the total non-recurring charge in every period. An add-back that cannot
+be attributed to an account fails the build, and a sponsor fee above the cap fails the build.
+
+| USD m | FY2023A | FY2024A | FY2025A | FY2026B | FY2026F |
+|---|---|---|---|---|---|
+| `680100` Restructuring — severance | 1.80 | 1.40 | 1.50 | 0.50 | 2.00 |
+| `680200` Restructuring — facility exit | 0.90 | 0.40 | 0.50 | 0.20 | 0.80 |
+| `680300` Acquisition and transaction costs | 2.60 | 1.90 | 0.40 | — | — |
+| `680400` Integration and ERP programme costs | 3.00 | 3.10 | 2.60 | 1.60 | 1.60 |
+| `680600` Legal settlements and claims | 0.30 | 0.20 | 0.30 | — | 0.20 |
+| `680700` Transaction and retention bonuses | 0.20 | 0.10 | — | — | — |
+| `630400` Sponsor monitoring fee (cap $1.5m) | 1.00 | 1.10 | 1.20 | 1.20 | 1.20 |
+| **Total add-backs** | **9.80** | **8.20** | **6.50** | **3.50** | **5.80** |
+
+OQ-01 is closed.

@@ -19,6 +19,7 @@ figure back to the source journal that produced it.
 | Phase | | |
 |---|---|---|
 | **1 — Business design & architecture** | ✅ **Complete** | [Report](docs/phases/phase-01-report.md) |
+| **1.1 — Architecture correction pass** | ✅ **Complete** | [Report](docs/phases/phase-01-1-report.md) |
 | 2 — Synthetic source systems & reference data | ⏸ Awaiting approval | |
 | 3 — Ingestion, staging & COA harmonisation | ⏸ | |
 | 4 — Consolidation engine | ⏸ | |
@@ -53,8 +54,8 @@ version-controlled configuration validated in CI — not code, and not tribal kn
 
 **What makes it defensible.** Every transformation between the source trial balance and the
 board number is a separately identifiable layer, so the reconciliation from "what the ERPs
-said" to "what the board sees" is a standing output rather than an investigation. 71 automated
-controls, 56 of them blocking, run at the point of the transformation they protect.
+said" to "what the board sees" is a standing output rather than an investigation. 81 automated
+controls, 66 of them blocking, run at the point of the transformation they protect.
 
 ---
 
@@ -74,7 +75,7 @@ Expected output:
 
 ```
 All integrity assertions passed (BS balances; CF ties to BS cash).
-152 passed
+197 passed
 ```
 
 ---
@@ -85,14 +86,15 @@ All integrity assertions passed (BS balances; CF ties to BS cash).
 config/          Version-controlled configuration — the platform's inputs
   anchors/       Generated financial anchors (the contract for Phases 2 and 9)
   coa/           Group chart of accounts, three source charts, ERP profiles
-  controls/      The 71-control register
-  dimensions/    Business units, departments, scenarios and versions
-  entities/      Legal entity master and ownership tree
+  debt/          Synthetic credit agreement terms, covenants and permitted add-backs
+  controls/      The 81-control register
+  dimensions/    Business units, departments, scenarios, versions, consolidation layers
+  entities/      Legal entity master and effective-dated ownership register
   fx/            FX translation policy
   ic/            Intercompany flow matrix
 data/            00_raw → 10_staging → 20_warehouse → 30_marts → 90_exports
 docs/            Design documentation
-  adr/           14 architecture decision records
+  adr/           15 architecture decision records
   phases/        Roadmap and per-phase reports
 excel/           Excel deliverables (Phase 6)
 powerbi/         PBIP project (Phase 7)
@@ -114,15 +116,18 @@ tests/           Automated validation
 | [Business scenario](docs/business-scenario.md) | The company: entities, ERPs, business units, capital structure, the FY2026 story |
 | [Financial anchors](docs/financial-anchors.md) | *Generated.* Three statements, KPIs, BU and entity anchors, FX, intercompany |
 | [Phase 1 report](docs/phases/phase-01-report.md) | What was built, and a critical self-audit that found nine defects |
+| [Phase 1.1 report](docs/phases/phase-01-1-report.md) | Architecture corrections applied at the approval gate |
 
 | Design | |
 |---|---|
 | [Consolidation design](docs/consolidation-design.md) | Layers, COA harmonisation, FX, elimination, adjustments, cash flow |
 | [Data contract](docs/data-contract.md) | Dimensions, facts, grain, relationships, volumes |
 | [Reporting design](docs/reporting-design.md) | Excel workbooks, Power BI pages, metric definitions |
-| [Control framework](docs/control-framework.md) | 71 controls and why they are placed where they are |
-| [ADRs](docs/adr/README.md) | 14 decisions with their alternatives and consequences |
-| [Open questions](docs/open-questions.md) | 12 decisions requiring owner approval |
+| [Control framework](docs/control-framework.md) | 81 controls and why they are placed where they are |
+| [NCI policy](docs/nci-policy.md) | Complete non-controlling interest treatment, end to end |
+| [FX and CTA policy](docs/fx-cta-policy.md) | Full translation policy and the deterministic CTA roll-forward |
+| [ADRs](docs/adr/README.md) | 15 decisions with their alternatives and consequences |
+| [Open questions](docs/open-questions.md) | 12 decisions; 4 closed at the Phase 1.1 review, 8 open with working assumptions |
 | [Glossary](docs/glossary.md) | Terms and metric definitions |
 
 ---
@@ -134,7 +139,8 @@ tests/           Automated validation
 | Revenue ($m) | 328.0 | 371.4 | 412.1 | 448.0 | 437.2 |
 | Adjusted EBITDA ($m) | 39.0 | 47.2 | 57.8 | 63.5 | 59.2 |
 | Adj. EBITDA margin | 11.9% | 12.7% | 14.0% | 14.2% | 13.5% |
-| Net leverage | 5.42x | 5.26x | 4.01x | 3.31x | 3.80x |
+| Net leverage (covenant) | 5.42x | 5.26x | 4.01x | 3.31x | 3.80x |
+| Economic net leverage | 5.98x | 5.77x | 4.43x | 3.68x | 4.23x |
 | Headcount | 2,180 | 2,340 | 2,450 | 2,530 | 2,486 |
 
 Four business units — Flow Control & Components, Industrial Services, Engineered Systems,

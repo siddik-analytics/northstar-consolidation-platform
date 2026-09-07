@@ -1,6 +1,6 @@
 # Control Framework
 
-**71 controls across 10 categories.** The full machine-readable register is
+**81 controls across 10 categories.** The full machine-readable register is
 [`config/controls/control_register.csv`](../config/controls/control_register.csv); this
 document explains the design.
 
@@ -26,7 +26,7 @@ a property of the person who happened to build this month's file. The design tar
 
 | Severity | Count | Behaviour |
 |---|---|---|
-| `BLOCKING` | 56 | Pipeline halts. Nothing downstream is published. The period does not close. |
+| `BLOCKING` | 66 | Pipeline halts. Nothing downstream is published. The period does not close. |
 | `WARNING` | 13 | Pipeline continues; the exception is reported and requires explicit acknowledgement before sign-off. |
 | `INFO` | 2 | Reported for trend and insight; no action required. |
 
@@ -46,11 +46,11 @@ month, people stop reading them, and the one that mattered gets lost in the nois
 | `DATA_QUALITY` | 10 | 3–4 | The extract arrived, parsed, and was not loaded twice |
 | `MAPPING` | 8 | 3 | Every source account reached the right group account |
 | `TRIAL_BALANCE` | 5 | 3–4 | Debits equal credits at every stage of transformation |
-| `FIN_STATEMENT` | 8 | 4–5 | The three statements are internally consistent and tie to each other |
-| `FX` | 8 | 3–5 | Translation is correct and CTA is derived rather than plugged |
+| `FIN_STATEMENT` | 9 | 4–5 | The three statements are internally consistent and tie to each other |
+| `FX` | 11 | 3–5 | Translation is correct, CTA rolls forward, and is derived rather than plugged |
 | `INTERCOMPANY` | 8 | 3–4 | Intercompany activity is identified, matched and eliminated |
-| `CONSOLIDATION` | 8 | 4 | Scope, ownership, NCI and adjustments are right |
-| `SCENARIO` | 5 | 5 | Budget and forecast are complete, locked and comparable |
+| `CONSOLIDATION` | 13 | 4 | Layers, scope, ownership, NCI and adjustments are right |
+| `SCENARIO` | 6 | 5 | Budget and forecast are complete, locked, comparable and isolated |
 | `RECONCILIATION` | 6 | 4–9 | Every figure traces back to its source |
 | `REASONABLENESS` | 5 | 4–8 | The numbers make business sense, not just arithmetic sense |
 
@@ -63,11 +63,11 @@ month, people stop reading them, and the one that mattered gets lost in the nois
         │
   MAP ──────────► CTL-MAP-01..08, CTL-TB-02    everything mapped, still balances
         │
-  TRANSLATE ────► CTL-FX-01..07, CTL-TB-03     rates complete, CTA derived, balances in USD
+  TRANSLATE ────► CTL-FX-01..11, CTL-TB-03     rates complete, CTA rolls forward, balances in USD
         │
   ELIMINATE ────► CTL-IC-01..08                IC matched, eliminations balance
         │
-  CONSOLIDATE ──► CTL-CON-01..08               scope, ownership, NCI, adjustments
+  CONSOLIDATE ──► CTL-CON-01..13               layers, scope, ownership, NCI, adjustments
         │
   DERIVE CF ────► CTL-FS-01..08                statements tie to each other
         │
@@ -80,7 +80,7 @@ detected after consolidation costs a day of bisecting.
 
 ## 5. The controls that matter most
 
-Seventy-one controls is a lot to hold in your head. These eight are the ones that would
+Eighty-one controls is a lot to hold in your head. These eleven are the ones that would
 catch the failures that actually damage credibility.
 
 ### `CTL-TB-01` — Entity trial balance balances
@@ -106,6 +106,29 @@ opening net assets × Δ(closing rate)  +  current year result × (closing − a
 CTA entered as a plug is the classic way a consolidation hides a translation defect: the
 balance sheet balances, so nobody looks, and the error sits in equity indefinitely. This
 control makes plugging impossible.
+
+### `CTL-CON-09` — Consolidation layer integrity
+Every fact row carries a `layer_id` from the defined set of five. This is a small control
+guarding a large hole: because both the statutory and the management view are defined by
+*explicit* layer membership (`1,2,3,5` and `1,2,3,4,5`), a row with an undefined or null layer
+belongs to **neither**. It is silently excluded from both, and the statements still balance
+without it — so no other control in the framework notices. The layer set is closed at five and
+`dim_layer` is built from a single configuration file.
+
+### `CTL-FX-09` — CTA roll-forward continuity
+Closing CTA equals opening plus movement plus any amount recycled on disposal, and each
+period's closing CTA is the next period's opening, per entity, with no unexplained step. A
+discontinuity means either that a closed period has been restated or that the engine
+recomputed CTA from scratch instead of rolling it forward. Both are defects, and both are
+invisible without this control because a recomputed CTA still balances the balance sheet.
+
+### `CTL-CON-11` — NCI equity roll-forward
+Closing NCI equals opening, plus share of result, less dividends, plus the share of the
+translation adjustment, plus ownership changes. The component most often omitted is the **NCI
+share of the CTA movement**: allocating 100% of a partially owned subsidiary's translation
+movement to group equity overstates group equity and understates NCI by the same amount, and
+because both sit inside total equity the balance sheet still balances. Only a control looking
+for it specifically will find it.
 
 ### `CTL-IC-01` / `CTL-IC-02` — Intercompany eliminates to nil
 Balances and P&L, per entity pair, per account, per period. Not tested in aggregate — a
@@ -171,8 +194,16 @@ The control framework applies to this phase too. Phase 1 ships with 152 automate
 | `tests/test_anchors.py` | Every accounting identity in the anchor model: statement subtotals, balance sheet balancing, cash flow tying to cash, retained earnings roll-forward, KPI derivation, covenant headroom, entity-to-BU-to-group roll-up, FX quotation direction, and the business-narrative assertions (margin expands, leverage falls, forecast is below budget) |
 | `tests/test_config_integrity.py` | Chart-of-accounts structure and flag consistency, mapping validity, ERP chart divergence, entity tree integrity and acyclicity, ownership sums, intercompany matrix referential integrity, control register well-formedness, scenario/version consistency |
 
-Three of these tests earned their place during Phase 1 by catching real defects — see
-`docs/phases/phase-01-report.md` §4.
+Four of these tests earned their place by catching real defects — three during Phase 1 and one
+during the Phase 1.1 correction pass. See `docs/phases/phase-01-report.md` §4 and
+`docs/phases/phase-01-1-report.md`.
+
+`test_config_integrity.py` additionally enforces the architectural invariants introduced at
+Phase 1.1: the consolidation layer set is closed at five and agrees across the configuration,
+the statutory and management formulas and every documentation reference; ownership plus NCI
+sums to 100% in the effective-dated register with no overlapping or missing date ranges; the
+NCI equity roll-forward accounts and the CTA roll-forward accounts both exist and are complete;
+and every add-back account named in the credit agreement is flagged in the group chart.
 
 ## 9. Deferred to later phases
 
@@ -186,3 +217,4 @@ so they are not forgotten:
 | Access and row-level security testing | 9 | Verify a BU role cannot see other entities |
 | Close-cycle timing controls | 9 | Actual close duration against the target of five working days |
 | Restatement detection | 5 | Alert when a closed period's figures change between runs |
+| Covenant breach, waiver and equity cure reporting | 8 | Exercised by the reserved Downside scenario (`DS_FY26_STRESS`), not by the base dataset |

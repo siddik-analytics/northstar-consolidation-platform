@@ -27,7 +27,7 @@ not by convention: `raw`, `staging`, `warehouse`, `mart`.
 **Modelling pattern: star schema with conformed dimensions.** Facts contain keys and
 measures. Dimensions contain descriptive attributes and flattened hierarchies. No
 snowflaking, no parent-child hierarchies, no bridge tables. The reasons are in ADR-0010, but
-the short version is that flattened hierarchies over a 181-account chart and a 15-entity
+the short version is that flattened hierarchies over a 188-account chart and a 15-entity
 tree are cheap, and parent-child hierarchies in Power BI are neither cheap nor pleasant to
 maintain.
 
@@ -90,7 +90,12 @@ Key columns: `entity_code`, `entity_name`, `short_name`, `country_code`, `region
 `parent_entity_code`, `ownership_pct`, `nci_pct`, `consolidation_method`, `entity_type`,
 `consolidation_effective_from`, `consolidation_effective_to`, `acquisition_date`,
 `acquisition_type`, `is_elimination_entity`, `legal_hierarchy_path`,
-`legal_hierarchy_level`, `is_active`.
+`legal_hierarchy_level`, `has_nci`, `nci_holder`, `is_active`.
+
+Ownership **percentages** are deliberately *not* dimension attributes. They are
+period-dependent, and a dimension attribute would silently apply today's percentage to a
+historical period. They live in `fact_ownership_interest` instead (see below), sourced from
+the effective-dated register `config/entities/ownership_history.csv`.
 
 `legal_hierarchy_path` is the materialised ancestor path (`NIG-100/NIG-500/NIG-510`),
 flattened so the tree can be traversed without recursion at query time.
@@ -128,7 +133,7 @@ in `consolidation-design.md` §5.3. They are load-bearing attributes, not docume
 |---|---|
 | **Purpose** | Group chart of accounts with reporting hierarchy and engine behaviour flags |
 | **Grain** | One row per group account |
-| **Rows** | 181 |
+| **Rows** | 188 |
 | **Key** | `account_key`; business key `group_account` |
 | **Source** | `config/coa/group_coa.csv` |
 
@@ -181,11 +186,40 @@ scenario while the data remains a date offset over `ACT` (ADR-0004).
 so a locked budget cannot be quietly edited.
 
 ### `dim_layer`
-One row per consolidation layer (5). Columns: `layer_code`, `layer_name`, `layer_sequence`,
-`in_statutory_view`, `in_management_view`, `posted_to_entity_type`.
+| | |
+|---|---|
+| **Purpose** | The five consolidation layers. Makes the statutory/management separation a filter on data rather than a convention people have to remember |
+| **Grain** | One row per consolidation layer |
+| **Rows** | **Exactly 5** |
+| **Key** | `layer_id` (1–5); business key `layer_code` |
+| **Source** | `config/dimensions/consolidation_layer.csv` — the canonical definition |
 
-Small, but it is the dimension that makes the statutory/management separation a filter on
-data rather than a convention people have to remember.
+| `layer_id` | `layer_code` | `layer_name` | Posted to | `in_statutory_view` | `in_management_view` | `must_balance_independently` |
+|---|---|---|---|---|---|---|
+| 1 | `REPORTED` | Entity Reported | Real legal entities | TRUE | TRUE | TRUE |
+| 2 | `IC_ELIM` | Intercompany Eliminations | `ELIM-IC` | TRUE | TRUE | TRUE |
+| 3 | `CONSOL_ADJ` | Consolidation Adjustments | `ELIM-CON` | TRUE | TRUE | TRUE |
+| 4 | `MGMT_ADJ` | Management Adjustments | `ELIM-MGT` | **FALSE** | TRUE | TRUE |
+| 5 | `FX_CTA` | Translation Adjustment | Real legal entities | TRUE | TRUE | **FALSE** |
+
+Other columns: `layer_sequence`, `posting_source`, `posted_to_entity_type`,
+`created_by_phase`, `description`.
+
+```
+Statutory  = layer_id IN (1,2,3,5)
+Management = layer_id IN (1,2,3,4,5)
+```
+
+**This dimension is closed.** The layer set is fixed at five; adding a sixth is a breaking
+change requiring an ADR, because both reporting bases are defined by explicit layer
+membership and a new layer would belong to neither until someone remembered to add it.
+`CTL-CON-09` rejects any fact row carrying a `layer_id` outside the configured set, and
+`tests/test_config_integrity.py` asserts that the configuration, the documented statutory and
+management formulas, and every layer reference in the documentation all agree.
+
+`layer_id 5` is the only layer that does not balance independently: it *is* the balancing
+entry that makes the translated trial balance sum to zero. Balancing controls must therefore
+read `must_balance_independently` rather than assume every layer self-balances.
 
 ### `dim_intercompany_partner`
 A **role-playing dimension over `dim_entity`**, plus one `EXTERNAL` member and one
@@ -230,6 +264,27 @@ Columns: `adjustment_id`, `adjustment_type`, `layer_code`, `description`, `ratio
 Adjustment **amounts** live in `fact_financials`; only metadata lives here. That way an
 adjustment aggregates naturally with everything else instead of needing to be unioned in.
 
+### `fact_ownership_interest`
+| | |
+|---|---|
+| **Purpose** | The ownership and non-controlling interest percentage in force for each entity in each period |
+| **Grain** | entity × period |
+| **Rows** | ~800 |
+| **Key** | `entity_key`, `period_key` |
+| **Source** | Generated by expanding the effective-date ranges in `config/entities/ownership_history.csv` across periods |
+
+Columns: `group_ownership_pct`, `nci_pct`, `consolidation_method`, `change_event`,
+`is_first_period`, `is_final_period`.
+
+Strictly this is a periodic-snapshot fact rather than a transaction fact, and it holds
+percentages rather than additive measures. It is modelled as a fact anyway because it is
+**period-dependent**, and the alternative — an ownership attribute on `dim_entity` — would
+silently apply today's percentage to a historical period.
+
+Populated for **every** entity and period, not only where NCI exists; wholly owned entities
+carry 100/0. A control that only runs where NCI exists cannot detect an NCI appearing where
+it should not (`CTL-CON-10`).
+
 ### Supporting dimensions
 | Dimension | Grain | Purpose |
 |---|---|---|
@@ -247,6 +302,7 @@ adjustment aggregates naturally with everything else instead of needing to be un
 |---|---|
 | **Purpose** | Every financial and statistical amount, all scenarios, all consolidation layers |
 | **Grain** | entity × account × cost centre × ic partner × period × scenario × version × layer |
+| **Grain note** | `related_entity_key` and `adjustment_key` are **attributes of a layer-3/4 row, not grain components** — they are functionally determined by the other keys and never split a row |
 | **Estimated rows** | ~1.1m (Actual ~420k; Budget ~180k; Forecast versions ~380k; eliminations and adjustments ~120k) |
 | **Source** | Consolidation engine (Phase 4) |
 
@@ -260,9 +316,10 @@ adjustment aggregates naturally with everything else instead of needing to be un
 | `date_key` | int | Month-end, for time intelligence |
 | `scenario_key` | int | |
 | `version_key` | int | |
-| `layer_key` | int | |
+| `layer_id` | int | 1–5, from `dim_layer`. Never null (`CTL-CON-09`) |
 | `currency_key` | int | The entity's functional currency |
 | `adjustment_key` | int | Populated for layers 3 and 4 only |
+| `related_entity_key` | int | The subsidiary an adjustment **relates to**, where `entity_key` is a virtual entity. Populated for layers 3 and 4; `NOT_APPLICABLE` otherwise |
 | `amount_local` | decimal(18,2) | Functional currency |
 | `amount_usd` | decimal(18,2) | Translated per the FX policy |
 | `amount_usd_cc` | decimal(18,2) | Constant currency, at budget rates |
@@ -385,6 +442,7 @@ dim_date ──┬──< fact_financials >──┬── dim_entity ───�
            ├──< fact_headcount >── dim_entity, dim_cost_center, dim_job_family
            ├──< fact_capex >── dim_entity, dim_asset_class
            ├──< fact_debt_schedule >── dim_debt_instrument
+           ├──< fact_ownership_interest >── dim_entity
            ├──< fact_cash_flow >── dim_entity
            └──< fact_control_result >── dim_control, dim_entity
 ```
@@ -423,6 +481,7 @@ across `dim_entity`, `dim_cost_center` and `dim_account`.
 | `fact_cash_flow` | ~25,000 | |
 | `fact_debt_schedule` | ~2,000 | |
 | `fact_fx_rate` | ~1,500 | |
+| `fact_ownership_interest` | ~800 | Entity × period ownership, all entities |
 | All dimensions | ~2,000 | |
 | **Total** | **~3.2m rows** | |
 
@@ -442,9 +501,15 @@ requiring a version bump and an ADR:
 1. `fact_financials` is unique on its declared grain (`CTL-DQ-04`).
 2. Every foreign key resolves; no nulls in key columns (`CTL-DQ-08`).
 3. `amount_usd` is translated per the documented FX policy and never re-derived downstream.
-4. Statutory results are `layer_key IN (1,2,3,5)`; the management view adds layer 4.
-5. Statistical accounts (`is_statistical = TRUE`) carry `quantity`, and their `amount_usd`
+4. `layer_id` is always populated and always one of the five values in `dim_layer`
+   (`CTL-CON-09`). Statutory results are `layer_id IN (1,2,3,5)`; the management view is
+   `layer_id IN (1,2,3,4,5)`. The layer set is closed — adding a sixth is a breaking change.
+5. Ownership percentages come from `fact_ownership_interest` for the period, never from a
+   dimension attribute. Every entity and period has exactly one row (`CTL-CON-10`).
+6. Statistical accounts (`is_statistical = TRUE`) carry `quantity`, and their `amount_usd`
    is null. They are never included in a balancing test.
-6. Prior year is a date offset over `ACT`; there are no stored `PY` rows.
-7. `period_key` is `YYYYMM` and monthly facts join `dim_date` on the month-end date key.
-8. No blocking control has failed for any period present in a published mart.
+7. Prior year is a date offset over `ACT`; there are no stored `PY` rows.
+8. `period_key` is `YYYYMM` and monthly facts join `dim_date` on the month-end date key.
+9. Versions flagged `is_reserved = TRUE` (currently the Downside stress case) are excluded
+   from every default reporting view (`CTL-SCN-06`).
+10. No blocking control has failed for any period present in a published mart.

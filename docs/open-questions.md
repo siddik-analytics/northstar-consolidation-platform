@@ -6,10 +6,32 @@ each states what changes if the answer differs.
 
 Nothing here is a blocker for Phase 2 unless marked as such.
 
+> **Status after the Phase 1.1 review.** Four questions are **closed** by owner decision:
+> OQ-01 (add-back policy), OQ-02 (net debt definition), OQ-04 (swap accounting, confirmed
+> by omission from the approved decisions) and OQ-12 (covenant narrative). Eight remain open
+> with working assumptions. Closed questions are retained rather than deleted, with the
+> decision and its consequence recorded, so the reasoning survives.
+
 ---
 
-## OQ-01 — Adjusted EBITDA add-back policy
-**Owner:** CFO · **Needed by:** Phase 4 · **Impact:** High
+## OQ-01 — Adjusted EBITDA add-back policy ✅ CLOSED
+**Owner:** CFO · **Decided:** Phase 1.1 review · **Impact:** High
+
+**DECISION.** All three sub-questions settled, and the synthetic credit agreement written down
+in [`config/debt/credit_agreement_terms.csv`](../config/debt/credit_agreement_terms.csv) so the
+policy rests on a clause rather than an assumption:
+
+| Sub-question | Decision | Clause |
+|---|---|---|
+| Run-rate synergy add-backs | **Not permitted** | `CA-028` |
+| Sponsor monitoring fee | **Permitted, capped at $1.5m p.a.** | `CA-026`, `CA-027` |
+| Share-based compensation | **Not added back** | `CA-029` |
+
+Consequence: Covenant EBITDA equals Adjusted EBITDA by construction, though the two are still
+computed separately so a future divergence surfaces. Add-back composition is anchored per
+account and asserted in the build. Anchors unchanged. See ADR-0013.
+
+*Original framing retained below.*
 
 Adjusted EBITDA drives covenant reporting and sponsor value tracking. Three sub-questions:
 
@@ -31,8 +53,15 @@ See ADR-0013.
 
 ---
 
-## OQ-02 — Net debt definition for covenant reporting
-**Owner:** CFO / Treasury · **Needed by:** Phase 4 · **Impact:** High
+## OQ-02 — Net debt definition for covenant reporting ✅ CLOSED
+**Owner:** CFO / Treasury · **Decided:** Phase 1.1 review · **Impact:** High
+
+**DECISION.** Operating leases are **excluded** from covenant net debt, per credit agreement
+clause `CA-018`. In addition, a **separate non-covenant KPI — Economic Net Leverage —** is
+reported alongside, including lease liabilities. It does not replace covenant leverage and has
+no threshold of its own. FY2025: covenant 4.01x, economic 4.43x. See ADR-0015.
+
+*Original framing retained below.*
 
 Net debt currently excludes operating lease liabilities, following the credit agreement.
 Including them would raise FY2025 net leverage from 4.01x to 4.43x. Both are computable and
@@ -60,8 +89,16 @@ See ADR-0009.
 
 ---
 
-## OQ-04 — Interest rate swap accounting
-**Owner:** CFO / Group Financial Controller · **Needed by:** Phase 4 · **Impact:** Medium
+## OQ-04 — Interest rate swap accounting ✅ CLOSED
+**Owner:** CFO / Group Financial Controller · **Decided:** Phase 1.1 review · **Impact:** Medium
+
+**DECISION.** The working assumption stands: the swap is **not designated for hedge
+accounting**, so fair value movements go through the P&L (`730700`). This keeps the equity
+roll-forward to a single OCI component (CTA), which the Phase 1.1 CTA roll-forward now
+specifies in full. The credit agreement's minimum hedging requirement (`CA-008`) is satisfied
+by the swap regardless of its accounting designation.
+
+*Original framing retained below.*
 
 The $100m swap is modelled as **not designated for hedge accounting**, so fair value movements
 go through the P&L (`730700`). Designating it as a cash flow hedge would route the effective
@@ -170,8 +207,24 @@ demonstrate nothing further and would slow every iteration.
 
 ---
 
-## OQ-12 — Whether FY2026 should show a covenant breach
-**Owner:** CFO / Engagement Lead · **Needed by:** Phase 2 · **Impact:** Medium
+## OQ-12 — Whether FY2026 should show a covenant breach ✅ CLOSED
+**Owner:** CFO / Engagement Lead · **Decided:** Phase 1.1 review · **Impact:** Medium
+
+**DECISION.** The FY2026 base case is **approved as it stands: no breach**, covenant threshold
+4.50x, forecast net leverage 3.80x, headroom 0.70x. The base dataset is **not** to be distorted
+to manufacture drama.
+
+A **Downside scenario is reserved** (`DS` / `DS_FY26_STRESS`) to produce a realistic breach or
+near-breach in a later phase, exercising waiver tracking, remediation reporting and the
+two-per-four-quarters equity cure right at clause S7.3 (`CA-014`). It is registered in the
+scenario configuration, **not populated**, and excluded from every default reporting view by
+`CTL-SCN-06`. It must be generated as a separate version, never by amending the base forecast.
+
+The approved figures are asserted in
+`tests/test_architecture_invariants.py::test_approved_fy2026_forecast_covenant_position` so
+they cannot drift. See ADR-0015.
+
+*Original framing retained below.*
 
 The FY2026 forecast currently shows leverage of 3.80x against a 4.50x covenant — **0.70x of
 headroom, narrowing but not breached**.

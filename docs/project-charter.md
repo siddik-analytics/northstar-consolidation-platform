@@ -36,7 +36,7 @@ An integrated, reproducible consolidation and reporting platform:
 1. **A consolidation engine** that harmonises three charts of accounts, translates four
    currencies, eliminates intercompany activity, allocates non-controlling interests, applies
    auditable adjustments and derives a cash flow statement that ties.
-2. **A control framework** of 71 automated controls that makes correctness a property of the
+2. **A control framework** of 81 automated controls that makes correctness a property of the
    pipeline rather than of the person who built this month's file.
 3. **An Excel management reporting and forecasting suite** for the CFO, the controller and
    FP&A.

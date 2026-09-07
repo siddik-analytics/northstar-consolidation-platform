@@ -15,7 +15,8 @@ each contained two genuinely separable pieces of work with different risk profil
 
 | Phase | Name | Status |
 |---|---|---|
-| 1 | Business design & architecture | **Complete — awaiting review** |
+| 1 | Business design & architecture | **Complete** |
+| 1.1 | Architecture correction pass | **Complete — ready for Phase 2 approval** |
 | 2 | Synthetic source systems & reference data | Not started |
 | 3 | Ingestion, staging & COA harmonisation | Not started |
 | 4 | Consolidation engine | Not started |
@@ -39,6 +40,18 @@ and 152 automated tests. See [`phase-01-report.md`](phase-01-report.md).
 
 ---
 
+## Phase 1.1 — Architecture correction pass ✅
+
+Corrections required at the Phase 1 approval gate: the consolidation layer set given a single
+canonical definition and propagated everywhere; the non-controlling interest and FX/CTA
+policies completed; covenant and EBITDA decisions applied; a Downside scenario reserved.
+
+**Delivered:** 3 new documents (NCI policy, FX/CTA policy, ADR-0015), 3 new configuration files
+(layers, ownership history, credit agreement), 10 new controls, 45 new tests, 2 new anchor
+outputs. No financial anchor changed. See [`phase-01-1-report.md`](phase-01-1-report.md).
+
+---
+
 ## Phase 2 — Synthetic source systems & reference data
 
 Generate the raw material: three ERPs' worth of extracts that look and behave like real
@@ -55,6 +68,10 @@ exports, calibrated to hit the Phase 1 anchors.
 - Intercompany transactions generated **in matched pairs by construction**, with deliberate,
   documented breaks: cut-off differences, an FX residual on the GBP/EUR pair, and one
   disputed balance
+- `fact_ownership_interest` for **every** entity and period, and `NIG-510` generated at 100%
+  with pre- and post-acquisition reserves distinguishable (see `docs/nci-policy.md` §13)
+- Acquisition-date spot rates and per-event historical equity rates (see
+  `docs/fx-cta-policy.md` §8)
 - Headcount, capex, debt schedule, customer and product master data
 - Revenue detail reconciling to GL revenue accounts
 
@@ -127,7 +144,7 @@ Consume the extracts. This is where the chart-of-accounts risk is concentrated.
 
 **Exit criteria**
 - One command rebuilds everything from raw in under five minutes
-- All 71 controls execute and report; no blocking failure on any period
+- All 81 controls execute and report; no blocking failure on any period
 - No mart publishes from a period with a failed blocking control
 
 ---

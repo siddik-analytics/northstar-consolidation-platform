@@ -14,20 +14,42 @@ Separately, management adjustments and statutory results must not contaminate ea
 
 ## Decision
 
-Every fact row carries a **`layer_key`**:
+Every fact row carries a **`layer_id`**. There are **exactly five layers**, defined once in
+`config/dimensions/consolidation_layer.csv` and materialised into `dim_layer`. The set is
+**closed**: no sixth layer exists, and a row carrying any other value is rejected.
 
-| Layer | Contents | Statutory | Management |
-|---|---|---|---|
-| 1 `REPORTED` | Entity trial balances, mapped and translated | Yes | Yes |
-| 2 `IC_ELIM` | Intercompany eliminations | Yes | Yes |
-| 3 `CONSOL_ADJ` | Investment elimination, PPA, NCI, unrealised profit | Yes | Yes |
-| 4 `MGMT_ADJ` | Normalisations and reclassifications | **No** | Yes |
-| 5 `FX_CTA` | Translation balancing entry | Yes | Yes |
+| `layer_id` | Code | Name | Posting source | Posted to | Statutory | Management | Balances alone |
+|---|---|---|---|---|---|---|---|
+| 1 | `REPORTED` | Entity Reported | Source ERP extract | Real legal entities | Yes | Yes | Yes |
+| 2 | `IC_ELIM` | Intercompany Eliminations | Elimination engine | `ELIM-IC` | Yes | Yes | Yes |
+| 3 | `CONSOL_ADJ` | Consolidation Adjustments | Consolidation engine | `ELIM-CON` | Yes | Yes | Yes |
+| 4 | `MGMT_ADJ` | Management Adjustments | Manual, approved | `ELIM-MGT` | **No** | Yes | Yes |
+| 5 | `FX_CTA` | Translation Adjustment | Translation engine | Real legal entities | Yes | Yes | **No** |
 
 ```
-Statutory  = L1 + L2 + L3 + L5
-Management = L1 + L2 + L3 + L5 + L4
+Statutory  = layer_id IN (1,2,3,5)
+Management = layer_id IN (1,2,3,4,5)
 ```
+
+Layer contents:
+
+- **1 REPORTED** — source trial balances, sign- and locale-normalised, mapped to the group
+  chart and translated to USD. The only layer originating outside the platform.
+- **2 IC_ELIM** — intercompany revenue, cost of sales, management fees, royalties, interest,
+  receivables, payables and loans, eliminated from matched entity pairs.
+- **3 CONSOL_ADJ** — investment-in-subsidiary elimination across the full ownership tree,
+  purchase price allocation and acquired intangible amortisation, NCI allocation of profit
+  and equity, unrealised profit in inventory. These **change** the consolidated result.
+- **4 MGMT_ADJ** — normalisations, reclassifications and pro-forma presentation entries.
+  Excluded from the statutory result.
+- **5 FX_CTA** — the cumulative translation adjustment, posted to the real foreign entity.
+
+**Layer 5 is the exception in two ways, and both are deliberate.** It does not balance
+independently, because it *is* the entry that makes the translated layer-1 trial balance sum
+to zero; and it is posted to real entities rather than a virtual one, because CTA is an
+attribute of a specific foreign operation and entity-level CTA is a genuine reporting
+requirement. Balancing controls therefore read `must_balance_independently` from `dim_layer`
+rather than assuming every layer self-balances.
 
 ## Alternatives considered
 
@@ -53,6 +75,11 @@ can never change the statutory result — enforced by `CTL-CON-06`, not by conve
 **Negative.** More rows, and every query must be layer-aware. Mitigated by making the reporting
 marts layer-aware by default so that report authors get statutory unless they ask otherwise.
 
-**Note.** Layer 5 (`FX_CTA`) is posted to real entities rather than a virtual one, because CTA
-is an attribute of a specific foreign operation and entity-level CTA is a genuine reporting
-requirement.
+**The risk this creates, and how it is closed.** Because both reporting bases are defined by
+*explicit* layer membership, a row carrying an undefined or null `layer_id` belongs to
+neither. It is silently excluded from the statutory result and from the management view, and
+nothing reports it as missing — the statements still balance without it. `CTL-CON-09` rejects
+any such row at load, and `tests/test_config_integrity.py` asserts that the configuration
+file, the documented statutory and management formulas, and every layer reference across the
+documentation all agree on the same five layers. Adding a sixth layer is a breaking change
+requiring a new ADR.

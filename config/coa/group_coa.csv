@@ -66,10 +66,16 @@ group_account,account_name,statement,fs_caption_l1,fs_caption_l2,account_class,n
 310200,Additional paid-in capital,BS,Equity,Contributed capital,EQUITY,C,HIST,FIN_EQUITY,FALSE,FALSE,FALSE,FALSE,TRUE,3120
 315100,Share-based compensation reserve,BS,Equity,Contributed capital,EQUITY,C,HIST,OP_NONCASH,FALSE,FALSE,FALSE,FALSE,TRUE,3130
 320100,Retained earnings - opening,BS,Equity,Retained earnings,EQUITY,C,HIST,OP_NI,FALSE,FALSE,FALSE,FALSE,TRUE,3210
-320200,Current year result,BS,Equity,Retained earnings,EQUITY,C,HIST,OP_NI,FALSE,FALSE,FALSE,FALSE,TRUE,3220
+320200,Current year result attributable to the group,BS,Equity,Retained earnings,EQUITY,C,HIST,OP_NI,FALSE,FALSE,FALSE,FALSE,TRUE,3220
 320300,Dividends and distributions,BS,Equity,Retained earnings,EQUITY,D,HIST,FIN_EQUITY,FALSE,FALSE,FALSE,FALSE,TRUE,3230
-330100,Cumulative translation adjustment,BS,Equity,Cumulative translation adjustment,EQUITY,C,NONE,OP_NONCASH,FALSE,FALSE,FALSE,FALSE,TRUE,3310
-340100,Non-controlling interests,BS,Equity,Non-controlling interests,EQUITY,C,CLOSE,FIN_EQUITY,FALSE,FALSE,FALSE,FALSE,TRUE,3410
+330100,Cumulative translation adjustment - opening balance,BS,Equity,Cumulative translation adjustment,EQUITY,C,NONE,OP_NONCASH,FALSE,FALSE,FALSE,FALSE,TRUE,3310
+330200,Cumulative translation adjustment - movement in period,BS,Equity,Cumulative translation adjustment,EQUITY,C,NONE,OP_NONCASH,FALSE,FALSE,FALSE,FALSE,TRUE,3320
+330300,Cumulative translation adjustment - recycled on disposal,BS,Equity,Cumulative translation adjustment,EQUITY,C,NONE,OP_NONCASH,FALSE,FALSE,FALSE,FALSE,TRUE,3330
+340100,Non-controlling interests - opening balance,BS,Equity,Non-controlling interests,EQUITY,C,CLOSE,FIN_EQUITY,FALSE,FALSE,FALSE,FALSE,TRUE,3410
+340200,Non-controlling interests - share of result for the period,BS,Equity,Non-controlling interests,EQUITY,C,AVG,OP_NI,FALSE,FALSE,FALSE,FALSE,TRUE,3420
+340300,Non-controlling interests - dividends and distributions,BS,Equity,Non-controlling interests,EQUITY,D,CLOSE,FIN_EQUITY,FALSE,FALSE,FALSE,FALSE,TRUE,3430
+340400,Non-controlling interests - share of translation adjustment,BS,Equity,Non-controlling interests,EQUITY,C,NONE,OP_NONCASH,FALSE,FALSE,FALSE,FALSE,TRUE,3440
+340500,Non-controlling interests - acquisition and ownership changes,BS,Equity,Non-controlling interests,EQUITY,C,HIST,FIN_EQUITY,FALSE,FALSE,FALSE,FALSE,TRUE,3450
 350100,Treasury stock,BS,Equity,Contributed capital,EQUITY,D,HIST,FIN_EQUITY,FALSE,FALSE,FALSE,FALSE,TRUE,3510
 410100,Product revenue - equipment,IS,Revenue,Product revenue,REVENUE,C,AVG,OP_NI,FALSE,TRUE,FALSE,FALSE,TRUE,4110
 410200,Product revenue - components,IS,Revenue,Product revenue,REVENUE,C,AVG,OP_NI,FALSE,TRUE,FALSE,FALSE,TRUE,4120
@@ -167,6 +173,7 @@ group_account,account_name,statement,fs_caption_l1,fs_caption_l2,account_class,n
 810300,Current income tax - foreign,IS,Income Tax,Current tax,TAX,D,AVG,OP_NI,FALSE,FALSE,FALSE,FALSE,TRUE,8130
 820100,Deferred income tax expense/(benefit),IS,Income Tax,Deferred tax,TAX,D,AVG,OP_NONCASH,FALSE,FALSE,FALSE,FALSE,TRUE,8210
 830100,Uncertain tax positions and other tax,IS,Income Tax,Other tax,TAX,D,AVG,OP_NI,FALSE,FALSE,FALSE,FALSE,TRUE,8310
+850100,Net income attributable to non-controlling interests,IS,Non-Controlling Interests,Non-controlling interests,NCI,D,AVG,OP_NI,FALSE,FALSE,FALSE,FALSE,TRUE,8510
 910100,Headcount - FTE period end,STAT,Statistical,Workforce,STAT,D,NONE,NONE,FALSE,FALSE,FALSE,TRUE,FALSE,9110
 910200,Headcount - FTE period average,STAT,Statistical,Workforce,STAT,D,NONE,NONE,FALSE,FALSE,FALSE,TRUE,FALSE,9120
 910300,Contractor FTE equivalent,STAT,Statistical,Workforce,STAT,D,NONE,NONE,FALSE,FALSE,FALSE,TRUE,FALSE,9130

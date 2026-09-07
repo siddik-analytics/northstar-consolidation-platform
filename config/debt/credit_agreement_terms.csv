@@ -1,0 +1,33 @@
+term_id,category,term,value,unit,effective_from,effective_to,clause_reference,notes
+CA-001,FACILITY,Term Loan B original principal,180.000,USD_MILLIONS,2021-06-15,,S2.1(a),"Funded the June 2021 sponsor recapitalisation."
+CA-002,FACILITY,Term Loan B scheduled amortisation,0.0100,PCT_PER_ANNUM,2021-06-15,,S2.5(a),"1% per annum of original principal, payable quarterly."
+CA-003,FACILITY,Term Loan B margin over SOFR,0.0425,DECIMAL,2021-06-15,,S2.8(a),"425 basis points."
+CA-004,FACILITY,Term Loan B maturity,2028-06-15,DATE,2021-06-15,,S2.4,
+CA-005,FACILITY,Incremental term loan capacity,75.000,USD_MILLIONS,2021-06-15,,S2.14,"Accordion. $25m drawn Apr 2023 (Halden), $30m drawn Jul 2024 (Vector B.V.); $20m remains available."
+CA-006,FACILITY,Revolving credit facility commitment,60.000,USD_MILLIONS,2021-06-15,,S2.1(b),
+CA-007,FACILITY,Revolving facility commitment fee,0.0050,DECIMAL,2021-06-15,,S2.9,"50 basis points on the undrawn balance."
+CA-008,HEDGING,Minimum hedged proportion of term debt,0.5000,DECIMAL,2021-06-15,,S6.12,"Satisfied by the $100m notional SOFR swap fixed at 3.00%, maturing 31 Dec 2026."
+CA-009,COVENANT,Maximum total net leverage - FY2023,6.00,RATIO,2023-01-01,2023-12-31,S7.1(a),"Tested quarterly on a trailing-twelve-month basis."
+CA-010,COVENANT,Maximum total net leverage - FY2024,5.50,RATIO,2024-01-01,2024-12-31,S7.1(a),
+CA-011,COVENANT,Maximum total net leverage - FY2025,5.00,RATIO,2025-01-01,2025-12-31,S7.1(a),
+CA-012,COVENANT,Maximum total net leverage - FY2026 onward,4.50,RATIO,2026-01-01,,S7.1(a),"Final step-down. No further reductions scheduled."
+CA-013,COVENANT,Minimum interest coverage,2.00,RATIO,2021-06-15,,S7.1(b),"Consolidated EBITDA to consolidated net interest expense, trailing twelve months."
+CA-014,COVENANT,Equity cure rights,2,COUNT,2021-06-15,,S7.3,"Sponsor may cure a financial covenant breach with equity twice in any four consecutive quarters, and not more than five times over the life of the facility. Relevant to the reserved Downside scenario."
+CA-015,DEFINITION,Net debt includes term loan gross principal,TRUE,BOOLEAN,2021-06-15,,S1.1 'Consolidated Total Debt',"Gross of unamortised deferred financing costs."
+CA-016,DEFINITION,Net debt includes revolving facility drawings,TRUE,BOOLEAN,2021-06-15,,S1.1,
+CA-017,DEFINITION,Net debt includes finance lease liabilities,TRUE,BOOLEAN,2021-06-15,,S1.1,"Capital/finance leases are indebtedness under the agreement."
+CA-018,DEFINITION,Net debt includes operating lease liabilities,FALSE,BOOLEAN,2021-06-15,,S1.1,"EXCLUDED. The agreement predates the group's ASC 842 adoption and its definition of Indebtedness expressly excludes operating leases. This is why covenant net leverage and Economic Net Leverage differ. See docs/reporting-design.md section 6."
+CA-019,DEFINITION,Net debt deducts unrestricted cash,TRUE,BOOLEAN,2021-06-15,,S1.1 'Consolidated Net Debt',"Unrestricted cash and cash equivalents. Restricted cash (110200) is not deducted."
+CA-020,DEFINITION,Cash netting cap,,NONE,2021-06-15,,S1.1,"No cap on the amount of cash that may be netted."
+CA-021,ADDBACK,Restructuring and severance costs,TRUE,PERMITTED,2021-06-15,,S1.1 'Consolidated EBITDA' (v),"Permitted without cap. Group accounts 680100 and 680200."
+CA-022,ADDBACK,Acquisition and transaction costs,TRUE,PERMITTED,2021-06-15,,S1.1 (vi),"Permitted without cap. Group account 680300."
+CA-023,ADDBACK,Integration and ERP programme costs,TRUE,PERMITTED,2021-06-15,,S1.1 (vi),"Permitted without cap. Group account 680400."
+CA-024,ADDBACK,Legal settlements and claims,TRUE,PERMITTED,2021-06-15,,S1.1 (viii),"Permitted to the extent non-recurring. Group account 680600."
+CA-025,ADDBACK,Transaction and retention bonuses,TRUE,PERMITTED,2021-06-15,,S1.1 (vi),"Permitted. Group account 680700."
+CA-026,ADDBACK,Sponsor monitoring and management fees,TRUE,PERMITTED_CAPPED,2021-06-15,,S1.1 (iv) and S6.9,"PERMITTED, capped at USD 1.5m per annum. Group account 630400. Actual charge is USD 1.0-1.2m per annum, within the cap in every modelled period. This clause is the explicit permission required before the sponsor fee may be added back - see ADR-0013."
+CA-027,ADDBACK,Sponsor monitoring fee annual cap,1.500,USD_MILLIONS,2021-06-15,,S6.9,"Any excess over the cap is NOT addable and remains a charge against Consolidated EBITDA."
+CA-028,ADDBACK,Run-rate cost savings and synergies,FALSE,NOT_PERMITTED,2021-06-15,,S1.1 (vii),"EXPRESSLY NOT PERMITTED in this agreement. The clause was negotiated out at closing. Only costs actually incurred may be added back. This resolves OQ-01(a)."
+CA-029,ADDBACK,Share-based compensation,FALSE,NOT_PERMITTED,2021-06-15,,S1.1,"NOT permitted as an add-back, and correspondingly excluded from the group's Adjusted EBITDA definition so that the two measures agree. Group account 610500. This resolves OQ-01(c)."
+CA-030,ADDBACK,Unrealised foreign exchange gains and losses,TRUE,PERMITTED,2021-06-15,,S1.1 (iii),"Non-cash. Below EBITDA in the group presentation (740200), so no add-back is required in practice."
+CA-031,REPORTING,Compliance certificate due,45,DAYS,2021-06-15,,S6.1(c),"Within 45 days of each quarter end, signed by the CFO."
+CA-032,REPORTING,Annual audited accounts due,120,DAYS,2021-06-15,,S6.1(a),"Within 120 days of the fiscal year end."

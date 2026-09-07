@@ -1,6 +1,6 @@
 # ADR-0009 — Full consolidation with one NCI; no equity-method investees
 
-**Status:** Accepted · **Date:** 2026-09-06 · **Phase:** 1 · **Requires owner confirmation**
+**Status:** Accepted · **Date:** 2026-09-06 · **Phase:** 1
 
 ## Context
 
@@ -64,3 +64,11 @@ so that adding `EQUITY` later is a data change plus one code path rather than a 
 **Requires owner confirmation.** Adding an equity-method associate or a disposal is a
 reasonable request and would be an incremental Phase 4 change. Recorded as open question OQ-03
 in `docs/open-questions.md`.
+
+**Phase 1.1 addendum.** The consequences of the NCI half of this decision are now specified in
+full in [`docs/nci-policy.md`](../nci-policy.md): 100% consolidation mechanics, the share of
+result, the five-account equity roll-forward, dividends, effective-dated ownership, the
+treatment of future acquisition and disposal changes, cash flow presentation, statutory versus
+management treatment, and the elimination implications. Ownership is held as an effective-dated
+register so that a step acquisition or partial disposal is a data event rather than a
+redesign.

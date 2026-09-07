@@ -8,7 +8,7 @@ answer are documented in the design docs, not here.
 |---|---|---|
 | [0001](0001-duckdb-as-consolidation-engine.md) | DuckDB as the consolidation and warehouse engine | Accepted |
 | [0002](0002-unified-fact-across-scenarios.md) | One unified fact table across Actual, Budget and Forecast | Accepted |
-| [0003](0003-consolidation-layer-model.md) | Consolidation layers instead of storing only consolidated results | Accepted |
+| [0003](0003-consolidation-layer-model.md) | Consolidation layers instead of storing only consolidated results | Accepted, amended 1.1 |
 | [0004](0004-prior-year-derived-not-stored.md) | Prior Year derived by date offset, not stored | Accepted |
 | [0005](0005-fx-translation-method.md) | Monthly-average FX, closing-rate balance sheet, computed CTA | Accepted |
 | [0006](0006-cash-flow-derived-indirect.md) | Cash flow derived from balance sheet movements | Accepted |
@@ -18,5 +18,6 @@ answer are documented in the design docs, not here.
 | [0010](0010-star-schema-and-pbip.md) | Star schema, flattened hierarchies, calculation groups, PBIP/TMDL | Accepted |
 | [0011](0011-anchor-first-deterministic-modelling.md) | Anchor-first deterministic modelling | Accepted |
 | [0012](0012-statistical-accounts-in-the-gl-fact.md) | Statistical accounts in the GL fact, outside the trial balance | Accepted |
-| [0013](0013-adjusted-ebitda-definition.md) | Adjusted EBITDA definition and add-back policy | Accepted |
+| [0013](0013-adjusted-ebitda-definition.md) | Adjusted EBITDA definition and add-back policy | Accepted, amended 1.1 |
 | [0014](0014-elimination-entities.md) | Eliminations posted to dedicated virtual entities | Accepted |
+| [0015](0015-covenant-and-economic-leverage.md) | Two leverage measures, and a reserved Downside scenario | Accepted |

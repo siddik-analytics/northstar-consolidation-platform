@@ -99,6 +99,33 @@ OPEX_TOTAL = series(FY2023A=62.500, FY2024A=66.400, FY2025A=68.000, FY2026B=72.4
 ONE_TIME_IN_OPEX = series(FY2023A=9.800, FY2024A=8.200, FY2025A=6.500, FY2026B=3.500, FY2026F=5.800)
 SBC = series(FY2023A=1.000, FY2024A=1.200, FY2025A=1.400, FY2026B=1.500, FY2026F=1.500)
 
+# Composition of the Adjusted EBITDA add-backs, by group account.  Must sum exactly to
+# ONE_TIME_IN_OPEX.  Every line is permitted by the synthetic credit agreement
+# (config/debt/credit_agreement_terms.csv), so management Adjusted EBITDA and covenant
+# Consolidated EBITDA are equal by construction under the current agreement.
+ADDBACK_COMPOSITION = {
+    "680100": ("Restructuring - severance",
+               series(FY2023A=1.800, FY2024A=1.400, FY2025A=1.500, FY2026B=0.500, FY2026F=2.000)),
+    "680200": ("Restructuring - facility exit",
+               series(FY2023A=0.900, FY2024A=0.400, FY2025A=0.500, FY2026B=0.200, FY2026F=0.800)),
+    "680300": ("Acquisition and transaction costs",
+               series(FY2023A=2.600, FY2024A=1.900, FY2025A=0.400, FY2026B=0.000, FY2026F=0.000)),
+    "680400": ("Integration and ERP programme costs",
+               series(FY2023A=3.000, FY2024A=3.100, FY2025A=2.600, FY2026B=1.600, FY2026F=1.600)),
+    "680600": ("Legal settlements and claims",
+               series(FY2023A=0.300, FY2024A=0.200, FY2025A=0.300, FY2026B=0.000, FY2026F=0.200)),
+    "680700": ("Transaction and retention bonuses",
+               series(FY2023A=0.200, FY2024A=0.100, FY2025A=0.000, FY2026B=0.000, FY2026F=0.000)),
+    "630400": ("Sponsor monitoring fee",
+               series(FY2023A=1.000, FY2024A=1.100, FY2025A=1.200, FY2026B=1.200, FY2026F=1.200)),
+}
+# Credit agreement clause S6.9: the sponsor monitoring fee add-back is capped.
+SPONSOR_FEE_ANNUAL_CAP = 1.500
+
+# Share-based compensation is NOT an add-back (credit agreement CA-029) and no run-rate
+# synergy add-backs are permitted (CA-028).  Both are asserted below so the policy cannot
+# drift silently into the numbers.
+
 DEPRECIATION = series(FY2023A=9.500, FY2024A=10.400, FY2025A=11.300, FY2026B=12.200, FY2026F=12.000)
 AMORT_INTANG = series(FY2023A=5.800, FY2024A=7.000, FY2025A=7.200, FY2026B=7.200, FY2026F=7.200)
 
@@ -277,6 +304,7 @@ class YearResult:
     bs: dict = field(default_factory=dict)
     cf: dict = field(default_factory=dict)
     kpi: dict = field(default_factory=dict)
+    cta: dict = field(default_factory=dict)
 
 
 def build() -> tuple[list[YearResult], dict]:
@@ -294,6 +322,17 @@ def build() -> tuple[list[YearResult], dict]:
     assert abs(ob["retained_earnings"] - OPENING_RE_EXPECTED) < OPENING_RE_TOLERANCE, (
         f"Opening retained earnings plug {ob['retained_earnings']:.3f} is outside the expected band "
         f"{OPENING_RE_EXPECTED} +/- {OPENING_RE_TOLERANCE}. Re-calibrate the opening balance sheet.")
+
+    # ---- add-back policy assertions (ADR-0013, credit agreement CA-021..CA-029) --------
+    for k in COLS:
+        composed = sum(v[k] for _lbl, v in ADDBACK_COMPOSITION.values())
+        assert abs(composed - ONE_TIME_IN_OPEX[k]) < 1e-9, (
+            f"{k}: add-back composition {composed:.3f} does not equal the one-time charge "
+            f"{ONE_TIME_IN_OPEX[k]:.3f}. Every add-back must be attributable to an account.")
+        sponsor = ADDBACK_COMPOSITION["630400"][1][k]
+        assert sponsor <= SPONSOR_FEE_ANNUAL_CAP + 1e-9, (
+            f"{k}: sponsor monitoring fee add-back {sponsor:.3f} exceeds the credit agreement "
+            f"cap of {SPONSOR_FEE_ANNUAL_CAP:.3f} (clause S6.9). Only the capped amount is addable.")
 
     # Closing balance sheet by fiscal year, populated from ACTUAL periods only.
     # Budget and Forecast are alternative views of the SAME fiscal year: both must open
@@ -508,7 +547,37 @@ def build() -> tuple[list[YearResult], dict]:
             covenant_max_leverage_x=COVENANT_MAX_LEVERAGE[key],
             covenant_leverage_headroom_x=COVENANT_MAX_LEVERAGE[key] - net_debt / adj_ebitda,
             covenant_coverage_headroom_x=adj_ebitda / net_interest - COVENANT_MIN_COVERAGE[key],
+            # Economic view: a non-covenant KPI that treats operating leases as debt.
+            # Reported alongside covenant leverage, never instead of it. See OQ-02 / ADR-0013.
+            operating_lease_liabilities=op_lease,
+            economic_net_debt=net_debt + op_lease,
+            economic_net_leverage_x=(net_debt + op_lease) / adj_ebitda,
         )
+
+        # ---------------- CTA roll-forward -------------------------------
+        # Deterministic and continuous: closing = opening + group movement.  The NCI share
+        # of the translation movement is presented separately and does not enter group CTA.
+        cta_open = prev["cta"]
+        r.cta = dict(
+            cta_opening=cta_open,
+            cta_movement_group=CTA_MOVEMENT[key],
+            cta_movement_nci=NCI_FX[key],
+            cta_movement_total=CTA_MOVEMENT[key] + NCI_FX[key],
+            cta_recycled_on_disposal=0.0,
+            cta_closing=cta,
+            fx_on_cash=FX_ON_CASH[key],
+            fx_on_ppe=FX_ON_PPE[key],
+            fx_on_goodwill=FX_ON_GOODWILL[key],
+            fx_on_intangibles=FX_ON_INTANG[key],
+            fx_non_cash_working_capital=fx_non_cash_wc,
+        )
+        assert abs(r.cta["cta_closing"] - (r.cta["cta_opening"] + r.cta["cta_movement_group"]
+                                          + r.cta["cta_recycled_on_disposal"])) < 1e-9, (
+            f"{key}: CTA roll-forward does not close")
+        assert abs(sum(r.cta[k] for k in ("fx_on_cash", "fx_on_ppe", "fx_on_goodwill",
+                                          "fx_on_intangibles", "fx_non_cash_working_capital"))
+                   - r.cta["cta_movement_total"]) < 1e-9, (
+            f"{key}: FX effects by balance category do not sum to the total translation movement")
 
         results.append(r)
         if scenario == "ACT":
@@ -593,6 +662,23 @@ KPI_ROWS = [
     ("covenant_max_leverage_x", "Covenant: maximum net leverage", "x"),
     ("covenant_leverage_headroom_x", "Covenant headroom — leverage", "x"),
     ("covenant_coverage_headroom_x", "Covenant headroom — interest coverage", "x"),
+    ("operating_lease_liabilities", "Memo: operating lease liabilities", "num"),
+    ("economic_net_debt", "Economic net debt (including leases)", "num"),
+    ("economic_net_leverage_x", "Economic net leverage (non-covenant)", "x"),
+]
+
+CTA_ROWS = [
+    ("cta_opening", "CTA — opening balance"),
+    ("cta_movement_group", "CTA — movement attributable to the group"),
+    ("cta_movement_nci", "CTA — movement attributable to non-controlling interests"),
+    ("cta_recycled_on_disposal", "CTA — recycled to income on disposal"),
+    ("cta_closing", "CTA — closing balance (group)"),
+    ("cta_movement_total", "Memo: total translation movement in the period"),
+    ("fx_on_cash", "  of which: on cash and cash equivalents"),
+    ("fx_on_ppe", "  of which: on property, plant and equipment"),
+    ("fx_on_goodwill", "  of which: on goodwill"),
+    ("fx_on_intangibles", "  of which: on intangible assets"),
+    ("fx_non_cash_working_capital", "  of which: on working capital and other balances"),
 ]
 
 BOLD_LABELS = {
@@ -668,6 +754,16 @@ def main():
     write_csv(ANCHOR_DIR / "anchor_intercompany.csv", ["measure"] + COLS,
               [[k] + [f"{v[c]:.3f}" for c in COLS] for k, v in IC_ANCHORS.items()])
 
+    write_csv(ANCHOR_DIR / "anchor_cta_rollforward.csv", ["line_item", "label"] + COLS,
+              [[k, lbl] + [f"{r.cta[k]:.6f}" for r in results] for k, lbl in CTA_ROWS])
+
+    write_csv(ANCHOR_DIR / "anchor_addback_composition.csv",
+              ["group_account", "label"] + COLS,
+              [[acct, lbl] + [f"{v[c]:.6f}" for c in COLS]
+               for acct, (lbl, v) in ADDBACK_COMPOSITION.items()]
+              + [["TOTAL", "Total Adjusted EBITDA add-backs"]
+                 + [f"{r.pl['one_time_in_opex']:.6f}" for r in results]])
+
     # --- console proof -----------------------------------------------------
     print(f"Opening retained earnings plug (2022-12-31): {ob['retained_earnings']:.3f}")
     print(f"{'':34}" + "".join(f"{p[0]:>12}" for p in PERIODS))
@@ -682,15 +778,19 @@ def main():
     for k, lbl in [("operating_cash_flow", "Operating cash flow"),
                    ("free_cash_flow", "Free cash flow")]:
         print(f"{lbl:34}" + "".join(f"{r.cf[k]:12,.1f}" for r in results))
+    for k, lbl in [("cta_opening", "CTA opening"), ("cta_movement_group", "CTA movement (group)"),
+                   ("cta_closing", "CTA closing")]:
+        print(f"{lbl:34}" + "".join(f"{r.cta[k]:12,.2f}" for r in results))
     for k, lbl in [("adjusted_ebitda_margin_pct", "Adj. EBITDA margin"),
                    ("net_leverage_x", "Net leverage (x)"),
                    ("interest_coverage_x", "Interest cover (x)"),
+                   ("economic_net_leverage_x", "Economic leverage (x)"),
                    ("fcf_conversion_pct", "FCF conversion")]:
         print(f"{lbl:34}" + "".join(f"{r.kpi[k]:12,.2f}" for r in results))
     print("\nAll integrity assertions passed (BS balances; CF ties to BS cash).")
 
     render_markdown(results, ob)
-    print(f"Wrote docs/financial-anchors.md and 7 anchor CSVs to config/anchors/")
+    print(f"Wrote docs/financial-anchors.md and 9 anchor CSVs to config/anchors/")
 
 
 def render_markdown(results, ob):

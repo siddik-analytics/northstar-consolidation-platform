@@ -130,7 +130,7 @@ the question it answers.
 | 5 | **Business Unit & Entity Performance** | *Which parts of the group are performing?* Small multiples across BUs and entities; contribution to group EBITDA; entity league table. |
 | 6 | **Balance Sheet & Working Capital** | *Is the balance sheet getting better or worse?* Balance sheet with movement analysis; DSO, DIO, DPO and cash conversion cycle by entity; working capital bridge. |
 | 7 | **Cash Flow & Liquidity** | *Where did the cash go, and do we have enough?* Cash bridge, operating/investing/financing, free cash flow, liquidity, revolver availability. |
-| 8 | **Debt & Covenant Compliance** | *Are we safe on the covenants, and for how long?* Debt by instrument, maturity profile, net leverage and interest coverage against tested thresholds, headroom trend, swap maturity. |
+| 8 | **Debt & Covenant Compliance** | *Are we safe on the covenants, and for how long?* Debt by instrument, maturity profile, covenant net leverage and interest coverage against tested thresholds, headroom trend, swap maturity. Economic Net Leverage shown alongside as a clearly labelled non-covenant measure. Built to accommodate the reserved Downside scenario without redesign. |
 | 9 | **Budget, Forecast & Accuracy** | *Do we believe the forecast?* Budget vs current forecast vs prior forecast versions; forecast accuracy by BU over time; FY outlook. |
 | 10 | **FX Impact & Constant Currency** | *How much of this is real?* Reported vs constant currency by BU and entity; translation impact on revenue, EBITDA and net assets; CTA movement; rate trends. |
 | 11 | **Intercompany & Consolidation** | *Does the consolidation hold together?* Intercompany matrix by entity pair, mismatches and ageing, elimination summary, source-to-consolidated reconciliation. |
@@ -243,14 +243,35 @@ definitions is where management reporting credibility goes to die.
 
 Two definitions warrant a note because reasonable people disagree about them:
 
-**Net debt excludes operating lease liabilities.** This follows the credit agreement, which
-is the definition that has consequences. Including them would raise FY2025 net leverage from
-4.01x to 4.43x and would not correspond to any tested covenant. Both are computable;
-the covenant definition is the default.
+**Covenant net debt excludes operating lease liabilities; Economic Net Leverage includes
+them.** Two measures, reported together, neither replacing the other:
 
-**Adjusted EBITDA contains no run-rate synergy add-backs.** Only costs actually incurred and
-flagged as non-recurring are added back. Sponsors often add back projected synergies; that
-is a judgement for the owner, and it is flagged in `open-questions.md` rather than assumed.
+| USD m / x | FY2023A | FY2024A | FY2025A | FY2026B | FY2026F |
+|---|---|---|---|---|---|
+| Covenant net debt | 211.6 | 248.1 | 231.8 | 209.9 | 225.1 |
+| Operating lease liabilities | 22.0 | 24.0 | 24.5 | 24.0 | 25.5 |
+| **Economic net debt** | **233.6** | **272.1** | **256.3** | **233.9** | **250.6** |
+| Covenant net leverage | 5.42x | 5.26x | 4.01x | 3.31x | 3.80x |
+| **Economic net leverage** | **5.98x** | **5.77x** | **4.43x** | **3.68x** | **4.23x** |
+| Covenant maximum | 6.00x | 5.50x | 5.00x | 4.50x | 4.50x |
+
+**Covenant leverage is the tested ratio and the default** on every covenant and board view,
+because it is the definition with consequences — it is what the lender measures and what a
+breach would be measured against. Economic Net Leverage is a **non-covenant KPI** presented
+alongside it, because a reader assessing the group's real obligations should see that roughly
+half a turn of leverage sits in leases that the 2021 credit agreement's definition of
+Indebtedness happens to exclude. Presenting only the covenant measure understates the economic
+position; presenting only the economic measure misstates covenant compliance.
+
+The two are never mixed into one number and never compared against each other's threshold.
+There is **no covenant threshold for Economic Net Leverage**, and none is implied.
+
+**Adjusted EBITDA contains no run-rate synergy add-backs**, and share-based compensation is not
+added back. Both follow the credit agreement (`CA-028`, `CA-029`), which expressly disallows
+them — so the group's management measure and the lender's measure agree. The sponsor monitoring
+fee **is** added back, but only because clause S6.9 explicitly permits it, and only up to the
+$1.5m annual cap (`CA-026`, `CA-027`). Add-back composition is anchored account by account in
+`config/anchors/anchor_addback_composition.csv`.
 
 ## 7. Performance targets
 

@@ -1,6 +1,13 @@
 # Phase 1 Report — Business Design & Architecture
 
-**Status:** Complete · **Date:** 2026-09-07 · **Next gate:** Owner review before Phase 2
+**Status:** Complete, superseded in part by Phase 1.1 · **Date:** 2026-09-07
+**Next gate:** Phase 2 approval
+
+> **Read with [`phase-01-1-report.md`](phase-01-1-report.md).** The Phase 1 approval gate
+> required six architecture corrections. Where this report and the Phase 1.1 report differ,
+> **Phase 1.1 is authoritative** — specifically on the consolidation layer definition, the
+> NCI and FX/CTA policies, the covenant and EBITDA decisions, and the control and test counts.
+> No financial anchor changed in Phase 1.1.
 
 ---
 
@@ -33,7 +40,7 @@ internally consistent.
 | `docs/data-contract.md` | Dimensional model: 16 dimensions, 9 facts, relationships, hierarchies, volumes, contract guarantees |
 | `docs/consolidation-design.md` | Layer model, grain, sequence, COA harmonisation, FX, elimination, adjustments, cash flow, scenarios |
 | `docs/reporting-design.md` | Excel workbooks, Power BI pages, semantic model, board pack, metric definitions, performance targets |
-| `docs/control-framework.md` | 71 controls: severity model, categories, pipeline placement, the eight that matter most |
+| `docs/control-framework.md` | Controls: severity model, categories, pipeline placement, the ones that matter most (71 at Phase 1; 81 after Phase 1.1) |
 | `docs/open-questions.md` | 12 decisions requiring owner approval, each with a working assumption |
 | `docs/glossary.md` | Terms and metric definitions |
 | `docs/phases/roadmap.md` | Ten phases with deliverables, exit criteria and risks |
@@ -306,14 +313,16 @@ either the legal or the business unit hierarchy.
 
 ## 7. Controls designed
 
-71 controls, 56 blocking. `DATA_QUALITY` 10 · `MAPPING` 8 · `TRIAL_BALANCE` 5 ·
-`FIN_STATEMENT` 8 · `FX` 8 · `INTERCOMPANY` 8 · `CONSOLIDATION` 8 · `SCENARIO` 5 ·
-`RECONCILIATION` 6 · `REASONABLENESS` 5.
+71 controls at Phase 1, 56 blocking. **Extended to 81 controls, 66 blocking, at Phase 1.1** —
+see [`phase-01-1-report.md`](phase-01-1-report.md) for the ten added: layer integrity, NCI
+effective dating, NCI equity roll-forward, NCI share of adjustments, NCI distributions, net
+income attribution, CTA roll-forward continuity, acquisition-date translation, cash flow FX
+split, and reserved scenario isolation.
 
 Design rule: **balancing controls block, judgement controls inform.** Detail in
 [`docs/control-framework.md`](../control-framework.md).
 
-Phase 1's own output is covered by 152 tests that run in CI.
+Phase 1's own output is covered by 152 tests that run in CI; **197 after Phase 1.1**.
 
 ---
 
@@ -325,13 +334,14 @@ not blocked. The four with the most impact:
 
 | # | Question | Working assumption |
 |---|---|---|
-| OQ-01 | Adjusted EBITDA add-backs: run-rate synergies, sponsor fee, share-based compensation | No synergies; sponsor fee added back; SBC not added back |
-| OQ-02 | Does net debt include operating leases? | No — the covenant definition governs (4.01x vs 4.43x at FY2025) |
-| OQ-12 | Should FY2026 show a covenant breach? | No breach; headroom narrows to 0.70x |
-| OQ-08 | Intercompany transfer pricing rates | As per the intercompany matrix |
+| OQ-01 ✅ | Adjusted EBITDA add-backs | **Closed at Phase 1.1:** no synergies; sponsor fee added back within a $1.5m cap; SBC not added back |
+| OQ-02 ✅ | Does net debt include operating leases? | **Closed at Phase 1.1:** no for the covenant; Economic Net Leverage added as a separate non-covenant KPI |
+| OQ-12 ✅ | Should FY2026 show a covenant breach? | **Closed at Phase 1.1:** no breach; Downside scenario reserved but not populated |
+| OQ-08 | Intercompany transfer pricing rates | Open — as per the intercompany matrix |
 
-OQ-12 is the one worth deciding **before** Phase 2, because it changes the data that gets
-generated and the character of every piece of board commentary in Phase 8.
+OQ-12 was the one worth deciding before Phase 2, and it was decided at the Phase 1.1 review:
+the base case stands unchanged, with a Downside scenario reserved but not populated. Eight
+questions remain open with working assumptions; none blocks Phase 2.
 
 ---
 

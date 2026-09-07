@@ -180,6 +180,9 @@
 | Covenant: maximum net leverage | 6.00x | 5.50x | 5.00x | 4.50x | 4.50x |
 | Covenant headroom — leverage | 0.58x | 0.24x | 0.99x | 1.19x | 0.70x |
 | Covenant headroom — interest coverage | 0.14x | 0.28x | 0.94x | 1.62x | 1.16x |
+| Memo: operating lease liabilities | 22.0 | 24.0 | 24.5 | 24.0 | 25.5 |
+| Economic net debt (including leases) | 233.6 | 272.1 | 256.3 | 233.9 | 250.6 |
+| Economic net leverage (non-covenant) | 5.98x | 5.77x | 4.43x | 3.68x | 4.23x |
 
     **Deleveraging is the headline, and covenant headroom is the tension.** Net leverage falls
     from 5.42x at FY2023 (immediately post-Halden) to

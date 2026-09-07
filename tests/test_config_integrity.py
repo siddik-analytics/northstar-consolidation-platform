@@ -93,13 +93,21 @@ def test_statistical_accounts_are_excluded_from_the_trial_balance(group_coa):
                 f"{r['group_account']} is financial and must be included in trial balance testing"
 
 
+def test_account_class_is_from_the_controlled_vocabulary(group_coa):
+    allowed = {"ASSET", "LIABILITY", "EQUITY", "REVENUE", "COGS", "OPEX",
+               "DA", "NONOP", "TAX", "NCI", "STAT"}
+    for r in group_coa:
+        assert r["account_class"] in allowed, \
+            f"{r['group_account']}: unknown account class {r['account_class']!r}"
+
+
 def test_ebitda_flag_only_on_operating_pl_accounts(group_coa):
-    """EBITDA must not accidentally include D&A, interest, tax or balance sheet accounts."""
+    """EBITDA must not accidentally include D&A, interest, tax, NCI or balance sheet accounts."""
     for r in group_coa:
         if r["is_ebitda"] == "TRUE":
             assert r["account_class"] in {"REVENUE", "COGS", "OPEX"}, \
                 f"{r['group_account']} {r['account_name']} is flagged into EBITDA but is {r['account_class']}"
-        if r["account_class"] in {"DA", "NONOP", "TAX"}:
+        if r["account_class"] in {"DA", "NONOP", "TAX", "NCI"}:
             assert r["is_ebitda"] == "FALSE", \
                 f"{r['group_account']} {r['account_name']} must sit below EBITDA"
 

@@ -1,0 +1,12 @@
+entity_code,parent_entity_code,group_ownership_pct,nci_pct,consolidation_method,effective_from,effective_to,change_event,change_reason,nci_holder,notes
+NIG-110,NIG-100,1.0000,0.0000,FULL,2019-07-01,,INCORPORATION,Shared services entity incorporated,,"Wholly owned from incorporation."
+NIG-200,NIG-100,1.0000,0.0000,FULL,2019-01-01,,ACQUISITION,Platform acquisition,,"Wholly owned from acquisition."
+NIG-210,NIG-200,1.0000,0.0000,FULL,2019-01-01,,ACQUISITION,Acquired with the platform,,"Second-tier holding through NIG-200."
+NIG-220,NIG-100,1.0000,0.0000,FULL,2023-04-01,,ACQUISITION,Halden Valve GmbH acquired,,"Consolidated from 1 April 2023. Nine months in FY2023."
+NIG-300,NIG-100,1.0000,0.0000,FULL,2021-03-01,,ACQUISITION,Cascade Industrial Services acquired,,"Wholly owned from acquisition."
+NIG-310,NIG-300,1.0000,0.0000,FULL,2021-03-01,,ACQUISITION,Acquired with Cascade,,"Second-tier holding through NIG-300."
+NIG-320,NIG-100,1.0000,0.0000,FULL,2022-02-01,,ACQUISITION,Tyneside Mechanical Services acquired,,"Wholly owned from acquisition."
+NIG-400,NIG-100,1.0000,0.0000,FULL,2022-09-01,,ACQUISITION,Vector Engineered Systems acquired,,"Wholly owned from acquisition."
+NIG-410,NIG-400,1.0000,0.0000,FULL,2024-07-01,,ACQUISITION,Vector Systems B.V. acquired,,"Consolidated from 1 July 2024. Six months in FY2024. Second-tier holding through NIG-400."
+NIG-500,NIG-100,1.0000,0.0000,FULL,2020-01-01,,REORGANISATION,Aftermarket business carved out of NIG-200,,"Internal reorganisation, not an acquisition."
+NIG-510,NIG-500,0.8000,0.2000,FULL,2023-01-01,,ACQUISITION,Northstar Parts UK acquired - 80%,Parts UK founding management,"THE ONLY NON-CONTROLLING INTEREST IN THE GROUP. 20% retained by founding management on acquisition. Fully consolidated with NCI presented separately. Ownership has not changed since acquisition; this row is effective-dated so that a future step acquisition or partial disposal is a new row rather than a schema change."

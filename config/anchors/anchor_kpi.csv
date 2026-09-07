@@ -22,3 +22,6 @@ liquidity,Total liquidity (cash + undrawn RCF),num,59.863304,51.152118,65.678682
 covenant_max_leverage_x,Covenant: maximum net leverage,x,6.000000,5.500000,5.000000,4.500000,4.500000
 covenant_leverage_headroom_x,Covenant headroom — leverage,x,0.579785,0.240393,0.993225,1.193785,0.697795
 covenant_coverage_headroom_x,Covenant headroom — interest coverage,x,0.135238,0.280106,0.944271,1.620961,1.164887
+operating_lease_liabilities,Memo: operating lease liabilities,num,22.000000,24.000000,24.500000,24.000000,25.500000
+economic_net_debt,Economic net debt (including leases),num,233.605196,272.116709,256.271913,233.899989,250.566194
+economic_net_leverage_x,Economic net leverage (non-covenant),x,5.983740,5.768362,4.430321,3.684248,4.232995

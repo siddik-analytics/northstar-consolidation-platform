@@ -23,22 +23,52 @@ group financial statements — and how every step of that journey can be traced 
 
 ## 2. The consolidation layer model
 
-Every row in `fact_financials` carries a `layer_key`. The layer determines which reporting
+Every row in `fact_financials` carries a `layer_id`. The layer determines which reporting
 basis the row belongs to. This is the single most important structural decision in the
 platform (ADR-0003).
 
-| Layer | Code | Posted to | Contents | In statutory? | In management? |
-|---|---|---|---|---|---|
-| 1 | `REPORTED` | Real entities | Source trial balances mapped to the group chart and translated to USD | Yes | Yes |
-| 2 | `IC_ELIM` | `ELIM-IC` | Intercompany revenue, cost, receivables, payables, loans and interest | Yes | Yes |
-| 3 | `CONSOL_ADJ` | `ELIM-CON` | Investment eliminations, NCI allocation, purchase price allocation, unrealised profit in inventory | Yes | Yes |
-| 4 | `MGMT_ADJ` | `ELIM-MGT` | Normalisations, reclassifications and pro-forma presentation entries | **No** | Yes |
-| 5 | `FX_CTA` | Real entities | The translation balancing entry | Yes | Yes |
+**There are exactly five layers.** The canonical, machine-readable definition is
+[`config/dimensions/consolidation_layer.csv`](../config/dimensions/consolidation_layer.csv);
+`dim_layer` is built from it, and every document below is derived from the same file. No
+other layer exists, and a fact row carrying any other `layer_id` is rejected by
+`CTL-CON-09`.
+
+| # | Code | Name | Posting source | Posted to | Statutory | Management | Balances alone |
+|---|---|---|---|---|---|---|---|
+| **1** | `REPORTED` | Entity Reported | Source ERP extract | Real legal entities | ✅ | ✅ | ✅ |
+| **2** | `IC_ELIM` | Intercompany Eliminations | Elimination engine | `ELIM-IC` | ✅ | ✅ | ✅ |
+| **3** | `CONSOL_ADJ` | Consolidation Adjustments | Consolidation engine | `ELIM-CON` | ✅ | ✅ | ✅ |
+| **4** | `MGMT_ADJ` | Management Adjustments | Manual, approved | `ELIM-MGT` | ❌ | ✅ | ✅ |
+| **5** | `FX_CTA` | Translation Adjustment | Translation engine | Real legal entities | ✅ | ✅ | ❌ |
 
 ```
-Consolidated (statutory)  =  L1 + L2 + L3 + L5
-Management view           =  L1 + L2 + L3 + L5 + L4
+Consolidated (statutory)  =  L1 + L2 + L3 + L5          layer_id IN (1,2,3,5)
+Management view           =  L1 + L2 + L3 + L5 + L4      layer_id IN (1,2,3,4,5)
 ```
+
+**What each layer contains**
+
+| # | Contents |
+|---|---|
+| 1 | Source trial balances from Aurora, Sable and Kestrel — sign- and locale-normalised, mapped to the group chart of accounts, translated into USD. The only layer originating outside the platform. |
+| 2 | Elimination of intercompany revenue, cost of sales, management fees, royalties, interest, receivables, payables and loans, generated from matched entity pairs. |
+| 3 | Investment-in-subsidiary elimination across the full ownership tree, purchase price allocation and acquired intangible amortisation, NCI allocation of profit and equity, and unrealised profit in inventory. Statutory entries that **change** the consolidated result rather than netting to nil. |
+| 4 | Normalisations, reclassifications and pro-forma presentation entries prepared and approved by finance. **Excluded from the statutory result.** |
+| 5 | The cumulative translation adjustment. Posted to the **real foreign entity** it belongs to, not to a virtual entity, because entity-level CTA is a genuine reporting requirement. |
+
+**Two properties that are easy to get wrong**
+
+*Why layer 5 does not balance independently.* Layers 2, 3 and 4 are self-balancing sets of
+journal entries — debits equal credits within each layer for every period. Layer 5 is not: it
+is the balancing entry that makes the **translated** layer-1 trial balance sum to zero. Testing
+it for independent balance would fail every period. `CTL-IC-06` and `CTL-CON-07` therefore
+apply to layers 2–4 only, and `CTL-TB-03` covers layers 1 and 5 together.
+
+*Why layer 5 is posted to real entities.* Every other consolidation entry goes to a virtual
+entity so that entity-level reported figures still agree with the entity's own trial balance
+(ADR-0014). CTA is the exception: it is an attribute of a specific foreign operation, and
+"what is Halden's CTA?" is a question the group needs to answer. Posting it to `ELIM-CON`
+would make it unattributable.
 
 Layer 4 exists because the alternative is worse. In most hand-built consolidations,
 "management adjustments" are made inside the consolidated numbers and then backed out for
@@ -200,8 +230,14 @@ failure because it produces a plausible-looking number that is quietly wrong.
 
 ## 6. FX translation
 
-Full policy: [`config/fx/fx_translation_policy.csv`](../config/fx/fx_translation_policy.csv).
-Rationale: [ADR-0005](adr/0005-fx-translation-method.md).
+Full policy: [`config/fx/fx_translation_policy.csv`](../config/fx/fx_translation_policy.csv)
+(22 rules). Rationale: [ADR-0005](adr/0005-fx-translation-method.md).
+
+**The complete translation policy — including the acquisition-date basis, the deterministic
+CTA roll-forward, the NCI share of the translation movement, and the split of the FX effect
+between cash and non-cash in the cash flow statement — is specified in
+[`docs/fx-cta-policy.md`](fx-cta-policy.md).** The summary below covers the method; that
+document is authoritative on the detail.
 
 ### 6.1 Method
 
@@ -266,8 +302,11 @@ produces, that is the right trade.
 ### 6.6 CTA
 
 CTA is the balancing figure that arises because assets and liabilities are translated at
-closing rates while equity is translated at historical and derived rates. It is **computed
-by the engine and then independently verified**:
+closing rates while equity is translated at historical and derived rates. It is held as an
+explicit three-account roll-forward — opening (`330100`), movement (`330200`) and recycling on
+disposal (`330300`) — so that closing CTA is a derived caption rather than a moving balance,
+and continuity across periods is testable (`CTL-FX-09`). It is **computed by the engine and
+then independently verified**:
 
 ```
 Expected CTA movement  =  opening net assets × (closing rate − prior closing rate)
@@ -280,8 +319,11 @@ movement is a warning; above 2% is blocking. CTA entered by hand as a plug is th
 most common way a consolidation hides a translation defect, and this control exists
 specifically to make that impossible.
 
-The NCI share of the CTA movement is allocated to non-controlling interests rather than
-group equity, in proportion to ownership.
+The NCI share of the CTA movement is allocated to non-controlling interests (`340400`) rather
+than group equity (`330200`), in proportion to ownership effective for the period. Allocating
+100% of a partially owned subsidiary's CTA movement to group equity overstates group equity and
+understates NCI by the same amount — and because both sit inside total equity, the balance sheet
+still balances and nothing else catches it (`CTL-CON-11`).
 
 ### 6.7 Intercompany FX
 
@@ -364,10 +406,19 @@ Posted to `ELIM-CON`. All are statutory (layer 3).
 | Unrealised profit in inventory | Per section 7.3 |
 
 **Ownership and consolidation method.** All twelve operating entities are fully
-consolidated. Eleven are wholly owned; `NIG-510` is 80% owned with the residual presented as
-non-controlling interests. There are no equity-method investees, joint ventures or
-discontinued operations in scope — a deliberate scope decision recorded in ADR-0009 and
-flagged for owner confirmation.
+consolidated at **100%**, with the 20% of `NIG-510` not owned by the group presented
+separately within equity and below tax in the income statement. Proportionate consolidation
+is never used. Ownership percentages are effective-dated in
+[`config/entities/ownership_history.csv`](../config/entities/ownership_history.csv) and
+applied per period, never retrospectively (`CTL-CON-10`).
+
+There are no equity-method investees, joint ventures or discontinued operations in scope — a
+deliberate scope decision recorded in ADR-0009.
+
+**The complete non-controlling interest treatment — consolidation mechanics, share of result,
+the five-account equity roll-forward, dividends, effective dating, acquisition and disposal
+changes, cash flow presentation, statutory versus management treatment and elimination
+implications — is specified in [`docs/nci-policy.md`](nci-policy.md).**
 
 **Consolidation effective dates.** Acquired entities are consolidated from their acquisition
 date, not from the start of the fiscal year. `NIG-220` contributes nine months of FY2023 and
