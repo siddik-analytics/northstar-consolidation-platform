@@ -1,0 +1,7 @@
+ppa_id,acquisition_id,intangible_class,group_account,gross_usd_m,useful_life_years,amortisation_start_period,accumulated_amortisation_at_open_usd_m,notes
+PPA-OPEN-A,ACQ-OPEN,CUSTOMER_RELATIONSHIPS,160200,1.100000,2.00,202301,0.000000,"The short-dated tranche of the opening acquired intangible block, fully amortised by the end of FY2024. Stated net of amortisation already taken before the window, which is why the accumulated column is nil: the opening balance IS the net book value."
+PPA-OPEN-B,ACQ-OPEN,TECHNOLOGY,160300,39.900000,10.53,202301,0.000000,"The long-dated tranche of the opening acquired intangible block. The remaining life is the weighted average implied by the approved amortisation anchor."
+PPA-010-C,ACQ-010,CUSTOMER_RELATIONSHIPS,160200,12.000000,10.00,202304,0.000000,"Halden's customer contracts and relationships, recognised on acquisition and amortised over ten years."
+PPA-010-T,ACQ-010,TECHNOLOGY,160300,6.000000,8.00,202304,0.000000,"Halden's valve design and qualification technology, amortised over eight years."
+PPA-011-C,ACQ-011,CUSTOMER_RELATIONSHIPS,160200,9.000000,10.00,202407,0.000000,"Vector Systems' installed-base service relationships."
+PPA-011-T,ACQ-011,TECHNOLOGY,160300,4.500000,8.00,202407,0.000000,"Vector Systems' control system software and configuration libraries."
