@@ -1,0 +1,128 @@
+rule_id,erp_system,source_account,priority,condition,target_group_account,rule_class,effective_from,effective_to,is_active,basis,notes
+AUR-1160-10,AURORA,1160,10,maturity_months <= 12,125100,SPLIT_BRANCH,2019-01-01,,TRUE,source_coa_aurora.csv 1160,"Aurora holds one notes-receivable account. The current/non-current split comes from the loan master, carried on the line."
+AUR-1160-99,AURORA,1160,999,TRUE,175100,SPLIT_DEFAULT,2019-01-01,,TRUE,source_coa_aurora.csv 1160,
+AUR-2060-10,AURORA,2060,10,maturity_months <= 12,225100,SPLIT_BRANCH,2019-01-01,,TRUE,source_coa_aurora.csv 2060,
+AUR-2060-99,AURORA,2060,999,TRUE,235100,SPLIT_DEFAULT,2019-01-01,,TRUE,source_coa_aurora.csv 2060,
+AUR-5100-10,AURORA,5100,10,dept_code IN ('D525'),520200,SPLIT_BRANCH,2019-01-01,,TRUE,source_coa_aurora.csv 5100,"Facilities overhead booked to the corporate facilities department is absorbed into cost of sales."
+AUR-5100-20,AURORA,5100,20,"dept_code IN ('D115','D120')",520300,SPLIT_BRANCH,2019-01-01,,TRUE,source_coa_aurora.csv 5100,"Supply chain and warehouse overhead is consumables, not indirect labour. The rule is on the department CODE and not on its function: D105 and D110 share the indirect-operations function but belong in indirect labour."
+AUR-5100-99,AURORA,5100,999,TRUE,520100,SPLIT_DEFAULT,2019-01-01,,TRUE,source_coa_aurora.csv 5100,
+AUR-5900-10,AURORA,5900,10,partner_bu = 'IS',590200,SPLIT_BRANCH,2019-01-01,,TRUE,source_coa_aurora.csv 5900,
+AUR-5900-99,AURORA,5900,999,TRUE,590100,SPLIT_DEFAULT,2019-01-01,,TRUE,source_coa_aurora.csv 5900,
+AUR-6100-10,AURORA,6100,10,dept_code IN ('D100'),515100,SPLIT_BRANCH,2019-01-01,,TRUE,source_coa_aurora.csv 6100,"THE MATERIAL MAPPING PROBLEM. Aurora books all payroll to one account whether the labour is direct, indirect or SG&A, so gross margin is not derivable from the account code alone. See ADR-0007 and CTL-MAP-04."
+AUR-6100-20,AURORA,6100,20,"dept_code IN ('D200','D205','D300','D305','D310')",515200,SPLIT_BRANCH,2019-01-01,,TRUE,source_coa_aurora.csv 6100,"Field and project labour is direct labour delivered on site."
+AUR-6100-30,AURORA,6100,30,"dept_code IN ('D105','D110','D115','D120','D210','D215')",520100,SPLIT_BRANCH,2019-01-01,,TRUE,source_coa_aurora.csv 6100,"Indirect operations labour is absorbed as production overhead."
+AUR-6100-99,AURORA,6100,999,TRUE,610100,SPLIT_DEFAULT,2019-01-01,,TRUE,source_coa_aurora.csv 6100,
+AUR-6110-10,AURORA,6110,10,"dept_code IN ('D100','D105','D110','D115','D120','D200','D205','D210','D215','D300','D305','D310')",515300,SPLIT_BRANCH,2019-01-01,,TRUE,source_coa_aurora.csv 6110,"Benefits follow the payroll they burden: the same department set as 6100."
+AUR-6110-99,AURORA,6110,999,TRUE,610200,SPLIT_DEFAULT,2019-01-01,,TRUE,source_coa_aurora.csv 6110,
+AUR-6120-10,AURORA,6120,10,"dept_code IN ('D100','D105','D110','D115','D120','D200','D205','D210','D215','D300','D305','D310')",515300,SPLIT_BRANCH,2019-01-01,,TRUE,source_coa_aurora.csv 6120,"Payroll taxes follow the payroll they burden."
+AUR-6120-99,AURORA,6120,999,TRUE,610300,SPLIT_DEFAULT,2019-01-01,,TRUE,source_coa_aurora.csv 6120,
+AUR-6150-10,AURORA,6150,10,"dept_code IN ('D100','D200','D205')",510300,SPLIT_BRANCH,2019-01-01,,TRUE,source_coa_aurora.csv 6150,"Contract labour in production and field departments is a cost of sale."
+AUR-6150-99,AURORA,6150,999,TRUE,610600,SPLIT_DEFAULT,2019-01-01,,TRUE,source_coa_aurora.csv 6150,
+AUR-6200-10,AURORA,6200,10,"dept_code IN ('D100','D120')",520200,SPLIT_BRANCH,2019-01-01,,TRUE,source_coa_aurora.csv 6200,"Plant and warehouse occupancy is absorbed into cost of sales."
+AUR-6200-99,AURORA,6200,999,TRUE,620100,SPLIT_DEFAULT,2019-01-01,,TRUE,source_coa_aurora.csv 6200,
+AUR-6210-10,AURORA,6210,10,"dept_code IN ('D100','D120')",520200,SPLIT_BRANCH,2019-01-01,,TRUE,source_coa_aurora.csv 6210,
+AUR-6210-99,AURORA,6210,999,TRUE,620200,SPLIT_DEFAULT,2019-01-01,,TRUE,source_coa_aurora.csv 6210,
+AUR-6320-10,AURORA,6320,10,dept_code = 'D910',680400,SPLIT_BRANCH,2019-01-01,,TRUE,source_coa_aurora.csv 6320,"Consulting booked to the transformation department is non-recurring and belongs in the add-back block."
+AUR-6320-20,AURORA,6320,20,dept_code = 'D905',680300,SPLIT_BRANCH,2019-01-01,,TRUE,source_coa_aurora.csv 6320,"Corporate development consulting is transaction cost."
+AUR-6320-99,AURORA,6320,999,TRUE,630300,SPLIT_DEFAULT,2019-01-01,,TRUE,source_coa_aurora.csv 6320,
+AUR-6510-10,AURORA,6510,10,dept_code = 'D910',680400,SPLIT_BRANCH,2019-01-01,,TRUE,source_coa_aurora.csv 6510,
+AUR-6510-99,AURORA,6510,999,TRUE,650200,SPLIT_DEFAULT,2019-01-01,,TRUE,source_coa_aurora.csv 6510,
+AUR-7000-10,AURORA,7000,10,asset_class = 'FINANCE_LEASE',710200,SPLIT_BRANCH,2019-01-01,,TRUE,source_coa_aurora.csv 7000,
+AUR-7000-99,AURORA,7000,999,TRUE,710100,SPLIT_DEFAULT,2019-01-01,,TRUE,source_coa_aurora.csv 7000,
+AUR-7010-10,AURORA,7010,10,asset_class = 'SOFTWARE',720200,SPLIT_BRANCH,2019-01-01,,TRUE,source_coa_aurora.csv 7010,
+AUR-7010-99,AURORA,7010,999,TRUE,720100,SPLIT_DEFAULT,2019-01-01,,TRUE,source_coa_aurora.csv 7010,
+AUR-7100-10,AURORA,7100,10,instrument_type = 'RCF',730200,SPLIT_BRANCH,2019-01-01,,TRUE,source_coa_aurora.csv 7100,"Aurora has a single interest account; the instrument split comes from the debt master, keyed on the journal reference."
+AUR-7100-20,AURORA,7100,20,instrument_type = 'LEASE',730300,SPLIT_BRANCH,2019-01-01,,TRUE,source_coa_aurora.csv 7100,
+AUR-7100-30,AURORA,7100,30,instrument_type = 'OTHER',730600,SPLIT_BRANCH,2019-01-01,,TRUE,source_coa_aurora.csv 7100,
+AUR-7100-99,AURORA,7100,999,TRUE,730100,SPLIT_DEFAULT,2019-01-01,,TRUE,source_coa_aurora.csv 7100,
+AUR-7300-10,AURORA,7300,10,revaluation_flag = 'TRUE',740200,SPLIT_BRANCH,2019-01-01,,TRUE,source_coa_aurora.csv 7300,"An unrealised revaluation is presented below EBITDA and is a permitted covenant add-back (CA-030)."
+AUR-7300-99,AURORA,7300,999,TRUE,740100,SPLIT_DEFAULT,2019-01-01,,TRUE,source_coa_aurora.csv 7300,
+SAB-15000-10,SABLE,15000,10,asset_class = 'LAND',150100,SPLIT_BRANCH,2021-03-01,,TRUE,source_coa_sable.csv 15000,"Land is not depreciated and must not sit inside the building class."
+SAB-15000-99,SABLE,15000,999,TRUE,150200,SPLIT_DEFAULT,2021-03-01,,TRUE,source_coa_sable.csv 15000,
+SAB-24900-10,SABLE,24900,10,maturity_months <= 12,225100,SPLIT_BRANCH,2021-03-01,,TRUE,source_coa_sable.csv 24900,
+SAB-24900-99,SABLE,24900,999,TRUE,235100,SPLIT_DEFAULT,2021-03-01,,TRUE,source_coa_sable.csv 24900,
+SAB-40900-10,SABLE,40900,10,reimbursable_type = 'FREIGHT',430100,SPLIT_BRANCH,2021-03-01,,TRUE,source_coa_sable.csv 40900,
+SAB-40900-99,SABLE,40900,999,TRUE,435100,SPLIT_DEFAULT,2021-03-01,,TRUE,source_coa_sable.csv 40900,"Sable has no separate freight revenue account, so reimbursables that are not freight fall to other operating revenue."
+SAB-50900-10,SABLE,50900,10,"partner_bu IN ('FC','AM')",590100,SPLIT_BRANCH,2021-03-01,,TRUE,source_coa_sable.csv 50900,
+SAB-50900-99,SABLE,50900,999,TRUE,590200,SPLIT_DEFAULT,2021-03-01,,TRUE,source_coa_sable.csv 50900,
+SAB-60700-10,SABLE,60700,10,dept_function = 'FIELD',520300,SPLIT_BRANCH,2021-03-01,,TRUE,source_coa_sable.csv 60700,"Safety training for field crews is a cost of delivering the work. The chart narrative enumerates D200, D205 and D215; the rule is expressed on the department FUNCTION because that enumeration is an incomplete statement of the same idea -- D210 is also a field department."
+SAB-60700-99,SABLE,60700,999,TRUE,610800,SPLIT_DEFAULT,2021-03-01,,TRUE,source_coa_sable.csv 60700,
+SAB-62000-10,SABLE,62000,10,vendor_category = 'AUDIT',630100,SPLIT_BRANCH,2021-03-01,,TRUE,source_coa_sable.csv 62000,
+SAB-62000-20,SABLE,62000,20,vendor_category = 'LEGAL',630200,SPLIT_BRANCH,2021-03-01,,TRUE,source_coa_sable.csv 62000,
+SAB-62000-30,SABLE,62000,30,dept_code = 'D910',680400,SPLIT_BRANCH,2021-03-01,,TRUE,source_coa_sable.csv 62000,
+SAB-62000-40,SABLE,62000,40,dept_code = 'D905',680300,SPLIT_BRANCH,2021-03-01,,TRUE,source_coa_sable.csv 62000,
+SAB-62000-99,SABLE,62000,999,TRUE,630300,SPLIT_DEFAULT,2021-03-01,,TRUE,source_coa_sable.csv 62000,
+SAB-63000-10,SABLE,63000,10,expense_subtype = 'COMMISSION',640300,SPLIT_BRANCH,2021-03-01,,TRUE,source_coa_sable.csv 63000,
+SAB-63000-20,SABLE,63000,20,expense_subtype = 'TRADESHOW',640200,SPLIT_BRANCH,2021-03-01,,TRUE,source_coa_sable.csv 63000,
+SAB-63000-99,SABLE,63000,999,TRUE,640100,SPLIT_DEFAULT,2021-03-01,,TRUE,source_coa_sable.csv 63000,
+SAB-64100-10,SABLE,64100,10,dept_code = 'D910',680400,SPLIT_BRANCH,2021-03-01,,TRUE,source_coa_sable.csv 64100,
+SAB-64100-99,SABLE,64100,999,TRUE,650200,SPLIT_DEFAULT,2021-03-01,,TRUE,source_coa_sable.csv 64100,
+SAB-65100-10,SABLE,65100,10,dept_function = 'FIELD',520400,SPLIT_BRANCH,2021-03-01,,TRUE,source_coa_sable.csv 65100,"Crew vehicles are equipment used to deliver the service; management vehicles are not."
+SAB-65100-99,SABLE,65100,999,TRUE,660200,SPLIT_DEFAULT,2021-03-01,,TRUE,source_coa_sable.csv 65100,
+SAB-68000-10,SABLE,68000,10,cost_type = 'FACILITY',680200,SPLIT_BRANCH,2021-03-01,,TRUE,source_coa_sable.csv 68000,
+SAB-68000-99,SABLE,68000,999,TRUE,680100,SPLIT_DEFAULT,2021-03-01,,TRUE,source_coa_sable.csv 68000,
+SAB-70000-10,SABLE,70000,10,asset_class = 'FINANCE_LEASE',710200,SPLIT_BRANCH,2021-03-01,,TRUE,source_coa_sable.csv 70000,
+SAB-70000-99,SABLE,70000,999,TRUE,710100,SPLIT_DEFAULT,2021-03-01,,TRUE,source_coa_sable.csv 70000,
+SAB-71000-10,SABLE,71000,10,instrument_type = 'RCF',730200,SPLIT_BRANCH,2021-03-01,,TRUE,source_coa_sable.csv 71000,
+SAB-71000-20,SABLE,71000,20,instrument_type = 'LEASE',730300,SPLIT_BRANCH,2021-03-01,,TRUE,source_coa_sable.csv 71000,
+SAB-71000-30,SABLE,71000,30,instrument_type = 'OTHER',730600,SPLIT_BRANCH,2021-03-01,,TRUE,source_coa_sable.csv 71000,
+SAB-71000-99,SABLE,71000,999,TRUE,730100,SPLIT_DEFAULT,2021-03-01,,TRUE,source_coa_sable.csv 71000,
+SAB-73000-10,SABLE,73000,10,revaluation_flag = 'TRUE',740200,SPLIT_BRANCH,2021-03-01,,TRUE,source_coa_sable.csv 73000,
+SAB-73000-99,SABLE,73000,999,TRUE,740100,SPLIT_DEFAULT,2021-03-01,,TRUE,source_coa_sable.csv 73000,
+SAB-80000-10,SABLE,80000,10,tax_jurisdiction = 'STATE',810200,SPLIT_BRANCH,2021-03-01,,TRUE,source_coa_sable.csv 80000,
+SAB-80000-20,SABLE,80000,20,tax_jurisdiction = 'FOREIGN',810300,SPLIT_BRANCH,2021-03-01,,TRUE,source_coa_sable.csv 80000,
+SAB-80000-99,SABLE,80000,999,TRUE,810100,SPLIT_DEFAULT,2021-03-01,,TRUE,source_coa_sable.csv 80000,
+KES-00016500-10,KESTREL,00016500,10,maturity_months <= 12,125100,SPLIT_BRANCH,2022-02-01,,TRUE,source_coa_kestrel.csv 00016500,
+KES-00016500-99,KESTREL,00016500,999,TRUE,175100,SPLIT_DEFAULT,2022-02-01,,TRUE,source_coa_kestrel.csv 00016500,
+KES-00017000-10,KESTREL,00017000,10,accrual_type = 'CONTRACT',121100,SPLIT_BRANCH,2022-02-01,,TRUE,source_coa_kestrel.csv 00017000,"Kestrel books contract assets and prepayments to one accrued-income account."
+KES-00017000-99,KESTREL,00017000,999,TRUE,140100,SPLIT_DEFAULT,2022-02-01,,TRUE,source_coa_kestrel.csv 00017000,
+KES-00030000-10,KESTREL,00030000,10,asset_class = 'LAND',150100,SPLIT_BRANCH,2022-02-01,,TRUE,source_coa_kestrel.csv 00030000,
+KES-00030000-99,KESTREL,00030000,999,TRUE,150200,SPLIT_DEFAULT,2022-02-01,,TRUE,source_coa_kestrel.csv 00030000,
+KES-00061500-10,KESTREL,00061500,10,maturity_months <= 12,225100,SPLIT_BRANCH,2022-02-01,,TRUE,source_coa_kestrel.csv 00061500,
+KES-00061500-99,KESTREL,00061500,999,TRUE,235100,SPLIT_DEFAULT,2022-02-01,,TRUE,source_coa_kestrel.csv 00061500,
+KES-00080000-10,KESTREL,00080000,10,product_group = 'COMPONENT',410200,SPLIT_BRANCH,2022-02-01,,TRUE,source_coa_kestrel.csv 00080000,
+KES-00080000-99,KESTREL,00080000,999,TRUE,410100,SPLIT_DEFAULT,2022-02-01,,TRUE,source_coa_kestrel.csv 00080000,
+KES-00081000-10,KESTREL,00081000,10,TRUE,530100,DERIVED,2022-02-01,,TRUE,source_coa_kestrel.csv 00081000,"THE GERMAN TOTAL-COST-METHOD PROBLEM. Under the Gesamtkostenverfahren the movement in finished goods is presented above the revenue line as part of Gesamtleistung. Under the group's cost-of-sales presentation it belongs inside cost of sales. The AMOUNT is unchanged -- a credit stays a credit -- but its caption moves from income to a credit within cost of sales, which is the sign reversal the chart narrative describes. See CTL-MAP-08 and docs/mapping-engine.md."
+KES-00081200-10,KESTREL,00081200,10,TRUE,520100,DERIVED,2022-02-01,,TRUE,source_coa_kestrel.csv 00081200,"Own work capitalised is the second total-cost-method item; it is credited against production overhead rather than shown as revenue."
+KES-00081500-10,KESTREL,00081500,10,income_type = 'OPERATING',435100,SPLIT_BRANCH,2022-02-01,,TRUE,source_coa_kestrel.csv 00081500,"Sonstige betriebliche Ertraege is a catch-all under German GAAP and has to be decomposed before it can be reported."
+KES-00081500-20,KESTREL,00081500,20,income_type = 'FX',740100,SPLIT_BRANCH,2022-02-01,,TRUE,source_coa_kestrel.csv 00081500,
+KES-00081500-30,KESTREL,00081500,30,income_type = 'DISPOSAL',745100,SPLIT_BRANCH,2022-02-01,,TRUE,source_coa_kestrel.csv 00081500,
+KES-00081500-99,KESTREL,00081500,999,TRUE,750100,SPLIT_DEFAULT,2022-02-01,,TRUE,source_coa_kestrel.csv 00081500,
+KES-00089000-10,KESTREL,00089000,10,"partner_bu IN ('FC','AM')",490100,SPLIT_BRANCH,2022-02-01,,TRUE,source_coa_kestrel.csv 00089000,"The chart narrative reads 'partner_bu = IS -> service revenue', which is an incomplete statement of the same idea: what the Kestrel entities sell to a Flow Control or Aftermarket partner is product, and everything else is a service recharge. IC-SV-03 recharges Tyneside services to Vector B.V., an Engineered Systems partner, and is a service sale. Expressed the other way round the rule is complete and matches the intercompany matrix."
+KES-00089000-99,KESTREL,00089000,999,TRUE,490200,SPLIT_DEFAULT,2022-02-01,,TRUE,source_coa_kestrel.csv 00089000,
+KES-00091000-10,KESTREL,00091000,10,dept_function = 'PRODUCTION',515100,SPLIT_BRANCH,2022-02-01,,TRUE,source_coa_kestrel.csv 00091000,"A nature-of-expense chart cannot separate direct from indirect labour, so the cost centre carries the split."
+KES-00091000-20,KESTREL,00091000,20,"dept_function IN ('FIELD','PROJECT')",515200,SPLIT_BRANCH,2022-02-01,,TRUE,source_coa_kestrel.csv 00091000,
+KES-00091000-30,KESTREL,00091000,30,dept_function = 'INDIRECT_OPS',520100,SPLIT_BRANCH,2022-02-01,,TRUE,source_coa_kestrel.csv 00091000,
+KES-00091000-99,KESTREL,00091000,999,TRUE,610100,SPLIT_DEFAULT,2022-02-01,,TRUE,source_coa_kestrel.csv 00091000,
+KES-00091200-10,KESTREL,00091200,10,"dept_function IN ('PRODUCTION','FIELD','PROJECT','INDIRECT_OPS')",515300,SPLIT_BRANCH,2022-02-01,,TRUE,source_coa_kestrel.csv 00091200,
+KES-00091200-99,KESTREL,00091200,999,TRUE,610300,SPLIT_DEFAULT,2022-02-01,,TRUE,source_coa_kestrel.csv 00091200,
+KES-00091400-10,KESTREL,00091400,10,"dept_function IN ('PRODUCTION','FIELD','PROJECT','INDIRECT_OPS')",515300,SPLIT_BRANCH,2022-02-01,,TRUE,source_coa_kestrel.csv 00091400,
+KES-00091400-99,KESTREL,00091400,999,TRUE,610200,SPLIT_DEFAULT,2022-02-01,,TRUE,source_coa_kestrel.csv 00091400,
+KES-00091600-10,KESTREL,00091600,10,"dept_function IN ('PRODUCTION','FIELD','PROJECT')",510300,SPLIT_BRANCH,2022-02-01,,TRUE,source_coa_kestrel.csv 00091600,
+KES-00091600-99,KESTREL,00091600,999,TRUE,610600,SPLIT_DEFAULT,2022-02-01,,TRUE,source_coa_kestrel.csv 00091600,
+KES-00092000-10,KESTREL,00092000,10,asset_class = 'FINANCE_LEASE',710200,SPLIT_BRANCH,2022-02-01,,TRUE,source_coa_kestrel.csv 00092000,
+KES-00092000-99,KESTREL,00092000,999,TRUE,710100,SPLIT_DEFAULT,2022-02-01,,TRUE,source_coa_kestrel.csv 00092000,
+KES-00092200-10,KESTREL,00092200,10,asset_class = 'SOFTWARE',720200,SPLIT_BRANCH,2022-02-01,,TRUE,source_coa_kestrel.csv 00092200,
+KES-00092200-99,KESTREL,00092200,999,TRUE,720100,SPLIT_DEFAULT,2022-02-01,,TRUE,source_coa_kestrel.csv 00092200,
+KES-00093000-10,KESTREL,00093000,10,"dept_function IN ('PRODUCTION','WAREHOUSE')",520200,SPLIT_BRANCH,2022-02-01,,TRUE,source_coa_kestrel.csv 00093000,
+KES-00093000-99,KESTREL,00093000,999,TRUE,620100,SPLIT_DEFAULT,2022-02-01,,TRUE,source_coa_kestrel.csv 00093000,
+KES-00093200-10,KESTREL,00093200,10,"dept_function IN ('PRODUCTION','WAREHOUSE')",520200,SPLIT_BRANCH,2022-02-01,,TRUE,source_coa_kestrel.csv 00093200,
+KES-00093200-99,KESTREL,00093200,999,TRUE,620200,SPLIT_DEFAULT,2022-02-01,,TRUE,source_coa_kestrel.csv 00093200,
+KES-00094000-10,KESTREL,00094000,10,advisor_type = 'AUDIT',630100,SPLIT_BRANCH,2022-02-01,,TRUE,source_coa_kestrel.csv 00094000,
+KES-00094000-20,KESTREL,00094000,20,advisor_type = 'LEGAL',630200,SPLIT_BRANCH,2022-02-01,,TRUE,source_coa_kestrel.csv 00094000,
+KES-00094000-30,KESTREL,00094000,30,project_code = 'ERP-INT',680400,SPLIT_BRANCH,2022-02-01,,TRUE,source_coa_kestrel.csv 00094000,
+KES-00094000-40,KESTREL,00094000,40,project_code = 'M-AND-A',680300,SPLIT_BRANCH,2022-02-01,,TRUE,source_coa_kestrel.csv 00094000,
+KES-00094000-99,KESTREL,00094000,999,TRUE,630300,SPLIT_DEFAULT,2022-02-01,,TRUE,source_coa_kestrel.csv 00094000,
+KES-00095000-10,KESTREL,00095000,10,project_code = 'ERP-INT',680400,SPLIT_BRANCH,2022-02-01,,TRUE,source_coa_kestrel.csv 00095000,
+KES-00095000-20,KESTREL,00095000,20,expense_subtype = 'SERVICES',650200,SPLIT_BRANCH,2022-02-01,,TRUE,source_coa_kestrel.csv 00095000,
+KES-00095000-99,KESTREL,00095000,999,TRUE,650100,SPLIT_DEFAULT,2022-02-01,,TRUE,source_coa_kestrel.csv 00095000,
+KES-00098000-10,KESTREL,00098000,10,cost_type = 'FACILITY',680200,SPLIT_BRANCH,2022-02-01,,TRUE,source_coa_kestrel.csv 00098000,
+KES-00098000-99,KESTREL,00098000,999,TRUE,680100,SPLIT_DEFAULT,2022-02-01,,TRUE,source_coa_kestrel.csv 00098000,
+KES-00100000-10,KESTREL,00100000,10,instrument_type = 'RCF',730200,SPLIT_BRANCH,2022-02-01,,TRUE,source_coa_kestrel.csv 00100000,
+KES-00100000-20,KESTREL,00100000,20,instrument_type = 'LEASE',730300,SPLIT_BRANCH,2022-02-01,,TRUE,source_coa_kestrel.csv 00100000,
+KES-00100000-30,KESTREL,00100000,30,instrument_type = 'AFFILIATE',795200,SPLIT_BRANCH,2022-02-01,,TRUE,source_coa_kestrel.csv 00100000,"Affiliate interest must leave the third-party interest accounts or consolidated net interest is overstated (CTL-IC-05)."
+KES-00100000-99,KESTREL,00100000,999,TRUE,730100,SPLIT_DEFAULT,2022-02-01,,TRUE,source_coa_kestrel.csv 00100000,
+KES-00100200-10,KESTREL,00100200,10,instrument_type = 'AFFILIATE',795100,SPLIT_BRANCH,2022-02-01,,TRUE,source_coa_kestrel.csv 00100200,
+KES-00100200-99,KESTREL,00100200,999,TRUE,735100,SPLIT_DEFAULT,2022-02-01,,TRUE,source_coa_kestrel.csv 00100200,
+KES-00100400-10,KESTREL,00100400,10,revaluation_flag = 'TRUE',740200,SPLIT_BRANCH,2022-02-01,,TRUE,source_coa_kestrel.csv 00100400,
+KES-00100400-99,KESTREL,00100400,999,TRUE,740100,SPLIT_DEFAULT,2022-02-01,,TRUE,source_coa_kestrel.csv 00100400,

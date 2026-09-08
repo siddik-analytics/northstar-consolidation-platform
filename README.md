@@ -23,7 +23,7 @@ figure back to the source journal that produced it.
 | **2 — Synthetic source systems & reference data** | ✅ **Complete** | [Report](docs/phases/phase-02-report.md) |
 | **2.1 — Source data correction pass** | ✅ **Complete** | [Report](docs/phases/phase-02-1-report.md) |
 | **2.2 — Source-layer integrity pass** | ✅ **Complete** | [Report](docs/phases/phase-02-2-report.md) |
-| 3 — Ingestion, staging & COA harmonisation | ⏸ Awaiting approval | |
+| **3 — Ingestion, staging & COA harmonisation** | ✅ **Complete** | [Report](docs/phases/phase-03-report.md) |
 | 4 — Consolidation engine | ⏸ | |
 | 5 — Reporting marts & control suite | ⏸ | |
 | 6 — Excel FP&A models | ⏸ | |
@@ -74,9 +74,11 @@ cd northstar-consolidation-platform
 python -m pip install -r requirements.txt
 
 python src/anchors/build_anchors.py    # rebuild the financial anchors and their documentation
-python -m src.generation.build         # generate the source systems (~25 s, 1.08m journal lines)
+python -m src.generation.build         # generate the source systems (~30 s, 1.08m journal lines)
 python -m src.generation.validate      # run the 77 source controls
-python -m src.generation.faults        # inject and detect the fault fixtures
+python -m src.generation.faults        # inject and detect the source fault fixtures
+python -m src.pipeline.run             # ingest, normalise, map and conform (~110 s)
+python -m src.pipeline.faults          # run every fault fixture through the real pipeline
 python -m pytest tests -q              # validate every accounting identity, seed and dataset
 ```
 
@@ -86,7 +88,9 @@ Expected output:
 All integrity assertions passed (BS balances; CF ties to BS cash).
 77/77 controls passed
 10 fault fixtures written to data/faults/ ... all DETECTED
-317 passed
+54/61 controls passed, 7 source findings, 0 blocking failures
+10/10 faults handled as intended
+367 passed
 ```
 
 The generated data is ~166 MB and is not committed — it rebuilds byte-for-byte from a fixed
@@ -102,7 +106,7 @@ config/          Version-controlled configuration — the platform's inputs
   anchors/       Generated financial anchors (the contract for Phases 2 and 9)
   coa/           Group chart of accounts, three source charts, ERP profiles
   debt/          Synthetic credit agreement terms, covenants, add-backs and treasury policy
-  controls/      The 84-control register
+  controls/      The 86-control register
   dimensions/    Business units, departments, scenarios, versions, consolidation layers
   entities/      Legal entity master and effective-dated ownership register
   fx/            FX translation policy
@@ -112,9 +116,11 @@ data/
   reference/     Source masters, planning and subledger data
   samples/       Committed extract samples and the build digest
   faults/        Injected-fault variants and expected results
-  10_staging/    → 20_warehouse/ → 30_marts/ → 90_exports/  (Phases 3-5)
+  10_staging/    parsed → standardised → mapped → conformed (Phase 3)
+  20_warehouse/  DuckDB finance data model (Phase 3)
+  30_marts/      → 90_exports/  (Phases 5+)
 docs/            Design documentation
-  adr/           18 architecture decision records
+  adr/           20 architecture decision records
   phases/        Roadmap and per-phase reports
 excel/           Excel deliverables (Phase 6)
 powerbi/         PBIP project (Phase 7)
@@ -122,7 +128,7 @@ sql/             Transformation layer, ordered by pipeline stage (Phases 3–5)
 src/
   anchors/       The financial anchor model (Phase 1)
   generation/    Synthetic source system generators (Phase 2)
-  pipeline/      Orchestration (Phases 3–5)
+  pipeline/      Ingestion, harmonisation and conformance (Phase 3)
 tools/           Maintenance utilities (anchor input derivation)
 tests/           Automated validation
 ```
@@ -141,20 +147,25 @@ tests/           Automated validation
 | [Phase 2 report](docs/phases/phase-02-report.md) | 1.08m journal lines generated, reconciled and controlled |
 | [Phase 2.1 report](docs/phases/phase-02-1-report.md) | Driver-generated monthly balance sheets, an explainable investment register, four Kestrel special periods |
 | [Phase 2.2 report](docs/phases/phase-02-2-report.md) | The measurement reserve removed, a CTA derived from source balances, revolver interest reconciled to daily utilisation |
+| [Phase 3 report](docs/phases/phase-03-report.md) | 1.08m lines ingested from three ERPs, harmonised to one chart, and four source defects found |
 
 | Design | |
 |---|---|
 | [Consolidation design](docs/consolidation-design.md) | Layers, COA harmonisation, FX, elimination, adjustments, cash flow |
 | [Data contract](docs/data-contract.md) | Dimensions, facts, grain, relationships, volumes |
 | [Reporting design](docs/reporting-design.md) | Excel workbooks, Power BI pages, metric definitions |
-| [Control framework](docs/control-framework.md) | 84 controls and why they are placed where they are |
+| [Control framework](docs/control-framework.md) | 86 controls and why they are placed where they are |
 | [NCI policy](docs/nci-policy.md) | Complete non-controlling interest treatment, end to end |
 | [FX and CTA policy](docs/fx-cta-policy.md) | Full translation policy and the deterministic CTA roll-forward |
-| [ADRs](docs/adr/README.md) | 17 live decisions with their alternatives and consequences, and 1 superseded |
+| [ADRs](docs/adr/README.md) | 19 live decisions with their alternatives and consequences, and 1 superseded |
 | [Open questions](docs/open-questions.md) | 12 decisions; 4 closed at the Phase 1.1 review, 8 open with working assumptions |
 | [Source system design](docs/source-system-design.md) | The three ERPs, their formats and every deliberate difference |
 | [Synthetic data methodology](docs/synthetic-data-methodology.md) | How 1.08m balanced journal lines are generated deterministically |
 | [Source data dictionary](docs/source-data-dictionary.md) | Every generated dataset, its grain and its columns |
+| [Ingestion design](docs/ingestion-design.md) | The five layers, the three ERP adapters, sign and period normalisation, lineage |
+| [Mapping engine](docs/mapping-engine.md) | The chart-of-accounts harmonisation engine and its rule language |
+| [Staging data dictionary](docs/staging-data-dictionary.md) | Every staged and conformed table, its grain and its columns |
+| [Source-to-group reconciliation](docs/source-to-group-reconciliation.md) | The evidence that the mapping worked |
 | [Glossary](docs/glossary.md) | Terms and metric definitions |
 
 ---

@@ -20,7 +20,7 @@ each contained two genuinely separable pieces of work with different risk profil
 | 2 | Synthetic source systems & reference data | **Complete** |
 | 2.1 | Source data correction pass | **Complete** |
 | 2.2 | Source-layer integrity pass | **Complete — ready for Phase 3 approval** |
-| 3 | Ingestion, staging & COA harmonisation | Not started |
+| 3 | Ingestion, staging & COA harmonisation | **Complete — awaiting owner review** |
 | 4 | Consolidation engine | Not started |
 | 5 | Reporting marts & automated control suite | Not started |
 | 6 | Excel FP&A and management reporting models | Not started |
@@ -157,6 +157,18 @@ Consume the extracts. This is where the chart-of-accounts risk is concentrated.
 - No conditional split falls through unresolved
 - Gross margin by BU lands within the anchor band — the proof that the payroll splits worked
 
+**Delivered.** A five-layer pipeline (raw → parsed → standardised → mapped → conformed) in
+DuckDB SQL, with one adapter per source system rather than a generic parser. 1,080,782 lines
+from 507 extracts in three encodings, three sign conventions, three date formats and three
+period structures, normalised and harmonised to the group chart in about 55 seconds, with
+full line-level lineage. The chart-of-accounts harmonisation engine is configuration-driven:
+127 effective-dated rules in a validated language, reproducing the expected-mapping oracle at
+**100.000000%** on every line the source system classified, with nothing unmapped and nothing
+ambiguous. Gross margin by business unit reproduces the anchor exactly for all twelve
+business-unit-years. 54 of 61 controls pass with **no blocking pipeline failure**; the other
+seven are **four defects found in the frozen Phase 2 source layer**, reported and escalated
+rather than patched. See [`phase-03-report.md`](phase-03-report.md).
+
 ---
 
 ## Phase 4 — Consolidation engine
@@ -198,7 +210,7 @@ Consume the extracts. This is where the chart-of-accounts risk is concentrated.
 
 **Exit criteria**
 - One command rebuilds everything from raw in under five minutes
-- All 84 controls execute and report; no blocking failure on any period
+- All 86 controls execute and report; no blocking failure on any period
 - No mart publishes from a period with a failed blocking control
 
 ---

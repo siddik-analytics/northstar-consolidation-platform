@@ -417,6 +417,25 @@ Covenant metrics are computed from this fact and reconciled to the balance sheet
 (`CTL-REC-05`). Modelling debt at instrument level rather than as one balance sheet line is
 what makes "what happens when the swap matures in December 2026?" answerable.
 
+### `fact_journal_line`
+Grain: source journal line — `(erp_system, source_file, journal_id, line_number)`. Built by
+Phase 3 and the only fact whose rows originate outside the platform. Measures:
+`signed_local_amount`, `debit_local`, `credit_local`, in the entity's functional currency and
+held as `DECIMAL(18,2)` rather than `DOUBLE`, so that a total does not depend on the order the
+threads finished in (ADR-0022). There is deliberately **no USD column**: this is layer 1 and
+translation is Phase 4's work (ADR-0005).
+
+It carries the full lineage block — source system, file, ordinal, source account and account
+name as the system spelled them, the native amount before sign normalisation, the source
+period as posted, the source attribute string, the journal and document identifiers — and the
+mapping provenance: `mapping_status`, `mapping_rule_id`, `chart_mapping_type_applied`,
+`is_presentation_reclass`.
+
+Keeping the journal-line grain is a decision, not an oversight (ADR-0019). Aggregating here
+would cut the fact from 1.08m rows to 42k and every reconciliation would still pass, while
+making a mapping untraceable to the posting that produced it. `fact_trial_balance` is the
+aggregate and is built **from** this fact, so the two cannot disagree.
+
 ### `fact_cta_expectation`
 Grain: entity × period. A **source-layer expectation**, loaded from
 `data/reference/cta_expectation.csv` and never written by the consolidation engine. Measures:
@@ -509,6 +528,8 @@ across `dim_entity`, `dim_cost_center` and `dim_account`.
 | `fact_capex` | ~60,000 | |
 | `fact_cash_flow` | ~25,000 | |
 | `fact_debt_schedule` | ~2,000 | |
+| `fact_journal_line` | ~1,080,000 | Phase 3, layer 1 only, journal-line grain |
+| `fact_trial_balance` | ~42,000 | Built from `fact_journal_line` |
 | `fact_fx_rate` | ~1,500 | |
 | `fact_cta_expectation` | ~250 | Source-layer expectation; foreign entities only |
 | `fact_ownership_interest` | ~800 | Entity × period ownership, all entities |

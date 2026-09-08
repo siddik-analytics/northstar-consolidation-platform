@@ -1,6 +1,6 @@
 # Control Framework
 
-**84 controls across 10 categories.** The full machine-readable register is
+**86 controls across 10 categories.** The full machine-readable register is
 [`config/controls/control_register.csv`](../config/controls/control_register.csv); this
 document explains the design.
 
@@ -153,6 +153,66 @@ notice date and the collections sweep date as policy rather than leaving them im
 average-drawn assumption that the facility's own roll-forward contradicts misstates the
 interest cost and the covenant coverage ratio at the same time, and neither the balance sheet
 nor the cash flow statement will notice. See ADR-0018.
+
+### `CTL-DQ-11` — Source lineage complete and unique
+
+Every conformed financial row carries the source system, the file, its ordinal within that
+file, the source account and account name as the system spelled them, the native amount
+*before* sign normalisation, the source period as posted, the journal and document
+identifiers and the line number. The declared grain — ERP, file, journal, line — is unique,
+and the ordinal runs 1..N within every file with no gap.
+
+Two different failures are covered. A row that cannot be walked back to a byte range in a
+named file cannot be defended in an audit, however correct it is. And a gap in the ordinal is
+a dropped row, which no total will reveal because the total was computed after the row went
+missing.
+
+### `CTL-MAP-09` — Mapping rule set integrity
+
+The rule set is validated before any data is mapped: every conditional account declares
+exactly one default branch, every condition parses and names only permitted fields, every
+target exists in the group chart and is not statistical, identifiers are unique, and every
+rule is effective-dated.
+
+A split with no default branch is a silent fall-through waiting for a posting that does not
+match. A condition naming an unvalidated field is arbitrary code sitting in a configuration
+file, where no control can reach it — which is the failure ADR-0007 and ADR-0020 exist to
+prevent, arriving by a different door.
+
+### `CTL-DQ-09` — Numeric and date parsing
+
+Strengthened in Phase 3. It originally asked for zero nulls after parsing, and a fault
+fixture proved that insufficient: a German `13.068,03` written as `13.068.03` is not null,
+not blank and not non-numeric. It casts cleanly to 1,306,803 — a hundredfold overstatement —
+and if both legs of the entry are affected it still balances, so the trial balance controls
+are blind to it too.
+
+The control now requires every raw amount string to conform to **its own ERP's numeric
+grammar before it is cast**, as an anchored expression per system, each exactly what that
+system emits rather than a permissive superset. Phase 3 implements it as `P3-ING-13`.
+
+### The source exception register
+
+A control that fails because of a defect in data the team does not own is a different animal
+from a control that fails because the pipeline is wrong, and treating them the same destroys
+one of them. Downgrade the first to a warning and it stops being read; leave it failing and
+the build is red every day until nobody looks.
+
+`config/controls/source_exception_register.csv` quarantines the first kind. Each accepted
+finding records the **population it was accepted at**, and the control compares against that
+baseline:
+
+| Measured | Outcome |
+|---|---|
+| nil | `PASS` — the source was corrected |
+| equal to the accepted population | `SOURCE_FINDING` — the known defect, unchanged |
+| **more** than accepted | **`FAIL`** — something new is wrong |
+| fewer than accepted | **`FAIL`** — retire the exception, it is stale |
+
+The third row is the one that earns the register. Without it, a *new* break of exactly the
+same shape as an accepted one hides inside it and no control ever moves. Each entry also
+carries an expiry — the phase at which the underlying defect is expected to be corrected — so
+an exception cannot quietly become permanent.
 
 ### `CTL-CON-09` — Consolidation layer integrity
 Every fact row carries a `layer_id` from the defined set of five. This is a small control

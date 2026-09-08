@@ -24,3 +24,7 @@ answer are documented in the design docs, not here.
 | [0016](0016-source-layer-measurement-reserve.md) | The source-layer difference is a disclosed equity reserve, never a plug | **Superseded by 0017** |
 | [0017](0017-layer-1-equity-bridge-and-derived-cta.md) | The layer-1 equity bridge, and a CTA derived from source balances | Accepted |
 | [0018](0018-revolver-utilisation-and-interest.md) | Revolver interest priced off a daily utilisation model | Accepted |
+| [0019](0019-five-layer-ingestion-with-line-level-lineage.md) | Five ingestion layers, ERP-specific adapters, line-level lineage | Accepted |
+| [0020](0020-mapping-rules-as-an-executable-configuration-language.md) | Mapping rules as an executable configuration language | Accepted |
+| [0021](0021-source-findings-are-baselined-not-downgraded.md) | Three control states, and a source finding baselined at its population | Accepted |
+| [0022](0022-money-is-decimal-and-artefacts-are-totally-ordered.md) | Money is DECIMAL; every committed artefact is written in a total order | Accepted |
