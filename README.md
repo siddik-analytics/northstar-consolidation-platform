@@ -75,7 +75,7 @@ python -m pip install -r requirements.txt
 
 python src/anchors/build_anchors.py    # rebuild the financial anchors and their documentation
 python -m src.generation.build         # generate the source systems (~30 s, 1.08m journal lines)
-python -m src.generation.validate      # run the 79 source controls
+python -m src.generation.validate      # run the 80 source controls
 python -m src.generation.faults        # inject and detect the source fault fixtures
 python -m src.pipeline.run             # ingest, normalise, map and conform (~110 s)
 python -m src.pipeline.faults          # run every fault fixture through the real pipeline
@@ -86,11 +86,11 @@ Expected output:
 
 ```
 All integrity assertions passed (BS balances; CF ties to BS cash).
-79/79 controls passed
+80/80 controls passed
 10 fault fixtures written to data/faults/ ... all DETECTED
 62/62 controls passed, 0 source findings, 0 blocking failures
 10/10 faults handled as intended
-390 passed
+401 passed
 ```
 
 The generated data is ~166 MB and is not committed — it rebuilds byte-for-byte from a fixed
@@ -149,6 +149,7 @@ tests/           Automated validation
 | [Phase 2.2 report](docs/phases/phase-02-2-report.md) | The measurement reserve removed, a CTA derived from source balances, revolver interest reconciled to daily utilisation |
 | [Phase 3 report](docs/phases/phase-03-report.md) | 1.08m lines ingested from three ERPs, harmonised to one chart, and four source defects found |
 | [Phase 3.1 report](docs/phases/phase-03-1-report.md) | those four defects corrected at the generator, the source regenerated, and both control baselines clean |
+| [Phase 3.2 report](docs/phases/phase-03-2-report.md) | two more defects, found by the consolidation engine rather than by a source control, corrected at the generator |
 
 | Design | |
 |---|---|

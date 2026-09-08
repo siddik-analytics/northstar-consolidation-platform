@@ -237,6 +237,36 @@ name is the same failure wearing a tidier number: Phase 3 reported 1,080,782 ing
 Dispositions that must be nil are stated at nil rather than omitted. A category missing from
 a bridge reads as a category nobody thought to look for.
 
+### `CTL-CON-03` — Investment elimination, and where a control's population comes from
+
+`P2-INV-01` reconciles the investments the ledgers hold to the approved investment register.
+It used to walk the **ledger's** balances and look each one up in the register, so an
+investment the register required and no ledger held was never looked at — and when exactly
+that happened, USD 16.9m disappeared from an opening balance sheet while the trial balance
+still closed, because the missing asset only made the retained-earnings plug smaller
+(P3-D-06).
+
+That is the second time this shape has cost a phase. `P2-IC-01` iterated the intercompany
+lines that already carried a counterparty; `P2-INV-01` iterated the investments the ledger
+already held. Both were written by somebody who knew what the answer should be and checked
+that the data agreed with itself, and agreeing with itself was never in doubt.
+
+**A control's population comes from the authority that requires the data, never from the data
+itself.** The register says which investments must exist; the flow matrix says which
+intercompany relationships must exist; the FX policy says which translation bases must exist.
+`P2-INV-01` now starts from the register and reports missing, unexpected, wrong parent, wrong
+subsidiary, wrong amount, wrong effective date and duplicate relationship separately, over the
+463 relationship-periods the register requires.
+
+### `CTL-FX-10` — the opening translation base, recomputed rather than trusted
+
+`P2-FX-04` recomputes every entity's opening translation base from the rule its opening
+balance sheet is built with, and compares it with what the generator registered. It exists
+because those two were produced by different parts of the generator and disagreed for one
+entity: the balance sheet was stated at the FY2022 closing anchor and registered at the
+January 2023 close (P3-D-05). Nothing balanced differently — the 2.1% difference simply became
+CTA, which no self-consistency check can see and only an independent recomputation catches.
+
 ### The source exception register
 
 A control that fails because of a defect in data the team does not own is a different animal

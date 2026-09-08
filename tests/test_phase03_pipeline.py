@@ -414,7 +414,7 @@ def test_the_clean_baseline_carries_no_source_finding():
     findings = [r for r in read(CONTROL_RESULTS) if r["status"] == "SOURCE_FINDING"]
     assert not findings, [f"{r['control_id']}: {r['measured']}" for r in findings]
     for row in findings:
-        assert re.fullmatch(r"P2-D-\d{2}", row["defect_reference"]), row["control_id"]
+        assert re.fullmatch(r"P[23]-D-\d{2}", row["defect_reference"]), row["control_id"]
 
 
 @needs_warehouse
@@ -507,7 +507,9 @@ def test_every_accepted_source_finding_is_registered_with_its_population():
     assert register, "the source exception register is empty"
     for row in register:
         assert re.fullmatch(r"SX-\d{3}", row["exception_id"]), row
-        assert re.fullmatch(r"P2-D-\d{2}", row["defect_reference"]), row
+        # defects are numbered by the phase whose data they belong to: P2-D-nn for the
+        # Phase 2 source layer, P3-D-nn for the Phase 3.1 conformed layer Phase 4 read
+        assert re.fullmatch(r"P[23]-D-\d{2}", row["defect_reference"]), row
         assert int(row["accepted_population"]) == 0, \
             f"{row['exception_id']} is closed and must accept nothing"
         assert row["status"] == "CLOSED", row["exception_id"]

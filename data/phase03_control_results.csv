@@ -1,6 +1,6 @@
 control_id,control_name,severity,status,measured,threshold,defect_reference,detail
 P3-ING-01,Every source extract file is ingested,BLOCKING,PASS,507,507,,one parsed partition per file present in data/raw
-P3-ING-02,Row counts survive ingestion,BLOCKING,PASS,1094996,1094996,,"parsed rows equal the data rows in the extract files, counted independently"
+P3-ING-02,Row counts survive ingestion,BLOCKING,PASS,1094997,1094997,,"parsed rows equal the data rows in the extract files, counted independently"
 P3-ING-03,Windows-1252 text decodes without loss,BLOCKING,PASS,0,0,,no replacement character in any Kestrel German account or item text
 P3-ING-04,Every amount parses under its declared locale,BLOCKING,PASS,0,0,,German point-thousands / comma-decimal and US thousands separators
 P3-ING-05,Every posting date parses,BLOCKING,PASS,0,0,,"ISO, US MM/DD/YYYY and German DD.MM.YYYY"
@@ -20,8 +20,8 @@ P3-TB-05,Mapping changes no amount,BLOCKING,PASS,0.000000,0.005,,the standardise
 P3-TB-06,No account class has had its sign inverted,BLOCKING,PASS,0,0,P2-D-01,"assets carry debit balances, liabilities, equity and revenue carry credits; contra and genuinely bidirectional accounts are named and excluded, never inferred. The accepted exception is contract assets at the Kestrel entities, driven into a credit balance by unclassified accrued-income postings."
 P3-MAP-01,No line is left unresolved,BLOCKING,PASS,0,0,,an unresolved line goes to data/10_staging/exceptions/mapping_exceptions.csv and blocks the close; it never defaults silently
 P3-MAP-02,No line matches more than one rule branch,BLOCKING,PASS,0,0,,"priority does not resolve an ambiguity, it hides one: a line matching two branches is an exception, not a lookup"
-P3-MAP-03,Mapping agrees with the acceptance oracle where the source classified the line,BLOCKING,PASS,1094996/1094996 = 100.000000%,100.000000%,,the expected-mapping manifest is read here and nowhere else; the engine derives the group account from the approved charts and rules alone
-P3-MAP-04,Mapping agreement across every line,WARNING,PASS,0,0,P2-D-01,1094996 of 1094996 lines agree with the oracle (100.000000%). Every disagreement is a posting the source system left unclassified; see P3-MAP-13.
+P3-MAP-03,Mapping agrees with the acceptance oracle where the source classified the line,BLOCKING,PASS,1094997/1094997 = 100.000000%,100.000000%,,the expected-mapping manifest is read here and nowhere else; the engine derives the group account from the approved charts and rules alone
+P3-MAP-04,Mapping agreement across every line,WARNING,PASS,0,0,P2-D-01,1094997 of 1094997 lines agree with the oracle (100.000000%). Every disagreement is a posting the source system left unclassified; see P3-MAP-13.
 P3-MAP-05,Every mapping is effective at the posting date,BLOCKING,PASS,0,0,,"effective-dated mappings are evaluated against the posting date, not the load date"
 P3-MAP-06,Every conditional account declares a default branch,BLOCKING,PASS,0,0,,a split with no default is a silent fall-through waiting to happen
 P3-MAP-07,Every rule target exists and is not statistical,BLOCKING,PASS,0,0,,"CTL-MAP-02, CTL-MAP-03"
@@ -30,7 +30,7 @@ P3-MAP-09,"Mapping coverage of value, not just of codes",BLOCKING,PASS,100.0,99.
 P3-MAP-10,German total-cost-method items are reclassified into cost of sales,BLOCKING,PASS,"613/613 to cost of sales, 0 left in revenue","all, none",,Bestandsveraenderung and aktivierte Eigenleistungen sit above the revenue line under the Gesamtkostenverfahren and inside cost of sales under the group's cost-of-sales presentation
 P3-MAP-11,Every presentation reclassification is flagged and traceable,BLOCKING,PASS,613,613,,"the source presentation stays visible on the line: source account, source account name in German, and the reclassification type"
 P3-MAP-12,A line's declared function agrees with the cost centre it was posted to,BLOCKING,PASS,0,0,P2-D-02,"0 local. The posting declares one classification and sits in a cost centre carrying another. The declared attribute is authoritative for the mapping contract, so the mapping is right; the source data is not self-corroborating."
-P3-REC-12,Every ingested row has exactly one disposition in every bridge,BLOCKING,PASS,[],0,,"1,094,996 ingested rows partitioned three ways -- by journal character, by mapping status and by oracle grading. Each partition sums to the ingested count with no residue, so no row is silently dropped between stages and no unexplained difference between two population counts can survive."
+P3-REC-12,Every ingested row has exactly one disposition in every bridge,BLOCKING,PASS,[],0,,"1,094,997 ingested rows partitioned three ways -- by journal character, by mapping status and by oracle grading. Each partition sums to the ingested count with no residue, so no row is silently dropped between stages and no unexplained difference between two population counts can survive."
 P3-MAP-13,Every posting to a conditional account carries the attribute its rules read,WARNING,PASS,0,0,P2-D-01,"0 postings carry no attribute their account's rules read. Opening-balance, year-end-close and special-period journals are written without the line attributes the mapping contract requires, so the split cannot be derived."
 P3-DIM-01,Every entity resolves to a real operating entity,BLOCKING,PASS,0,0,,an elimination entity must never appear in a source extract
 P3-DIM-02,Every cost centre resolves to the master,BLOCKING,PASS,0,0,,CTL-DQ-08

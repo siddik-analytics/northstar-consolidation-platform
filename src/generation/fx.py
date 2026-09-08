@@ -19,6 +19,8 @@ always a multiplication and an inverted pair is detectable by range (CTL-FX-05).
 
 from __future__ import annotations
 
+from datetime import date as _date
+
 import numpy as np
 
 from .common import (ACTUAL_PERIODS, CONFIG, PLAN_YEAR, Period, REFERENCE, read_csv,
@@ -127,6 +129,14 @@ def rate_lookup(rows: list[dict]) -> dict[tuple[str, int, str, str], float]:
             r["rate_usd_per_unit"] for r in rows}
 
 
+#: The first day of the modelled window. An entity consolidated on or before it opens from
+#: the FY2022 closing balance sheet; one consolidated after it opens from its own
+#: acquisition-date balance sheet. `series.opening_bs_usd()` applies the same test when it
+#: converts opening balances into local currency, and the two must agree or the translation
+#: base is stated at a different rate from the balance it is the base for (P3-D-05).
+WINDOW_OPENS = _date(2023, 1, 1)
+
+
 def historical_rates(entities) -> list[dict]:
     """
     Entity- and event-specific historical rates for equity translation (FX-P03/FX-P16).
@@ -140,8 +150,24 @@ def historical_rates(entities) -> list[dict]:
     for e in entities.values():
         eff = e.effective_from
         pk = eff.year * 100 + eff.month
-        # Pre-2023 events use the 2022 closing anchor; later ones the month's closing spot.
-        if pk < 202301:
+        # Which rate an entity's opening balance sheet is stated at depends on WHEN that
+        # balance sheet is, and there are only two cases.
+        #
+        # An entity already in the group when the modelled window opens has its opening
+        # balance sheet at 31 December 2022, so its base is the FY2022 closing anchor. That
+        # includes an entity whose consolidation begins on 1 January 2023: the opening
+        # position it brings in is the FY2022 closing position, and `opening_bs_usd()`
+        # converts its opening balances into local currency at exactly that anchor. The
+        # test was `pk < 202301`, which put such an entity in the wrong branch and
+        # registered the JANUARY 2023 closing rate as the base for a balance sheet stated
+        # at the DECEMBER 2022 one -- so the two halves of the generator disagreed with
+        # each other about the same opening balance sheet, and the translation base was
+        # 2.1% out for the whole of the entity's life (defect P3-D-05).
+        #
+        # An entity acquired inside the window has its opening balance sheet at the
+        # acquisition date, and `_build_actuals` converts it at that month's closing rate,
+        # so the base is that month's close.
+        if eff <= WINDOW_OPENS:
             rate = _anchor_rates()[(e.currency, 2022, "ACTUAL")][1]
             basis = "FY2022 closing anchor"
         else:

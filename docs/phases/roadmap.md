@@ -205,6 +205,30 @@ and `data/phase03_1_source_diff.json` evidences. See
 
 ---
 
+## Phase 3.2 — Targeted source correction pass ✅
+
+**Deliverables**
+- The two defects the consolidation engine found in the frozen Phase 3.1 layer, corrected at
+  the generation layer
+- `P2-INV-01` redesigned around the authoritative population
+- Regression against the Phase 4 engines already built
+
+**Delivered.** Phase 4 stopped when its translation engine could not reproduce the CTA oracle
+for one entity and its investment elimination found a register relationship that reached no
+ledger. Both are corrected in the generator and the source regenerated: an entity consolidated
+on the first day of the window now opens from the FY2022 closing anchor like every other
+entity that opens there, and every investment the register requires reaches a ledger. The
+opening journal now refuses to post when a counterparty decomposition does not sum to the
+balance it decomposes, which makes the second class of defect impossible for every account.
+
+`P2-INV-01` is rebuilt around the register rather than the ledger — the same control-design
+defect Phase 3.1 found in `P2-IC-01`, and the second time it has cost a phase. **80 of 80**
+Phase 2 controls and **62 of 62** Phase 3 controls pass; CTA now agrees with the oracle for
+**243 of 243** entity-periods; the intercompany elimination is unchanged; no headline anchor
+moved. See [`phase-03-2-report.md`](phase-03-2-report.md).
+
+---
+
 ## Phase 4 — Consolidation engine
 
 **Deliverables**

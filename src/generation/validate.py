@@ -92,6 +92,13 @@ def read_native_trial_balances() -> dict[tuple[str, int], float]:
     return tb
 
 
+def _anchor_close_2022(currency: str) -> float:
+    """The FY2022 closing rate, which is the base every pre-window opening balance sheet is
+    stated at. Read from the same anchor the generator converts those balances with."""
+    from .fx import _anchor_rates
+    return _anchor_rates()[(currency, 2022, "ACTUAL")][1]
+
+
 def run() -> Result:
     r = Result()
     ents = operating_entities()
@@ -479,22 +486,93 @@ def run() -> Result:
           "CA-016; drawings are booked at Topco in USD")
 
     # ---------------- investment in subsidiaries -----------------------------
-    # Phase 2.0 calibrated investment-at-cost to absorb a residual, which left the balances
-    # unexplainable.  Every balance must now reconcile to the investment register.
+    # The AUTHORITATIVE population is the register, not the ledger.
+    #
+    # This control used to walk the ledger's investment balances and look each one up in the
+    # roll-forward. An entity that appeared in the register and had NO ledger balance was
+    # therefore never looked at, and when exactly that happened -- NIG-500's USD 16.9m
+    # holding in NIG-510 vanished from the opening journal while the trial balance still
+    # closed, because the missing asset simply reduced the retained-earnings plug -- the
+    # control ran green for two phases (defect P3-D-06). It is the same shape as the defect
+    # Phase 3.1 found in P2-IC-01: a control measured over the population that already
+    # satisfies it cannot fail.
+    #
+    # The question it now answers is the one that matters: for every relationship and period
+    # the register requires, does the parent's ledger carry that investment, at that amount,
+    # from that date? And is there anything in the ledger the register does not require?
     roll = read_csv(REFERENCE / "investment_rollforward.csv")
-    reg_close = defaultdict(float)
+    register = read_csv(CONFIG / "entities" / "investment_register.csv")
+
+    required = {}                      # (parent, subsidiary, period) -> closing cost
     for row in roll:
-        reg_close[(row["parent_entity"], int(row["period_key"]))] += float(
-            row["closing_cost_usd"])
+        key = (row["parent_entity"], row["subsidiary_entity"], int(row["period_key"]))
+        required[key] = required.get(key, 0.0) + float(row["closing_cost_usd"])
+
     invj = jl[jl["expected_group_account"] == "178100"]
-    led = invj.groupby(["entity_code", "period_key"])["amount_local"].sum().groupby(
-        level=0).cumsum()
+    held = defaultdict(float)          # (parent, subsidiary, period) -> ledger balance
+    running = defaultdict(float)
+    by_period = defaultdict(list)
+    for ent, prt, pk, amt in zip(invj["entity_code"], invj["ic_partner_code"],
+                                 invj["period_key"], invj["amount_local"]):
+        by_period[int(pk)].append((ent, prt, float(amt)))
+    # every period the register covers, not only the ones with a posting in them: an
+    # investment is a BALANCE, and a balance exists in the months nothing happens to it
+    for pk in sorted({p for (_e, _s, p) in required}):
+        for ent, prt, amt in by_period.get(pk, []):
+            running[(ent, prt)] += amt
+        for (ent, prt), v in running.items():
+            held[(ent, prt, pk)] = v
+
+    missing, unexpected, wrong_amount = [], [], []
     worst_inv = 0.0
-    for (ent, pk), v in led.items():
-        worst_inv = max(worst_inv, abs(float(v) - reg_close[(ent, int(pk))]))
-    r.add("P2-INV-01", "Investment balances reconcile to the investment register",
-          "BLOCKING", "PASS" if worst_inv <= 1.0 else "FAIL", f"{worst_inv:.4f}", "1.00",
-          "every balance is the sum of the considerations actually paid; there is no plug")
+    for key, want in sorted(required.items()):
+        got = held.get(key)
+        if got is None:
+            missing.append(key)
+        else:
+            worst_inv = max(worst_inv, abs(got - want))
+            if abs(got - want) > 1.0:
+                wrong_amount.append((key, want, got))
+    for key, got in sorted(held.items()):
+        if abs(got) > 1.0 and key not in required:
+            unexpected.append((key, got))
+
+    # A relationship the ledger carries against a counterparty the register does not name at
+    # all is a wrong parent or a wrong subsidiary; both surface as an unexpected pair.
+    pairs_register = {(row["parent_entity"], row["subsidiary_entity"]) for row in register}
+    pairs_ledger = {(p, s) for (p, s, _pk) in held if abs(held[(p, s, _pk)]) > 1.0}
+    wrong_relationship = sorted(pairs_ledger - pairs_register)
+    duplicates = [k for k in {(row["parent_entity"], row["subsidiary_entity"],
+                               row["event_date"], row["consideration_usd_m"])
+                              for row in register}
+                  if sum(1 for row in register
+                         if (row["parent_entity"], row["subsidiary_entity"],
+                             row["event_date"], row["consideration_usd_m"]) == k) > 1]
+    # An investment that appears in the ledger before the register says it was paid for is a
+    # wrong effective date, and it is invisible to a closing-balance comparison alone.
+    early = []
+    for row in register:
+        first = min((pk for (p, s, pk) in held
+                     if p == row["parent_entity"] and s == row["subsidiary_entity"]
+                     and abs(held[(p, s, pk)]) > 1.0), default=None)
+        if first is None:
+            continue
+        due = int(row["event_date"][:4]) * 100 + int(row["event_date"][5:7])
+        if first < due:
+            early.append((row["investment_id"], due, first))
+
+    failures = (missing, unexpected, wrong_amount, wrong_relationship, duplicates, early)
+    r.add("P2-INV-01",
+          "Every investment the register requires is in the parent's ledger, and nothing else is",
+          "BLOCKING", "PASS" if not any(failures) and worst_inv <= 1.0 else "FAIL",
+          f"{len(missing)} missing, {len(unexpected)} unexpected, {len(wrong_amount)} wrong "
+          f"amount, {len(wrong_relationship)} wrong relationship, {len(duplicates)} duplicate, "
+          f"{len(early)} early; worst {worst_inv:.4f}",
+          "0 of each, 1.00 USD",
+          f"CTL-CON-03, over the {len(required)} relationship-periods the register requires. "
+          f"Detail: missing={missing[:3]} unexpected={unexpected[:3]} "
+          f"wrong_amount={wrong_amount[:3]} wrong_relationship={wrong_relationship[:3]} "
+          f"duplicate={duplicates[:3]} early={early[:3]}")
 
     events = read_csv(CONFIG / "entities" / "investment_register.csv")
     unexplained = [row["investment_id"] for row in events
@@ -627,6 +705,42 @@ def run() -> Result:
           "BLOCKING", "PASS" if worst_row <= 0.0001 and not usd_rows else "FAIL",
           f"{worst_row:.6f}", "0.0001",
           f"{len(cta)} entity-periods; the presentation currency generates none")
+
+    # An entity's opening balance sheet and the rate that balance sheet is stated at are one
+    # fact, and two parts of the generator produce them: `opening_bs_usd()` converts the
+    # opening balances into local currency, and `historical_rates()` registers the base the
+    # consolidation engine will translate them back at. If those two disagree the entity is
+    # translated at a rate its own balance sheet was never stated at, and nothing balances
+    # differently -- the difference simply becomes CTA. That is defect P3-D-05, and this is
+    # the control that makes it impossible: the base is recomputed from the same rule the
+    # opening balance sheet uses and compared with what was registered.
+    import datetime as _d
+    window_opens = _d.date(2023, 1, 1)
+    hist_rows = read_csv(REFERENCE / "fx_rates_historical.csv")
+    ent_master = {row["entity_code"]: row
+                  for row in read_csv(CONFIG / "entities" / "entity_master.csv")}
+    base_wrong = []
+    bases = [row for row in hist_rows if row["group_account"] == "ACQ_OPENING_BS"]
+    for row in bases:
+        code = row["entity_code"]
+        eff = _d.date.fromisoformat(ent_master[code]["consolidation_effective_from"])
+        ccy = ent_master[code]["functional_currency"]
+        if eff <= window_opens:
+            want = _anchor_close_2022(ccy)
+            basis = "FY2022 closing anchor"
+        else:
+            pk = eff.year * 100 + eff.month
+            want = rate(ccy, pk, "CLOSE")
+            basis = f"closing spot {pk}"
+        if abs(float(row["rate_usd_per_unit"]) - want) > 1e-8 or row["basis"] != basis:
+            base_wrong.append((code, row["rate_usd_per_unit"], f"{want:.8f}", row["basis"]))
+    r.add("P2-FX-04", "Every opening balance sheet is registered at the rate it is stated at",
+          "BLOCKING", "PASS" if not base_wrong and bases else "FAIL",
+          f"{len(base_wrong)} of {len(bases)} wrong", "0",
+          "FX-P16. An entity consolidated on or before the first day of the window opens "
+          "from the FY2022 closing balance sheet and its base is the FY2022 anchor; one "
+          "acquired inside the window opens from its acquisition-date balance sheet and "
+          "its base is that month's close. Detail: " + str(base_wrong[:3]))
 
     # ---------------- debt and the revolving facility ------------------------
     util = read_csv(REFERENCE / "revolver_utilisation.csv")

@@ -50,7 +50,7 @@ P2-REC-03,Fixed asset register agrees with capital project spend,BLOCKING,PASS,7
 P2-REC-04,Debt schedule agrees with the anchored term loan balance,BLOCKING,PASS,226.600,226.600,
 P2-IC-01,Intercompany balances match by pair at the closing rate,BLOCKING,PASS,0.1742,1.00,"CTL-IC-01, 1169 entity-pair-periods. Investments in subsidiaries are excluded as non-reciprocal and reconciled by P2-INV-01 instead."
 P2-IC-03,Intercompany flows match by pair at the average rate,BLOCKING,PASS,0.0165,1.00,"CTL-IC-02, 905 entity-pair-periods"
-P2-IC-02,Every intercompany posting names its counterparty,BLOCKING,PASS,"0 missing, 0 self-referencing","0, 0","CTL-IC-04, over all 17,116 intercompany postings outside the year-end close. A balance with no counterparty cannot be eliminated by pair, which is what defect P2-D-03 was."
+P2-IC-02,Every intercompany posting names its counterparty,BLOCKING,PASS,"0 missing, 0 self-referencing","0, 0","CTL-IC-04, over all 17,117 intercompany postings outside the year-end close. A balance with no counterparty cannot be eliminated by pair, which is what defect P2-D-03 was."
 P2-SCN-01,Forecast actual months equal the Actual scenario,BLOCKING,PASS,0.0100,0.05,CTL-SCN-02
 P2-FMT-01,Kestrel uses special period 13 for year-end adjustments,BLOCKING,PASS,542,>0,
 P2-FMT-06,Every declared Kestrel special period is populated,BLOCKING,PASS,"[13, 14, 15, 16]","[13, 14, 15, 16]","13 statutory close, 14 audit, 15 tax, 16 local GAAP to group reporting"
@@ -62,7 +62,7 @@ P2-FMT-03,The three source charts remain genuinely different,BLOCKING,PASS,[],no
 P2-BR-01,No entity runs a materially negative bank balance,WARNING,PASS,0,0,
 P2-BR-04,"Interim balances are driver-generated, not interpolated",BLOCKING,PASS,0 flat of 317; min 0.090,0 flat,linearity 0.0 would be a straight line between anchored year ends
 P2-BR-05,Revolver drawings stay within the committed facility,BLOCKING,PASS,31.5m,60m,CA-016; drawings are booked at Topco in USD
-P2-INV-01,Investment balances reconcile to the investment register,BLOCKING,PASS,0.0000,1.00,every balance is the sum of the considerations actually paid; there is no plug
+P2-INV-01,"Every investment the register requires is in the parent's ledger, and nothing else is",BLOCKING,PASS,"0 missing, 0 unexpected, 0 wrong amount, 0 wrong relationship, 0 duplicate, 0 early; worst 0.0000","0 of each, 1.00 USD","CTL-CON-03, over the 463 relationship-periods the register requires. Detail: missing=[] unexpected=[] wrong_amount=[] wrong_relationship=[] duplicate=[] early=[]"
 P2-INV-02,Every register event has a consideration and an event type,BLOCKING,PASS,[],none,
 P2-ICP-01,Intercompany inventory detail supports a PUP calculation,BLOCKING,PASS,complete,all fields present,
 P2-ICP-02,Implied unrealised profit tracks the anchored PUP,BLOCKING,PASS,4.40%,10%,Phase 4 performs the elimination; Phase 2 carries only the support
@@ -73,6 +73,7 @@ P2-EQ-04,Layer-1 cash ties to the anchor with no reserve in the ledger,BLOCKING,
 P2-FX-01,Contributed capital is constant in local currency,BLOCKING,PASS,0.00,1.00,FX-P03: capital is frozen at the rate ruling when it was contributed and moves only when capital is actually contributed
 P2-FX-02,Anchored CTA is reproduced from source balances and FX policy,BLOCKING,PASS,0.000003,0.001,layer-1 CTA + FX on goodwill and intangibles - the minority's share - the movement in unrealised profit = the anchored group CTA movement
 P2-FX-03,Every CTA row is derivable from source balances and rates,BLOCKING,PASS,0.000001,0.0001,243 entity-periods; the presentation currency generates none
+P2-FX-04,Every opening balance sheet is registered at the rate it is stated at,BLOCKING,PASS,0 of 12 wrong,0,FX-P16. An entity consolidated on or before the first day of the window opens from the FY2022 closing balance sheet and its base is the FY2022 anchor; one acquired inside the window opens from its acquisition-date balance sheet and its base is that month's close. Detail: []
 P2-DBT-01,Revolver roll-forward: opening + draws - repayments = closing,BLOCKING,PASS,0.0000,0.01,"44 months, chained without a break"
 P2-DBT-02,Revolver charge is supported by the daily drawn balance,BLOCKING,PASS,0.002%,0.5%,average daily drawn x (SOFR + 425bps) + commitment fee on the average daily undrawn versus the recorded charge: 2023 1.553v1.553; 2024 2.439v2.439; 2025 2.035v2.035
 P2-DBT-03,Debt schedule agrees with the general ledger every month,BLOCKING,PASS,0.0000,0.05,"balances are read from the ledger, not interpolated between year ends"

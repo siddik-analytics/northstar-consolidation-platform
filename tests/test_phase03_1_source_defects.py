@@ -328,7 +328,9 @@ def test_every_source_exception_is_closed_and_says_how():
             f"{row['exception_id']} is closed but still accepts a population"
         assert row["closed_in_phase"], f"{row['exception_id']} does not say when it closed"
         assert row["correction"], f"{row['exception_id']} does not say what fixed it"
-        assert re.fullmatch(r"P2-D-\d{2}", row["defect_reference"])
+        # defects are numbered by the phase whose data they belong to: P2-D-nn for the
+        # Phase 2 source layer, P3-D-nn for the Phase 3.1 conformed layer Phase 4 read
+        assert re.fullmatch(r"P[23]-D-\d{2}", row["defect_reference"]), row
 
 
 def test_a_recurrence_of_a_closed_defect_fails_rather_than_passing():

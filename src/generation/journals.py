@@ -553,6 +553,22 @@ class JournalGenerator:
         for (a, prt), v in sorted(ic_split.items()):
             if abs(v) >= 0.005:
                 legs.append((a, round(v, 2), {"_partner": prt}))
+        # A decomposition has to sum to the thing it decomposes. Intercompany balances are
+        # brought forward one counterparty at a time, so the opening journal takes them from
+        # the split rather than from the balance -- and if the split is short, the balance
+        # silently vanishes into the retained-earnings plug and the entry still balances.
+        # That is how P3-D-06 hid: an investment held at the opening date was omitted from
+        # its own decomposition and the trial balance closed anyway.
+        for account in IC_BALANCE_ACCOUNTS:
+            whole = balances.get(account, 0.0)
+            parts = sum(v for (a, _p), v in ic_split.items() if a == account)
+            if abs(whole - parts) >= 0.005:
+                raise AssertionError(
+                    f"{entity} opening {account}: the counterparty decomposition sums to "
+                    f"{parts:,.2f} against an opening balance of {whole:,.2f}. A balance "
+                    f"that is not fully attributed would be absorbed into the retained "
+                    f"earnings plug and the entry would still balance (P3-D-06).")
+
         if not legs:
             return []
         # The plug is derived from the ROUNDED legs, so the entry balances to the cent.

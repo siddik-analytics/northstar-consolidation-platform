@@ -2,13 +2,20 @@
 
 Phase 4 must not repair upstream data inside the consolidation engine. Where it finds a
 genuine defect in the frozen Phase 3.1 layer, it stops, documents it, and reports it. This
-file is that record. **Nothing listed here has been patched.**
+file is that record.
+
+> **Both defects are now CLOSED.** They were corrected at the generation layer in the
+> approved Phase 3.2 pass and the source layer was regenerated from the corrected code; no
+> generated artefact was edited by hand and the consolidation engine carries no override.
+> `docs/phases/phase-03-2-report.md` records the corrections, their financial effect and the
+> regression against the Phase 4 engines. The analysis below is left as it was written, when
+> both were open, because it is the evidence the corrections were made against.
 
 ---
 
 ## P3-D-05 — the opening translation rate registered for NIG-510 is the wrong month's close
 
-**Status:** OPEN — escalated to the owner. The frozen file is unchanged.
+**Status:** CLOSED in Phase 3.2 (SX-008). Originally raised as OPEN; the analysis below is as written then.
 
 **Where.** `data/reference/fx_rates_historical.csv`, one row:
 
@@ -82,7 +89,7 @@ than absorbed into a tolerance. Every other entity-period agrees.
 
 ## P3-D-06 — the investment in NIG-510 is in the register but not in any ledger
 
-**Status:** OPEN — escalated to the owner. The frozen layer is unchanged.
+**Status:** CLOSED in Phase 3.2 (SX-009). Originally raised as OPEN; the analysis below is as written then.
 
 **What it is.** `NIG-500`'s USD 16.9m investment in `NIG-510` Northstar Parts UK exists in
 both registers and in **no ledger**:

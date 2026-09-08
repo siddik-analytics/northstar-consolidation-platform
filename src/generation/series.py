@@ -813,10 +813,20 @@ class SeriesBuilder:
                         em.ic_open = carry_ic
                     else:
                         em.ic_open = {}
+                        # No live_at() filter here, deliberately. The opening balance
+                        # sheet carries the investments the parent HELD at the opening
+                        # date, and `opening_bs_usd()` builds it from exactly that
+                        # population; a subsidiary acquired on the closing date is bought
+                        # and paid for even though its consolidation starts the next day.
+                        # Filtering this decomposition on consolidation instead dropped one
+                        # relationship, and because the opening journal takes intercompany
+                        # accounts only from the decomposition, USD 16.9m of investment
+                        # disappeared from the ledger while the trial balance still closed
+                        # -- the plug simply moved into retained earnings (P3-D-06).
                         em.ic_open.update({
                             ("178100", sub): amt * 1e6
                             for (par, sub), amt in investments_at(open_at).items()
-                            if par == code and self.lb.live_at(sub, open_at)})
+                            if par == code})
                         if code != "NIG-100" and code in ic_loans:
                             opening_loan = carry.get("235100", 0.0)
                             if opening_loan:
