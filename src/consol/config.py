@@ -63,13 +63,20 @@ NCI_IN_PL = "850100"          # net income attributable to NCI, below tax
 
 #: Consolidation-created accounts. None of these exists in any source ledger.
 GOODWILL = "160100"
-PPA_INTANGIBLES = ("160200", "160300")
-PPA_ACCUM_AMORT = "165100"
+#: The approved group chart already carries the acquired intangible classes and their
+#: accumulated amortisation. The engine posts to those rather than inventing accounts:
+#: an account that exists in a journal and not in the chart is silently dropped by every
+#: join, and the balance sheet stops balancing by exactly the amount nobody can see.
+PPA_INTANGIBLES = ("165100", "165200")     # customer relationships, technology and patents
+PPA_ACCUM_AMORT = "166100"
 PPA_AMORT_EXPENSE = "720100"
 PPA_DTL = "240100"
 INVESTMENT = "178100"
 PUP_INVENTORY = "130500"
-PUP_COS = "530300"
+#: The chart has no dedicated line for the unrealised-profit charge, so it is posted to the
+#: inventory adjustment account, which is inside cost of sales where the design requires the
+#: charge to sit. Recorded here rather than added to the approved chart.
+PUP_COS = "530100"
 
 #: The intercompany BALANCE relationship, as two sides rather than as account pairs.
 #:
