@@ -61,6 +61,17 @@ Phase 4 constructs removed. Tolerance 0.5%, unchanged from Phase 2 and not relax
 
 ---
 
+## 2a. The population bridge
+
+Before any figure is reconciled, the population is. `rpt_population_bridge` assigns every
+ingested row exactly one disposition in each of three partitions — journal character, mapping
+status, oracle grading — and each partition sums to the ingested row count with no residue
+(`P3-REC-12`).
+
+This is deliberately the first thing in the chain. A reconciliation that agrees over a
+population that has quietly lost rows agrees about nothing, and a dropped balanced journal
+leaves the trial balance closing exactly as it did before.
+
 ## 3. Gross margin by business unit — the control that matters
 
 This is the reconciliation that catches a mapping which is wrong but still balances. Move

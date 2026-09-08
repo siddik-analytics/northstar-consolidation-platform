@@ -16,7 +16,7 @@ AURORA,1540,Computer Equipment,DIRECT,150500,150500,,Computer hardware and softw
 AURORA,1550,Leasehold Improvements,DIRECT,150600,150600,,Leasehold improvements,BS,FALSE
 AURORA,1590,Accumulated Depreciation,DIRECT,155100,155100,,Accumulated depreciation,BS,FALSE
 AURORA,1595,Operating Lease ROU Asset,DIRECT,158100,158100,,Operating lease right-of-use assets,BS,FALSE
-AURORA,1160,Intercompany Notes Receivable,SPLIT,175100,175100,,Intercompany loans receivable - non-current,BS,FALSE
+AURORA,1160,Intercompany Notes Receivable,SPLIT,175100,175100,maturity_months=60,Intercompany loans receivable - non-current,BS,FALSE
 AURORA,1750,Investment in Subsidiaries,DIRECT,178100,178100,,Investments in subsidiaries,BS,FALSE
 AURORA,1790,Other Long Term Assets,DIRECT,180100,180100,,Other non-current assets,BS,FALSE
 AURORA,2000,Accounts Payable - Trade,DIRECT,210100,210100,,Trade accounts payable,BS,FALSE
@@ -55,11 +55,11 @@ AURORA,4920,Management Fee Income,DIRECT,490300,490300,,Intercompany management 
 AURORA,4930,Royalty Income,DIRECT,490400,490400,,Intercompany royalty income,IS,FALSE
 AURORA,5000,Cost of Goods Sold - Materials,DIRECT,510100,510100,,Direct materials,IS,FALSE
 AURORA,5010,Cost of Goods Sold - Purchased Parts,DIRECT,510200,510200,,Purchased components,IS,FALSE
-AURORA,6150,Temporary Labor,SPLIT,510300,510300,dept_function=PRODUCTION,Subcontract costs,IS,FALSE
+AURORA,6150,Temporary Labor,SPLIT,510300,510300,dept_function=PRODUCTION|FIELD,Subcontract costs,IS,FALSE
 AURORA,6100,Salaries and Wages,SPLIT,515100,515100,dept_function=PRODUCTION,Direct labour - production,IS,FALSE
-AURORA,6110,Employee Benefits,SPLIT,515300,515300,dept_function=PRODUCTION,Direct labour burden and benefits,IS,FALSE
-AURORA,6100,Salaries and Wages,SPLIT,520100,520100,dept_function=INDIRECT_OPS,Overhead - indirect labour,IS,FALSE
-AURORA,6200,Rent,SPLIT,520200,520200,dept_function=PRODUCTION,Overhead - facilities and utilities,IS,FALSE
+AURORA,6110,Employee Benefits,SPLIT,515300,515300,dept_function=PRODUCTION|FIELD|PROJECT,Direct labour burden and benefits,IS,FALSE
+AURORA,6100,Salaries and Wages,SPLIT,520100,520100,dept_function=INDIRECT_OPS|FIELD,Overhead - indirect labour,IS,FALSE
+AURORA,6200,Rent,SPLIT,520200,520200,dept_function=PRODUCTION|INDIRECT_OPS,Overhead - facilities and utilities,IS,FALSE
 AURORA,5100,Manufacturing Overhead,SPLIT,520300,520300,dept_function=INDIRECT_OPS,Overhead - supplies and consumables,IS,FALSE
 AURORA,5400,Freight Out,DIRECT,525100,525100,,Freight and logistics,IS,FALSE
 AURORA,5410,Duties and Customs,DIRECT,525200,525200,,Duties and tariffs,IS,FALSE
@@ -168,7 +168,7 @@ SABLE,50300,Job Cost - Subcontractors,DIRECT,510300,510300,,Subcontract costs,IS
 SABLE,50100,Job Cost - Labor,DIRECT,515200,515200,,Direct labour - field and project,IS,FALSE
 SABLE,50110,Job Cost - Labor Burden,DIRECT,515300,515300,,Direct labour burden and benefits,IS,FALSE
 SABLE,51000,Shop and Yard Overhead,DIRECT,520100,520100,,Overhead - indirect labour,IS,FALSE
-SABLE,60700,Safety Training and Certification,SPLIT,520300,520300,dept_function=FIELD,Overhead - supplies and consumables,IS,FALSE
+SABLE,60700,Safety Training and Certification,SPLIT,520300,520300,dept_code=D200|D205|D215,Overhead - supplies and consumables,IS,FALSE
 SABLE,65100,Company Vehicles,SPLIT,520400,520400,dept_function=FIELD,Overhead - equipment and tool rental,IS,FALSE
 SABLE,50600,Job Cost - Freight,DIRECT,525100,525100,,Freight and logistics,IS,FALSE
 SABLE,51900,Contract EAC Adjustment,DIRECT,535100,535100,,Contract estimate-at-completion adjustments,IS,FALSE
@@ -200,7 +200,7 @@ SABLE,66000,Office and Administrative,DIRECT,670100,670100,,Office supplies and 
 SABLE,66100,Banking and Merchant Fees,DIRECT,670200,670200,,Bank charges,IS,FALSE
 SABLE,66200,Licenses and Permits,DIRECT,670300,670300,,Dues and subscriptions,IS,FALSE
 SABLE,66900,Other Operating Expense,DIRECT,670400,670400,,Other operating expenses,IS,FALSE
-SABLE,68000,Restructuring Costs,SPLIT,680100,680100,,Restructuring - severance,IS,FALSE
+SABLE,68000,Restructuring Costs,SPLIT,680100,680100,cost_type=SEVERANCE,Restructuring - severance,IS,FALSE
 SABLE,62000,Professional Fees,SPLIT,680400,680400,dept_code=D910,Integration and ERP programme costs,IS,FALSE
 SABLE,68400,Claims and Settlements,DIRECT,680600,680600,,Legal settlements and claims,IS,FALSE
 SABLE,69000,Management Fee - Affiliate,DIRECT,695100,695100,,Intercompany management fee expense,IS,FALSE
@@ -263,19 +263,19 @@ KESTREL,00089000,Intercompany Revenue,SPLIT,490100,490100,partner_bu=FC,Intercom
 KESTREL,00089000,Intercompany Revenue,SPLIT,490200,490200,partner_bu=IS,Intercompany service revenue,IS,FALSE
 KESTREL,00090000,Cost of Materials,DIRECT,510100,510100,,Direct materials,IS,FALSE
 KESTREL,00090200,Cost of Purchased Goods,DIRECT,510200,510200,,Purchased components,IS,FALSE
-KESTREL,00091600,Temporary Staff,SPLIT,510300,510300,cost_center_function=PRODUCTION,Subcontract costs,IS,FALSE
+KESTREL,00091600,Temporary Staff,SPLIT,510300,510300,cost_center_function=PRODUCTION|FIELD|PROJECT,Subcontract costs,IS,FALSE
 KESTREL,00091000,Wages and Salaries,SPLIT,515100,515100,cost_center_function=PRODUCTION,Direct labour - production,IS,FALSE
-KESTREL,00091000,Wages and Salaries,SPLIT,515200,515200,cost_center_function=FIELD,Direct labour - field and project,IS,FALSE
-KESTREL,00091200,Social Security Contributions,SPLIT,515300,515300,cost_center_function=PRODUCTION,Direct labour burden and benefits,IS,FALSE
+KESTREL,00091000,Wages and Salaries,SPLIT,515200,515200,cost_center_function=FIELD|PROJECT,Direct labour - field and project,IS,FALSE
+KESTREL,00091200,Social Security Contributions,SPLIT,515300,515300,cost_center_function=PRODUCTION|FIELD|PROJECT|INDIRECT_OPS,Direct labour burden and benefits,IS,FALSE
 KESTREL,00091000,Wages and Salaries,SPLIT,520100,520100,cost_center_function=INDIRECT_OPS,Overhead - indirect labour,IS,FALSE
 KESTREL,00093000,Rent and Leases,SPLIT,520200,520200,cost_center_function=PRODUCTION,Overhead - facilities and utilities,IS,FALSE
 KESTREL,00090000,Cost of Materials,DIRECT,510100,520300,,Overhead - supplies and consumables,IS,TRUE
-KESTREL,00091600,Temporary Staff,SPLIT,510300,520400,cost_center_function=PRODUCTION,Overhead - equipment and tool rental,IS,TRUE
-KESTREL,00091600,Temporary Staff,SPLIT,510300,525100,cost_center_function=PRODUCTION,Freight and logistics,IS,TRUE
+KESTREL,00091600,Temporary Staff,SPLIT,510300,520400,cost_center_function=PRODUCTION|FIELD|PROJECT,Overhead - equipment and tool rental,IS,TRUE
+KESTREL,00091600,Temporary Staff,SPLIT,510300,525100,cost_center_function=PRODUCTION|FIELD|PROJECT,Freight and logistics,IS,TRUE
 KESTREL,00090000,Cost of Materials,DIRECT,510100,525200,,Duties and tariffs,IS,TRUE
 KESTREL,00081000,Change in Finished Goods Inventory,DERIVED,530100,530100,presentation=TOTAL_COST_METHOD,Inventory adjustments and scrap,IS,FALSE
 KESTREL,00090000,Cost of Materials,DIRECT,510100,530200,,Warranty expense,IS,TRUE
-KESTREL,00091600,Temporary Staff,SPLIT,510300,535100,cost_center_function=PRODUCTION,Contract estimate-at-completion adjustments,IS,TRUE
+KESTREL,00091600,Temporary Staff,SPLIT,510300,535100,cost_center_function=PRODUCTION|FIELD|PROJECT,Contract estimate-at-completion adjustments,IS,TRUE
 KESTREL,00090600,Intercompany Cost of Materials,DIRECT,590100,590100,,Intercompany cost of sales - product,IS,FALSE
 KESTREL,00090600,Intercompany Cost of Materials,DIRECT,590100,590200,,Intercompany cost of sales - services,IS,TRUE
 KESTREL,00091000,Wages and Salaries,SPLIT,610100,610100,cost_center_function=SGA,Salaries and wages,IS,FALSE

@@ -161,6 +161,7 @@ def build(con: duckdb.DuckDBPyConnection) -> dict[str, int]:
     counts["rpt_group_account_coverage"] = con.execute(
         "SELECT count(*) FROM rpt_group_account_coverage").fetchone()[0]
 
+
     # ------------------------------------------------------- validation views
     # LAYER 1 ONLY. Both legs of every intercompany transaction are present, nothing is
     # eliminated and nothing is translated, so these are not financial statements and are

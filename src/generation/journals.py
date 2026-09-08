@@ -27,6 +27,18 @@ import numpy as np
 from .common import PERIOD_BY_KEY, Period, rng, stable_id
 from .masters import ACCOUNT_DEPTS, DEFAULT_DEPT, DEPT_FUNCTION
 
+
+def _accepted(value) -> tuple[str, ...]:
+    """A required attribute is one value or a set of them, and reads the same either way.
+
+    The approved chart rules are frequently a set -- Kestrel's temporary-staff account goes
+    to cost of sales for PRODUCTION, FIELD *or* PROJECT cost centres -- and an entity that
+    does no manufacturing can still satisfy such a rule through the members it does have.
+    """
+    if value is None:
+        return ()
+    return (value,) if isinstance(value, str) else tuple(value)
+
 # group account -> the balance sheet account its P&L posting settles against
 COUNTERPART = {
     "410100": "120100", "410200": "120100", "415100": "120100", "425200": "120100",
@@ -99,6 +111,14 @@ SETTLEMENT_TX = {
 PPE_ACCOUNTS = ["150200", "150300", "150400", "150500", "150600", "150800"]
 INVENTORY_ACCOUNTS = ["130100", "130200", "130300"]
 
+#: Balance sheet accounts whose balance is, by definition, owed to or by another group
+#: entity. Every posting to one of these must name the counterparty: without it a balance
+#: cannot be attributed to an entity pair and the Phase 4 elimination has nothing to match
+#: on (CTL-IC-04). They are settled by counterparty in their own stage, so they are
+#: excluded from the account-level settlement loops that follow it.
+IC_BALANCE_ACCOUNTS = ("120500", "210500", "125100", "225100", "175100", "235100",
+                       "178100")
+
 DOC_TYPE = {
     "SALES_INVOICE": "SI", "CREDIT_NOTE": "CN", "PURCHASE_INVOICE": "PI",
     "PAYROLL_ACCRUAL": "PY", "DEPRECIATION": "DP", "ACCRUAL": "AC",
@@ -125,7 +145,13 @@ SPECIAL_PERIOD_ADJUSTMENTS = {
     ]),
     15: ("TAX_ADJUSTMENT", "Tax return true-up", [
         ("810300", "830100", 0.60),      # corporate income tax versus trade tax
-        ("218100", "219100", 0.40),      # and the same split on the balance sheet
+        # There is deliberately NO balance sheet leg. The true-up reallocates the CHARGE
+        # between Koerperschaftsteuer and Gewerbesteuer; the amount owed to the tax
+        # authority does not change, and both are income taxes payable at group level, so
+        # the payable is not reclassified either. The leg that used to sit here moved the
+        # corporation tax payable into 219100 -- the VAT account, which is an accrued
+        # liability and not an income tax -- and so crossed an anchored balance sheet
+        # caption. That was defect P2-D-04.
     ]),
     16: ("GROUP_GAAP_ADJUSTMENT", "Local GAAP to group policy", [
         ("215600", "215400", 0.50),      # warranty provision to the group category
@@ -145,19 +171,105 @@ class JournalGenerator:
                 cc["department_code"], []).append(cc)
 
     # ------------------------------------------------------------------ helpers
-    def _cost_centre(self, entity: str, account: str) -> tuple[str, str, str]:
+    def _cost_centre(self, entity: str, account: str,
+                     req: dict[str, str] | None = None) -> tuple[str, str, str]:
+        """
+        The cost centre a line is posted to, honouring what the mapping contract requires
+        of that line.
+
+        A conditional split reads the department or cost-centre segment because the account
+        code cannot carry the distinction (ADR-0007).  If a line declares PRODUCTION in its
+        attributes and then sits in an SGA cost centre, the two views of the same fact
+        contradict each other and the dimension can no longer corroborate the mapping --
+        which is exactly what defect P2-D-02 was.  So the requirement drives the choice of
+        cost centre rather than being stamped on afterwards.
+
+        The account's own departments are searched first, so the natural home wins whenever
+        it satisfies the requirement; any other department at the entity carrying the
+        required function is the fallback.
+        """
         depts = self.cc_by_entity.get(entity, {})
+        req = req or {}
+        want_dept = _accepted(req.get("dept_code"))
+        want_func = _accepted(req.get("dept_function")
+                              or req.get("cost_center_function"))
+
+        def satisfies(d: str) -> bool:
+            if want_dept and d not in want_dept:
+                return False
+            if want_func and DEPT_FUNCTION.get(d) not in want_func:
+                return False
+            return True
+
+        # Only the departments the account may be posted to are eligible. Widening the
+        # search beyond them would satisfy the declared attribute while landing the line in
+        # a department the approved rule routes somewhere else entirely -- a correct label
+        # on a posting that then maps to the wrong account.
+        eligible = ACCOUNT_DEPTS.get(account, [])
+        if want_dept:
+            eligible = list(want_dept) + [d for d in eligible if d not in want_dept]
+        for d in eligible:
+            if d in depts and satisfies(d):
+                return depts[d][0]["cost_center_code"], d, DEPT_FUNCTION[d]
+        if want_dept or want_func:
+            raise KeyError(
+                f"{entity} has no department satisfying {req} for group account {account}. "
+                f"Posting the line anyway would make its declared classification "
+                f"contradict its cost centre (P2-D-02); give the entity a department that "
+                f"can carry the cost, or do not allocate the cost to this entity.")
         for d in ACCOUNT_DEPTS.get(account, []):
             if d in depts:
-                cc = depts[d][0]
-                return cc["cost_center_code"], d, DEPT_FUNCTION[d]
+                return depts[d][0]["cost_center_code"], d, DEPT_FUNCTION[d]
         if DEFAULT_DEPT in depts:
-            cc = depts[DEFAULT_DEPT][0]
-            return cc["cost_center_code"], DEFAULT_DEPT, DEPT_FUNCTION[DEFAULT_DEPT]
+            return (depts[DEFAULT_DEPT][0]["cost_center_code"], DEFAULT_DEPT,
+                    DEPT_FUNCTION[DEFAULT_DEPT])
         any_d = next(iter(depts)) if depts else None
         if any_d:
             return depts[any_d][0]["cost_center_code"], any_d, DEFAULT_DEPT
         return "0-950", DEFAULT_DEPT, "SGA"
+
+    @staticmethod
+    def _attributes(*sources: dict[str, str]) -> str:
+        """The line-attribute string, in the one format every extract writer expects."""
+        merged: dict[str, str] = {}
+        for src in sources:
+            merged.update(src)
+        return ";".join(f"{k}={v}" for k, v in sorted(merged.items()))
+
+    def _resolve(self, entity: str, erp: str, account: str,
+                 extra: dict[str, str] | None = None) -> tuple[str, str, str, str, str]:
+        """
+        Everything a posting line needs from the mapping contract, in one place.
+
+        Returns (source_account, cost_centre, department, function, attribute_string).
+        Every journal type goes through this, so an opening balance, a year-end close and
+        an ordinary invoice all carry the attributes the contract says they will -- which
+        is the correction for P2-D-01.
+        """
+        resolved = self.sm.resolve(erp, account)
+        if resolved is None:
+            raise KeyError(f"{erp} has no source account for group account {account}.")
+        src, req = resolved
+        # Where the chart has no account of its own and the posting is substituted onto
+        # another one, the line will be CLASSIFIED as the substitute -- so it has to sit
+        # where a line of the substitute belongs. Kestrel has no inbound-freight account
+        # and books it inside bezogene Leistungen, which is a cost-of-sales split: the
+        # posting belongs in a delivery cost centre, not in the logistics department that
+        # would have owned a freight account the chart does not have.
+        effective = self.sm.expected_group(erp, account)
+        cc, dept, func = self._cost_centre(entity, effective, req)
+        # The attributes state what the line IS, so they are read back off the cost centre
+        # actually chosen rather than off the requirement. Where the approved rule accepts
+        # several values, the posting declares the one it really carries -- which is what
+        # lets the cost-centre dimension corroborate the mapping instead of contradicting
+        # it (P2-D-02).
+        concrete = dict(req)
+        if "dept_code" in concrete:
+            concrete["dept_code"] = dept
+        for key in ("dept_function", "cost_center_function"):
+            if key in concrete:
+                concrete[key] = func
+        return src, cc, dept, func, self._attributes(concrete, extra or {})
 
     @staticmethod
     def _split(g: np.random.Generator, total: float, n: int) -> np.ndarray:
@@ -188,6 +300,7 @@ class JournalGenerator:
         lines: list[tuple] = []
         seq = [0]
         used: dict[str, float] = {}
+        ic_used: dict[tuple[str, str], float] = {}
         scale = max(sum(abs(v) for a, v in em.pl.items() if a.startswith("4")), 1.0)
         vol = float(np.clip(scale / 6.0e6, 0.25, 6.0))     # transaction volume driver
 
@@ -208,33 +321,22 @@ class JournalGenerator:
             jid = f"{e.erp[:2]}{em.period_key}{em.entity[-3:]}{seq[0]:06d}"
             pdate = p.start + timedelta(days=int(date_day) - 1)
             for ln, (acct, amt, attrs) in enumerate(legs, start=1):
-                cc, dept, func = self._cost_centre(em.entity, acct)
-                resolved = self.sm.resolve(e.erp, acct)
-                if resolved is None:
-                    raise KeyError(
-                        f"{e.erp} has no source account for group account {acct}. "
-                        f"Dropping the leg would silently unbalance journal {jid}; "
-                        f"add a mapping or a NOT_AVAILABLE substitution.")
-                src, req = resolved
-                merged = {**req, **attrs}
-                if "dept_function" in req:
-                    func = req["dept_function"]
-                    for d in ACCOUNT_DEPTS.get(acct, []):
-                        if d in self.cc_by_entity.get(em.entity, {}) and DEPT_FUNCTION[d] == func:
-                            cc = self.cc_by_entity[em.entity][d][0]["cost_center_code"]
-                            dept = d
-                            break
-                if "cost_center_function" in req:
-                    func = req["cost_center_function"]
+                try:
+                    src, cc, dept, func, attr = self._resolve(em.entity, e.erp, acct, attrs)
+                except KeyError as exc:
+                    raise KeyError(f"{exc.args[0]} Dropping the leg would silently "
+                                   f"unbalance journal {jid}.") from None
                 lines.append((
                     em.entity, e.erp, e.erp_company_code, em.period_key, jid, ln,
                     pdate.isoformat(), doc_ref, DOC_TYPE.get(journal_type, "JE"),
                     journal_type, desc, src,
                     self.sm.expected_group(e.erp, acct), cc, dept, func, e.currency,
-                    round(float(amt), 2), partner, customer, product,
-                    ";".join(f"{k}={v}" for k, v in sorted(merged.items())),
+                    round(float(amt), 2), partner, customer, product, attr,
                 ))
                 used[acct] = used.get(acct, 0.0) + float(amt)
+                if acct in IC_BALANCE_ACCOUNTS and partner:
+                    key = (acct, partner)
+                    ic_used[key] = ic_used.get(key, 0.0) + float(amt)
 
         # ---------------- stage 1: P&L-driven events -----------------------
         rev_accounts = {a: v for a, v in em.pl.items()
@@ -360,9 +462,47 @@ class JournalGenerator:
                  "Operating lease remeasurement",
                  f"LR-{stable_id(em.entity, em.period_key, width=6)}")
 
+        # ---------------- stage 3a: intercompany settlement, by counterparty --
+        # An intercompany balance is settled with the entity that owes it, so the posting
+        # names that entity. Clearing the account as one net figure -- which is what this
+        # used to do -- leaves a balance nobody can attribute to a pair, and the Phase 4
+        # elimination cannot match it (P2-D-03). The per-counterparty residuals sum to the
+        # account residual, so cash is unchanged.
+        for acct in IC_BALANCE_ACCOUNTS:
+            partners = {prt for a, prt in em.ic_close if a == acct}
+            partners |= {prt for a, prt in em.ic_open if a == acct}
+            partners |= {prt for a, prt in ic_used if a == acct}
+            jt, desc, freq = SETTLEMENT_TX.get(
+                acct, ("SETTLEMENT", "Intercompany settlement", 0.004))
+            need = {prt: round(em.ic_close.get((acct, prt), 0.0)
+                               - em.ic_open.get((acct, prt), 0.0)
+                               - ic_used.get((acct, prt), 0.0), 2)
+                    for prt in sorted(partners)}
+            # The counterparty amounts are rounded to the cent individually, so their sum
+            # can miss the account's own residual by a cent. Push that onto the largest
+            # counterparty, the same way a multi-leg journal is balanced: leaving it behind
+            # would mean a cent on an intercompany account with no counterparty at all.
+            if need:
+                drift = round(residual(acct) - sum(need.values()), 2)
+                if drift:
+                    big = max(need, key=lambda k: (abs(need[k]), k))
+                    need[big] = round(need[big] + drift, 2)
+            for prt, r in need.items():
+                if abs(r) < 0.005:
+                    continue
+                n = max(int(freq * 900 * vol), 1)
+                days = self._dates(g, p, n)
+                for i, part in enumerate(self._split(g, r, n)):
+                    post(jt, days[i % n], [(acct, part, {}), ("110100", -part, {})],
+                         f"{desc} - {prt}",
+                         f"{DOC_TYPE.get(jt, 'JE')}-{stable_id(em.entity, em.period_key, acct, prt, i, width=7)}",
+                         partner=prt)
+
         # ---------------- stage 3: settlements against cash ------------------
         for acct, (jt, desc, freq) in SETTLEMENT_TX.items():
             if acct in ("158100", "220400", "230400", "121100"):
+                continue
+            if acct in IC_BALANCE_ACCOUNTS:
                 continue
             r = residual(acct)
             if abs(r) < 0.005:
@@ -376,6 +516,15 @@ class JournalGenerator:
         for acct in sorted(set(em.bs_close) | set(em.bs_open)):
             if acct in ("110100", "320100", "320200"):
                 continue
+            if acct in IC_BALANCE_ACCOUNTS:
+                # already settled by counterparty above; anything left here would be a
+                # partnerless plug on an intercompany account, which is the defect
+                if abs(residual(acct)) >= 0.005:
+                    raise AssertionError(
+                        f"{em.entity} {em.period_key}: {residual(acct):.2f} left "
+                        f"unattributed on intercompany account {acct}. The counterparty "
+                        f"decomposition does not sum to the account balance.")
+                continue
             r = residual(acct)
             if abs(r) >= 0.005:
                 post("SETTLEMENT", min(28, p.days),
@@ -384,34 +533,40 @@ class JournalGenerator:
         return lines
 
     def opening_balance(self, entity: str, period_key: int,
-                        balances: dict[str, float]) -> list[tuple]:
+                        balances: dict[str, float],
+                        ic_split: dict[tuple[str, str], float] | None = None) -> list[tuple]:
         """
         The conversion journal that establishes an entity's opening balance sheet.
 
         Without it a source extract would only contain movements, and no reader could
         derive a balance.  The entry balances because the opening trial balance does.
+
+        Intercompany balances are brought forward one counterparty at a time, because a
+        balance carried in as a single unattributed figure is exactly as unusable to the
+        elimination engine as an unattributed settlement (P2-D-03).
         """
         e = self.ent[entity]
         p = PERIOD_BY_KEY[period_key]
+        ic_split = ic_split or {}
         legs = [(a, round(v, 2), {}) for a, v in sorted(balances.items())
-                if abs(v) >= 0.005]
+                if abs(v) >= 0.005 and a not in IC_BALANCE_ACCOUNTS]
+        for (a, prt), v in sorted(ic_split.items()):
+            if abs(v) >= 0.005:
+                legs.append((a, round(v, 2), {"_partner": prt}))
         if not legs:
             return []
         # The plug is derived from the ROUNDED legs, so the entry balances to the cent.
         legs.append(("320100" if e.erp != "KESTREL" else "320200",
                      round(-sum(v for _, v, _ in legs), 2), {}))
         out, jid = [], f"{e.erp[:2]}{period_key}{entity[-3:]}000000"
-        for ln, (acct, amt, _) in enumerate(legs, start=1):
-            resolved = self.sm.resolve(e.erp, acct)
-            if resolved is None:
-                raise KeyError(f"{e.erp} has no source account for {acct}")
-            src, req = resolved
-            cc, dept, func = self._cost_centre(entity, acct)
+        for ln, (acct, amt, extra) in enumerate(legs, start=1):
+            partner = extra.pop("_partner", "")
+            src, cc, dept, func, attr = self._resolve(entity, e.erp, acct, extra)
             out.append((entity, e.erp, e.erp_company_code, period_key, jid, ln,
                         p.start.isoformat(), f"OB-{period_key}", "OB", "OPENING_BALANCE",
                         "Opening balance brought forward", src,
                         self.sm.expected_group(e.erp, acct), cc, dept, func,
-                        e.currency, round(float(amt), 2), "", "", "", ""))
+                        e.currency, round(float(amt), 2), partner, "", "", attr))
         return out
 
     def special_period_adjustments(self, entity: str, period_key: int,
@@ -458,17 +613,15 @@ class JournalGenerator:
                     continue
                 jid = f"KE{period_key}{entity[-3:]}{special}{i:04d}"
                 for ln, (acct, amt) in enumerate(((dr, amount), (cr, -amount)), start=1):
-                    resolved = self.sm.resolve(e.erp, acct)
-                    if resolved is None:
+                    if self.sm.resolve(e.erp, acct) is None:
                         continue
-                    src, _req = resolved
-                    cc, dept, func = self._cost_centre(entity, acct)
+                    src, cc, dept, func, attr = self._resolve(
+                        entity, e.erp, acct, {"special_period": str(special)})
                     out.append((entity, e.erp, e.erp_company_code, period_key, jid, ln,
                                 p.end.isoformat(), f"AJ{special}-{year}", "AJ", event,
                                 f"{label} (special period {special})", src,
                                 self.sm.expected_group(e.erp, acct), cc, dept, func,
-                                e.currency, round(float(amt), 2), "", "", "",
-                                f"special_period={special}"))
+                                e.currency, round(float(amt), 2), "", "", "", attr))
         return out
 
     def year_end_close(self, entity: str, period_key: int, ytd_pl: dict[str, float]) -> list[tuple]:
@@ -484,16 +637,12 @@ class JournalGenerator:
         out = []
         jid = f"{e.erp[:2]}{period_key}{entity[-3:]}999999"
         for ln, (acct, amt, _) in enumerate(legs, start=1):
-            resolved = self.sm.resolve(e.erp, acct)
-            if resolved is None:
-                raise KeyError(f"{e.erp} has no source account for {acct}")
-            src, req = resolved
-            cc, dept, func = self._cost_centre(entity, acct)
+            src, cc, dept, func, attr = self._resolve(entity, e.erp, acct)
             out.append((entity, e.erp, e.erp_company_code, period_key, jid, ln,
                         p.end.isoformat(), f"CL-{period_key}", "CL", "YEAR_END_CLOSE",
                         "Year-end close to retained earnings", src,
                         self.sm.expected_group(e.erp, acct), cc, dept, func,
-                        e.currency, round(float(amt), 2), "", "", "", ""))
+                        e.currency, round(float(amt), 2), "", "", "", attr))
         return out
 
 

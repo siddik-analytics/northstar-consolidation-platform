@@ -90,6 +90,7 @@ def run(raw_root: Path | None = None, with_controls: bool = True) -> dict:
         reconcile.load_oracle(con)
         acc = reconcile.mapping_acceptance(con)
         reconcile.build(con)
+        acc["rpt_population_bridge"] = reconcile.population_bridge(con)
         return acc
 
     acc = stage("reconciliation", acceptance)

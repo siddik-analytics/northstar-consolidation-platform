@@ -1,6 +1,6 @@
 # Control Framework
 
-**86 controls across 10 categories.** The full machine-readable register is
+**87 controls across 10 categories.** The full machine-readable register is
 [`config/controls/control_register.csv`](../config/controls/control_register.csv); this
 document explains the design.
 
@@ -191,6 +191,52 @@ The control now requires every raw amount string to conform to **its own ERP's n
 grammar before it is cast**, as an anchored expression per system, each exactly what that
 system emits rather than a permissive superset. Phase 3 implements it as `P3-ING-13`.
 
+### `CTL-IC-04` — Intercompany partner always populated
+
+Enforced from Phase 2 as `P2-IC-02` and from Phase 3 as `P3-DIM-08`, and worth reading as a
+lesson rather than a rule.
+
+The Phase 2 implementation tested the intercompany lines **that already carried a partner**.
+It could not fail. A filter that removes exactly the rows a control exists to find is not a
+subtle bug, and it ran green through two phase gates over a population in which 63% of the
+intercompany balance position could not be attributed to an entity pair at all — the defect
+that would have blocked the Phase 4 elimination engine.
+
+A control is now required to state the population it measures, and to measure the whole of
+it. Where a legitimate exclusion exists it is named and justified in the control itself: the
+year-end close is excluded here because it sweeps the entire income statement into retained
+earnings in one entry, so its lines are a position rather than a transaction with any one
+counterparty.
+
+### `CTL-IC-01` and `CTL-IC-02` — what matches at which rate
+
+Also split apart in Phase 3.1, because one control was doing both jobs and doing neither
+correctly. A **balance** matches its mirror at the **closing** rate, and it is the cumulative
+balance that must match, not the month's movement. A **flow** matches at the **average** rate
+of the month it was recorded in. Testing movements at average rates for every intercompany
+line regardless of statement is two errors, and they cancelled only because the balance sheet
+legs carried no counterparty and were silently excluded.
+
+Investments in subsidiaries are intercompany but **not reciprocal** — a holding eliminates
+against the subsidiary's equity, not against a mirror balance in the subsidiary's books — so
+they are excluded from the pair test and reconciled to the investment register by
+`P2-INV-01` instead.
+
+### `CTL-DQ-12` — Population bridge complete
+
+Every ingested financial row carries exactly one disposition in each of three partitions:
+what kind of posting it is, what the harmonisation engine did with it, and whether the oracle
+graded it. Each partition sums to the ingested row count.
+
+Two things this catches that nothing else does. A row that falls out between two stages
+leaves no trace in any total — the trial balance still closes, because a dropped balanced
+journal is still balanced. And a difference between two population counts that nobody can
+name is the same failure wearing a tidier number: Phase 3 reported 1,080,782 ingested against
+1,013,640 graded and the difference turned out to be a measurement defect, not an exclusion.
+
+Dispositions that must be nil are stated at nil rather than omitted. A category missing from
+a bridge reads as a category nobody thought to look for.
+
 ### The source exception register
 
 A control that fails because of a defect in data the team does not own is a different animal
@@ -208,6 +254,12 @@ baseline:
 | equal to the accepted population | `SOURCE_FINDING` — the known defect, unchanged |
 | **more** than accepted | **`FAIL`** — something new is wrong |
 | fewer than accepted | **`FAIL`** — retire the exception, it is stale |
+
+All seven entries are `CLOSED` at an accepted population of nil as at Phase 3.1: the four
+defects they excepted were corrected at the generation layer rather than accepted. A closed
+exception is **not** a deleted one. The register still names the defect, so a recurrence
+fails the control instead of reappearing as an accepted finding, and each entry records the
+phase that closed it and the code that corrected it.
 
 The third row is the one that earns the register. Without it, a *new* break of exactly the
 same shape as an accepted one hides inside it and no control ever moves. Each entry also

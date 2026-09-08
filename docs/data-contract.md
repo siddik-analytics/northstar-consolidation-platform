@@ -431,6 +431,14 @@ period as posted, the source attribute string, the journal and document identifi
 mapping provenance: `mapping_status`, `mapping_rule_id`, `chart_mapping_type_applied`,
 `is_presentation_reclass`.
 
+`partner_entity_code` is populated on **every** posting to an account where
+`is_intercompany = TRUE`, including the cash settlement that clears an intercompany balance,
+the treasury current account, the loans and the investment in each subsidiary. The one
+exception is the year-end close, which sweeps the whole income statement into retained
+earnings in a single entry and is therefore a position rather than a transaction with any one
+counterparty. Phase 4's elimination engine depends on this: a balance with no counterparty
+cannot be matched to its mirror (`CTL-IC-04`, defect P2-D-03).
+
 Keeping the journal-line grain is a decision, not an oversight (ADR-0019). Aggregating here
 would cut the fact from 1.08m rows to 42k and every reconciliation would still pass, while
 making a mapping untraceable to the posting that produced it. `fact_trial_balance` is the

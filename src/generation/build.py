@@ -138,7 +138,8 @@ def run(quick: bool = False) -> dict:
             # opening balances exclude retained earnings, which the journal derives
             opening = {a: v for a, v in em.bs_open.items()
                        if a not in ("320100", "320200") and abs(v) >= 0.005}
-            all_lines.extend(jg.opening_balance(em.entity, em.period_key, opening))
+            all_lines.extend(jg.opening_balance(em.entity, em.period_key, opening,
+                                                em.ic_open))
         all_lines.extend(jg.generate(em, sb.ic_legs))
         year = em.period_key // 100
         acc = ytd.setdefault((em.entity, year), {})

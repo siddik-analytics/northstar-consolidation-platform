@@ -42,14 +42,14 @@
 | Amortisation of acquired intangibles | 5.8 | 7.0 | 7.2 | 7.2 | 7.2 |
 | Total D&A | 15.3 | 17.4 | 18.5 | 19.4 | 19.2 |
 | **EBIT** | **13.9** | **21.6** | **32.8** | **40.6** | **34.2** |
-| Net interest expense | 18.4 | 22.0 | 21.0 | 17.5 | 19.4 |
-| **Profit before tax** | **-4.5** | **-0.4** | **11.8** | **23.1** | **14.8** |
-| Income tax expense/(benefit) | 0.8 | -0.2 | 3.4 | 6.2 | 4.1 |
-| **Net income** | **-5.3** | **-0.2** | **8.4** | **16.8** | **10.8** |
+| Net interest expense | 18.2 | 21.8 | 21.0 | 17.5 | 19.3 |
+| **Profit before tax** | **-4.3** | **-0.2** | **11.9** | **23.1** | **14.9** |
+| Income tax expense/(benefit) | 0.8 | -0.1 | 3.4 | 6.2 | 4.1 |
+| **Net income** | **-5.1** | **-0.1** | **8.5** | **16.8** | **10.8** |
 | Less: non-controlling interests | 0.2 | 0.3 | 0.4 | 0.4 | 0.4 |
-| **Net income attributable to the group** | **-5.5** | **-0.5** | **8.1** | **16.4** | **10.4** |
+| **Net income attributable to the group** | **-5.2** | **-0.4** | **8.1** | **16.4** | **10.4** |
 | Memo: interest expense - term loan | 15.4 | 18.0 | 17.8 | 16.1 | 16.8 |
-| Memo: interest expense - revolving facility | 1.5 | 2.5 | 1.9 | 0.1 | 1.2 |
+| Memo: interest expense - revolving facility | 1.3 | 2.3 | 1.8 | 0.1 | 1.1 |
 | Memo: interest expense - finance leases | 0.7 | 0.7 | 0.7 | 0.7 | 0.7 |
 | Memo: commitment and agency fees | 0.2 | 0.2 | 0.2 | 0.3 | 0.2 |
 | Memo: amortisation of deferred financing costs | 0.9 | 1.1 | 1.1 | 1.0 | 1.0 |
@@ -95,18 +95,18 @@
 | Contract liabilities | 5.2 | 5.9 | 6.7 | 7.8 | 6.6 |
 | Accrued liabilities | 18.0 | 20.4 | 22.7 | 24.6 | 24.0 |
 | Income taxes payable | 2.0 | 2.2 | 2.5 | 2.7 | 2.6 |
-| Revolving credit facility | 16.2 | 24.9 | 19.5 | 9.9 | 15.1 |
+| Revolving credit facility | 16.0 | 24.5 | 19.1 | 9.6 | 14.7 |
 | Term loan B, net of financing costs | 196.0 | 222.5 | 221.2 | 209.9 | 219.9 |
 | Finance lease liabilities | 10.3 | 10.4 | 10.9 | 10.8 | 11.3 |
 | Operating lease liabilities | 22.0 | 24.0 | 24.5 | 24.0 | 25.5 |
 | Deferred tax liabilities | 15.5 | 17.9 | 16.3 | 14.7 | 14.8 |
 | Other long-term liabilities | 3.5 | 3.8 | 4.0 | 4.0 | 4.2 |
-| **Total liabilities** | **318.5** | **367.0** | **368.3** | **353.5** | **367.7** |
+| **Total liabilities** | **318.3** | **366.6** | **368.0** | **353.1** | **367.3** |
 | Contributed capital and APIC | 166.0 | 167.2 | 168.6 | 170.1 | 170.1 |
-| Retained earnings / (accumulated deficit) | -82.6 | -83.0 | -75.0 | -58.6 | -64.6 |
+| Retained earnings / (accumulated deficit) | -82.3 | -82.7 | -74.6 | -58.2 | -64.2 |
 | Cumulative translation adjustment | -0.9 | -5.6 | 2.2 | 2.2 | 3.2 |
 | Non-controlling interests | 3.1 | 3.2 | 3.4 | 3.6 | 3.5 |
-| **Total equity** | **85.6** | **81.8** | **99.2** | **117.3** | **112.2** |
+| **Total equity** | **85.8** | **82.1** | **99.6** | **117.7** | **112.6** |
 | **TOTAL LIABILITIES AND EQUITY** | **404.1** | **448.7** | **467.5** | **470.8** | **479.9** |
 | Memo: term loan B, gross principal | 201.2 | 228.9 | 226.6 | 214.3 | 224.3 |
 | Memo: unamortised deferred financing costs | 5.2 | 6.4 | 5.3 | 4.3 | 4.3 |
@@ -126,7 +126,7 @@
 
     | USD millions | FY2023 Actual | FY2024 Actual | FY2025 Actual | FY2026 Budget | FY2026 Forecast (8+4) |
 |---|---|---|---|---|---|
-| **Net income** | **-5.3** | **-0.2** | **8.4** | **16.8** | **10.8** |
+| **Net income** | **-5.1** | **-0.1** | **8.5** | **16.8** | **10.8** |
 | Depreciation and amortisation | 15.3 | 17.4 | 18.5 | 19.4 | 19.2 |
 | Share-based compensation | 1.0 | 1.2 | 1.4 | 1.5 | 1.5 |
 | Amortisation of deferred financing costs | 0.9 | 1.1 | 1.1 | 1.0 | 1.0 |
@@ -134,23 +134,23 @@
 | Non-cash FX translation movement on working capital | 0.7 | -1.6 | 3.5 | 0.0 | -1.6 |
 | Change in working capital | 2.2 | 2.8 | 1.0 | 4.7 | -5.4 |
 | Change in other assets and liabilities | -0.2 | -0.4 | -0.4 | -0.2 | -0.2 |
-| **NET CASH FROM OPERATING ACTIVITIES** | **13.2** | **19.2** | **31.9** | **41.6** | **23.7** |
+| **NET CASH FROM OPERATING ACTIVITIES** | **13.5** | **19.3** | **31.9** | **41.6** | **23.8** |
 | Capital expenditure | -12.5 | -14.0 | -15.5 | -17.5 | -15.0 |
 | Acquisitions, net of cash acquired | -50.2 | -36.9 | -0.0 | -0.0 | -0.0 |
 | **NET CASH USED IN INVESTING ACTIVITIES** | **-62.7** | **-50.9** | **-15.5** | **-17.5** | **-15.0** |
 | Term loan drawings | 25.0 | 30.0 | 0.0 | 0.0 | 0.0 |
 | Term loan repayments | -2.0 | -2.3 | -2.3 | -12.3 | -2.3 |
-| Revolving facility, net | 8.2 | 8.6 | -5.3 | -9.6 | -4.4 |
+| Revolving facility, net | 8.0 | 8.5 | -5.4 | -9.6 | -4.4 |
 | Finance lease principal | -1.8 | -1.9 | -1.9 | -2.0 | -2.0 |
 | Deferred financing costs paid | -1.6 | -2.2 | -0.0 | -0.0 | -0.0 |
 | Sponsor equity contribution | 20.0 | 0.0 | 0.0 | 0.0 | 0.0 |
 | Dividends to non-controlling interests | -0.0 | -0.1 | -0.2 | -0.2 | -0.2 |
-| **NET CASH FROM FINANCING ACTIVITIES** | **47.9** | **32.0** | **-9.8** | **-24.1** | **-8.9** |
+| **NET CASH FROM FINANCING ACTIVITIES** | **47.6** | **31.9** | **-9.8** | **-24.1** | **-9.0** |
 | Effect of exchange rate changes | 0.2 | -0.3 | 0.4 | 0.0 | 0.2 |
-| **NET CHANGE IN CASH** | **-1.4** | **-0.0** | **7.0** | **-0.0** | **-0.0** |
+| **NET CHANGE IN CASH** | **-1.4** | **-0.0** | **7.0** | **-0.0** | **0.0** |
 | Cash at beginning of period | 16.4 | 15.0 | 15.0 | 22.0 | 22.0 |
 | **CASH AT END OF PERIOD** | **15.0** | **15.0** | **22.0** | **22.0** | **22.0** |
-| Memo: free cash flow (OCF less capex) | 0.7 | 5.2 | 16.4 | 24.1 | 8.7 |
+| Memo: free cash flow (OCF less capex) | 1.0 | 5.3 | 16.4 | 24.1 | 8.8 |
 
     The statement is prepared on the **indirect** basis and derived arithmetically from
     balance sheet movements plus net income (ADR-0006). `NET CHANGE IN CASH` therefore ties
@@ -167,7 +167,7 @@
 | EBITDA margin % | 8.9% | 10.5% | 12.5% | 13.4% | 12.2% |
 | Adjusted EBITDA margin % | 11.9% | 12.7% | 14.0% | 14.2% | 13.5% |
 | Opex % of revenue | 19.1% | 17.9% | 16.5% | 16.2% | 16.7% |
-| Net margin % | -1.6% | -0.0% | 2.0% | 3.8% | 2.5% |
+| Net margin % | -1.5% | -0.0% | 2.1% | 3.8% | 2.5% |
 | Headcount (period-end FTE) | 2,180 | 2,340 | 2,450 | 2,530 | 2,486 |
 | Revenue per FTE (USD) | 150,459 | 158,718 | 168,204 | 177,075 | 175,865 |
 | Capex % of revenue | 3.8% | 3.8% | 3.8% | 3.9% | 3.4% |
@@ -177,31 +177,31 @@
 | Cash conversion cycle (days) | 71 | 65 | 58 | 50 | 59 |
 | Net working capital | 52.3 | 54.0 | 53.3 | 48.8 | 58.9 |
 | NWC % of revenue | 16.0% | 14.5% | 12.9% | 10.9% | 13.5% |
-| Total debt | 227.7 | 264.1 | 257.0 | 235.1 | 250.8 |
-| Net debt | 212.7 | 249.1 | 235.0 | 213.1 | 228.8 |
-| Net leverage (x Adj. EBITDA) | 5.45x | 5.28x | 4.06x | 3.36x | 3.86x |
-| Interest coverage (x) | 2.12x | 2.15x | 2.75x | 3.62x | 3.06x |
-| FCF conversion % of Adj. EBITDA | 1.9% | 11.0% | 28.3% | 38.0% | 14.8% |
-| Total liquidity (cash + undrawn RCF) | 58.8 | 50.1 | 62.5 | 72.1 | 66.9 |
+| Total debt | 227.5 | 263.8 | 256.6 | 234.7 | 250.4 |
+| Net debt | 212.5 | 248.8 | 234.6 | 212.7 | 228.4 |
+| Net leverage (x Adj. EBITDA) | 5.44x | 5.27x | 4.06x | 3.35x | 3.86x |
+| Interest coverage (x) | 2.14x | 2.17x | 2.76x | 3.62x | 3.06x |
+| FCF conversion % of Adj. EBITDA | 2.5% | 11.2% | 28.4% | 38.0% | 14.8% |
+| Total liquidity (cash + undrawn RCF) | 59.0 | 50.5 | 62.9 | 72.4 | 67.3 |
 | Covenant: maximum net leverage | 6.00x | 5.50x | 5.00x | 4.50x | 4.50x |
-| Covenant headroom — leverage | 0.55x | 0.22x | 0.94x | 1.14x | 0.64x |
-| Covenant headroom — interest coverage | 0.12x | 0.15x | 0.75x | 1.62x | 1.06x |
+| Covenant headroom — leverage | 0.56x | 0.23x | 0.94x | 1.15x | 0.64x |
+| Covenant headroom — interest coverage | 0.14x | 0.17x | 0.76x | 1.62x | 1.06x |
 | Memo: operating lease liabilities | 22.0 | 24.0 | 24.5 | 24.0 | 25.5 |
-| Economic net debt (including leases) | 234.7 | 273.1 | 259.5 | 237.1 | 254.3 |
-| Economic net leverage (non-covenant) | 6.01x | 5.79x | 4.49x | 3.73x | 4.30x |
+| Economic net debt (including leases) | 234.5 | 272.8 | 259.1 | 236.7 | 253.9 |
+| Economic net leverage (non-covenant) | 6.01x | 5.78x | 4.48x | 3.73x | 4.29x |
 
     **Deleveraging is the headline, and covenant headroom is the tension.** Net leverage falls
-    from 5.45x at FY2023 (immediately post-Halden) to
+    from 5.44x at FY2023 (immediately post-Halden) to
     4.06x at FY2025 against a covenant maximum that steps down
     6.00x / 5.50x / 5.00x / 4.50x across FY2023–FY2026. Headroom is genuinely tight early:
-    0.55x at FY2023 and
-    0.22x at FY2024, widening to
+    0.56x at FY2023 and
+    0.23x at FY2024, widening to
     0.94x at FY2025. Interest coverage improves from
-    2.12x to 2.75x against a
-    2.00x minimum — only 0.12x of headroom in FY2023.
+    2.14x to 2.76x against a
+    2.00x minimum — only 0.14x of headroom in FY2023.
 
     The FY2026 Forecast at 3.86x versus a Budget of
-    3.36x costs
+    3.35x costs
     0.51x
     of headroom. That is a legitimate board-level talking point rather than a covenant breach:
     headroom narrows, it does not disappear. A covenant-compliance view is therefore a

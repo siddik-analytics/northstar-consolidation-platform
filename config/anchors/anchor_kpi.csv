@@ -3,7 +3,7 @@ gross_margin_pct,Gross margin %,pct,0.279695,0.283721,0.289602,0.295506,0.288869
 ebitda_margin_pct,EBITDA margin %,pct,0.089146,0.104938,0.124594,0.133898,0.122126
 adjusted_ebitda_margin_pct,Adjusted EBITDA margin %,pct,0.119024,0.127017,0.140366,0.141711,0.135392
 opex_pct_revenue,Opex % of revenue,pct,0.190549,0.178783,0.165008,0.161607,0.166743
-net_margin_pct,Net margin %,pct,-0.016169,-0.000499,0.020472,0.037579,0.024602
+net_margin_pct,Net margin %,pct,-0.015413,-0.000233,0.020571,0.037579,0.024650
 headcount,Headcount (period-end FTE),int,2180.000000,2340.000000,2450.000000,2530.000000,2486.000000
 revenue_per_fte_usd,Revenue per FTE (USD),int,150458.715596,158717.948718,168204.081633,177075.098814,175864.843121
 capex_pct_revenue,Capex % of revenue,pct,0.038110,0.037695,0.037612,0.039062,0.034309
@@ -13,15 +13,15 @@ dpo,DPO (days),int,46.000000,48.000000,50.000000,52.000000,51.000000
 cash_conversion_cycle,Cash conversion cycle (days),int,71.000000,65.000000,58.000000,50.000000,59.000000
 net_working_capital,Net working capital,num,52.347658,54.017647,53.283884,48.806377,58.859285
 nwc_pct_revenue,NWC % of revenue,pct,0.159597,0.145443,0.129298,0.108943,0.134628
-total_debt,Total debt,num,227.705530,264.135642,256.968795,235.090301,250.770478
-net_debt,Net debt,num,212.705530,249.135642,234.968795,213.090301,228.770478
-net_leverage_x,Net leverage (x Adj. EBITDA),x,5.448400,5.281207,4.062042,3.356466,3.864784
-interest_coverage_x,Interest coverage (x),x,2.117763,2.145692,2.748568,3.622821,3.057909
-fcf_conversion_pct,FCF conversion % of Adj. EBITDA,pct,0.019069,0.109592,0.282943,0.380057,0.147792
-liquidity,Total liquidity (cash + undrawn RCF),num,58.762970,50.133185,62.481800,72.052933,66.872756
+total_debt,Total debt,num,227.457093,263.787904,256.582869,234.704376,250.363974
+net_debt,Net debt,num,212.457093,248.787904,234.582869,212.704376,228.363974
+net_leverage_x,Net leverage (x Adj. EBITDA),x,5.442036,5.273835,4.055370,3.350387,3.857917
+interest_coverage_x,Interest coverage (x),x,2.142203,2.167264,2.755980,3.622821,3.062411
+fcf_conversion_pct,FCF conversion % of Adj. EBITDA,pct,0.025433,0.111697,0.283603,0.380057,0.148139
+liquidity,Total liquidity (cash + undrawn RCF),num,59.011407,50.480924,62.867725,72.438859,67.279260
 covenant_max_leverage_x,Covenant: maximum net leverage,x,6.000000,5.500000,5.000000,4.500000,4.500000
-covenant_leverage_headroom_x,Covenant headroom — leverage,x,0.551600,0.218793,0.937958,1.143534,0.635216
-covenant_coverage_headroom_x,Covenant headroom — interest coverage,x,0.117763,0.145692,0.748568,1.622821,1.057909
+covenant_leverage_headroom_x,Covenant headroom — leverage,x,0.557964,0.226165,0.944630,1.149613,0.642083
+covenant_coverage_headroom_x,Covenant headroom — interest coverage,x,0.142203,0.167264,0.755980,1.622821,1.062411
 operating_lease_liabilities,Memo: operating lease liabilities,num,22.000000,24.000000,24.500000,24.000000,25.500000
-economic_net_debt,Economic net debt (including leases),num,234.705530,273.135642,259.468795,237.090301,254.270478
-economic_net_leverage_x,Economic net leverage (non-covenant),x,6.011924,5.789961,4.485587,3.734499,4.295574
+economic_net_debt,Economic net debt (including leases),num,234.457093,272.787904,259.082869,236.704376,253.863974
+economic_net_leverage_x,Economic net leverage (non-covenant),x,6.005561,5.782590,4.478916,3.728421,4.288706

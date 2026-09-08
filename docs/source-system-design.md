@@ -216,7 +216,7 @@ Phase 1 mapping. That inversion is recorded rather than hidden, in
 | `mapping_type` | `DIRECT`, `MERGE`, `SPLIT`, `DERIVED` |
 | `requested_group_account` | what the generator wanted to post |
 | `expected_group_account` | what Phase 3's mapping engine must produce |
-| `required_line_attributes` | the attributes a conditional split has to read, e.g. `dept_function=PRODUCTION` |
+| `required_line_attributes` | the attributes a conditional split has to read, e.g. `dept_function=PRODUCTION`. Where the approved rule accepts a **set** of values the manifest shows the set, pipe-separated: Kestrel's temporary-staff account reaches cost of sales from a `PRODUCTION`, `FIELD` or `PROJECT` cost centre, and an entity that does no manufacturing satisfies it through the members it has |
 | `substituted_because_unavailable` | `TRUE` where the ERP has no equivalent account |
 
 The manifest has 315 rows. Every generated journal line also carries its own

@@ -1,5 +1,18 @@
 # Phase 2.2 Report — Source-Layer Integrity Pass
 
+> **Superseded in part by Phase 3.1.** Every architectural decision in this report stands:
+> there is no measurement reserve, the CTA is derived from source balances (ADR-0017) and the
+> revolver charge is priced off a daily utilisation model (ADR-0018). What has moved is the
+> **value** of two of the three derived inputs. Phase 3.1 corrected four source defects, one
+> of which changed the intra-year intercompany positions; cash is the residual of the balanced
+> entity journals, so the group's liquidity path moved and with it the revolver drawn against
+> it. Average daily drawn falls from 17.318 / 26.347 / 22.820 to **14.829 / 23.902 / 22.099**,
+> and the CTA movement moves in the sixth decimal. Every figure quoted below is the Phase 2.2
+> figure; the restated figures and the causal chain are in
+> [`phase-03-1-report.md`](phase-03-1-report.md) §10, and the evidence that nothing else moved
+> is `data/phase03_1_source_diff.json`.
+
+
 **Status:** Complete · **Date:** 2026-09-07 · **Next gate:** Phase 3 approval
 
 The two architecture issues left open at the Phase 2.1 gate, settled before the source data is

@@ -28,3 +28,4 @@ answer are documented in the design docs, not here.
 | [0020](0020-mapping-rules-as-an-executable-configuration-language.md) | Mapping rules as an executable configuration language | Accepted |
 | [0021](0021-source-findings-are-baselined-not-downgraded.md) | Three control states, and a source finding baselined at its population | Accepted |
 | [0022](0022-money-is-decimal-and-artefacts-are-totally-ordered.md) | Money is DECIMAL; every committed artefact is written in a total order | Accepted |
+| [0023](0023-intercompany-balances-are-built-pair-by-pair.md) | Intercompany balances built pair by pair; every posting names its counterparty | Accepted |

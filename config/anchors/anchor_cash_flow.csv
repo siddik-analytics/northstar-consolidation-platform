@@ -1,26 +1,26 @@
 line_item,label,FY2023A,FY2024A,FY2025A,FY2026B,FY2026F
-net_income,Net income,-5.303566,-0.185150,8.436642,16.835587,10.756142
+net_income,Net income,-5.055388,-0.086678,8.477110,16.835587,10.776773
 da,Depreciation and amortisation,15.300000,17.400000,18.500000,19.400000,19.200000
 sbc,Share-based compensation,1.000000,1.200000,1.400000,1.500000,1.500000
 dff_amortisation,Amortisation of deferred financing costs,0.950000,1.050000,1.050000,1.000000,1.000000
 deferred_tax,Deferred income taxes,-1.400000,-1.100000,-1.600000,-1.600000,-1.500000
-fx_non_cash_wc,Non-cash FX translation movement on working capital,0.677693,-1.585373,3.502243,0.000000,-1.583024
+fx_non_cash_wc,Non-cash FX translation movement on working capital,0.677952,-1.584544,3.499962,0.000000,-1.583077
 change_in_working_capital,Change in working capital,2.220342,2.790411,0.977963,4.692907,-5.424801
 change_in_other,Change in other assets and liabilities,-0.200000,-0.400000,-0.400000,-0.200000,-0.200000
-operating_cash_flow,NET CASH FROM OPERATING ACTIVITIES,13.244470,19.169888,31.866848,41.628494,23.748317
+operating_cash_flow,NET CASH FROM OPERATING ACTIVITIES,13.492907,19.269189,31.905035,41.628494,23.768895
 capex,Capital expenditure,-12.500000,-14.000000,-15.500000,-17.500000,-15.000000
 acquisitions,"Acquisitions, net of cash acquired",-50.200000,-36.900000,-0.000000,-0.000000,-0.000000
 investing_cash_flow,NET CASH USED IN INVESTING ACTIVITIES,-62.700000,-50.900000,-15.500000,-17.500000,-15.000000
 tlb_draw,Term loan drawings,25.000000,30.000000,0.000000,0.000000,0.000000
 tlb_repayment,Term loan repayments,-2.000000,-2.300000,-2.300000,-12.300000,-2.300000
-rcf_movement,"Revolving facility, net",8.237030,8.629785,-5.348615,-9.571134,-4.390957
+rcf_movement,"Revolving facility, net",7.988593,8.530483,-5.386801,-9.571134,-4.411535
 finance_lease_principal,Finance lease principal,-1.831500,-1.899673,-1.918233,-2.007360,-2.007360
 financing_fees,Deferred financing costs paid,-1.550000,-2.250000,-0.000000,-0.000000,-0.000000
 equity_contribution,Sponsor equity contribution,20.000000,0.000000,0.000000,0.000000,0.000000
 nci_dividend,Dividends to non-controlling interests,-0.000000,-0.150000,-0.200000,-0.250000,-0.250000
-financing_cash_flow,NET CASH FROM FINANCING ACTIVITIES,47.855530,32.030112,-9.766848,-24.128494,-8.948317
+financing_cash_flow,NET CASH FROM FINANCING ACTIVITIES,47.607093,31.930811,-9.805035,-24.128494,-8.968895
 fx_effect_on_cash,Effect of exchange rate changes,0.200000,-0.300000,0.400000,0.000000,0.200000
-net_change_in_cash,NET CHANGE IN CASH,-1.400000,-0.000000,7.000000,-0.000000,-0.000000
+net_change_in_cash,NET CHANGE IN CASH,-1.400000,-0.000000,7.000000,-0.000000,0.000000
 opening_cash,Cash at beginning of period,16.400000,15.000000,15.000000,22.000000,22.000000
 closing_cash,CASH AT END OF PERIOD,15.000000,15.000000,22.000000,22.000000,22.000000
-free_cash_flow,Memo: free cash flow (OCF less capex),0.744470,5.169888,16.366848,24.128494,8.748317
+free_cash_flow,Memo: free cash flow (OCF less capex),0.992907,5.269189,16.405035,24.128494,8.768895

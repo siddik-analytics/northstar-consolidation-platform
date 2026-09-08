@@ -58,6 +58,12 @@ class EntityMonth:
     bs_open: dict[str, float] = field(default_factory=dict)   # local, debit-positive
     bs_close: dict[str, float] = field(default_factory=dict)
     context: dict[str, float] = field(default_factory=dict)
+    # Intercompany balances decomposed by counterparty, keyed (account, partner) and in
+    # the same local, debit-positive terms as bs_close. Every intercompany balance the
+    # group carries is attributable to an entity pair, so the settlement postings can name
+    # the counterparty and Phase 4 can eliminate by pair (P2-D-03, CTL-IC-04).
+    ic_open: dict[tuple[str, str], float] = field(default_factory=dict)
+    ic_close: dict[tuple[str, str], float] = field(default_factory=dict)
 
 
 class SeriesBuilder:
@@ -243,7 +249,8 @@ class SeriesBuilder:
     DRIVEN = bd.DRIVEN_CAPTIONS
 
     def _bs_driver_path(self, code: str, col: str, periods: list[Period],
-                        open_local: dict[str, float], pl: dict[str, np.ndarray]
+                        open_local: dict[str, float], pl: dict[str, np.ndarray],
+                        exact_extra: dict[str, np.ndarray] | None = None
                         ) -> list[dict[str, float]]:
         """
         Monthly balances generated from the economics that move them, then scaled so the
@@ -293,7 +300,7 @@ class SeriesBuilder:
 
         paths: dict[str, np.ndarray] = {}
         # paths that are already the answer and must not be scaled onto an anchor
-        exact: dict[str, np.ndarray] = {}
+        exact: dict[str, np.ndarray] = dict(exact_extra or {})
 
         # --- receivables: an ageing profile over recent revenue --------------
         if revenue.sum() > 0:
@@ -358,6 +365,24 @@ class SeriesBuilder:
             assert self.ent[code].currency == "USD", (
                 f"{code} holds investments but is not USD-functional")
             exact["178100"] = inv
+
+        # --- intercompany loans: the register, month by month ----------------
+        # Interpolating these towards a year-end anchor gave the lender a balance in months
+        # when the borrower was not yet in the group, and gave the two sides of the same
+        # loan different paths through the year. Both sides are built from the same
+        # register entry instead, so the pair matches at every closing rate (P2-D-03).
+        loans = self.lb.ic_loan_amounts(col)
+        rs_col = self.m.rate_set_for(col)
+        if code == "NIG-100" and loans:
+            exact["175100"] = np.array([
+                sum(a for b, a in loans.items() if self.lb.live_at(b, p.end))
+                for p in periods]) * 1_000_000.0
+        elif code in loans:
+            exact["235100"] = np.array([
+                (-loans[code] * 1_000_000.0
+                 / self.m.rate(e.currency, p.period_key, "CLOSE", rs_col))
+                if self.lb.live_at(code, p.end) else 0.0
+                for p in periods])
 
         # --- external debt: an instrument schedule ---------------------------
         if code == "NIG-100":
@@ -432,6 +457,94 @@ class SeriesBuilder:
         return rows
 
     # ------------------------------------------------------------------ intercompany
+    def _ic_trade_paths(self, code: str, col: str, periods: list[Period]
+                        ) -> tuple[dict[str, np.ndarray], list[dict[tuple[str, str], float]]]:
+        """
+        The intercompany trade current account built from the pairs that make it up.
+
+        Each entity used to interpolate its own balance from its own opening to its own
+        anchored year end, and the counterparty decomposition was a fixed fraction of that.
+        Both sides then landed on the same December figure by different routes, so in May
+        the seller's receivable from a buyer and that buyer's payable to the seller were
+        several per cent apart -- an elimination difference with no economic cause.
+
+        Here the PAIR is the unit. Its balance runs from what the pair owed at the last
+        year end to what the anchor says it will owe at this one, and each side reads the
+        same number, translated into its own currency at the month's closing rate. Summing
+        a pair path over an entity's pairs reproduces exactly the entity total the anchor
+        allocation gives, so no anchored balance moves.
+
+        Returns (account paths in local currency, per-period {(account, partner): local}).
+        """
+        year = 2026 if col.startswith("FY2026") else int(col[2:6])
+        prev_col = f"FY{year - 1}A" if year > 2023 else None
+        close_usd = self.lb.ic_partner_balances(col)
+        open_usd = self.lb.ic_partner_balances(prev_col) if prev_col else {}
+        anchor_close = self.m.ic_anchor["ic_ar_ap_close"][col]
+        anchor_open = self.m.ic_anchor["ic_ar_ap_close"][prev_col] if prev_col else 0.0
+
+        pairs: dict[tuple[str, str], tuple[float, float]] = {}
+        for acct in ("120500", "210500"):
+            for prt, frac in close_usd.get((code, acct), {}).items():
+                pairs[(acct, prt)] = (
+                    open_usd.get((code, acct), {}).get(prt, 0.0) * anchor_open * 1e6,
+                    frac * anchor_close * 1e6)
+            for prt, frac in open_usd.get((code, acct), {}).items():
+                pairs.setdefault((acct, prt), (frac * anchor_open * 1e6, 0.0))
+
+        if not pairs:
+            return {}, [{} for _ in periods]
+
+        e = self.ent[code]
+        rs = self.m.rate_set_for(col)
+        n = len(periods)
+        # A pair has no balance before both sides are in the group. The flow matrix is
+        # settled a year at a time, so a company acquired in April was carrying a balance
+        # with its new sister companies from January -- one side of a pair that the other
+        # side could not have, because it did not exist yet.
+        live_from = {key: max(e.effective_from, self.ent[prt].effective_from)
+                     for key in pairs for prt in (key[1],)}
+        by_period: list[dict[tuple[str, str], float]] = []
+        acct_paths: dict[str, np.ndarray] = {}
+        for i, p in enumerate(periods):
+            fx = self.m.rate(e.currency, p.period_key, "CLOSE", rs)
+            row = {}
+            for key, (o, c) in pairs.items():
+                live = [j for j, q in enumerate(periods) if q.end >= live_from[key]]
+                if not live or i < live[0]:
+                    continue
+                step = (i - live[0] + 1) / len(live)
+                row[key] = (o + (c - o) * step) / fx
+            by_period.append(row)
+            for (acct, _prt), v in row.items():
+                acct_paths.setdefault(acct, np.zeros(n))[i] += v
+        return acct_paths, by_period
+
+    def _ic_partner_shares(self, col: str) -> dict[tuple[str, str], dict[str, float]]:
+        """
+        For each (entity, intercompany account), what fraction of that balance is owed to
+        or by each counterparty.
+
+        Fractions rather than amounts, so the same decomposition applies to every month of
+        the year: the monthly balance is interpolated between anchored year ends, and
+        splitting it in fixed proportions keeps the parts summing to the whole in every
+        period. This covers the trade current account, which divides by flow. The loan and
+        investment balances are decomposed from their own registers month by month
+        instead, because whether a counterparty is in the group at all changes during the
+        year and a fixed fraction cannot express that.
+        """
+        key = ("shares", col)
+        if key in self._ic_cache:
+            return self._ic_cache[key]
+        out: dict[tuple[str, str], dict[str, float]] = {}
+        for (e, acct), by_partner in self.lb.ic_partner_balances(col).items():
+            total = sum(by_partner.values())
+            if abs(total) < 1e-12:
+                continue
+            out[(e, acct)] = {prt: v / total for prt, v in by_partner.items()}
+        self._ic_cache[key] = out
+        return out
+
     def ic_monthly(self, col: str, periods: list[Period]):
         """
         Both legs of every intercompany flow, phased monthly.
@@ -544,23 +657,40 @@ class SeriesBuilder:
             # Topco keeps a quarter of group cash; the rest sits where the trading happens
             topco_share = 0.25
             sweep_total = 0.0
+            topco = next(em for em in group if em.entity == TOPCO)
             for em in opcos:
                 target_usd = total_usd * (1 - topco_share) * act[em.entity] / act_sum
                 target_local = target_usd / rate[em.entity]
                 sweep = em.bs_close["110100"] - target_local
                 em.bs_close["110100"] = target_local
                 em.bs_close[RECV] = em.bs_close.get(RECV, 0.0) + sweep
+                # The pool has exactly one counterparty on each side and always has had:
+                # the operating entity's current account is with Topco. Recording it is the
+                # whole of the correction on this side (P2-D-03).
+                em.ic_close[(RECV, TOPCO)] = em.bs_close[RECV]
                 sweep_total += sweep * rate[em.entity]
-            topco = next(em for em in group if em.entity == TOPCO)
             topco.bs_close["110100"] += sweep_total
             topco.bs_close[PAY] = topco.bs_close.get(PAY, 0.0) - sweep_total
+            # Topco's side of the pool is the mirror of the participants', so it divides
+            # between them in proportion to what each of them holds. Allocating the actual
+            # balance -- rather than only the period's sweep -- keeps the parts summing to
+            # the whole in every period.
+            held = {em.entity: em.bs_close[RECV] * rate[em.entity] for em in opcos
+                    if abs(em.bs_close.get(RECV, 0.0)) > 1e-9}
+            denom = sum(held.values())
+            if abs(denom) > 1e-9:
+                for e, v in held.items():
+                    topco.ic_close[(PAY, e)] = topco.bs_close[PAY] * v / denom
 
         # re-chain openings so each month opens on the prior month's restated close
         prev: dict[str, dict[str, float]] = {}
+        prev_ic: dict[str, dict[tuple[str, str], float]] = {}
         for em in sorted(rows, key=lambda r: (r.entity, r.period_key)):
             if em.entity in prev:
                 em.bs_open = prev[em.entity]
+                em.ic_open = prev_ic[em.entity]
             prev[em.entity] = dict(em.bs_close)
+            prev_ic[em.entity] = dict(em.ic_close)
 
     # ------------------------------------------------------------------ build
     def build_actuals(self, pool: bool = True) -> list[EntityMonth]:
@@ -581,6 +711,7 @@ class SeriesBuilder:
         return rows
 
     def _build_actuals(self, pool: bool) -> list[EntityMonth]:
+        import datetime as _dt2
         opening_usd = self.opening_bs_usd()
         out: list[EntityMonth] = []
         for code, e in sorted(self.ent.items()):
@@ -600,6 +731,10 @@ class SeriesBuilder:
                               for a, v in self.acquisition_opening_usd(code).items()}
 
             carry = dict(open_local)
+            # the date the opening balance sheet is stated at, so the intercompany
+            # positions brought forward decompose on the same register the balance came from
+            open_at = _dt2.date(2022, 12, 31) if code in opening_usd else e.effective_from
+            carry_ic: dict[tuple[str, str], float] = {}
             for year in (2023, 2024, 2025, 2026):
                 col = "FY2026F" if year == 2026 else f"FY{year}A"
                 periods = [p for p in build_periods((year, 1), (year, 12))
@@ -613,6 +748,9 @@ class SeriesBuilder:
                 if not periods:
                     continue
                 pl_full = self._pl_local_monthly(code, col, full)
+                # counterparty shares of each intercompany balance, this year's flow mix
+                ic_shares = self._ic_partner_shares(col)
+                ic_loans = self.lb.ic_loan_amounts(col)
                 ic_pl, ic_legs = self._ic_cache.setdefault(
                     (col, tuple(p.period_key for p in full)),
                     self.ic_monthly(col, full))
@@ -624,7 +762,9 @@ class SeriesBuilder:
                                 for i in range(len(full))])
                 if act.sum() <= 0:
                     act = np.ones(len(full))
-                bs_full = self._bs_driver_path(code, col, full, carry, pl_full)
+                ic_trade_paths, ic_trade_by_period = self._ic_trade_paths(code, col, full)
+                bs_full = self._bs_driver_path(code, col, full, carry, pl_full,
+                                               ic_trade_paths)
 
                 re_account = "320200" if e.erp == "KESTREL" else "320100"
                 re_open = carry.get(re_account, 0.0) + carry.get(
@@ -647,9 +787,44 @@ class SeriesBuilder:
                     em.bs_close = close
                     em.context = {"activity": float(act[i]),
                                   "ytd_pl": ytd, "year_end": float(is_year_end)}
+                    em.ic_close = dict(ic_trade_by_period[i])
+                    # An investment in a subsidiary is an intercompany balance too, and the
+                    # register already says which subsidiary each one is. The consideration
+                    # posting simply did not name it, so Phase 4's investment elimination
+                    # had nothing to match the holding against (P2-D-03).
+                    em.ic_close.update({
+                        ("178100", sub): amt * 1e6
+                        for (par, sub), amt in investments_at(p.end).items()
+                        if par == code and self.lb.live_at(sub, p.end)})
+                    # Loans, from the same register the monthly path was built from, so
+                    # the lender never carries a balance with a borrower that is not yet
+                    # in the group and the two sides agree entity by entity.
+                    if code == "NIG-100":
+                        em.ic_close.update({
+                            ("175100", b): amt * 1e6
+                            for b, amt in ic_loans.items()
+                            if self.lb.live_at(b, p.end)})
+                    elif code in ic_loans and close.get("235100"):
+                        em.ic_close[("235100", "NIG-100")] = close["235100"]
+                    # The very first month opens on the entity's opening balance sheet,
+                    # which is one figure per account. It is split on the same counterparty
+                    # shares, so the opening journal can name a partner too (P2-D-03).
+                    if carry_ic:
+                        em.ic_open = carry_ic
+                    else:
+                        em.ic_open = {}
+                        em.ic_open.update({
+                            ("178100", sub): amt * 1e6
+                            for (par, sub), amt in investments_at(open_at).items()
+                            if par == code and self.lb.live_at(sub, open_at)})
+                        if code != "NIG-100" and code in ic_loans:
+                            opening_loan = carry.get("235100", 0.0)
+                            if opening_loan:
+                                em.ic_open[("235100", "NIG-100")] = opening_loan
                     self.ic_legs[(code, p.period_key)] = ic_legs.get((code, p.period_key), [])
                     out.append(em)
                     carry = dict(close)
+                    carry_ic = dict(em.ic_close)
                 if year == 2026:
                     break
         if pool:

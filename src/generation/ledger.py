@@ -143,6 +143,50 @@ class LedgerBuilder:
         self._cache: dict[str, dict] = {}
 
     # ------------------------------------------------------------------ helpers
+    def ic_loan_amounts(self, col: str) -> dict[str, float]:
+        """Each borrower's intercompany loan balance for the year, in USD millions.
+
+        The register fixes the relative sizes and the anchor fixes the total, so the pair
+        is the same number on both sides by construction. Naming it here rather than
+        computing it inline is what lets the monthly path be built from it as well, and a
+        monthly path that is not built from it is how Topco came to carry a loan to Vector
+        for six months before Vector was in the group.
+        """
+        ic = self.m.ic_anchor
+        loans = {b: n for b, (c, n) in IC_LOAN_NOTIONAL.items() if self.live(b, col)}
+        scale = ic["ic_loan_close"][col] / max(sum(loans.values()), 1e-9)
+        return {b: n * scale for b, n in loans.items()}
+
+    def ic_partner_balances(self, col: str) -> dict[tuple[str, str], dict[str, float]]:
+        """
+        The intercompany trade current account decomposed by counterparty, as fractions of
+        the group intercompany receivable/payable anchor.
+
+        The anchor is one group-level number. Allocating it to entities by each entity's
+        share of intercompany turnover -- which is what this used to do -- gives every
+        entity the right total and no way to say who owes it. Allocating the same anchor
+        FLOW by flow gives identical entity totals (an entity's total is the sum of its own
+        flows either way) and, because a flow has one seller and one buyer, it also gives
+        the seller's receivable from B and B's payable to the seller the same USD amount.
+        That is what makes the pair eliminate, and it is the correction for P2-D-03.
+
+        Signed debit-positive: a receivable is positive at the seller, the payable negative
+        at the buyer. Interest flows are excluded because the loan interest settles through
+        the current account within the period rather than sitting in the year-end balance.
+        """
+        flows = [f for f in self.m.ic_flows_usd(col) if f["kind"] != "INTEREST"]
+        total = max(sum(f["amount_usd"] for f in flows), 1e-9)
+        out: dict[tuple[str, str], dict[str, float]] = {}
+        for f in flows:
+            share = f["amount_usd"] / total
+            out.setdefault((f["seller"], "120500"), {})
+            out[(f["seller"], "120500")][f["buyer"]] = (
+                out[(f["seller"], "120500")].get(f["buyer"], 0.0) + share)
+            out.setdefault((f["buyer"], "210500"), {})
+            out[(f["buyer"], "210500")][f["seller"]] = (
+                out[(f["buyer"], "210500")].get(f["seller"], 0.0) - share)
+        return out
+
     def live(self, code: str, col: str) -> bool:
         return self.m._entity_live(code, col)
 
@@ -298,27 +342,13 @@ class LedgerBuilder:
         out["NIG-100"]["220200"] = -bs["rcf"][col]
 
         # ---- intercompany balances -----------------------------------------
-        loans = {b: n for b, (c, n) in IC_LOAN_NOTIONAL.items() if self.live(b, col)}
-        scale = ic["ic_loan_close"][col] / max(sum(loans.values()), 1e-9)
-        for b, notional in loans.items():
-            amt = notional * scale
+        for b, amt in self.ic_loan_amounts(col).items():
             out[b]["235100"] = out[b].get("235100", 0.0) - amt
             out["NIG-100"]["175100"] = out["NIG-100"].get("175100", 0.0) + amt
 
         ic_bal = ic["ic_ar_ap_close"][col]
-        flows = self.m.ic_flows_usd(col)
-        by_seller: dict[str, float] = {}
-        by_buyer: dict[str, float] = {}
-        for f in flows:
-            if f["kind"] == "INTEREST":
-                continue
-            by_seller[f["seller"]] = by_seller.get(f["seller"], 0.0) + f["amount_usd"]
-            by_buyer[f["buyer"]] = by_buyer.get(f["buyer"], 0.0) + f["amount_usd"]
-        tot = max(sum(by_seller.values()), 1e-9)
-        for e, v in by_seller.items():
-            out[e]["120500"] = out[e].get("120500", 0.0) + ic_bal * v / tot
-        for e, v in by_buyer.items():
-            out[e]["210500"] = out[e].get("210500", 0.0) - ic_bal * v / tot
+        for (e, acct), by_partner in self.ic_partner_balances(col).items():
+            out[e][acct] = out[e].get(acct, 0.0) + sum(by_partner.values()) * ic_bal
 
         # ---- equity ---------------------------------------------------------
         for e in live:

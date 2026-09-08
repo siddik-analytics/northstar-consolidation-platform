@@ -1,0 +1,1057 @@
+{
+  "anchor_movements": [
+    {
+      "anchor": "anchor_income_statement.revenue",
+      "measure": "Revenue",
+      "unchanged": true,
+      "years": {
+        "FY2023A": {
+          "after": 328.0,
+          "before": 328.0,
+          "change": 0.0,
+          "change_pct": 0.0
+        },
+        "FY2024A": {
+          "after": 371.4,
+          "before": 371.4,
+          "change": 0.0,
+          "change_pct": 0.0
+        },
+        "FY2025A": {
+          "after": 412.1,
+          "before": 412.1,
+          "change": 0.0,
+          "change_pct": 0.0
+        }
+      }
+    },
+    {
+      "anchor": "anchor_income_statement.gross_profit",
+      "measure": "Gross profit",
+      "unchanged": true,
+      "years": {
+        "FY2023A": {
+          "after": 91.74,
+          "before": 91.74,
+          "change": 0.0,
+          "change_pct": 0.0
+        },
+        "FY2024A": {
+          "after": 105.374,
+          "before": 105.374,
+          "change": 0.0,
+          "change_pct": 0.0
+        },
+        "FY2025A": {
+          "after": 119.345,
+          "before": 119.345,
+          "change": 0.0,
+          "change_pct": 0.0
+        }
+      }
+    },
+    {
+      "anchor": "anchor_income_statement.ebitda",
+      "measure": "EBITDA",
+      "unchanged": true,
+      "years": {
+        "FY2023A": {
+          "after": 29.24,
+          "before": 29.24,
+          "change": 0.0,
+          "change_pct": 0.0
+        },
+        "FY2024A": {
+          "after": 38.974,
+          "before": 38.974,
+          "change": 0.0,
+          "change_pct": 0.0
+        },
+        "FY2025A": {
+          "after": 51.345,
+          "before": 51.345,
+          "change": 0.0,
+          "change_pct": 0.0
+        }
+      }
+    },
+    {
+      "anchor": "anchor_income_statement.adjusted_ebitda",
+      "measure": "Adjusted EBITDA",
+      "unchanged": true,
+      "years": {
+        "FY2023A": {
+          "after": 39.04,
+          "before": 39.04,
+          "change": 0.0,
+          "change_pct": 0.0
+        },
+        "FY2024A": {
+          "after": 47.174,
+          "before": 47.174,
+          "change": 0.0,
+          "change_pct": 0.0
+        },
+        "FY2025A": {
+          "after": 57.845,
+          "before": 57.845,
+          "change": 0.0,
+          "change_pct": 0.0
+        }
+      }
+    },
+    {
+      "anchor": "anchor_income_statement.cost_of_sales",
+      "measure": "Cost of sales",
+      "unchanged": true,
+      "years": {
+        "FY2023A": {
+          "after": 236.26,
+          "before": 236.26,
+          "change": 0.0,
+          "change_pct": 0.0
+        },
+        "FY2024A": {
+          "after": 266.026,
+          "before": 266.026,
+          "change": 0.0,
+          "change_pct": 0.0
+        },
+        "FY2025A": {
+          "after": 292.755,
+          "before": 292.755,
+          "change": 0.0,
+          "change_pct": 0.0
+        }
+      }
+    },
+    {
+      "anchor": "anchor_income_statement.opex",
+      "measure": "Operating expenses",
+      "unchanged": true,
+      "years": {
+        "FY2023A": {
+          "after": 62.5,
+          "before": 62.5,
+          "change": 0.0,
+          "change_pct": 0.0
+        },
+        "FY2024A": {
+          "after": 66.4,
+          "before": 66.4,
+          "change": 0.0,
+          "change_pct": 0.0
+        },
+        "FY2025A": {
+          "after": 68.0,
+          "before": 68.0,
+          "change": 0.0,
+          "change_pct": 0.0
+        }
+      }
+    },
+    {
+      "anchor": "anchor_income_statement.ebit",
+      "measure": "EBIT",
+      "unchanged": true,
+      "years": {
+        "FY2023A": {
+          "after": 13.94,
+          "before": 13.94,
+          "change": 0.0,
+          "change_pct": 0.0
+        },
+        "FY2024A": {
+          "after": 21.574,
+          "before": 21.574,
+          "change": 0.0,
+          "change_pct": 0.0
+        },
+        "FY2025A": {
+          "after": 32.845,
+          "before": 32.845,
+          "change": 0.0,
+          "change_pct": 0.0
+        }
+      }
+    },
+    {
+      "anchor": "anchor_income_statement.pbt",
+      "measure": "Profit before tax",
+      "unchanged": false,
+      "years": {
+        "FY2023A": {
+          "after": -4.284227,
+          "before": -4.494547,
+          "change": 0.21032,
+          "change_pct": -4.6794
+        },
+        "FY2024A": {
+          "after": -0.192617,
+          "before": -0.411445,
+          "change": 0.218828,
+          "change_pct": -53.1852
+        },
+        "FY2025A": {
+          "after": 11.856097,
+          "before": 11.799499,
+          "change": 0.056598,
+          "change_pct": 0.4797
+        }
+      }
+    },
+    {
+      "anchor": "anchor_income_statement.net_interest",
+      "measure": "Net interest",
+      "unchanged": false,
+      "years": {
+        "FY2023A": {
+          "after": 18.224227,
+          "before": 18.434547,
+          "change": -0.21032,
+          "change_pct": -1.1409
+        },
+        "FY2024A": {
+          "after": 21.766617,
+          "before": 21.985445,
+          "change": -0.218828,
+          "change_pct": -0.9953
+        },
+        "FY2025A": {
+          "after": 20.988903,
+          "before": 21.045501,
+          "change": -0.056598,
+          "change_pct": -0.2689
+        }
+      }
+    },
+    {
+      "anchor": "anchor_income_statement.tax",
+      "measure": "Tax",
+      "unchanged": false,
+      "years": {
+        "FY2023A": {
+          "after": 0.771161,
+          "before": 0.809019,
+          "change": -0.037858,
+          "change_pct": -4.6795
+        },
+        "FY2024A": {
+          "after": -0.105939,
+          "before": -0.226295,
+          "change": 0.120356,
+          "change_pct": -53.1854
+        },
+        "FY2025A": {
+          "after": 3.378988,
+          "before": 3.362857,
+          "change": 0.016131,
+          "change_pct": 0.4797
+        }
+      }
+    },
+    {
+      "anchor": "anchor_income_statement.net_income",
+      "measure": "Net income",
+      "unchanged": false,
+      "years": {
+        "FY2023A": {
+          "after": -5.055388,
+          "before": -5.303566,
+          "change": 0.248178,
+          "change_pct": -4.6795
+        },
+        "FY2024A": {
+          "after": -0.086678,
+          "before": -0.18515,
+          "change": 0.098472,
+          "change_pct": -53.185
+        },
+        "FY2025A": {
+          "after": 8.47711,
+          "before": 8.436642,
+          "change": 0.040468,
+          "change_pct": 0.4797
+        }
+      }
+    },
+    {
+      "anchor": "anchor_balance_sheet.cash",
+      "measure": "Cash",
+      "unchanged": true,
+      "years": {
+        "FY2023A": {
+          "after": 15.0,
+          "before": 15.0,
+          "change": 0.0,
+          "change_pct": 0.0
+        },
+        "FY2024A": {
+          "after": 15.0,
+          "before": 15.0,
+          "change": 0.0,
+          "change_pct": 0.0
+        },
+        "FY2025A": {
+          "after": 22.0,
+          "before": 22.0,
+          "change": 0.0,
+          "change_pct": 0.0
+        }
+      }
+    },
+    {
+      "anchor": "anchor_balance_sheet.tlb_gross",
+      "measure": "Term loan B",
+      "unchanged": true,
+      "years": {
+        "FY2023A": {
+          "after": 201.2,
+          "before": 201.2,
+          "change": 0.0,
+          "change_pct": 0.0
+        },
+        "FY2024A": {
+          "after": 228.9,
+          "before": 228.9,
+          "change": 0.0,
+          "change_pct": 0.0
+        },
+        "FY2025A": {
+          "after": 226.6,
+          "before": 226.6,
+          "change": 0.0,
+          "change_pct": 0.0
+        }
+      }
+    },
+    {
+      "anchor": "anchor_balance_sheet.rcf",
+      "measure": "Revolver drawn",
+      "unchanged": false,
+      "years": {
+        "FY2023A": {
+          "after": 15.988593,
+          "before": 16.23703,
+          "change": -0.248437,
+          "change_pct": -1.5301
+        },
+        "FY2024A": {
+          "after": 24.519076,
+          "before": 24.866815,
+          "change": -0.347739,
+          "change_pct": -1.3984
+        },
+        "FY2025A": {
+          "after": 19.132275,
+          "before": 19.5182,
+          "change": -0.385925,
+          "change_pct": -1.9773
+        }
+      }
+    },
+    {
+      "anchor": "anchor_balance_sheet.total_equity",
+      "measure": "Total equity",
+      "unchanged": false,
+      "years": {
+        "FY2023A": {
+          "after": 85.822564,
+          "before": 85.574127,
+          "change": 0.248437,
+          "change_pct": 0.2903
+        },
+        "FY2024A": {
+          "after": 82.101343,
+          "before": 81.753604,
+          "change": 0.347739,
+          "change_pct": 0.4254
+        },
+        "FY2025A": {
+          "after": 99.578414,
+          "before": 99.192489,
+          "change": 0.385925,
+          "change_pct": 0.3891
+        }
+      }
+    },
+    {
+      "anchor": "anchor_balance_sheet.retained_earnings",
+      "measure": "Retained earnings",
+      "unchanged": false,
+      "years": {
+        "FY2023A": {
+          "after": -82.335388,
+          "before": -82.583566,
+          "change": 0.248178,
+          "change_pct": -0.3005
+        },
+        "FY2024A": {
+          "after": -82.702065,
+          "before": -83.048716,
+          "change": 0.346651,
+          "change_pct": -0.4174
+        },
+        "FY2025A": {
+          "after": -74.584956,
+          "before": -74.972074,
+          "change": 0.387118,
+          "change_pct": -0.5163
+        }
+      }
+    },
+    {
+      "anchor": "anchor_balance_sheet.cta",
+      "measure": "CTA",
+      "unchanged": false,
+      "years": {
+        "FY2023A": {
+          "after": -0.892756,
+          "before": -0.892996,
+          "change": 0.00024,
+          "change_pct": -0.0269
+        },
+        "FY2024A": {
+          "after": -5.557934,
+          "before": -5.558968,
+          "change": 0.001034,
+          "change_pct": -0.0186
+        },
+        "FY2025A": {
+          "after": 2.183014,
+          "before": 2.184143,
+          "change": -0.001129,
+          "change_pct": -0.0517
+        }
+      }
+    },
+    {
+      "anchor": "anchor_balance_sheet.nci",
+      "measure": "Non-controlling interest",
+      "unchanged": false,
+      "years": {
+        "FY2023A": {
+          "after": 3.050708,
+          "before": 3.050689,
+          "change": 1.9e-05,
+          "change_pct": 0.0006
+        },
+        "FY2024A": {
+          "after": 3.161342,
+          "before": 3.161288,
+          "change": 5.4e-05,
+          "change_pct": 0.0017
+        },
+        "FY2025A": {
+          "after": 3.380356,
+          "before": 3.38042,
+          "change": -6.4e-05,
+          "change_pct": -0.0019
+        }
+      }
+    },
+    {
+      "anchor": "anchor_balance_sheet.ar",
+      "measure": "Trade receivables",
+      "unchanged": true,
+      "years": {
+        "FY2023A": {
+          "after": 55.715068,
+          "before": 55.715068,
+          "change": 0.0,
+          "change_pct": 0.0
+        },
+        "FY2024A": {
+          "after": 61.052055,
+          "before": 61.052055,
+          "change": 0.0,
+          "change_pct": 0.0
+        },
+        "FY2025A": {
+          "after": 65.484384,
+          "before": 65.484384,
+          "change": 0.0,
+          "change_pct": 0.0
+        }
+      }
+    },
+    {
+      "anchor": "anchor_balance_sheet.inventory",
+      "measure": "Inventory",
+      "unchanged": true,
+      "years": {
+        "FY2023A": {
+          "after": 35.600822,
+          "before": 35.600822,
+          "change": 0.0,
+          "change_pct": 0.0
+        },
+        "FY2024A": {
+          "after": 38.628433,
+          "before": 38.628433,
+          "change": 0.0,
+          "change_pct": 0.0
+        },
+        "FY2025A": {
+          "after": 40.103425,
+          "before": 40.103425,
+          "change": 0.0,
+          "change_pct": 0.0
+        }
+      }
+    },
+    {
+      "anchor": "anchor_balance_sheet.ap",
+      "measure": "Trade payables",
+      "unchanged": true,
+      "years": {
+        "FY2023A": {
+          "after": 29.775233,
+          "before": 29.775233,
+          "change": 0.0,
+          "change_pct": 0.0
+        },
+        "FY2024A": {
+          "after": 34.984241,
+          "before": 34.984241,
+          "change": 0.0,
+          "change_pct": 0.0
+        },
+        "FY2025A": {
+          "after": 40.103425,
+          "before": 40.103425,
+          "change": 0.0,
+          "change_pct": 0.0
+        }
+      }
+    },
+    {
+      "anchor": "anchor_balance_sheet.contract_assets",
+      "measure": "Contract assets",
+      "unchanged": true,
+      "years": {
+        "FY2023A": {
+          "after": 7.512,
+          "before": 7.512,
+          "change": 0.0,
+          "change_pct": 0.0
+        },
+        "FY2024A": {
+          "after": 8.2064,
+          "before": 8.2064,
+          "change": 0.0,
+          "change_pct": 0.0
+        },
+        "FY2025A": {
+          "after": 8.901,
+          "before": 8.901,
+          "change": 0.0,
+          "change_pct": 0.0
+        }
+      }
+    },
+    {
+      "anchor": "anchor_balance_sheet.prepaid",
+      "measure": "Prepayments",
+      "unchanged": true,
+      "years": {
+        "FY2023A": {
+          "after": 6.56,
+          "before": 6.56,
+          "change": 0.0,
+          "change_pct": 0.0
+        },
+        "FY2024A": {
+          "after": 7.428,
+          "before": 7.428,
+          "change": 0.0,
+          "change_pct": 0.0
+        },
+        "FY2025A": {
+          "after": 8.242,
+          "before": 8.242,
+          "change": 0.0,
+          "change_pct": 0.0
+        }
+      }
+    },
+    {
+      "anchor": "anchor_balance_sheet.accrued",
+      "measure": "Accrued liabilities",
+      "unchanged": true,
+      "years": {
+        "FY2023A": {
+          "after": 18.04,
+          "before": 18.04,
+          "change": 0.0,
+          "change_pct": 0.0
+        },
+        "FY2024A": {
+          "after": 20.427,
+          "before": 20.427,
+          "change": 0.0,
+          "change_pct": 0.0
+        },
+        "FY2025A": {
+          "after": 22.6655,
+          "before": 22.6655,
+          "change": 0.0,
+          "change_pct": 0.0
+        }
+      }
+    },
+    {
+      "anchor": "anchor_balance_sheet.tax_payable",
+      "measure": "Income taxes payable",
+      "unchanged": true,
+      "years": {
+        "FY2023A": {
+          "after": 1.968,
+          "before": 1.968,
+          "change": 0.0,
+          "change_pct": 0.0
+        },
+        "FY2024A": {
+          "after": 2.2284,
+          "before": 2.2284,
+          "change": 0.0,
+          "change_pct": 0.0
+        },
+        "FY2025A": {
+          "after": 2.4726,
+          "before": 2.4726,
+          "change": 0.0,
+          "change_pct": 0.0
+        }
+      }
+    },
+    {
+      "anchor": "anchor_balance_sheet.total_assets",
+      "measure": "Total assets",
+      "unchanged": true,
+      "years": {
+        "FY2023A": {
+          "after": 404.08789,
+          "before": 404.08789,
+          "change": 0.0,
+          "change_pct": 0.0
+        },
+        "FY2024A": {
+          "after": 448.714888,
+          "before": 448.714888,
+          "change": 0.0,
+          "change_pct": 0.0
+        },
+        "FY2025A": {
+          "after": 467.530808,
+          "before": 467.530808,
+          "change": 0.0,
+          "change_pct": 0.0
+        }
+      }
+    },
+    {
+      "anchor": "anchor_cash_flow.operating_cash_flow",
+      "measure": "Operating cash flow",
+      "unchanged": false,
+      "years": {
+        "FY2023A": {
+          "after": 13.492907,
+          "before": 13.24447,
+          "change": 0.248437,
+          "change_pct": 1.8758
+        },
+        "FY2024A": {
+          "after": 19.269189,
+          "before": 19.169888,
+          "change": 0.099301,
+          "change_pct": 0.518
+        },
+        "FY2025A": {
+          "after": 31.905035,
+          "before": 31.866848,
+          "change": 0.038187,
+          "change_pct": 0.1198
+        }
+      }
+    },
+    {
+      "anchor": "anchor_cash_flow.free_cash_flow",
+      "measure": "Free cash flow",
+      "unchanged": false,
+      "years": {
+        "FY2023A": {
+          "after": 0.992907,
+          "before": 0.74447,
+          "change": 0.248437,
+          "change_pct": 33.371
+        },
+        "FY2024A": {
+          "after": 5.269189,
+          "before": 5.169888,
+          "change": 0.099301,
+          "change_pct": 1.9208
+        },
+        "FY2025A": {
+          "after": 16.405035,
+          "before": 16.366848,
+          "change": 0.038187,
+          "change_pct": 0.2333
+        }
+      }
+    },
+    {
+      "anchor": "anchor_kpi.net_debt",
+      "measure": "Net debt",
+      "unchanged": false,
+      "years": {
+        "FY2023A": {
+          "after": 212.457093,
+          "before": 212.70553,
+          "change": -0.248437,
+          "change_pct": -0.1168
+        },
+        "FY2024A": {
+          "after": 248.787904,
+          "before": 249.135642,
+          "change": -0.347738,
+          "change_pct": -0.1396
+        },
+        "FY2025A": {
+          "after": 234.582869,
+          "before": 234.968795,
+          "change": -0.385926,
+          "change_pct": -0.1642
+        }
+      }
+    },
+    {
+      "anchor": "anchor_kpi.net_leverage_x",
+      "measure": "Net leverage",
+      "unchanged": false,
+      "years": {
+        "FY2023A": {
+          "after": 5.442036,
+          "before": 5.4484,
+          "change": -0.006364,
+          "change_pct": -0.1168
+        },
+        "FY2024A": {
+          "after": 5.273835,
+          "before": 5.281207,
+          "change": -0.007372,
+          "change_pct": -0.1396
+        },
+        "FY2025A": {
+          "after": 4.05537,
+          "before": 4.062042,
+          "change": -0.006672,
+          "change_pct": -0.1643
+        }
+      }
+    },
+    {
+      "anchor": "anchor_intercompany.ic_ar_ap_close",
+      "measure": "Intercompany AR/AP",
+      "unchanged": true,
+      "years": {
+        "FY2023A": {
+          "after": 9.8,
+          "before": 9.8,
+          "change": 0.0,
+          "change_pct": 0.0
+        },
+        "FY2024A": {
+          "after": 11.2,
+          "before": 11.2,
+          "change": 0.0,
+          "change_pct": 0.0
+        },
+        "FY2025A": {
+          "after": 12.4,
+          "before": 12.4,
+          "change": 0.0,
+          "change_pct": 0.0
+        }
+      }
+    },
+    {
+      "anchor": "anchor_intercompany.ic_loan_close",
+      "measure": "Intercompany loans",
+      "unchanged": true,
+      "years": {
+        "FY2023A": {
+          "after": 42.0,
+          "before": 42.0,
+          "change": 0.0,
+          "change_pct": 0.0
+        },
+        "FY2024A": {
+          "after": 48.5,
+          "before": 48.5,
+          "change": 0.0,
+          "change_pct": 0.0
+        },
+        "FY2025A": {
+          "after": 47.2,
+          "before": 47.2,
+          "change": 0.0,
+          "change_pct": 0.0
+        }
+      }
+    },
+    {
+      "anchor": "anchor_cta_rollforward.cta_movement_group",
+      "measure": "CTA movement (group)",
+      "unchanged": false,
+      "years": {
+        "FY2023A": {
+          "after": 2.607244,
+          "before": 2.607004,
+          "change": 0.00024,
+          "change_pct": 0.0092
+        },
+        "FY2024A": {
+          "after": -4.665178,
+          "before": -4.665972,
+          "change": 0.000794,
+          "change_pct": -0.017
+        },
+        "FY2025A": {
+          "after": 7.740948,
+          "before": 7.743111,
+          "change": -0.002163,
+          "change_pct": -0.0279
+        }
+      }
+    },
+    {
+      "anchor": "anchor_cta_rollforward.cta_closing",
+      "measure": "CTA closing",
+      "unchanged": false,
+      "years": {
+        "FY2023A": {
+          "after": -0.892756,
+          "before": -0.892996,
+          "change": 0.00024,
+          "change_pct": -0.0269
+        },
+        "FY2024A": {
+          "after": -5.557934,
+          "before": -5.558968,
+          "change": 0.001034,
+          "change_pct": -0.0186
+        },
+        "FY2025A": {
+          "after": 2.183014,
+          "before": 2.184143,
+          "change": -0.001129,
+          "change_pct": -0.0517
+        }
+      }
+    }
+  ],
+  "anchors_moved": [
+    "CTA",
+    "CTA closing",
+    "CTA movement (group)",
+    "Free cash flow",
+    "Net debt",
+    "Net income",
+    "Net interest",
+    "Net leverage",
+    "Non-controlling interest",
+    "Operating cash flow",
+    "Profit before tax",
+    "Retained earnings",
+    "Revolver drawn",
+    "Tax",
+    "Total equity"
+  ],
+  "anchors_unchanged": [
+    "Accrued liabilities",
+    "Adjusted EBITDA",
+    "Cash",
+    "Contract assets",
+    "Cost of sales",
+    "EBIT",
+    "EBITDA",
+    "Gross profit",
+    "Income taxes payable",
+    "Intercompany AR/AP",
+    "Intercompany loans",
+    "Inventory",
+    "Operating expenses",
+    "Prepayments",
+    "Revenue",
+    "Term loan B",
+    "Total assets",
+    "Trade payables",
+    "Trade receivables"
+  ],
+  "baseline_commit": "20355b2",
+  "files_changed": [
+    {
+      "lines_added": 6,
+      "lines_removed": 6,
+      "path": "config/anchors/anchor_balance_sheet.csv",
+      "status": "M"
+    },
+    {
+      "lines_added": 7,
+      "lines_removed": 7,
+      "path": "config/anchors/anchor_cash_flow.csv",
+      "status": "M"
+    },
+    {
+      "lines_added": 6,
+      "lines_removed": 6,
+      "path": "config/anchors/anchor_cta_rollforward.csv",
+      "status": "M"
+    },
+    {
+      "lines_added": 7,
+      "lines_removed": 7,
+      "path": "config/anchors/anchor_income_statement.csv",
+      "status": "M"
+    },
+    {
+      "lines_added": 11,
+      "lines_removed": 11,
+      "path": "config/anchors/anchor_kpi.csv",
+      "status": "M"
+    },
+    {
+      "lines_added": 4,
+      "lines_removed": 4,
+      "path": "config/anchors/phase02_source_layer_targets.csv",
+      "status": "M"
+    },
+    {
+      "lines_added": 4,
+      "lines_removed": 1,
+      "path": "config/controls/control_register.csv",
+      "status": "M"
+    },
+    {
+      "lines_added": 8,
+      "lines_removed": 0,
+      "path": "config/controls/source_exception_register.csv",
+      "status": "A"
+    },
+    {
+      "lines_added": 2,
+      "lines_removed": 2,
+      "path": "config/dimensions/department.csv",
+      "status": "M"
+    },
+    {
+      "lines_added": 13,
+      "lines_removed": 13,
+      "path": "config/generation/expected_mapping_manifest.csv",
+      "status": "M"
+    },
+    {
+      "lines_added": 128,
+      "lines_removed": 0,
+      "path": "config/mapping/mapping_rules.csv",
+      "status": "A"
+    },
+    {
+      "lines_added": 16,
+      "lines_removed": 6,
+      "path": "data/reference/cost_centres.csv",
+      "status": "M"
+    },
+    {
+      "lines_added": 243,
+      "lines_removed": 243,
+      "path": "data/reference/cta_expectation.csv",
+      "status": "M"
+    },
+    {
+      "lines_added": 3,
+      "lines_removed": 3,
+      "path": "data/reference/cta_group_bridge.csv",
+      "status": "M"
+    },
+    {
+      "lines_added": 44,
+      "lines_removed": 44,
+      "path": "data/reference/debt_schedule.csv",
+      "status": "M"
+    },
+    {
+      "lines_added": 2381,
+      "lines_removed": 2381,
+      "path": "data/reference/employees.csv",
+      "status": "M"
+    },
+    {
+      "lines_added": 3,
+      "lines_removed": 3,
+      "path": "data/reference/layer1_equity_bridge.csv",
+      "status": "M"
+    },
+    {
+      "lines_added": 41,
+      "lines_removed": 41,
+      "path": "data/reference/revolver_utilisation.csv",
+      "status": "M"
+    },
+    {
+      "lines_added": 2,
+      "lines_removed": 1,
+      "path": "src/generation/build.py",
+      "status": "M"
+    },
+    {
+      "lines_added": 196,
+      "lines_removed": 47,
+      "path": "src/generation/journals.py",
+      "status": "M"
+    },
+    {
+      "lines_added": 47,
+      "lines_removed": 17,
+      "path": "src/generation/ledger.py",
+      "status": "M"
+    },
+    {
+      "lines_added": 29,
+      "lines_removed": 12,
+      "path": "src/generation/mapping.py",
+      "status": "M"
+    },
+    {
+      "lines_added": 8,
+      "lines_removed": 1,
+      "path": "src/generation/masters.py",
+      "status": "M"
+    },
+    {
+      "lines_added": 179,
+      "lines_removed": 4,
+      "path": "src/generation/series.py",
+      "status": "M"
+    },
+    {
+      "lines_added": 66,
+      "lines_removed": 8,
+      "path": "src/generation/validate.py",
+      "status": "M"
+    }
+  ],
+  "files_changed_count": 25,
+  "generator_modules_changed": [
+    "src/generation/build.py",
+    "src/generation/journals.py",
+    "src/generation/ledger.py",
+    "src/generation/mapping.py",
+    "src/generation/masters.py",
+    "src/generation/series.py",
+    "src/generation/validate.py"
+  ],
+  "phase": "3.1",
+  "purpose": "correction of source defects P2-D-01 to P2-D-04"
+}

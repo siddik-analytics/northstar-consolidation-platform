@@ -245,3 +245,19 @@ The 61 controls run separately against the built warehouse and take about 2.4 s.
 
 `data/phase03_manifest.json` records the build id, the frozen source digest, every row count,
 the mapping acceptance result and a SHA-256 per artefact.
+
+## The population bridge
+
+`rpt_population_bridge` partitions the ingested population three ways, and each partition
+sums to the ingested row count with no residue (`P3-REC-12`, `CTL-DQ-12`):
+
+| Bridge | Dispositions |
+|---|---|
+| `CHARACTER` | what kind of posting it is: `OPERATIONAL`, `OPENING_BALANCE`, `YEAR_END_CLOSE`, or one of the four Kestrel special-period types |
+| `MAPPING` | the declared mapping status, one per line, with the blocking statuses present at nil rather than absent |
+| `ORACLE` | whether the expected-mapping manifest graded the line, and whether the source carried what the account's rules read |
+
+A row that falls out between two stages leaves no trace in any total — a dropped balanced
+journal is still balanced — and a difference between two population counts that nobody can
+name is the same failure wearing a tidier number. Both are what this exists to make
+impossible.

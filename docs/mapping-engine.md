@@ -24,6 +24,24 @@ Get it wrong and every balancing control still passes. The trial balance sums to
 statements tie, the eliminations net — and gross margin moves by three points. That is why
 `P3-REC-06` exists (§6) and why fault fixture F08 tests exactly this.
 
+### Where the accepted values are a set
+
+An approved rule frequently accepts several values, not one. Kestrel's temporary-staff
+account reaches cost of sales from a `PRODUCTION`, `FIELD` **or** `PROJECT` cost centre. The
+generator has to satisfy the same contract from the other side, so the manifest records the
+accepted **set** and the posting declares whichever member the entity actually has. Naming
+one of them forced a services entity with no manufacturing to declare `PRODUCTION`, which is
+half of what defect P2-D-02 was.
+
+The other half was a wrong value in a lookup: `D210 Equipment & Fleet` and `D215 Field Safety
+& Compliance` were classified as `FIELD` when they are support departments, which the
+approved Aurora split had always said by grouping them with the other indirect-operations
+departments. `SAB-60700-10` was expressed on the department **function** because, under the
+wrong classification, the function happened to select exactly the department set the chart
+enumerates. It no longer does, so the rule is expressed on the department set the chart
+actually names. A rule written on a proxy for its criterion breaks silently when the proxy
+stops holding.
+
 F08 is also the reason `P3-REC-06` is set at one basis point rather than the 0.05 percentage
 points it started at. The fixture moves eight payroll postings across the line *consistently* —
 the line attributes and the cost centre agree with each other, so the posting looks correct

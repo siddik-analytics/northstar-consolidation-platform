@@ -45,7 +45,7 @@ SAB-40900-10,SABLE,40900,10,reimbursable_type = 'FREIGHT',430100,SPLIT_BRANCH,20
 SAB-40900-99,SABLE,40900,999,TRUE,435100,SPLIT_DEFAULT,2021-03-01,,TRUE,source_coa_sable.csv 40900,"Sable has no separate freight revenue account, so reimbursables that are not freight fall to other operating revenue."
 SAB-50900-10,SABLE,50900,10,"partner_bu IN ('FC','AM')",590100,SPLIT_BRANCH,2021-03-01,,TRUE,source_coa_sable.csv 50900,
 SAB-50900-99,SABLE,50900,999,TRUE,590200,SPLIT_DEFAULT,2021-03-01,,TRUE,source_coa_sable.csv 50900,
-SAB-60700-10,SABLE,60700,10,dept_function = 'FIELD',520300,SPLIT_BRANCH,2021-03-01,,TRUE,source_coa_sable.csv 60700,"Safety training for field crews is a cost of delivering the work. The chart narrative enumerates D200, D205 and D215; the rule is expressed on the department FUNCTION because that enumeration is an incomplete statement of the same idea -- D210 is also a field department."
+SAB-60700-10,SABLE,60700,10,"dept_code IN ('D200','D205','D215')",520300,SPLIT_BRANCH,2021-03-01,,TRUE,source_coa_sable.csv 60700,"Safety training for field crews is a cost of delivering the work. The chart enumerates D200, D205 and D215 and the rule now follows it exactly. It was expressed on dept_function until D210 and D215 were corrected to INDIRECT_OPS (P2-D-02): the enumeration is not a proxy for a function, it is the list of departments whose safety training the chart absorbs into cost of sales."
 SAB-60700-99,SABLE,60700,999,TRUE,610800,SPLIT_DEFAULT,2021-03-01,,TRUE,source_coa_sable.csv 60700,
 SAB-62000-10,SABLE,62000,10,vendor_category = 'AUDIT',630100,SPLIT_BRANCH,2021-03-01,,TRUE,source_coa_sable.csv 62000,
 SAB-62000-20,SABLE,62000,20,vendor_category = 'LEGAL',630200,SPLIT_BRANCH,2021-03-01,,TRUE,source_coa_sable.csv 62000,

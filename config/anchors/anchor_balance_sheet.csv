@@ -15,18 +15,18 @@ ap,Trade accounts payable,29.775233,34.984241,40.103425,44.964115,43.441716
 contract_liabilities,Contract liabilities,5.225000,5.886000,6.678000,7.790000,6.647000
 accrued,Accrued liabilities,18.040000,20.427000,22.665500,24.640000,24.046000
 tax_payable,Income taxes payable,1.968000,2.228400,2.472600,2.688000,2.623200
-rcf,Revolving credit facility,16.237030,24.866815,19.518200,9.947067,15.127244
+rcf,Revolving credit facility,15.988593,24.519076,19.132275,9.561141,14.720740
 tlb_net,"Term loan B, net of financing costs",196.000000,222.500000,221.250000,209.950000,219.950000
 finance_lease,Finance lease liabilities,10.268500,10.368828,10.850594,10.843234,11.343234
 operating_lease,Operating lease liabilities,22.000000,24.000000,24.500000,24.000000,25.500000
 dtl,Deferred tax liabilities,15.500000,17.900000,16.300000,14.700000,14.800000
 other_ltl,Other long-term liabilities,3.500000,3.800000,4.000000,4.000000,4.200000
-total_liabilities,Total liabilities,318.513763,366.961284,368.338319,353.522416,367.678394
+total_liabilities,Total liabilities,318.265326,366.613545,367.952394,353.136491,367.271890
 contributed_capital,Contributed capital and APIC,166.000000,167.200000,168.600000,170.100000,170.100000
-retained_earnings,Retained earnings / (accumulated deficit),-82.583566,-83.048716,-74.972074,-58.576488,-64.615932
-cta,Cumulative translation adjustment,-0.892996,-5.558968,2.184143,2.184143,3.184143
-nci,Non-controlling interests,3.050689,3.161288,3.380420,3.570420,3.547396
-total_equity,Total equity,85.574127,81.753604,99.192489,117.278075,112.215607
+retained_earnings,Retained earnings / (accumulated deficit),-82.335388,-82.702065,-74.584956,-58.189369,-64.208182
+cta,Cumulative translation adjustment,-0.892756,-5.557934,2.183014,2.183014,3.183014
+nci,Non-controlling interests,3.050708,3.161342,3.380356,3.570356,3.547279
+total_equity,Total equity,85.822564,82.101343,99.578414,117.664001,112.622111
 total_liabilities_and_equity,TOTAL LIABILITIES AND EQUITY,404.087890,448.714888,467.530808,470.800492,479.894001
 tlb_gross,"Memo: term loan B, gross principal",201.200000,228.900000,226.600000,214.300000,224.300000
 dff,Memo: unamortised deferred financing costs,5.200000,6.400000,5.350000,4.350000,4.350000

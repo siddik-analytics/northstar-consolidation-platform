@@ -154,6 +154,11 @@ negative bank balance that no real group would tolerate. Pooling only *redistrib
 the group total is untouched, and both legs are in the operating entity's currency so the
 pair eliminates exactly.
 
+The pool has exactly one counterparty on each side and always has had — the participant's
+current account is with Topco and Topco's is with that participant — and since Phase 3.1
+every posting to it **says so**. Topco's side of the pool divides between the participants in
+proportion to what each of them holds, so the parts sum to the whole in every period.
+
 Pooling redistributes; it does not create liquidity. A month in which working capital builds
 faster than the business collects still leaves the group short, and Phase 2.0 left 76
 entity-months with a negative bank balance as a result. A real group draws its revolver —
@@ -343,6 +348,40 @@ one. With it in place, layer-1 cash lands on the approved anchor to the cent wit
 added to any ledger. There is no measurement reserve and no equivalent account anywhere in
 the source architecture, and `P2-EQ-03` fails the build if one reappears under any name.
 
+### 3.7a Intercompany balances are built pair by pair
+
+An intercompany balance is a balance **with somebody**, and the generator treats the pair as
+the unit rather than the entity.
+
+The approved anchor gives one group-level intercompany receivable and payable figure per
+year. Allocating it to entities by each entity's share of intercompany turnover gives every
+entity the right total and no pair a matching number: two sides of the same relationship land
+on the same December figure by different routes and are several per cent apart in May.
+Allocating the same anchor **flow by flow** gives identical entity totals — an entity's total
+is the sum of its own flows either way, so no anchored balance moves — and, because a flow has
+one seller and one buyer, both sides read the same USD figure. Each side then translates that
+figure into its own currency at the month's closing rate, which is the rate a balance is
+compared at.
+
+The same principle covers the rest of the intercompany position:
+
+| Balance | Counterparty, and where it comes from |
+|---|---|
+| Trade current account (`120500` / `210500`) | the flow: one seller, one buyer, both sides of the same amount |
+| Treasury current account (`125100` / `225100`) | the pool: the participant on one side, Topco on the other |
+| Loans (`175100` / `235100`) | the loan register: every loan is made by Topco, and its receivable divides between borrowers by notional |
+| Investments in subsidiaries (`178100`) | the investment register, which names the subsidiary |
+
+A pair carries no balance before **both** sides are in the group. The flow matrix is settled a
+year at a time, so a company acquired in April used to carry balances with its new sister
+companies from January — one side of a pair that the other side could not have.
+
+Every posting to one of these accounts names its counterparty, including the cash settlement
+that clears it, and the settlement is made counterparty by counterparty rather than as one net
+figure. Anything left unattributed on such an account raises rather than posting a nameless
+plug. This is what makes the position eliminable by pair, and it is the correction for defect
+P2-D-03 — before it, only 37% of the position at FY2025 could be attributed to a pair at all.
+
 ### 3.8 Unrealised intercompany profit — support only
 
 Phase 2 does **not** eliminate unrealised intercompany profit. That is a layer-3 construct
@@ -509,7 +548,7 @@ three systems, and the small reference masters — about 1.8 MB.
 
 Two ideas kept strictly apart:
 
-- **`data/raw/`** — the clean baseline. It passes all 77 source controls. It is never
+- **`data/raw/`** — the clean baseline. It passes all 79 source controls. It is never
   corrupted.
 - **`data/faults/<id>/`** — a separate copy of only the file each fault touches, with
   `expected_results.json` naming the control that must catch it.

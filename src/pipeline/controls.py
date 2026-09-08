@@ -481,7 +481,7 @@ def run(con: duckdb.DuckDBPyConnection) -> Result:
 
     # The two source-data findings, reported rather than hidden.
     contradiction = con.execute("""
-        SELECT count(*) AS lines, round(sum(abs(signed_local_amount)), 2) AS amount
+        SELECT count(*) AS lines, coalesce(round(sum(abs(signed_local_amount)), 2), 0) AS amount
         FROM fact_journal_line
         WHERE dimension_dept_function IS NOT NULL
           AND dept_function IS DISTINCT FROM dimension_dept_function""").fetchone()
@@ -493,10 +493,24 @@ def run(con: duckdb.DuckDBPyConnection) -> Result:
                f"authoritative for the mapping contract, so the mapping is right; the source "
                f"data is not self-corroborating.")
 
+    # Every ingested row has exactly one disposition in each bridge, and each bridge sums
+    # to the ingested population. A row that falls out between two stages, or a difference
+    # between two counts that nobody can name, is the failure this makes impossible.
+    ingested = _one(con, "SELECT count(*) FROM fact_journal_line")
+    residues = con.execute(f"""
+        SELECT bridge, sum(lines) - {ingested} AS residue
+        FROM rpt_population_bridge GROUP BY 1 HAVING residue <> 0""").fetchall()
+    r.ok("P3-REC-12", "Every ingested row has exactly one disposition in every bridge",
+         "BLOCKING", not residues, str(residues), 0,
+         f"{ingested:,} ingested rows partitioned three ways -- by journal character, by "
+         f"mapping status and by oracle grading. Each partition sums to the ingested "
+         f"count with no residue, so no row is silently dropped between stages and no "
+         f"unexplained difference between two population counts can survive.")
+
     unclassified_lines = con.execute("""
         SELECT count(*) AS lines,
                count(*) FILTER (WHERE NOT agrees) AS wrong,
-               round(sum(abs(signed_local_amount)) FILTER (WHERE NOT agrees), 2) AS amount
+               coalesce(round(sum(abs(signed_local_amount)) FILTER (WHERE NOT agrees), 2), 0) AS amount
         FROM map_acceptance WHERE NOT classifiable_at_source""").fetchone()
     registered(r, exceptions, "P3-MAP-13",
                "Every posting to a conditional account carries the attribute its rules read",

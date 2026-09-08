@@ -405,13 +405,25 @@ def test_the_control_results_separate_a_pipeline_failure_from_a_source_finding()
 
 
 @needs_warehouse
-def test_every_source_finding_names_the_defect_it_belongs_to():
+def test_the_clean_baseline_carries_no_source_finding():
+    """
+    All four source defects were corrected in Phase 3.1, so the clean baseline has none.
+    The status still exists and the register still names the four defects -- a recurrence
+    fails rather than reappearing as an accepted finding -- but nothing is standing.
+    """
     findings = [r for r in read(CONTROL_RESULTS) if r["status"] == "SOURCE_FINDING"]
-    assert findings, "the three known source defects should still be reported"
+    assert not findings, [f"{r['control_id']}: {r['measured']}" for r in findings]
     for row in findings:
         assert re.fullmatch(r"P2-D-\d{2}", row["defect_reference"]), row["control_id"]
-    assert {r["defect_reference"] for r in findings} == {"P2-D-01", "P2-D-02", "P2-D-03",
-                                                        "P2-D-04"}
+
+
+@needs_warehouse
+def test_every_control_is_pass_or_explicitly_not_applicable():
+    """The clean baseline: no unresolved failure, no unexplained warning."""
+    unresolved = [r for r in read(CONTROL_RESULTS)
+                  if r["status"] not in ("PASS", "NOT_APPLICABLE")]
+    assert not unresolved, [f"{r['control_id']} {r['status']} {r['measured']}"
+                            for r in unresolved]
 
 
 def test_the_source_defects_are_documented_in_the_phase_report():
@@ -422,16 +434,38 @@ def test_the_source_defects_are_documented_in_the_phase_report():
     assert "rather than patched" in report, "the report must say the defects stand"
 
 
-def test_no_phase_2_generator_module_was_changed_by_phase_3():
-    """The source freeze in the form a reviewer would check it: git says so."""
+def test_phase_3_itself_changed_no_generator_module():
+    """
+    The source freeze in the form a reviewer would check it: git says so.
+
+    Phase 3 was not permitted to touch the generator and did not. Phase 3.1 reopened the
+    freeze deliberately and only to correct the four documented defects, so the assertion
+    is made against the Phase 3 commit rather than against the working tree; what Phase 3.1
+    changed is enumerated in data/phase03_1_source_diff.json and asserted separately.
+    """
     changed = subprocess.run(
-        ["git", "diff", "--name-only", "0ffe502..HEAD", "--", "src/generation"],
+        ["git", "diff", "--name-only", "20355b2..647336e", "--", "src/generation"],
         capture_output=True, text=True, cwd=ROOT).stdout.split()
-    phase22 = subprocess.run(
-        ["git", "diff", "--name-only", "0ffe502..20355b2", "--", "src/generation"],
-        capture_output=True, text=True, cwd=ROOT).stdout.split()
-    assert set(changed) == set(phase22), \
-        "src/generation changed after the Phase 2.2 freeze: " + str(set(changed) - set(phase22))
+    assert changed == [], "Phase 3 changed " + str(changed)
+
+
+def test_phase_3_1_changed_the_generator_only_where_the_defects_were():
+    """
+    Reopening the freeze is a licence to fix four named defects, not a licence to edit the
+    generator. Every module that moved has to be one the defect analysis named.
+    """
+    diff = json.loads((DATA / "phase03_1_source_diff.json").read_text(encoding="utf-8"))
+    allowed = {
+        "src/generation/journals.py",     # P2-D-01, P2-D-02, P2-D-03, P2-D-04
+        "src/generation/mapping.py",      # P2-D-02: the accepted values of a split
+        "src/generation/masters.py",      # P2-D-02: the function of a department
+        "src/generation/ledger.py",       # P2-D-03: intercompany by counterparty
+        "src/generation/series.py",       # P2-D-03: the monthly paths behind it
+        "src/generation/build.py",        # P2-D-03: passing the opening decomposition
+        "src/generation/validate.py",     # the controls that failed to catch them
+    }
+    changed = set(diff["generator_modules_changed"])
+    assert changed <= allowed, "unexplained generator change: " + str(changed - allowed)
 
 
 # ---------------------------------------------------------------------------
@@ -474,34 +508,42 @@ def test_every_accepted_source_finding_is_registered_with_its_population():
     for row in register:
         assert re.fullmatch(r"SX-\d{3}", row["exception_id"]), row
         assert re.fullmatch(r"P2-D-\d{2}", row["defect_reference"]), row
-        assert int(row["accepted_population"]) > 0, row
-        assert row["expires"], f"{row['exception_id']} has no expiry and cannot be retired"
+        assert int(row["accepted_population"]) == 0, \
+            f"{row['exception_id']} is closed and must accept nothing"
+        assert row["status"] == "CLOSED", row["exception_id"]
+        assert row["correction"], f"{row['exception_id']} does not say what fixed it"
 
 
 @needs_warehouse
-def test_a_source_finding_is_reported_only_at_its_accepted_population():
+def test_no_control_reports_a_source_finding_without_a_registered_exception():
     exceptions = controls.load_exceptions()
-    findings = [r for r in read(CONTROL_RESULTS) if r["status"] == "SOURCE_FINDING"]
-    assert findings
-    for row in findings:
-        assert row["control_id"] in exceptions, \
-            f"{row['control_id']} reports a source finding with no registered exception"
-        accepted = int(exceptions[row["control_id"]]["accepted_population"])
-        assert str(accepted) in row["measured"], \
-            f"{row['control_id']} measured {row['measured']}, accepted {accepted}"
+    for row in read(CONTROL_RESULTS):
+        if row["status"] == "SOURCE_FINDING":
+            assert row["control_id"] in exceptions, \
+                f"{row['control_id']} reports a source finding with no registered exception"
 
 
-def test_a_new_break_of_a_known_shape_fails_rather_than_hiding():
-    """The register's whole purpose: the population *is* the control."""
+def test_the_register_still_grades_a_population_and_not_only_a_shape():
+    """
+    The register's whole purpose: the population IS the control. With every exception
+    closed at nil, that reduces to "nothing, or it fails" -- but the grading is unchanged
+    and a re-opened exception would behave exactly as it did.
+    """
     exceptions = controls.load_exceptions()
-    cid, row = next(iter(exceptions.items()))
-    accepted = int(row["accepted_population"])
-    for measured, expected in ((0, "PASS"), (accepted, "SOURCE_FINDING"),
-                               (accepted + 1, "FAIL"), (accepted - 1, "FAIL")):
+    cid = next(iter(exceptions))
+    for measured, expected in ((0, "PASS"), (1, "FAIL"), (5248, "FAIL")):
         r = controls.Result()
         controls.registered(r, exceptions, cid, "t", "BLOCKING", measured, "lines", "d")
-        assert r[-1]["status"] == expected, \
-            f"{measured} against {accepted} accepted should be {expected}"
+        assert r[-1]["status"] == expected, f"{measured} should be {expected}"
+
+    # and against a hypothetical open exception, the three-way grading still holds
+    open_exception = {"X": {"accepted_population": "100", "exception_id": "SX-999",
+                            "defect_reference": "P2-D-99", "expires": "later"}}
+    for measured, expected in ((0, "PASS"), (100, "SOURCE_FINDING"),
+                               (101, "FAIL"), (99, "FAIL")):
+        r = controls.Result()
+        controls.registered(r, open_exception, "X", "t", "BLOCKING", measured, "lines", "d")
+        assert r[-1]["status"] == expected, f"{measured} against 100 should be {expected}"
 
 
 # ---------------------------------------------------------------------------

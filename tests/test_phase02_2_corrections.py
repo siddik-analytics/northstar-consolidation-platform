@@ -198,12 +198,21 @@ def test_the_anchored_cta_is_reproduced_from_the_source_ledgers():
 
 
 def test_the_revised_cta_anchor_is_the_one_documented():
-    """The narrow, approved CTA revision. Asserted so it cannot drift silently."""
+    """
+    The narrow, approved CTA revision. Asserted so it cannot drift silently.
+
+    Restated in Phase 3.1 to the sixth decimal. The CTA is derived from the generated
+    entity balances, and correcting the intercompany balances moved those balances a
+    little; the largest movement in any year is USD 2.2 thousand on a figure of USD 7.7m,
+    which is 0.03% and changes nothing a reader would notice. It is restated rather than
+    absorbed into a wider tolerance, because the point of the assertion is that the number
+    is derived and reproducible.
+    """
     cta = load_anchor("cta_rollforward")
-    assert cta["cta_movement_group"]["FY2023A"] == pytest.approx(2.607004, abs=5e-4)
-    assert cta["cta_movement_group"]["FY2024A"] == pytest.approx(-4.665972, abs=5e-4)
-    assert cta["cta_movement_group"]["FY2025A"] == pytest.approx(7.743111, abs=5e-4)
-    assert cta["cta_closing"]["FY2025A"] == pytest.approx(2.184143, abs=5e-4)
+    assert cta["cta_movement_group"]["FY2023A"] == pytest.approx(2.607244, abs=5e-4)
+    assert cta["cta_movement_group"]["FY2024A"] == pytest.approx(-4.665178, abs=5e-4)
+    assert cta["cta_movement_group"]["FY2025A"] == pytest.approx(7.740948, abs=5e-4)
+    assert cta["cta_closing"]["FY2025A"] == pytest.approx(2.183014, abs=5e-4)
     # the roll-forward still articulates
     prev = -3.5
     for col in ("FY2023A", "FY2024A", "FY2025A"):
@@ -422,11 +431,19 @@ def test_phase_22_moved_only_the_two_anchors_it_derived():
 
 
 def test_the_restated_interest_and_net_income_are_the_documented_figures():
+    """
+    Restated again in Phase 3.1. Correcting the intercompany balances changed the
+    intra-year cash position, and the revolver is drawn against exactly that: average
+    daily drawn falls from 17.318 to 14.829 in FY2023 and from 26.347 to 23.902 in FY2024,
+    so revolver interest falls and the commitment fee on the larger undrawn balance rises.
+    FY2025 net income moves by USD 0.040m, 0.48%. Revenue, gross profit, EBITDA, cash and
+    the term loan are untouched -- data/phase03_1_source_diff.json is the evidence.
+    """
     pl = load_anchor("income_statement")
-    assert pl["net_interest"]["FY2023A"] == pytest.approx(18.434547, abs=5e-4)
-    assert pl["net_interest"]["FY2024A"] == pytest.approx(21.985445, abs=5e-4)
-    assert pl["net_interest"]["FY2025A"] == pytest.approx(21.045501, abs=5e-4)
-    assert pl["net_income"]["FY2025A"] == pytest.approx(8.436642, abs=5e-4)
+    assert pl["net_interest"]["FY2023A"] == pytest.approx(18.224227, abs=5e-4)
+    assert pl["net_interest"]["FY2024A"] == pytest.approx(21.766617, abs=5e-4)
+    assert pl["net_interest"]["FY2025A"] == pytest.approx(20.988903, abs=5e-4)
+    assert pl["net_income"]["FY2025A"] == pytest.approx(8.477110, abs=5e-4)
 
 
 def test_the_balance_sheet_still_balances_after_the_revision():

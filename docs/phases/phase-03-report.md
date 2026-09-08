@@ -2,6 +2,13 @@
 
 **Status:** Complete · **Date:** 2026-09-07 · **Next gate:** owner review
 
+> **The four source defects in §12 are CLOSED.** They were corrected at the generation layer
+> in Phase 3.1 and the source layer regenerated; the figures in this report describe the state
+> at the end of Phase 3, before that correction. Mapping agreement is now 100.000000% across
+> all lines with no exclusions, and both control baselines are clean. See
+> [`phase-03-1-report.md`](phase-03-1-report.md).
+
+
 Three deliberately heterogeneous ERP source systems ingested, normalised and harmonised into
 one controlled finance data model, **without altering a byte of the approved source data**.
 

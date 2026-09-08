@@ -445,12 +445,14 @@ def test_approved_fy2026_forecast_covenant_position():
     Phase 2.2 revised the revolver's average drawn balance (ADR-0018) and the cumulative
     translation adjustment (ADR-0017), both of which move the year-end facility balance and
     therefore net debt.  Leverage moved from 3.80x to 3.86x and headroom from 0.70x to
-    0.64x -- restated here, and still comfortably inside the 4.50x covenant.
+    0.64x.  Phase 3.1's intercompany corrections moved the intra-year cash position the
+    facility is drawn against, and leverage improves again to 3.858x with headroom 0.642x.
+    Restated here, and still comfortably inside the 4.50x covenant.
     """
     kpi = {r["metric"]: r for r in read(ROOT / "config" / "anchors" / "anchor_kpi.csv")}
     assert float(kpi["covenant_max_leverage_x"]["FY2026F"]) == pytest.approx(4.50)
-    assert float(kpi["net_leverage_x"]["FY2026F"]) == pytest.approx(3.865, abs=0.005)
-    assert float(kpi["covenant_leverage_headroom_x"]["FY2026F"]) == pytest.approx(0.635, abs=0.005)
+    assert float(kpi["net_leverage_x"]["FY2026F"]) == pytest.approx(3.858, abs=0.005)
+    assert float(kpi["covenant_leverage_headroom_x"]["FY2026F"]) == pytest.approx(0.642, abs=0.005)
 
 
 def test_downside_scenario_is_reserved_and_not_populated():

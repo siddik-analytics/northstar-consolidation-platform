@@ -1,11 +1,11 @@
-fault_id,name,category,phase2_expected_control,phase_detected,phase3_control_family,detected_by,other_controls_broken,status,rationale
-F01,Unmapped source account,MAPPING,CTL-MAP-01,3,P3-MAP,P3-MAP-01;P3-MAP-03;P3-MAP-04;P3-MAP-08,P3-TB-01;P3-TB-03;P3-DIM-04,DETECTED,an account absent from the ERP chart cannot be mapped and must land in the exception file
-F02,Intercompany amount mismatch,INTERCOMPANY,CTL-IC-01,4,n/a (later phase),,,DEFERRED_TO_LATER_PHASE,"an entity-pair intercompany mismatch is invisible until the elimination engine matches the pair, which is Phase 4. Both trial balances still close and every Phase 3 control is correct to pass"
-F03,Missing FX rate,FX,CTL-FX-01,4,P3-DIM,P3-DIM-10,,DETECTED,a missing rate must block the period rather than translate at zero
-F04,Duplicate journal identifier,DATA_QUALITY,CTL-DQ-03,3,P3-ING,P3-ING-02;P3-ING-08,,DETECTED,a duplicated journal breaks the declared lineage grain
-F05,Invalid cost centre,DATA_QUALITY,CTL-DQ-08,3,P3-DIM,P3-DIM-02,,DETECTED,a cost centre absent from the master is an unresolved dimension key
-F06,Malformed localised amount,DATA_QUALITY,CTL-DQ-09,3,P3-ING,P3-ING-13,P3-TB-01;P3-TB-02;P3-TB-03;P3-REC-04,DETECTED,an amount that does not parse under the declared locale
-F07,Posting date outside its period,DATA_QUALITY,CTL-DQ-06,3,P3-ING,P3-ING-06,,DETECTED,a posting date outside its own accounting period
-F08,Payroll misclassified across the gross margin line,MAPPING,CTL-MAP-04,3,P3-REC,P3-REC-06,P3-MAP-04;P3-MAP-13,DETECTED,payroll moved across the gross margin line still balances; only the margin reconciliation finds it
-F09,Unbalanced journal,TRIAL_BALANCE,CTL-TB-01,3,P3-TB,P3-TB-01;P3-TB-02;P3-TB-03,P3-ING-02,DETECTED,a journal whose lines do not sum to zero
-F10,Posting before the consolidation effective date,CONSOLIDATION,CTL-CON-02,4,P3-CMP,P3-CMP-02,P3-ING-02;P3-ING-08;P3-TB-01;P3-TB-02;P3-TB-03;P3-MAP-04;P3-MAP-13;P3-REC-04,DETECTED,a posting before the entity's consolidation effective date
+fault_id,name,category,phase2_expected_control,phase_detected,phase3_control_family,deferred_to_control,detected_by,other_controls_broken,status,rationale
+F01,Unmapped source account,MAPPING,CTL-MAP-01,3,P3-MAP,,P3-MAP-01;P3-MAP-03;P3-MAP-04;P3-MAP-08,P3-TB-01;P3-TB-03;P3-DIM-04,DETECTED,an account absent from the ERP chart cannot be mapped and must land in the exception file
+F02,Intercompany amount mismatch,INTERCOMPANY,CTL-IC-01,4,NOT_APPLICABLE,CTL-IC-01,,,NOT_APPLICABLE_DEFERRED,"an entity-pair intercompany mismatch cannot be seen until the pair is assembled, which the Phase 4 elimination engine does and no Phase 3 artefact does. Both trial balances still close and every Phase 3 control is correct to pass. Phase 4 CTL-IC-01 must detect it."
+F03,Missing FX rate,FX,CTL-FX-01,4,P3-DIM,,P3-DIM-10,,DETECTED,a missing rate must block the period rather than translate at zero
+F04,Duplicate journal identifier,DATA_QUALITY,CTL-DQ-03,3,P3-ING,,P3-ING-02;P3-ING-08,P3-REC-12,DETECTED,a duplicated journal breaks the declared lineage grain
+F05,Invalid cost centre,DATA_QUALITY,CTL-DQ-08,3,P3-DIM,,P3-DIM-02,,DETECTED,a cost centre absent from the master is an unresolved dimension key
+F06,Malformed localised amount,DATA_QUALITY,CTL-DQ-09,3,P3-ING,,P3-ING-13,P3-TB-01;P3-TB-02;P3-TB-03;P3-REC-04,DETECTED,an amount that does not parse under the declared locale
+F07,Posting date outside its period,DATA_QUALITY,CTL-DQ-06,3,P3-ING,,P3-ING-06,,DETECTED,a posting date outside its own accounting period
+F08,Payroll misclassified across the gross margin line,MAPPING,CTL-MAP-04,3,P3-REC,,P3-REC-06,P3-MAP-03;P3-MAP-04,DETECTED,payroll moved across the gross margin line still balances; only the margin reconciliation finds it
+F09,Unbalanced journal,TRIAL_BALANCE,CTL-TB-01,3,P3-TB,,P3-TB-01;P3-TB-02;P3-TB-03,P3-ING-02,DETECTED,a journal whose lines do not sum to zero
+F10,Posting before the consolidation effective date,CONSOLIDATION,CTL-CON-02,4,P3-CMP,,P3-CMP-02,P3-ING-02;P3-ING-08;P3-TB-01;P3-TB-02;P3-TB-03;P3-TB-06;P3-MAP-02;P3-MAP-03;P3-MAP-04;P3-REC-12;P3-DIM-04;P3-REC-03;P3-REC-04,DETECTED,a posting before the entity's consolidation effective date

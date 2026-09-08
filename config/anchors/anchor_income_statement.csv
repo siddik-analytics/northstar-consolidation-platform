@@ -10,15 +10,15 @@ depreciation,Depreciation,9.500000,10.400000,11.300000,12.200000,12.000000
 amortisation,Amortisation of acquired intangibles,5.800000,7.000000,7.200000,7.200000,7.200000
 da,Total D&A,15.300000,17.400000,18.500000,19.400000,19.200000
 ebit,EBIT,13.940000,21.574000,32.845000,40.586500,34.193600
-net_interest,Net interest expense,18.434547,21.985445,21.045501,17.524053,19.357542
-pbt,Profit before tax,-4.494547,-0.411445,11.799499,23.062447,14.836058
-tax,Income tax expense/(benefit),0.809019,-0.226295,3.362857,6.226861,4.079916
-net_income,Net income,-5.303566,-0.185150,8.436642,16.835587,10.756142
+net_interest,Net interest expense,18.224227,21.766617,20.988903,17.524053,19.329085
+pbt,Profit before tax,-4.284227,-0.192617,11.856097,23.062447,14.864515
+tax,Income tax expense/(benefit),0.771161,-0.105939,3.378988,6.226861,4.087742
+net_income,Net income,-5.055388,-0.086678,8.477110,16.835587,10.776773
 nci,Less: non-controlling interests,0.180000,0.280000,0.360000,0.440000,0.400000
-ni_parent,Net income attributable to the group,-5.483566,-0.465150,8.076642,16.395587,10.356142
+ni_parent,Net income attributable to the group,-5.235388,-0.366678,8.117110,16.395587,10.376773
 interest_tlb,Memo: interest expense - term loan,15.365700,17.956675,17.764500,16.092850,16.796025
-interest_rcf,Memo: interest expense - revolving facility,1.549961,2.489791,1.905470,0.147000,1.178330
+interest_rcf,Memo: interest expense - revolving facility,1.327195,2.258739,1.845267,0.147000,1.147883
 interest_lease,Memo: interest expense - finance leases,0.655476,0.670713,0.689631,0.694203,0.710203
-commitment_fee,Memo: commitment and agency fees,0.213410,0.168265,0.185900,0.290000,0.222985
+commitment_fee,Memo: commitment and agency fees,0.225855,0.180490,0.189505,0.290000,0.224975
 dff_amortisation,Memo: amortisation of deferred financing costs,0.950000,1.050000,1.050000,1.000000,1.000000
 interest_income,Memo: interest income,-0.300000,-0.350000,-0.550000,-0.700000,-0.550000

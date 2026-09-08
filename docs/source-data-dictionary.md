@@ -60,10 +60,10 @@ source system.
 | `expected_group_account` | text | **what Phase 3's mapping must produce** |
 | `cost_center_code` | text | joins `cost_centres.csv` |
 | `department_code` | text | `D100` … `D950` |
-| `dept_function` | text | `PRODUCTION`, `FIELD`, `PROJECT`, `INDIRECT_OPS`, `SGA` |
+| `dept_function` | text | `PRODUCTION`, `FIELD`, `PROJECT`, `INDIRECT_OPS`, `SGA`. Delivery functions are the ones that are billable or absorbed into a unit cost: `D200` and `D205` are `FIELD`, while `D210 Equipment & Fleet` and `D215 Field Safety & Compliance` **support** field operations and are `INDIRECT_OPS`, which is what the department master's own `cost_type` and the approved Aurora split have always said |
 | `currency_code` | text | entity functional currency |
 | `amount_local` | decimal | **debit positive**; every journal sums to zero |
-| `ic_partner_code` | text | counterparty entity, on both legs; blank if external |
+| `ic_partner_code` | text | counterparty entity, on **every** posting to an intercompany account — the invoice, the settlement, the treasury current account, the loan and the investment in a subsidiary. Blank only on an external posting and on the year-end close, which is a position rather than a transaction with anyone |
 | `customer_code` | text | sales invoices only |
 | `product_code` | text | |
 | `line_attributes` | text | `key=value;…` — the attributes a conditional split must read |
@@ -71,6 +71,19 @@ source system.
 `line_attributes` is the load-bearing column for Phase 3. A payroll line carrying
 `dept_function=PRODUCTION` must map to direct labour; the same account carrying
 `dept_function=SGA` must map to operating expense.
+
+**Every** journal type carries them — the conversion journal that establishes an opening
+balance, the year-end close, and Kestrel's special-period adjustments as well as ordinary
+transactions. Three of those four wrote an empty attribute string until Phase 3.1
+(defect P2-D-01), and a posting to a conditional account that carries none of the fields its
+rules read cannot be classified from what it contains.
+
+The declared attribute and the cost centre the line sits in are **two views of one fact and
+always agree**. A line declaring `dept_function=PRODUCTION` is posted to a cost centre whose
+department carries that function; where an entity has no such department the cost is not
+allocated there at all. They disagreed on 5,710 lines until Phase 3.1 (defect P2-D-02), which
+cost nothing in the reported figures and everything in the dimension's ability to corroborate
+the mapping.
 
 **Special rows**: `event_type = OPENING_BALANCE` establishes each entity's opening balance
 sheet in its first period, so an extract is self-contained rather than movement-only.
@@ -372,7 +385,7 @@ charts.
 |---|---|
 | `data/build_manifest.json` | Row counts, the investment calibration, and a SHA-256 for each of the 520 generated files |
 | `data/samples/build_digest.txt` | One digest over all checksums — the reproducibility fingerprint |
-| `data/phase02_control_results.csv` | All 77 source controls with measured value, threshold and status |
+| `data/phase02_control_results.csv` | All 79 source controls with measured value, threshold and status |
 | `data/faults/expected_results.json` | The ten fault fixtures and the control each must trip |
 | `data/samples/*.csv` | Extract samples from all three systems, plus a journal line sample |
 | `config/generation/expected_mapping_manifest.csv` | The mapping fixture Phase 3 is graded against |

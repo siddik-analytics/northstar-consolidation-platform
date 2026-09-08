@@ -18,19 +18,25 @@ from .common import CONFIG, load_group_coa, load_source_coa, write_csv
 ERPS = ["AURORA", "SABLE", "KESTREL"]
 
 # Inverse of the conditional split rules in the approved source charts.
-# (erp, group_account) -> (source_account, {line attribute: required value})
-# The attribute is what the Phase 3 rule evaluator must read to resolve the split.
+# (erp, group_account) -> (source_account, {line attribute: required value or values})
+# The attribute is what the Phase 3 rule evaluator must read to resolve the split. Where
+# the approved rule accepts a SET of values -- Kestrel's temporary-staff account reaches
+# cost of sales from a PRODUCTION, FIELD or PROJECT cost centre -- the set is given here,
+# and the generator posts to whichever member the entity actually has. Naming only one of
+# them forced a services entity to declare PRODUCTION while sitting in a project cost
+# centre, which was defect P2-D-02.
 SPLIT_INVERSE: dict[tuple[str, str], tuple[str, dict[str, str]]] = {
     # --- Aurora: one payroll account spans the gross margin line -------------
     ("AURORA", "515100"): ("6100", {"dept_function": "PRODUCTION"}),
-    ("AURORA", "515200"): ("6100", {"dept_function": "FIELD"}),
-    ("AURORA", "520100"): ("6100", {"dept_function": "INDIRECT_OPS"}),
-    ("AURORA", "515300"): ("6110", {"dept_function": "PRODUCTION"}),
+    ("AURORA", "515200"): ("6100", {"dept_function": ("FIELD", "PROJECT")}),
+    ("AURORA", "520100"): ("6100", {"dept_function": ("INDIRECT_OPS", "FIELD")}),
+    ("AURORA", "515300"): ("6110",
+                           {"dept_function": ("PRODUCTION", "FIELD", "PROJECT")}),
     ("AURORA", "610200"): ("6110", {"dept_function": "SGA"}),
     ("AURORA", "610300"): ("6120", {"dept_function": "SGA"}),
-    ("AURORA", "510300"): ("6150", {"dept_function": "PRODUCTION"}),
+    ("AURORA", "510300"): ("6150", {"dept_function": ("PRODUCTION", "FIELD")}),
     ("AURORA", "610600"): ("6150", {"dept_function": "SGA"}),
-    ("AURORA", "520200"): ("6200", {"dept_function": "PRODUCTION"}),
+    ("AURORA", "520200"): ("6200", {"dept_function": ("PRODUCTION", "INDIRECT_OPS")}),
     ("AURORA", "620100"): ("6200", {"dept_function": "SGA"}),
     ("AURORA", "620200"): ("6210", {"dept_function": "SGA"}),
     ("AURORA", "520300"): ("5100", {"dept_function": "INDIRECT_OPS"}),
@@ -46,6 +52,7 @@ SPLIT_INVERSE: dict[tuple[str, str], tuple[str, dict[str, str]]] = {
     ("AURORA", "740200"): ("7300", {"revaluation_flag": "TRUE"}),
     ("AURORA", "740100"): ("7300", {"revaluation_flag": "FALSE"}),
     ("AURORA", "125100"): ("1160", {"maturity_months": "12"}),
+    ("AURORA", "175100"): ("1160", {"maturity_months": "60"}),
     ("AURORA", "225100"): ("2060", {"maturity_months": "12"}),
     ("AURORA", "590200"): ("5900", {"partner_bu": "IS"}),
     ("AURORA", "590100"): ("5900", {"partner_bu": "FC"}),
@@ -60,7 +67,7 @@ SPLIT_INVERSE: dict[tuple[str, str], tuple[str, dict[str, str]]] = {
     ("SABLE", "640300"): ("63000", {"expense_subtype": "COMMISSION"}),
     ("SABLE", "520400"): ("65100", {"dept_function": "FIELD"}),
     ("SABLE", "660200"): ("65100", {"dept_function": "SGA"}),
-    ("SABLE", "520300"): ("60700", {"dept_function": "FIELD"}),
+    ("SABLE", "520300"): ("60700", {"dept_code": ("D200", "D205", "D215")}),
     ("SABLE", "610800"): ("60700", {"dept_function": "SGA"}),
     ("SABLE", "150100"): ("15000", {"asset_class": "LAND"}),
     ("SABLE", "150200"): ("15000", {"asset_class": "BUILDING"}),
@@ -76,17 +83,22 @@ SPLIT_INVERSE: dict[tuple[str, str], tuple[str, dict[str, str]]] = {
     ("SABLE", "590200"): ("50900", {"partner_bu": "IS"}),
     ("SABLE", "740100"): ("73000", {"revaluation_flag": "FALSE"}),
     ("SABLE", "740200"): ("73000", {"revaluation_flag": "TRUE"}),
+    ("SABLE", "680200"): ("68000", {"cost_type": "FACILITY"}),
+    ("SABLE", "680100"): ("68000", {"cost_type": "SEVERANCE"}),
     ("SABLE", "225100"): ("24900", {"maturity_months": "12"}),
     ("SABLE", "235100"): ("24900", {"maturity_months": "60"}),
     # --- Kestrel -------------------------------------------------------------
     ("KESTREL", "515100"): ("00091000", {"cost_center_function": "PRODUCTION"}),
-    ("KESTREL", "515200"): ("00091000", {"cost_center_function": "FIELD"}),
+    ("KESTREL", "515200"): ("00091000", {"cost_center_function": ("FIELD", "PROJECT")}),
     ("KESTREL", "520100"): ("00091000", {"cost_center_function": "INDIRECT_OPS"}),
     ("KESTREL", "610100"): ("00091000", {"cost_center_function": "SGA"}),
-    ("KESTREL", "515300"): ("00091200", {"cost_center_function": "PRODUCTION"}),
+    ("KESTREL", "515300"): ("00091200",
+                            {"cost_center_function": ("PRODUCTION", "FIELD",
+                                                     "PROJECT", "INDIRECT_OPS")}),
     ("KESTREL", "610300"): ("00091200", {"cost_center_function": "SGA"}),
     ("KESTREL", "610200"): ("00091400", {"cost_center_function": "SGA"}),
-    ("KESTREL", "510300"): ("00091600", {"cost_center_function": "PRODUCTION"}),
+    ("KESTREL", "510300"): ("00091600",
+                            {"cost_center_function": ("PRODUCTION", "FIELD", "PROJECT")}),
     ("KESTREL", "610600"): ("00091600", {"cost_center_function": "SGA"}),
     ("KESTREL", "520200"): ("00093000", {"cost_center_function": "PRODUCTION"}),
     ("KESTREL", "620100"): ("00093000", {"cost_center_function": "SGA"}),
@@ -164,6 +176,11 @@ NOT_AVAILABLE = {
 }
 
 
+def _as_text(value) -> str:
+    """A required attribute value, or the pipe-separated set of values the rule accepts."""
+    return value if isinstance(value, str) else "|".join(value)
+
+
 class SourceMap:
     def __init__(self):
         self.group = load_group_coa()
@@ -210,7 +227,7 @@ class SourceMap:
                 rows.append([
                     erp, sa, src["source_account_name"], src["mapping_type"],
                     NOT_AVAILABLE.get((erp, ga), ga), ga,
-                    ";".join(f"{k}={v}" for k, v in sorted(attrs.items())) or "",
+                    ";".join(f"{k}={_as_text(v)}" for k, v in sorted(attrs.items())) or "",
                     self.group[ga]["account_name"], self.group[ga]["statement"],
                     "TRUE" if (erp, ga) in NOT_AVAILABLE else "FALSE",
                 ])

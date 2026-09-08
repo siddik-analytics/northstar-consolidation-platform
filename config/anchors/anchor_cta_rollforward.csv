@@ -1,12 +1,12 @@
 line_item,label,FY2023A,FY2024A,FY2025A,FY2026B,FY2026F
-cta_opening,CTA — opening balance,-3.500000,-0.892996,-5.558968,2.184143,2.184143
-cta_movement_group,CTA — movement attributable to the group,2.607004,-4.665972,7.743111,0.000000,1.000000
-cta_movement_nci,CTA — movement attributable to non-controlling interests,0.070689,-0.019401,0.059132,0.000000,0.016976
+cta_opening,CTA — opening balance,-3.500000,-0.892756,-5.557934,2.183014,2.183014
+cta_movement_group,CTA — movement attributable to the group,2.607244,-4.665178,7.740948,0.000000,1.000000
+cta_movement_nci,CTA — movement attributable to non-controlling interests,0.070708,-0.019366,0.059014,0.000000,0.016923
 cta_recycled_on_disposal,CTA — recycled to income on disposal,0.000000,0.000000,0.000000,0.000000,0.000000
-cta_closing,CTA — closing balance (group),-0.892996,-5.558968,2.184143,2.184143,3.184143
-cta_movement_total,Memo: total translation movement in the period,2.677693,-4.685373,7.802243,0.000000,1.016976
+cta_closing,CTA — closing balance (group),-0.892756,-5.557934,2.183014,2.183014,3.183014
+cta_movement_total,Memo: total translation movement in the period,2.677952,-4.684544,7.799962,0.000000,1.016923
 fx_on_cash,  of which: on cash and cash equivalents,0.200000,-0.300000,0.400000,0.000000,0.200000
 fx_on_ppe,"  of which: on property, plant and equipment",0.600000,-0.900000,1.100000,0.000000,0.900000
 fx_on_goodwill,  of which: on goodwill,0.800000,-1.200000,1.900000,0.000000,1.000000
 fx_on_intangibles,  of which: on intangible assets,0.400000,-0.700000,0.900000,0.000000,0.500000
-fx_non_cash_working_capital,  of which: on working capital and other balances,0.677693,-1.585373,3.502243,0.000000,-1.583024
+fx_non_cash_working_capital,  of which: on working capital and other balances,0.677952,-1.584544,3.499962,0.000000,-1.583077

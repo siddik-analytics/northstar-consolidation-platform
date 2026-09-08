@@ -14,7 +14,14 @@ from .model import EconomicModel
 DEPT_FUNCTION = {
     "D100": "PRODUCTION", "D105": "INDIRECT_OPS", "D110": "INDIRECT_OPS",
     "D115": "INDIRECT_OPS", "D120": "INDIRECT_OPS",
-    "D200": "FIELD", "D205": "FIELD", "D210": "FIELD", "D215": "FIELD",
+    # D210 and D215 support field operations, they do not deliver them: the department
+    # master calls both INDIRECT and the approved Aurora split rule groups them with the
+    # other indirect-operations departments (D105, D110, D115, D120 -> 520100) rather than
+    # with the billable crews (D200, D205 -> 515200). Calling them FIELD here made every
+    # posting at an industrial-services entity declare a delivery function while sitting
+    # in a support cost centre, which was the bulk of defect P2-D-02.
+    "D200": "FIELD", "D205": "FIELD",
+    "D210": "INDIRECT_OPS", "D215": "INDIRECT_OPS",
     "D300": "PROJECT", "D305": "PROJECT", "D310": "PROJECT",
     "D400": "SGA", "D405": "SGA", "D410": "SGA", "D415": "SGA",
     "D500": "SGA", "D505": "SGA", "D510": "SGA", "D515": "SGA", "D520": "SGA",

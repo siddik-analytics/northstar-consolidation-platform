@@ -284,17 +284,75 @@ def run() -> Result:
           "PASS" if abs(got - want) < 0.02 else "FAIL", f"{got:.3f}", f"{want:.3f}")
 
     # ---------------- intercompany -------------------------------------------
-    icj = live[live["ic_partner_code"] != ""]
+    coa_rows = read_csv(CONFIG / "coa" / "group_coa.csv")
+    ic_accounts = {row["group_account"] for row in coa_rows
+                   if row["is_intercompany"] == "TRUE"}
+    ic_bs = {row["group_account"] for row in coa_rows
+             if row["is_intercompany"] == "TRUE" and row["statement"] == "BS"}
+    # Only the intercompany ACCOUNTS are summed. The cash leg of a settlement carries the
+    # counterparty too, for lineage, but it is bank -- not a position with that entity --
+    # and including it only worked before because the two legs happened to cancel.
+    #
+    # Investments in subsidiaries are intercompany but NOT reciprocal: the holding
+    # eliminates against the subsidiary's equity, not against a mirror balance in the
+    # subsidiary's books. P2-INV-01 reconciles them to the investment register instead.
+    reciprocal = live[live["expected_group_account"].isin(ic_accounts - {"178100"})
+                      & (live["ic_partner_code"] != "")]
+
+    # A BALANCE matches its mirror at the CLOSING rate, and it is the cumulative balance
+    # that has to match, not the month's movement (CTL-IC-01). Testing the movement at the
+    # average rate -- which is what this control used to do for every intercompany line
+    # regardless of statement -- is two errors that only cancelled because the balance
+    # sheet legs carried no counterparty and were silently excluded (P2-D-03).
+    bs = reciprocal[reciprocal["expected_group_account"].isin(ic_bs)]
+    running: dict[tuple[str, str, str], float] = defaultdict(float)
+    bal_pair: dict[tuple, float] = defaultdict(float)
+    for ent, pt, pk, amt, ccy in sorted(zip(
+            bs["entity_code"], bs["ic_partner_code"], bs["period_key"],
+            bs["amount_local"], bs["currency_code"]), key=lambda t: t[2]):
+        running[(ent, pt, ccy)] += amt
+    # cumulative per period requires a second pass in period order
+    running.clear()
+    for pk in sorted(bs["period_key"].unique()):
+        month = bs[bs["period_key"] == pk]
+        for ent, pt, amt, ccy in zip(month["entity_code"], month["ic_partner_code"],
+                                     month["amount_local"], month["currency_code"]):
+            running[(ent, pt, ccy)] += amt
+        for (ent, pt, ccy), v in running.items():
+            bal_pair[tuple(sorted((ent, pt))) + (int(pk),)] += v * rate(ccy, int(pk), "CLOSE")
+    worst_bal = max((abs(v) for v in bal_pair.values()), default=0.0)
+    r.add("P2-IC-01", "Intercompany balances match by pair at the closing rate", "BLOCKING",
+          "PASS" if worst_bal <= 1.0 else "FAIL", f"{worst_bal:.4f}", "1.00",
+          f"CTL-IC-01, {len(bal_pair)} entity-pair-periods. Investments in subsidiaries are "
+          f"excluded as non-reciprocal and reconciled by P2-INV-01 instead.")
+
+    # A FLOW matches at the average rate of the month it was recorded in (CTL-IC-02).
+    flows = reciprocal[~reciprocal["expected_group_account"].isin(ic_bs)]
     pair = defaultdict(float)
-    for ent, pt, pk, amt, ccy in zip(icj["entity_code"], icj["ic_partner_code"],
-                                     icj["period_key"], icj["amount_local"],
-                                     icj["currency_code"]):
-        key = tuple(sorted((ent, pt))) + (pk,)
-        pair[key] += amt * rate(ccy, pk, "AVG")
+    for ent, pt, pk, amt, ccy in zip(flows["entity_code"], flows["ic_partner_code"],
+                                     flows["period_key"], flows["amount_local"],
+                                     flows["currency_code"]):
+        pair[tuple(sorted((ent, pt))) + (pk,)] += amt * rate(ccy, pk, "AVG")
     worst_ic = max((abs(v) for v in pair.values()), default=0.0)
-    r.add("P2-IC-01", "Intercompany pairs match in USD before injected faults", "BLOCKING",
+    r.add("P2-IC-03", "Intercompany flows match by pair at the average rate", "BLOCKING",
           "PASS" if worst_ic <= 1.0 else "FAIL", f"{worst_ic:.4f}", "1.00",
-          f"{len(pair)} entity-pair-periods")
+          f"CTL-IC-02, {len(pair)} entity-pair-periods")
+
+    # CTL-IC-04, tested over the WHOLE intercompany population rather than over the subset
+    # that already carries a partner. Testing only the lines that have one is how P2-D-03
+    # survived Phase 2 and was found by Phase 3: the control could not see the postings it
+    # was meant to be about. The year-end close is the one legitimate exception -- it
+    # sweeps the entire income statement into retained earnings in a single entry, so its
+    # lines are a position rather than a transaction with any one counterparty.
+    ic_all = live[live["expected_group_account"].isin(ic_accounts)]
+    missing_partner = int((ic_all["ic_partner_code"] == "").sum())
+    self_partner = int((ic_all["ic_partner_code"] == ic_all["entity_code"]).sum())
+    r.add("P2-IC-02", "Every intercompany posting names its counterparty", "BLOCKING",
+          "PASS" if missing_partner == 0 and self_partner == 0 else "FAIL",
+          f"{missing_partner} missing, {self_partner} self-referencing", "0, 0",
+          f"CTL-IC-04, over all {len(ic_all):,} intercompany postings outside the year-end "
+          f"close. A balance with no counterparty cannot be eliminated by pair, which is "
+          f"what defect P2-D-03 was.")
 
     # ---------------- scenario integrity -------------------------------------
     fc = plan[(plan["version_code"] == "FC_FY26_08") & (plan["is_actual_month"] == "TRUE")]

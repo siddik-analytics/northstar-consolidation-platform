@@ -26,7 +26,7 @@ from __future__ import annotations
 
 import duckdb
 
-from .config import CONFIG, DATA, REFERENCE, writing_artefacts
+from .config import BLOCKING_STATUS, CONFIG, DATA, REFERENCE, writing_artefacts
 
 ORACLE = CONFIG / "generation" / "expected_mapping_manifest.csv"
 #: Phase 2's per-line record of the group account each posting should map to.  It is a
@@ -68,18 +68,24 @@ def mapping_acceptance(con: duckdb.DuckDBPyConnection) -> dict:
     split resolves to the account's declared default branch.  Both populations are reported:
     the first is the mapping engine's score, the second is a property of the source data.
     """
-    from .rules import load_rules
-    from .standardise import LINE_ATTRIBUTES
+    from .rules import load_rules, resolve_field
+    from .standardise import CONTEXT_FIELDS, LINE_ATTRIBUTES
     import re
 
+    # Whether the SOURCE carried what its account's rules read. The test has to run
+    # against the column the rule actually evaluates -- resolve_field is the authority for
+    # that -- and not against the declared line attribute alone. Aurora states a posting's
+    # department in its department segment rather than in the attribute string, so testing
+    # attr_dept_code marked 67,246 perfectly classifiable lines unclassifiable and split
+    # the acceptance measure in two for no reason.
     referenced: dict[tuple[str, str], set[str]] = {}
     for rule in load_rules():
         for field in re.findall(r"[a-z_]+(?=\s*(?:=|<>|<=|>=|<|>|IN\b|IS\b))", rule.condition):
-            if field in LINE_ATTRIBUTES:
+            if field in LINE_ATTRIBUTES or field in CONTEXT_FIELDS:
                 referenced.setdefault((rule.erp_system, rule.source_account), set()).add(field)
     cases = " ".join(
         f"WHEN m.erp_system = '{erp}' AND m.source_account = '{acct}' THEN ("
-        + " OR ".join(f"m.attr_{a} IS NOT NULL" for a in sorted(names)) + ")"
+        + " OR ".join(f"m.{resolve_field(a)} IS NOT NULL" for a in sorted(names)) + ")"
         for (erp, acct), names in sorted(referenced.items()))
 
     con.execute(f"""
@@ -130,6 +136,82 @@ def mapping_acceptance(con: duckdb.DuckDBPyConnection) -> dict:
     """)
 
     return _acceptance_summary(summary)
+
+
+def population_bridge(con) -> int:
+    # ------------------------------------------------------- population bridge
+    # Every ingested row, assigned a disposition, three ways. Each of the three is a
+    # PARTITION of the same population: the counts within one bridge sum to the ingested
+    # row count exactly, and no row appears twice or not at all. A row that quietly falls
+    # out between two stages is the failure this exists to make impossible, and a
+    # difference between two counts that nobody can name is the same failure wearing a
+    # tidier number (P3-REC-12).
+    #
+    #   CHARACTER   what kind of posting it is: an ordinary transaction, the conversion
+    #               journal that establishes an opening balance, the statutory close, or a
+    #               post-close adjustment in one of Kestrel's special periods
+    #   MAPPING     what the harmonisation engine did with it -- the declared status, one
+    #               per line, with the blocking statuses present and at nil rather than
+    #               absent, so that a reader can see they were looked for
+    #   ORACLE      whether the expected-mapping manifest graded it, and whether the source
+    #               carried what the account's rules read
+    con.execute("""
+    CREATE OR REPLACE TABLE rpt_population_bridge AS
+    WITH base AS (
+        SELECT f.*, a.classifiable_at_source, a.agrees
+        FROM fact_journal_line f
+        LEFT JOIN map_acceptance a USING (line_uid)
+    ),
+    character AS (
+        SELECT 'CHARACTER' AS bridge, 1 AS ord,
+               CASE
+                   WHEN source_event_type = 'OPENING_BALANCE'   THEN 'OPENING_BALANCE'
+                   WHEN source_event_type = 'YEAR_END_CLOSE'    THEN 'YEAR_END_CLOSE'
+                   WHEN special_period_type IS NOT NULL
+                       THEN 'SPECIAL_PERIOD_' || special_period_type
+                   ELSE 'OPERATIONAL'
+               END AS disposition,
+               count(*) AS lines,
+               round(sum(abs(signed_local_amount)), 2) AS absolute_amount_local
+        FROM base GROUP BY 3
+    ),
+    mapping AS (
+        SELECT 'MAPPING' AS bridge, 2 AS ord, mapping_status AS disposition,
+               count(*) AS lines,
+               round(sum(abs(signed_local_amount)), 2) AS absolute_amount_local
+        FROM base GROUP BY 3
+    ),
+    oracle AS (
+        SELECT 'ORACLE' AS bridge, 3 AS ord,
+               CASE
+                   WHEN agrees IS NULL              THEN 'NOT_GRADED'
+                   WHEN NOT classifiable_at_source  THEN 'GRADED_NOT_CLASSIFIABLE_AT_SOURCE'
+                   WHEN agrees                      THEN 'GRADED_AGREES'
+                   ELSE 'GRADED_DISAGREES'
+               END AS disposition,
+               count(*) AS lines,
+               round(sum(abs(signed_local_amount)), 2) AS absolute_amount_local
+        FROM base GROUP BY 3
+    ),
+    declared AS (
+        -- the dispositions that must be nil, stated rather than merely absent: a category
+        -- that is missing from a bridge reads as a category nobody thought to look for
+        SELECT 'MAPPING' AS bridge, 2 AS ord, s AS disposition, 0 AS lines,
+               CAST(0 AS DECIMAL(18,2)) AS absolute_amount_local
+        FROM (VALUES {blocking}) AS t(s)
+        UNION ALL
+        SELECT 'ORACLE', 3, s, 0, CAST(0 AS DECIMAL(18,2))
+        FROM (VALUES ('NOT_GRADED'), ('GRADED_DISAGREES'),
+                     ('GRADED_NOT_CLASSIFIABLE_AT_SOURCE'), ('GRADED_AGREES')) AS t(s)
+    )
+    SELECT bridge, disposition, sum(lines) AS lines,
+           sum(absolute_amount_local) AS absolute_amount_local
+    FROM (SELECT * FROM character UNION ALL SELECT * FROM mapping
+          UNION ALL SELECT * FROM oracle UNION ALL SELECT * FROM declared)
+    GROUP BY ALL
+    ORDER BY min(ord), disposition
+    """.format(blocking=", ".join(f"('{s}')" for s in sorted(BLOCKING_STATUS))))
+    return con.execute("SELECT count(*) FROM rpt_population_bridge").fetchone()[0]
 
 
 def _acceptance_summary(summary) -> dict:

@@ -206,8 +206,8 @@ INTEREST_INCOME = series(FY2023A=0.300, FY2024A=0.350, FY2025A=0.550, FY2026B=0.
 #
 # FY2026B is the approved budget assumption and is deliberately NOT refitted to outturn.
 # FY2026F uses the eight closed months, the only utilisation the year has produced.
-RCF_AVG_DRAWN = series(FY2023A=17.318, FY2024A=26.347, FY2025A=22.820,
-                       FY2026B=2.000, FY2026F=15.403)
+RCF_AVG_DRAWN = series(FY2023A=14.829, FY2024A=23.902, FY2025A=22.099,
+                       FY2026B=2.000, FY2026F=15.005)
 # Treasury policy - config/debt/treasury_policy.csv, shared with the Phase 2 generator
 MIN_CASH = TREASURY["TP-001"]
 TARGET_CASH = TREASURY["TP-002"]
@@ -218,8 +218,8 @@ NCI_DIVIDEND = series(FY2023A=0.000, FY2024A=0.150, FY2025A=0.200, FY2026B=0.250
 # The non-controlling interest's share of the translation movement: 20% of the
 # translation adjustment arising in NIG-510, derived from the same source ledgers as
 # CTA_MOVEMENT and not an independent estimate.
-NCI_FX = series(FY2023A=0.070689, FY2024A=-0.019401, FY2025A=0.059132,
-                FY2026B=0.000000, FY2026F=0.016976)
+NCI_FX = series(FY2023A=0.070708, FY2024A=-0.019366, FY2025A=0.059014,
+                FY2026B=0.000000, FY2026F=0.016923)
 SPONSOR_EQUITY_CONTRIB = series(FY2023A=20.000, FY2024A=0.000, FY2025A=0.000, FY2026B=0.000, FY2026F=0.000)
 
 # --------------------------------------------------------------------------
@@ -302,7 +302,7 @@ FX_ON_INTANG = series(FY2023A=0.400, FY2024A=-0.700, FY2025A=0.900, FY2026B=0.00
 #  and republished each build as
 # data/reference/cta_expectation.csv; tools/derive_anchor_inputs.py regenerates the line
 # below and tests/test_phase02_2_corrections.py fails if the two ever disagree.
-CTA_MOVEMENT = series(FY2023A=2.607004, FY2024A=-4.665972, FY2025A=7.743111,
+CTA_MOVEMENT = series(FY2023A=2.607244, FY2024A=-4.665178, FY2025A=7.740948,
                       FY2026B=0.000000, FY2026F=1.000000)
 # FX effect on foreign-currency *cash balances* only.  The balance of the CTA movement
 # relates to foreign-currency working capital and is presented as a non-cash reconciling

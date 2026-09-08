@@ -171,6 +171,40 @@ rather than patched. See [`phase-03-report.md`](phase-03-report.md).
 
 ---
 
+## Phase 3.1 — Source defect remediation & clean-baseline gate ✅
+
+**Deliverables**
+- All four source defects corrected at the generation layer, not patched in the data
+- The entire Phase 2 source baseline regenerated from the corrected code
+- A formal row-population bridge: every ingested row with exactly one disposition
+- 100.000000% mapping agreement over the whole population, with no exclusions
+- A clean control baseline at both phases, with every source exception closed
+- A source-diff manifest proving no unrelated economics moved
+
+**Delivered.** The four defects are **closed**, not accepted. The journal writers that
+discarded the attributes they had resolved now share one line resolver; the cost centre is
+chosen to satisfy what a split requires rather than labelled afterwards, and the generator
+refuses to post where no department can carry the cost; every intercompany balance is
+decomposed by counterparty and settled counterparty by counterparty, so 100% of the position
+is attributable to an entity pair and every pair nets to under USD 1.00 at closing rates; and
+the tax true-up no longer moves a corporation tax payable into the VAT account.
+
+Correcting them exposed five controls that were wrong rather than merely unlucky — most
+sharply `P2-IC-01`, which tested only the intercompany lines that already carried a
+counterparty and therefore could not fail. It is rewritten and split in two, and `P2-IC-02`
+now tests the whole population.
+
+**79 of 79** Phase 2 controls and **62 of 62** Phase 3 controls pass, with no source finding
+outstanding. Mapping agreement is **100.000000%** across all 1,094,996 lines with zero
+mismatches, zero unmapped, zero ambiguous and zero exclusions. Ten of ten fault fixtures are
+handled as intended, with F02 explicitly `NOT_APPLICABLE_DEFERRED` to Phase 4's `CTL-IC-01`.
+Revenue, gross profit, EBITDA, cash, the term loan and every working-capital caption are
+unchanged; net income moves 0.48% in FY2025 through one causal chain that the report sets out
+and `data/phase03_1_source_diff.json` evidences. See
+[`phase-03-1-report.md`](phase-03-1-report.md).
+
+---
+
 ## Phase 4 — Consolidation engine
 
 **Deliverables**
@@ -178,7 +212,9 @@ rather than patched. See [`phase-03-report.md`](phase-03-report.md).
   CTA — tested against `data/reference/cta_expectation.csv`, the per-entity, per-month
   expectation Phase 2.2 derived from source balances before the engine existed (`CTL-FX-12`)
 - Constant-currency amount column
-- Intercompany elimination by entity pair, including unrealised profit in inventory
+- Intercompany elimination by entity pair, including unrealised profit in inventory --
+  unblocked by Phase 3.1: every intercompany balance now names its counterparty and the
+  pairs net to under USD 1.00 at closing rates
 - Investment elimination walking the full multi-tier ownership tree
 - NCI allocation: income, equity, and the NCI share of CTA
 - Purchase price allocation and acquired intangible amortisation
