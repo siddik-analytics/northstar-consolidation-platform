@@ -69,12 +69,25 @@ def build(con: duckdb.DuckDBPyConnection, scenario: str = "ACT",
         GROUP BY ALL
     ),
     consolidation_effect AS (
-        -- eliminations and consolidation adjustments attributed to this subsidiary
+        -- Only LAYER 3. Layer 2 is deliberately excluded, and it is the difference between
+        -- a defensible allocation and a nonsensical one.
+        --
+        -- An intercompany elimination removes a matched pair -- the seller's revenue and the
+        -- buyer's cost -- and changes group profit by nothing. Attributing the buyer's half
+        -- to the buyer, without attributing the seller's half to the seller, hands the buyer
+        -- its goods for free: NIG-510's own result of USD (0.78)m becomes +4.71m, which is
+        -- simply its external result, as though its purchases from Meridian had cost
+        -- nothing. The minority would then be allocated a share of profit that belongs to
+        -- the entity that made the goods.
+        --
+        -- Layer 3 is different: acquired intangible amortisation and the unrealised profit
+        -- charge DO change group profit, and each is attributable to the subsidiary it
+        -- arose on, so each belongs in the base the minority's share is taken on.
         SELECT j.related_entity_code AS entity_code, j.period_key, j.fiscal_year,
                round(-sum(j.amount_usd), 2) AS result_usd
         FROM fact_consol_journal j
         JOIN dim_account a USING (group_account)
-        WHERE a.statement = 'IS' AND j.layer_id IN (2, 3)
+        WHERE a.statement = 'IS' AND j.layer_id = 3
           AND j.related_entity_code IS NOT NULL AND a.group_account <> '850100'
         GROUP BY ALL
     ),

@@ -129,3 +129,55 @@ correct it, and widen `P2-INV-01` to test the register's population rather than 
 investments **layer 1 actually carries**, which is what a real consolidation eliminates. It
 does not invent the missing balance. `P4-INV-01` reconciles layer-1 investments to the
 register and reports this gap as a `SOURCE_FINDING` naming the relationship and the amount.
+
+---
+
+## P3-D-07 — the NCI anchor and NIG-510's ledger have never agreed
+
+**Status:** OPEN — escalated to the owner. Nothing has been patched, and the engine has **not**
+been scaled to the anchor.
+
+**What it is.** `docs/nci-policy.md` anchors the non-controlling interest's share of result at
+**0.18 / 0.28 / 0.36** USD m for FY2023-25. Derived from the generated ledger the same figure
+is **(0.197) / (0.219) / (0.266)** — the opposite sign.
+
+**Root cause.** `NIG-510` is loss-making on its own books, and nothing ever required it not to
+be:
+
+| USD m | FY2023 | FY2024 | FY2025 |
+|---|---|---|---|
+| External revenue | 17.500 | 19.500 | 22.300 |
+| Cost of sales | 15.303 | 17.296 | 19.681 |
+| — of which purchased from `NIG-200` | 4.826 | 5.719 | 6.555 |
+| Gross margin | **12.6%** | **11.3%** | **11.7%** |
+| Result after tax | **(0.775)** | **(0.883)** | **(1.145)** |
+
+`config/anchors/anchor_by_entity.csv` anchors **external revenue only** for NIG-510 — 17.500 /
+19.500 / 22.300, which the ledger reproduces exactly. Its profitability was never anchored,
+never calibrated and never tested. The 42% gross margin the Aftermarket business unit is
+anchored at is a business-unit figure that NIG-500 and NIG-510 carry between them; the
+transfer price at which NIG-510 buys from Meridian leaves it barely above breakeven before
+overheads.
+
+The NCI anchor is therefore a Phase 1 economic estimate that was never reconciled to the
+entity ledger Phase 2 later produced, and no control compares the two.
+
+**Why it is upstream.** Either the transfer price or the NCI anchor is wrong, and both are
+approved inputs to source generation. Correcting either inside the consolidation engine would
+be fabricating the subsidiary's profitability.
+
+**Financial effect.** NCI share of result differs by **0.377 / 0.499 / 0.626** USD m per year,
+and the closing NCI balance by the cumulative 1.502 USD m against an anchored closing of
+3.50 USD m at FY2025. It does not move revenue, EBITDA, cash or debt: NCI is an attribution
+below the tax line and inside equity, so consolidated net income before attribution and total
+equity are unaffected.
+
+**Proposed correction.** Decide which input is authoritative. Either
+(a) raise NIG-510's transfer-price margin so its result supports the anchored NCI, regenerating
+the source, or (b) restate the NCI anchor from the ledger, as Phase 2.2 did for the CTA anchor
+when it was found to be an estimate rather than a derivation. Then add a control that compares
+the two, which is the thing whose absence let them diverge.
+
+**How Phase 4 behaves in the meantime.** The engine allocates the minority's share of the
+result NIG-510 actually made, adjusted for the consolidation entries attributable to it, and
+reports the difference against the anchor rather than absorbing it.

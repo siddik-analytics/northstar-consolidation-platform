@@ -163,17 +163,21 @@ def build(con: duckdb.DuckDBPyConnection) -> dict[str, int]:
                sum(amount_usd) AS movement_usd
         FROM vw_statutory_fact WHERE statement = 'BS' GROUP BY ALL
         UNION ALL BY NAME
-        -- The result of the period is part of equity at any date before it is closed. Layer
-        -- 1 closes its own income statement into reserves each December; the consolidation
-        -- adjustments -- acquired intangible amortisation, the unrealised profit charge, the
-        -- share allocated to the minority -- are never closed by anybody, because no entity
-        -- ledger owns them. Leaving them out is why a consolidated balance sheet built only
-        -- from balance sheet accounts does not balance, and the gap is exactly the
-        -- consolidation's effect on the result.
+        -- The result of the period is part of equity at any date before it is closed, and
+        -- the amount that is still open is the CUMULATIVE balance of every income statement
+        -- account INCLUDING the close. The close is what makes that work: it reverses each
+        -- year's result into reserves, so the cumulative income statement balance at any
+        -- date is exactly the result not yet in retained earnings -- the current year to
+        -- date, plus the consolidation adjustments that no entity ledger ever closes.
+        --
+        -- Excluding the close here is what broke it. Retained earnings already contains
+        -- every closed year, so a result line that also contained them counted each closed
+        -- year twice, and the balance sheet was out by the whole of the prior years'
+        -- earnings.
         SELECT period_key, fiscal_year, 'Result for the period' AS fs_caption_l2,
                'EQUITY' AS account_class, 3999 AS sort_order,
                sum(amount_usd) AS movement_usd
-        FROM vw_statutory_fact WHERE counts_in_result GROUP BY ALL
+        FROM vw_statutory_fact WHERE statement = 'IS' GROUP BY ALL
     )
     ,
     caption AS (
@@ -194,7 +198,15 @@ def build(con: duckdb.DuckDBPyConnection) -> dict[str, int]:
         -- while still looking like a balance sheet.
         SELECT c.fs_caption_l2, c.account_class, c.sort_order, d.period_key, d.fiscal_year,
                coalesce(m.movement_usd, 0) AS movement_usd
-        FROM (SELECT DISTINCT fs_caption_l2, account_class, sort_order FROM caption) c
+        FROM (
+            -- the caption spine, resolved ONCE for the whole statement. Taking the class and
+            -- the sort order per period instead lets a caption whose accounts move in
+            -- different months appear under two sort orders, and the cross join below then
+            -- prints -- and sums -- that caption twice in every month.
+            SELECT fs_caption_l2, any_value(account_class) AS account_class,
+                   min(sort_order) AS sort_order
+            FROM caption GROUP BY 1
+        ) c
         CROSS JOIN (SELECT DISTINCT period_key, fiscal_year FROM dim_date
                     WHERE accounting_period <= 12) d
         LEFT JOIN caption m
