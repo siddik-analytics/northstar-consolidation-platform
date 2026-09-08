@@ -19,7 +19,7 @@ flowchart TD
     M -->|"line_uid"| J["fact_journal_line<br/>1,094,997 · the conformed grain"]
     J -->|"entity × account × cost centre ×<br/>partner × period"| L1["fact_layer1_usd<br/>44,584 · translated to USD"]
     L1 -->|"layer 1"| FF["fact_financials<br/>48,202"]
-    L1 --> CJ["fact_consol_journal<br/>6,204 legs<br/>consol_journal_id + rule_id"]
+    L1 --> CJ["fact_consol_journal<br/>6,532 legs<br/>consol_journal_id + rule_id"]
     CJ -->|"layers 2–5"| FF
     FF --> ST["vw_statutory_fact<br/>layers 1+2+3+5"]
     FF --> MG["vw_management_fact<br/>+ layer 4"]
@@ -89,3 +89,9 @@ need to carry through so a reported figure stays traceable:
 
 A report that aggregates these away is still correct and is no longer traceable — the drill-down
 has to stop at whatever the model kept.
+
+Every reporting artefact's grain, upstream fact, close logic and NULL policy is set out in
+[`reporting-artefact-contract.md`](reporting-artefact-contract.md). A mart that redefines a
+measure has forked the definition, and the fork will not be visible until two reports disagree
+in front of the board.
+

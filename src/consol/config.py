@@ -109,6 +109,11 @@ TOL_IC_RESIDUAL_USD = 1.00      # CTL-IC-01: an entity pair, after elimination
 TOL_CTA_WARN = 0.005            # CTL-FX-04: 0.5% of the movement warns
 TOL_CTA_BLOCK = 0.02            # 2% blocks
 TOL_ANCHOR_PCT = 0.01           # a consolidated caption against its approved anchor
+#: Cross-artefact reconciliation. Two artefacts expressing one measure are compared against the
+#: authoritative fact, and every line on each side is already rounded to the cent, so a few
+#: cents of accumulated presentation rounding is all that is allowed. It is a rounding
+#: allowance and not room for a difference: each control reports the worst it measured.
+TOL_XAR_USD = 0.05
 
 #: Scenario and version coverage. Actual is consolidated in full; the planning scenarios
 #: share the same grain and the same engine, with their own rate set.

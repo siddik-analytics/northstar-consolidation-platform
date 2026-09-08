@@ -229,27 +229,14 @@ moved. See [`phase-03-2-report.md`](phase-03-2-report.md).
 
 ---
 
-## Phase 4 — Consolidation engine ⚠️
+## Phase 4 — Consolidation engine ✅
 
-**Delivered, proved, and not yet signed off.** The engine is built and frozen at `4847d64`:
-five layers, FX translation with a derived CTA, pair-level intercompany elimination,
-investment elimination and PPA, NCI, unrealised profit, the management layer and the three
-consolidated statements — with **61 of 61** controls passing, **19 of 19** fault fixtures
-handled as intended, a balance sheet that balances at 0.00 in all 48 months and a cash flow
-that ties at 0.00 in all 48.
-
-Two defects in Phase 4 **reporting artefacts** were found during the Phase 4B documentation
-pass and reported rather than corrected, because Phase 4B is documentation only:
-
-| | | |
-|---|---|---|
-| **P4-D-01** | `rpt_balance_sheet` presents prior years' unclosed consolidation result as the period's result | classification within equity; total equity correct |
-| **P4-D-02** | `rpt_ebitda_bridge` includes the year-end close and returns NULL Covenant EBITDA | the artefact is unusable |
-
-Neither touches the accounting engine and neither is caught by any control — the gap is that
-nothing compares one reporting artefact with another. See
-[`phase-04-report.md`](phase-04-report.md) and
-[`phase-04b-engine-findings.md`](phase-04b-engine-findings.md).
+**Complete.** The accounting engine is frozen at `4847d64`: five layers, FX translation with a
+derived CTA, pair-level intercompany elimination, investment elimination and PPA, NCI,
+unrealised profit, the management layer and the three consolidated statements. With the Phase
+4C reporting corrections: **72 of 72** controls passing, **23 of 23** fault fixtures handled as
+intended, a balance sheet that balances at 0.00 in all 48 months and a cash flow that ties at
+0.00 in all 48. See [`phase-04-report.md`](phase-04-report.md).
 
 **Original deliverables**
 - FX translation: monthly average P&L, closing balance sheet, historical equity, computed
@@ -329,18 +316,31 @@ brief. See [`phase-04b-engine-findings.md`](phase-04b-engine-findings.md).
 
 ---
 
-## Phase 4C — Reporting-artefact correction (recommended, not started)
+## Phase 4C — Reporting integrity & cross-artefact control gate ✅
 
 **Deliverables**
-- P4-D-01 and P4-D-02 corrected, once the owner has decided the presentation policy for the
-  consolidated result caption
-- A **cross-artefact control family** — nothing currently compares one reporting artefact with
-  another, which is the gap that let both defects survive
-- Fault fixtures for that family
+- P4-D-01 and P4-D-02 corrected
+- A permanent cross-artefact control family
+- Fault fixtures proving it detects reporting divergence
+- A written NULL / empty-population policy, enforced
+- A contract for every Phase 4 reporting artefact
 
-Both defects are repeats of faults already found and fixed elsewhere in Phase 4, in an artefact
-nothing was checking. The control family is the substantive fix; the two corrections are one
-line each.
+**Delivered.** The balance sheet's result caption is now the fiscal year to date excluding the
+close, agreeing with the income statement in all 48 months and at all four year ends; total
+equity did not move. The EBITDA bridge excludes the close and coalesces every component, so it
+agrees with the income statement exactly and Covenant EBITDA is a number in every year rather
+than NULL.
+
+Eleven `P4-XAR-*` controls implement the second design rule — *different artefacts expressing
+the same financial measure must reconcile to one authoritative definition* — each with at least
+one side recomputed from `fact_financials`. `P4-XAR-11` failed on its first run and found a
+**third** instance of the same close defect, in `rpt_layer_bridge` (P4-D-03).
+
+Four fixtures prove the family detects reporting divergence; `F4-XAR-01` breaks the equity
+presentation while the balance sheet still balances and **no accounting control fires**. The
+NULL policy — *no population means zero, never NULL* — is enforced by a lint test after
+seventeen un-coalesced aggregates were found and fixed. See
+[`phase-04c-reporting-integrity.md`](phase-04c-reporting-integrity.md).
 
 ---
 

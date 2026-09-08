@@ -5,7 +5,7 @@ engine are run against deliberately broken inputs, and each fixture names the co
 that is supposed to find it.
 
     python -m src.pipeline.faults      # Phase 3, 10 fixtures
-    python -m src.consol.faults        # Phase 4, 19 fixtures
+    python -m src.consol.faults        # Phase 4, 23 fixtures
 
 Results are committed at `data/phase03_fault_results.csv` and `data/phase04_fault_results.csv`.
 
@@ -45,7 +45,7 @@ results looked like a control suite in a very good mood.
 
 ---
 
-## Phase 4 — 19 of 19 handled as intended, 0 accidental detections
+## Phase 4 — 23 of 23 handled as intended, 0 accidental detections
 
 | Fixture | Injected defect | Intended family | Result | Detected by |
 |---|---|---|---|---|
@@ -68,6 +68,21 @@ results looked like a control suite in a very good mood.
 | F4-16 | an account given a second balance sheet caption | `P4-BS` | DETECTED | `P4-BS-02` |
 | F4-MGT-LEAK | an APPROVED layer-4 adjustment of USD 2.5m a month | separation | SEPARATION_PROVEN | 96 legs, 8 measures moved, statutory unmoved |
 | F4-17 | the same adjustment marked DRAFT | suppression | SUPPRESSED | 0 legs, 0 measures moved |
+| F4-XAR-01 | USD 5m moved between the period result and retained earnings, equity untouched | `P4-XAR` | DETECTED | `P4-XAR-06`, and **nothing else** |
+| F4-XAR-02 | statutory EBITDA recomputed including the close | `P4-XAR` | DETECTED | `P4-XAR-02` |
+| F4-XAR-03 | an empty add-back category left NULL | `P4-XAR` | DETECTED | `P4-XAR-04` |
+| F4-XAR-04 | closing cash moved in the cash flow, the fact left correct | `P4-XAR` | DETECTED | `P4-XAR-10` |
+
+### The cross-artefact fixtures corrupt an artefact, deliberately
+
+They are the exception to the first rule above, and they have to be: the thing under test **is**
+the reporting layer. Each one corrupts a reporting artefact and leaves the consolidated fact
+correct, so the accounting stays right while the report goes wrong — which is exactly what
+P4-D-01, P4-D-02 and P4-D-03 were.
+
+`F4-XAR-01` is the one to read. It moves USD 5m between two equity captions, total equity is
+untouched, the balance sheet still balances at 0.00, and **not one of the 61 accounting
+controls fires**. Only `P4-XAR-06` objects.
 
 ### Fixtures that prove a negative must show their working
 

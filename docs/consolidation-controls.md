@@ -1,6 +1,7 @@
 # The Phase 4 control framework
 
-61 controls over the consolidation engine, all passing on the clean baseline.
+72 controls over the consolidation engine, all passing on the clean baseline: 61 over the
+accounting and 11 over the reporting layer built on it.
 [`control-framework.md`](control-framework.md) covers the source and pipeline controls of
 Phases 2 and 3; this document covers Phase 4.
 
@@ -35,6 +36,7 @@ absorbs the difference.
 | NCI | the non-controlling percentages in the ownership register | the entities that received an allocation |
 | Unrealised profit | `ref_ic_inventory_transaction`, all 173 sales | the holdings table derived from them |
 | Management adjustments | `ref_management_adjustment` | the adjustments that were posted |
+| **Cross-artefact** | **the consolidated fact, recomputed** | **the artefact being tested** |
 
 Four Phase 4 controls were written the easy way, could not have failed, and were rewritten
 during Phase 4A after fault fixtures exposed them. Those four are marked ★ below.
@@ -247,23 +249,59 @@ Population: `ref_management_adjustment`.
 | `P4-MGT-03` | Adjusted and Covenant EBITDA are computed separately | reported | warning |
 
 `P4-MGT-03` passes unconditionally by design — the two measures are not expected to be equal —
-and it is the weakest control in the suite. It touches `rpt_ebitda_bridge` without testing
-either figure in it, which is why defect **P4-D-02** survived: see
-[`phase-04b-engine-findings.md`](phases/phase-04b-engine-findings.md).
+and it tests neither figure. That is why defect **P4-D-02** survived. The figures in
+`rpt_ebitda_bridge` are now tested by `P4-XAR-02`, `P4-XAR-03` and `P4-XAR-04`, which is where
+a value test belongs: against the authoritative fact, not against the other column.
 
 ---
+
+## Cross-artefact reporting integrity — 11 controls
+
+> ### Different artefacts expressing the same financial measure must reconcile to one authoritative definition.
+
+The second design rule, and a different one from the first. Everything above tests the
+accounting; this family tests the **reporting** built on it, and it exists because three
+artefacts were wrong at once while all 61 accounting controls passed. Nothing was out of
+balance. Nothing compared one artefact with another.
+
+Every control has at least one side **recomputed from `fact_financials`** and never both sides
+from the same reporting calculation — a report agreeing with itself is not evidence.
+
+| ID | Reconciles | Against |
+|---|---|---|
+| `P4-XAR-01` | the income statement: revenue, gross profit, EBITDA, EBIT, net income, net income attributable to the parent | the fact |
+| `P4-XAR-02` | the EBITDA bridge's statutory EBITDA | the fact |
+| `P4-XAR-03` | Adjusted EBITDA | the fact + add-backs + layer 4 |
+| `P4-XAR-04` | Covenant EBITDA — completeness **and** value | non-null; the fact + capped fee + FX |
+| `P4-XAR-05` | total assets, liabilities and equity | the fact |
+| `P4-XAR-06` | the period result caption | the fact's fiscal year to date |
+| `P4-XAR-07` | retained earnings + the period result | the fact's cumulative earnings |
+| `P4-XAR-08` | the CTA caption | the fact's translation accounts |
+| `P4-XAR-09` | the NCI caption | the NCI roll-forward |
+| `P4-XAR-10` | closing cash | the cash flow, the balance sheet **and** the fact |
+| `P4-XAR-11` | the layer bridge's net income | the fact |
+
+All **BLOCKING**: a difference in a primary statement or a lender-facing measure is not an
+informational warning. `TOL_XAR_USD` is 0.05 — a rounding allowance over lines already held at
+the cent, not room for a difference. All eleven measure 0.00.
+
+`P4-XAR-11` failed on its first run and found a third instance of the close defect, in
+`rpt_layer_bridge` (P4-D-03).
+
+## The NULL policy
+
+> **A component with no population contributes ZERO, never NULL.**
+
+A `FILTER` that matches nothing yields NULL, and one NULL anywhere in an expression voids the
+whole result. Every additive `FILTER` aggregate in `src/consol/` is coalesced where it is
+built, and a test fails the build if one is not. See
+[`reporting-artefact-contract.md`](reporting-artefact-contract.md).
 
 ## What the suite does not cover
 
 Stated plainly, because a control register that implies completeness is worse than one that
 admits its gaps:
 
-* **No cross-artefact controls.** Nothing compares one reporting artefact with another. Two
-  statements can disagree about the same measure and every control still passes — which is
-  exactly what defect P4-D-02 is.
-* **No control on `rpt_ebitda_bridge`'s figures.** `P4-MGT-03` reports on it without testing it.
-* **No control that the balance sheet's result caption equals the period's result.** `P4-BS-05`
-  requires the caption to appear once, not to be correct — defect P4-D-01.
 * **Impairment is out of scope.** Goodwill is recognised and never tested for impairment; there
   is no impairment model in the platform.
 * **Disposals are out of scope.** FX-P19 (CTA recycling on disposal) is implemented but has no

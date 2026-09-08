@@ -84,7 +84,7 @@ USD, as built:
 | Recognised at acquisition | 2,800,000.00 | — | — | — |
 | **Closing** | **2,673,319.01** | **2,404,986.94** | **2,158,051.93** | **1,945,007.50** |
 
-FY2026 is eight actual months. The minority's interest declines because NIG-510 is loss-making
+The minority's interest declines because NIG-510 is loss-making
 and distributes cash to its minority shareholders; the translation share moves with sterling.
 
 ## 6. Presentation

@@ -2,19 +2,19 @@
   "artefacts": {
     "10_staging/05_consolidated/fact_consol_journal.parquet": "2cffb57e34ec0407d571a3a5a8af02dcca4fe87f8934670f03d8f5e9aea0e430",
     "10_staging/05_consolidated/fact_financials.parquet": "e1d0b47514c3b2b9dda9a0f29a1a6399d9c7ea02991670e4fcb87ed22e5a37d2",
-    "10_staging/05_consolidated/rpt_balance_sheet.parquet": "10be3c1b196f4142d8731893d017f5c1f81de21f58566fb0a3c1f99833240bcc",
+    "10_staging/05_consolidated/rpt_balance_sheet.parquet": "c1fa95a79862b86bbd706e449e2e545affcdcafec4284fc425adba5feaf2b12d",
     "10_staging/05_consolidated/rpt_basis_comparison.parquet": "fdea6aa47af11b0108f7507e3f95b4350023fa363303dce6e59271dd46e7d975",
     "10_staging/05_consolidated/rpt_cash_flow.parquet": "ad49f36e5673af4d73761c91d49b24dc7ffc28e896c78a6a48251060109dcc8e",
     "10_staging/05_consolidated/rpt_cta_rollforward.parquet": "2dee254647551b52b75aadccbdd2bc0dc3e1cf171ac86c19cde683c8c7961714",
-    "10_staging/05_consolidated/rpt_ebitda_bridge.parquet": "f5f063f1dbf07e2958930b2a2585d3ac594c37f32ebbf1c19bb57df0e92db020",
+    "10_staging/05_consolidated/rpt_ebitda_bridge.parquet": "5b3f79a3e4c909701a2c709ccdf5a0511b6b30f42c7a71085cdf5cd69771d40b",
     "10_staging/05_consolidated/rpt_goodwill_bridge.parquet": "c59d97185886b5d4b9b0bc8e67828a7b7cc8d412dd7767644712f1cb6c232b70",
     "10_staging/05_consolidated/rpt_ic_exception.parquet": "0c33055cd4d717eb4eaa9f84ac060805c4d4ab583c5104029e22e4ff73b8087c",
     "10_staging/05_consolidated/rpt_income_statement.parquet": "a0a5f264294c30f1642a091dfdef6cd9c8863e8aa6efe9599c28d3698a3c0751",
     "10_staging/05_consolidated/rpt_intangible_schedule.parquet": "b38f6aa47b9465e3131bee54764c58011868ace865fe992746ba947ec04a733b",
-    "10_staging/05_consolidated/rpt_layer_bridge.parquet": "623f425ad49b7fd3b114ff3826366f6a4426bc282a537e2787aee721a4a8cd74",
+    "10_staging/05_consolidated/rpt_layer_bridge.parquet": "26d9b083257664e225e1e394f61966a0ccfb6379c32afecc11b986872c90ff14",
     "10_staging/05_consolidated/rpt_nci_rollforward.parquet": "395d8ebdabd48a1103bca92dc9d5e46925a68f7408739a83dce06fd1c423a75e",
     "10_staging/05_consolidated/rpt_pup_provision.parquet": "d7e474c24c04e134d7ff8ab8f2decb1ade9e9b6efe197c5eb8c32e55b915632a",
-    "phase04_control_results.csv": "d25252af7294156547dba36e2f9480464cf80994ddcbda432e6457108041a30a"
+    "phase04_control_results.csv": "b16ca9f2a68fb7447258d7f5a20ec534a260074688ed2972c63081e9ebeb59a6"
   },
   "build_id": "78e406e139662392",
   "phase": 4,

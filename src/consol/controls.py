@@ -33,7 +33,7 @@ import sys
 import duckdb
 
 from .config import (CONTROL_RESULTS, MANAGEMENT_LAYERS, STATUTORY_LAYERS,
-                     TOL_BALANCE_USD, TOL_IC_RESIDUAL_USD,
+                     TOL_BALANCE_USD, TOL_IC_RESIDUAL_USD, TOL_XAR_USD,
                      TOL_STATEMENT_USD, writing_artefacts)
 
 
@@ -670,6 +670,250 @@ def run(con: duckdb.DuckDBPyConnection) -> Result:
          "the credit agreement caps the sponsor fee (CA-027) and permits unrealised foreign "
          "exchange (CA-030) where the management policy does neither, so the two measures "
          "are not assumed to be the same number")
+
+    # ============================================== cross-artefact reporting integrity
+    # A separate family, and a separate design rule from the one above:
+    #
+    #   **Different artefacts expressing the same financial measure must reconcile to one
+    #   authoritative definition.**
+    #
+    # Everything before this point tests the accounting. This family tests the *reporting*,
+    # and it exists because two artefacts disagreed about Adjusted EBITDA for an entire phase
+    # while all 61 accounting controls passed (P4-D-02), and because the balance sheet
+    # presented three years of unclosed consolidation result as the period's result while
+    # total equity stayed exactly right (P4-D-01). Neither is an accounting error. Both are
+    # reporting errors, and nothing was looking for them.
+    #
+    # Every control here has **at least one side computed from the consolidated fact**, and
+    # never both sides from the same reporting calculation -- a report agreeing with itself
+    # is not evidence.
+    con.execute("""
+    CREATE OR REPLACE TEMP TABLE chk_fact_measure AS
+    SELECT fiscal_year,
+           round(-coalesce(sum(amount_usd) FILTER (
+               WHERE group_account LIKE '4%' AND group_account NOT LIKE '49%'), 0), 2)
+               AS revenue_usd,
+           round(-coalesce(sum(amount_usd) FILTER (
+               WHERE (group_account LIKE '4%' AND group_account NOT LIKE '49%')
+                  OR group_account LIKE '5%'), 0), 2) AS gross_profit_usd,
+           round(-coalesce(sum(amount_usd) FILTER (WHERE is_ebitda), 0), 2) AS ebitda_usd,
+           round(coalesce(sum(amount_usd) FILTER (WHERE is_ebitda_addback), 0), 2)
+               AS addbacks_usd,
+           round(-coalesce(sum(amount_usd) FILTER (
+               WHERE is_ebitda OR group_account LIKE '71%' OR group_account LIKE '72%'), 0), 2)
+               AS ebit_usd,
+           round(-coalesce(sum(amount_usd) FILTER (
+               WHERE statement = 'IS' AND group_account <> '850100'), 0), 2)
+               AS net_income_usd,
+           round(-coalesce(sum(amount_usd) FILTER (WHERE statement = 'IS'), 0), 2)
+               AS net_income_parent_usd
+    FROM vw_statutory_fact WHERE counts_in_result GROUP BY 1
+    """)
+
+    # ---------------------------------------------------------- income statement vs the fact
+    is_break = con.execute("""
+        SELECT count(*), round(max(greatest(
+                 abs(i.revenue_usd - f.revenue_usd),
+                 abs(i.gross_profit_usd - f.gross_profit_usd),
+                 abs(i.ebitda_usd - f.ebitda_usd),
+                 abs(i.ebit_usd - f.ebit_usd),
+                 abs(i.net_income_usd - f.net_income_usd),
+                 abs(i.net_income_parent_usd - f.net_income_parent_usd))), 2)
+        FROM (SELECT fiscal_year, round(sum(revenue_usd), 2) AS revenue_usd,
+                     round(sum(gross_profit_usd), 2) AS gross_profit_usd,
+                     round(sum(ebitda_usd), 2) AS ebitda_usd,
+                     round(sum(ebit_usd), 2) AS ebit_usd,
+                     round(sum(net_income_usd), 2) AS net_income_usd,
+                     round(sum(net_income_parent_usd), 2) AS net_income_parent_usd
+              FROM rpt_income_statement GROUP BY 1) i
+        JOIN chk_fact_measure f USING (fiscal_year)
+    """).fetchone()
+    r.ok("P4-XAR-01", "The income statement reconciles to the consolidated fact", "BLOCKING",
+         (is_break[1] or 0) <= TOL_XAR_USD, f"{is_break[0]} years, worst {is_break[1]}",
+         TOL_XAR_USD,
+         "revenue, gross profit, EBITDA, EBIT, net income and net income attributable to the "
+         "parent, each recomputed from the fact rather than read back from the artefact being "
+         "tested. Business consequence: the primary statement the board reads does not agree "
+         "with the ledger it is drawn from")
+
+    # ---------------------------------------------------------- EBITDA bridge vs the fact
+    bridge_ebitda = _one(con, """
+        SELECT round(max(abs(b.statutory_ebitda_usd - f.ebitda_usd)), 2)
+        FROM rpt_ebitda_bridge b JOIN chk_fact_measure f USING (fiscal_year)""")
+    r.ok("P4-XAR-02", "The EBITDA bridge's statutory EBITDA equals the fact's", "BLOCKING",
+         bridge_ebitda <= TOL_XAR_USD, bridge_ebitda, TOL_XAR_USD,
+         "P4-D-02. Summing a fiscal year without excluding the year-end close nets it to "
+         "approximately nil, and three of four years were wrong by the whole year's EBITDA "
+         "while the income statement was right. Business consequence: two artefacts state "
+         "different EBITDA and nothing says which is the group's")
+
+    bridge_adj = _one(con, """
+        SELECT round(max(abs(b.adjusted_ebitda_usd
+                             - (f.ebitda_usd + f.addbacks_usd)
+                             - b.management_layer4_effect_usd)), 2)
+        FROM rpt_ebitda_bridge b JOIN chk_fact_measure f USING (fiscal_year)""")
+    r.ok("P4-XAR-03", "Adjusted EBITDA is the fact plus the approved add-backs plus layer 4",
+         "BLOCKING", bridge_adj <= TOL_XAR_USD, bridge_adj, TOL_XAR_USD,
+         "the layer-4 effect is added rather than assumed nil, so the control still holds "
+         "when a management adjustment is approved. Business consequence: the headline "
+         "management measure diverges from the statutory base it is built on")
+
+    covenant_null = _one(con, """
+        SELECT count(*) FROM rpt_ebitda_bridge
+        WHERE covenant_ebitda_usd IS NULL OR sponsor_fee_cap_effect_usd IS NULL
+           OR covenant_fx_addback_usd IS NULL OR approved_addbacks_usd IS NULL
+           OR statutory_ebitda_usd IS NULL OR adjusted_ebitda_usd IS NULL
+           OR management_layer4_effect_usd IS NULL""")
+    covenant_break = _one(con, """
+        SELECT round(max(abs(b.covenant_ebitda_usd
+                             - (f.ebitda_usd + f.addbacks_usd
+                                + b.sponsor_fee_cap_effect_usd
+                                + b.covenant_fx_addback_usd))), 2)
+        FROM rpt_ebitda_bridge b JOIN chk_fact_measure f USING (fiscal_year)""")
+    r.ok("P4-XAR-04", "Covenant EBITDA is complete, non-null and reconciles to the fact",
+         "BLOCKING", covenant_null == 0 and covenant_break <= TOL_XAR_USD,
+         f"{covenant_null} null components, worst {covenant_break}",
+         f"0 nulls, {TOL_XAR_USD} USD",
+         "P4-D-02. An add-back category with no population contributes ZERO, never NULL: a "
+         "nil FILTER voided the whole expression and every year came back NULL. Business "
+         "consequence: this is the measure the credit agreement tests leverage on, and a "
+         "null or wrong Covenant EBITDA misstates headroom to a lender")
+
+    # ---------------------------------------------------------- balance sheet vs the fact
+    bs_class = _one(con, """
+        WITH artefact AS (
+            SELECT period_key,
+                   round(coalesce(sum(balance_usd) FILTER (
+                       WHERE account_class = 'ASSET'), 0), 2) AS a,
+                   round(coalesce(sum(balance_usd) FILTER (
+                       WHERE account_class = 'LIABILITY'), 0), 2) AS l,
+                   round(coalesce(sum(balance_usd) FILTER (
+                       WHERE account_class = 'EQUITY'), 0), 2) AS e
+            FROM rpt_balance_sheet GROUP BY 1
+        ),
+        fact AS (
+            SELECT d.period_key,
+                   round(coalesce(sum(f.amount_usd) FILTER (
+                       WHERE f.account_class = 'ASSET'), 0), 2) AS a,
+                   round(coalesce(sum(f.amount_usd) FILTER (
+                       WHERE f.account_class = 'LIABILITY'), 0), 2) AS l,
+                   round(coalesce(sum(f.amount_usd) FILTER (
+                       WHERE f.account_class = 'EQUITY' OR f.statement = 'IS'), 0), 2) AS e
+            FROM (SELECT DISTINCT period_key FROM rpt_balance_sheet) d
+            JOIN vw_statutory_fact f ON f.period_key <= d.period_key
+            GROUP BY 1
+        )
+        SELECT round(max(greatest(abs(x.a - y.a), abs(x.l - y.l), abs(x.e - y.e))), 2)
+        FROM artefact x JOIN fact y USING (period_key)""")
+    r.ok("P4-XAR-05", "Total assets, liabilities and equity reconcile to the fact", "BLOCKING",
+         bs_class <= TOL_XAR_USD, bs_class, TOL_XAR_USD,
+         "equity on the fact side includes the unclosed income statement balance, because "
+         "that is what the balance sheet presents inside equity. Business consequence: the "
+         "primary statement does not agree with the ledger")
+
+    result_break = _one(con, """
+        WITH ytd AS (
+            SELECT period_key,
+                   sum(coalesce(sum(amount_usd) FILTER (WHERE counts_in_result), 0))
+                       OVER (PARTITION BY fiscal_year ORDER BY period_key
+                             ROWS UNBOUNDED PRECEDING) AS ytd_usd
+            FROM vw_statutory_fact WHERE statement = 'IS' GROUP BY period_key, fiscal_year
+        )
+        SELECT round(max(abs(b.balance_usd - y.ytd_usd)), 2)
+        FROM rpt_balance_sheet b JOIN ytd y USING (period_key)
+        WHERE b.fs_caption_l2 = 'Result for the period'""")
+    r.ok("P4-XAR-06", "The period result in equity is the fiscal year to date from the fact",
+         "BLOCKING", result_break <= TOL_XAR_USD, result_break, TOL_XAR_USD,
+         "P4-D-01. The caption presented the cumulative income statement including the close, "
+         "which is only complete for layer 1: no entity ledger closes a consolidation "
+         "adjustment, so three years of them accumulated in a caption called the period's "
+         "result. Business consequence: a reader cannot reconcile the balance sheet to the "
+         "income statement, and total equity is right the whole time")
+
+    retained_break = _one(con, """
+        WITH cum AS (
+            SELECT d.period_key,
+                   round(coalesce(sum(f.amount_usd) FILTER (
+                       WHERE f.group_account IN ('320100', '320200', '320300')
+                          OR f.statement = 'IS'), 0), 2) AS earnings_usd
+            FROM (SELECT DISTINCT period_key FROM rpt_balance_sheet) d
+            JOIN vw_statutory_fact f ON f.period_key <= d.period_key
+            GROUP BY 1
+        ),
+        artefact AS (
+            SELECT period_key, round(sum(balance_usd), 2) AS earnings_usd
+            FROM rpt_balance_sheet
+            WHERE fs_caption_l2 IN ('Retained earnings', 'Result for the period')
+            GROUP BY 1
+        )
+        SELECT round(max(abs(a.earnings_usd - c.earnings_usd)), 2)
+        FROM artefact a JOIN cum c USING (period_key)""")
+    r.ok("P4-XAR-07", "Retained earnings plus the period result equal the fact's earnings",
+         "BLOCKING", retained_break <= TOL_XAR_USD, retained_break, TOL_XAR_USD,
+         "the split between the two captions is a presentation decision and the total is not. "
+         "P4-XAR-06 tests the split; this tests that moving it never changes the total. "
+         "Business consequence: earnings created or destroyed by presentation")
+
+    cta_break = _one(con, """
+        SELECT round(max(abs(b.balance_usd - c.cta_usd)), 2)
+        FROM (SELECT period_key, round(sum(balance_usd), 2) AS balance_usd
+              FROM rpt_balance_sheet
+              WHERE fs_caption_l2 = 'Cumulative translation adjustment' GROUP BY 1) b
+        JOIN (SELECT d.period_key,
+                     round(coalesce(sum(f.amount_usd) FILTER (
+                         WHERE f.group_account LIKE '330%'), 0), 2) AS cta_usd
+              FROM (SELECT DISTINCT period_key FROM rpt_balance_sheet) d
+              JOIN vw_statutory_fact f ON f.period_key <= d.period_key
+              GROUP BY 1) c USING (period_key)""")
+    r.ok("P4-XAR-08", "The CTA caption reconciles to the fact's translation accounts",
+         "BLOCKING", cta_break <= TOL_XAR_USD, cta_break, TOL_XAR_USD,
+         "business consequence: the equity reserve that explains every rate movement does "
+         "not agree with the entries that produced it")
+
+    nci_break = _one(con, """
+        SELECT round(max(abs(b.balance_usd + n.closing_usd)), 2)
+        FROM (SELECT period_key, round(sum(balance_usd), 2) AS balance_usd
+              FROM rpt_balance_sheet
+              WHERE fs_caption_l2 = 'Non-controlling interests' GROUP BY 1) b
+        JOIN rpt_nci_rollforward n ON b.period_key = n.fiscal_year * 100 + 12""")
+    r.ok("P4-XAR-09", "The NCI caption agrees with the NCI roll-forward at each year end",
+         "BLOCKING", nci_break <= TOL_XAR_USD, nci_break, TOL_XAR_USD,
+         "two artefacts, one measure: the balance sheet's equity component and the "
+         "roll-forward that explains it. Business consequence: the minority's stake is "
+         "reported at one figure and explained by another")
+
+    cash_break = _one(con, """
+        WITH fact AS (
+            SELECT d.period_key,
+                   round(coalesce(sum(f.amount_usd) FILTER (
+                       WHERE f.cash_flow_category = 'CASH'), 0), 2) AS cash_usd
+            FROM (SELECT DISTINCT period_key FROM rpt_cash_flow) d
+            JOIN vw_statutory_fact f ON f.period_key <= d.period_key
+            GROUP BY 1
+        )
+        SELECT round(max(greatest(abs(c.closing_cash_usd - t.cash_usd),
+                                  abs(b.balance_usd - t.cash_usd))), 2)
+        FROM rpt_cash_flow c
+        JOIN fact t USING (period_key)
+        JOIN rpt_balance_sheet b
+          ON b.period_key = c.period_key
+         AND b.fs_caption_l2 = 'Cash and cash equivalents'""")
+    r.ok("P4-XAR-10",
+         "Closing cash agrees across the cash flow, the balance sheet and the fact",
+         "BLOCKING", cash_break <= TOL_XAR_USD, cash_break, TOL_XAR_USD,
+         "a three-way tie with the fact as the authority, so an artefact that agrees with the "
+         "other artefact but not with the ledger still fails. Business consequence: the "
+         "single number every reader checks first")
+
+    layer_break = _one(con, """
+        SELECT round(max(abs(l.net_income_usd - f.net_income_usd)), 2)
+        FROM (SELECT fiscal_year, round(sum(net_income_usd), 2) AS net_income_usd
+              FROM rpt_layer_bridge WHERE in_statutory_view GROUP BY 1) l
+        JOIN chk_fact_measure f USING (fiscal_year)""")
+    r.ok("P4-XAR-11", "The layer bridge sums to the fact's net income", "BLOCKING",
+         layer_break <= TOL_XAR_USD, layer_break, TOL_XAR_USD,
+         "the artefact that answers 'where did this number come from' has to arrive at the "
+         "number. Business consequence: a bridge that does not bridge")
 
     return r
 

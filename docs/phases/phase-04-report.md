@@ -1,14 +1,16 @@
 # Phase 4 — Group consolidation engine
 
 Formal completion report for the consolidation engine, covering Phase 4, the Phase 4A proof
-gate and the Phase 4B documentation and release gate.
+gate, the Phase 4B documentation and release gate and the Phase 4C reporting-integrity gate.
 
-**Engine frozen at `4847d64`.** Source layer `fd7afb8f…`, consolidation build
-`78e406e139662392`.
+**Accounting engine frozen at `4847d64`.** Source layer `fd7afb8f…`, consolidation build
+`78e406e139662392`. Phase 4C changed three reporting artefacts and nothing else; every
+accounting figure below is byte-identical to the frozen build.
 
-> **Phase 4 is not signed off.** Two defects in Phase 4 reporting artefacts were found during
-> the Phase 4B documentation pass and, per the Phase 4B brief, reported rather than corrected.
-> See §21 and [`phase-04b-engine-findings.md`](phase-04b-engine-findings.md).
+> **Phase 4 is complete.** The three reporting-layer defects found in Phase 4B and 4C are
+> closed, and the cross-artefact control family that would have caught all three on the day
+> they were written is in place. See
+> [`phase-04c-reporting-integrity.md`](phase-04c-reporting-integrity.md).
 
 ---
 
@@ -20,13 +22,14 @@ purchase price allocation, acquired intangible amortisation, non-controlling int
 unrealised profit in inventory, a management adjustment layer, the three consolidated
 statements, a full control suite and complete audit lineage.
 
-Delivered across three gates:
+Delivered across four gates:
 
 | | | |
 |---|---|---|
 | Phase 4 | the engines | `c55d441`, `5a1c254`, `f2fa9df` |
 | Phase 4A | proof and control gate | `4847d64` |
-| Phase 4B | documentation and release gate | this pass |
+| Phase 4B | documentation and release gate | `17922f9` |
+| Phase 4C | reporting integrity and the cross-artefact control gate | this pass |
 
 Phase 4 stopped twice to report upstream defects rather than repairing data inside the
 consolidation engine. Both stops were approved, corrected at the generator in Phase 3.2, and
@@ -178,7 +181,7 @@ statutory basis contains zero layer-4 rows (`P4-LAY-03`).
 
 ## 13. Consolidated income statement
 
-| USD m | FY2023 | FY2024 | FY2025 | FY2026 (8m) |
+| USD m | FY2023 | FY2024 | FY2025 | FY2026 |
 |---|---|---|---|---|
 | Revenue | 328.000 | 371.400 | 412.100 | 278.981 |
 | Gross profit | 91.205 | 105.291 | 119.250 | 77.082 |
@@ -194,8 +197,9 @@ statutory basis contains zero layer-4 rows (`P4-LAY-03`).
 **Assets = Liabilities + Equity in all 48 months, residual exactly 0.00.**
 
 At 31 December 2025: total assets USD 465.390m, liabilities USD 372.048m, equity USD 93.340m —
-including goodwill 140.697, acquired intangibles net 52.476, CTA (0.283) and non-controlling
-interests 2.158. Investments in subsidiaries and intercompany balances both eliminate to nil
+contributed capital 168.600, retained earnings (84.747), the FY2025 result 7.046, CTA 0.283 and
+non-controlling interests 2.158, with goodwill 140.697 and acquired intangibles net 52.476 in
+assets. Investments in subsidiaries and intercompany balances both eliminate to nil
 and are presented rather than suppressed.
 
 ## 15. Consolidated cash flow
@@ -203,7 +207,7 @@ and are presented rather than suppressed.
 **Opening + operating + investing + financing + FX on cash = closing, difference exactly 0.00
 in all 48 periods.** Closing cash ties to the balance sheet at 0.00 in all 48 periods.
 
-| USD m | FY2023 | FY2024 | FY2025 | FY2026 (8m) |
+| USD m | FY2023 | FY2024 | FY2025 | FY2026 |
 |---|---|---|---|---|
 | Operating | (61.541) | 13.128 | 26.130 | (7.478) |
 | Investing | (313.616) | (47.909) | (13.019) | (1.956) |
@@ -215,7 +219,8 @@ No cash residual, no FX plug, and CTA is not used as the FX effect on cash (`P4-
 
 ## 16. Controls
 
-**61 controls, 61 passing, 0 source findings, 0 blocking failures.** Register committed at
+**72 controls, 72 passing, 0 source findings, 0 blocking failures** — 61 over the accounting
+and **11 over the reporting layer built on it**. Register committed at
 `config/controls/phase04_control_register.csv`; a test fails if register and code disagree.
 
 | Family | Count | Family | Count |
@@ -226,14 +231,21 @@ No cash residual, no FX plug, and CTA is not used as the FX effect on cash (`P4-
 | Investment | 3 | Statutory vs management | 2 |
 | Goodwill and PPA | 4 | Management adjustments | 3 |
 | Intangibles | 4 | NCI | 5 |
+| | | **Cross-artefact reporting integrity** | **11** |
 
 Detail: [`consolidation-controls.md`](../consolidation-controls.md).
 
 ## 17. Fault fixtures
 
-**19 of 19 handled as intended, 0 accidental detections.** Every fixture corrupts an input the
-engine consumes and runs a full consolidation. Four controls that could not have failed were
-exposed by fixtures and rewritten: `P4-PUP-02`, `P4-INV-03`, `P4-INT-02`, `P4-OWN-06`.
+**23 of 23 handled as intended, 0 accidental detections.** Nineteen corrupt an input the engine
+consumes; the four `F4-XAR-*` fixtures corrupt a reporting **artefact** and leave the fact
+correct, because the reporting layer is what that family tests. Four controls that could not
+have failed were exposed by fixtures and rewritten: `P4-PUP-02`, `P4-INV-03`, `P4-INT-02`,
+`P4-OWN-06`.
+
+`F4-XAR-01` moves USD 5m between two equity captions. Total equity is untouched, the balance
+sheet still balances, and **not one of the 61 accounting controls fires** — only `P4-XAR-06`
+objects. That is the whole case for the family in one fixture.
 
 Detail: [`fault-testing.md`](../fault-testing.md).
 
@@ -253,7 +265,13 @@ cash flow's double-counted translation and stranded close (13.95m → 0.00); one
 non-deterministic artefact; one configuration field the engine ignored; two dangling
 documentation references.
 
-**Found in Phase 4B and NOT fixed** — see §21.
+**Found in Phase 4B, corrected in Phase 4C:**
+
+| | | Outcome |
+|---|---|---|
+| P4-D-01 | `rpt_balance_sheet` presented prior years' unclosed consolidation result as the period's result | the caption is now the fiscal year to date excluding the close; equity at 31 Dec 2025 reads retained earnings (84.747) and result 7.046, and total equity did not move |
+| P4-D-02 | `rpt_ebitda_bridge` summed the year including the close, and a nil `FILTER` voided Covenant EBITDA | `counts_in_result` applied and every aggregate coalesced; the bridge now agrees with the income statement exactly and Covenant EBITDA is non-null in all four years |
+| P4-D-03 | the same close defect in `rpt_layer_bridge`, **found by `P4-XAR-11` on its first run** | corrected the same way |
 
 Architectural analysis of all of these: [`architecture-lessons.md`](../architecture-lessons.md).
 
@@ -287,18 +305,10 @@ controls attached.
 
 Detail: [`reproducibility.md`](../reproducibility.md).
 
-## 21. Limitations and open items
+## 21. Limitations
 
-**Open defects — Phase 4 cannot be signed off until these are decided:**
-
-| | | Impact |
-|---|---|---|
-| **P4-D-01** | `rpt_balance_sheet`'s "Result for the period" accumulates prior years' unclosed consolidation result — USD 19.869m at Dec 2025 against a FY2025 parent result of 7.046m | classification within equity; total equity correct; no control affected |
-| **P4-D-02** | `rpt_ebitda_bridge` computes statutory EBITDA including the year-end close (three of four years wrong) and returns NULL Covenant EBITDA in every year | the artefact is unusable; `rpt_income_statement` is correct and the two disagree |
-
-Both are in reporting artefacts, not in the accounting engine. Neither is caught by any of the
-61 controls, and both were found by writing this documentation and comparing artefacts with
-each other. Full analysis: [`phase-04b-engine-findings.md`](phase-04b-engine-findings.md).
+**No open defects.** P4-D-01, P4-D-02 and P4-D-03 are closed and each is covered by a blocking
+cross-artefact control and a fault fixture.
 
 **Scope limitations, by design:**
 
@@ -306,25 +316,21 @@ each other. Full analysis: [`phase-04b-engine-findings.md`](phase-04b-engine-fin
 * **No disposals.** FX-P19 (CTA recycling on disposal) is implemented with no population.
 * **Layer 4 is empty**, so the management basis is proved structurally and by fixture rather
   than from production data.
-* **No cross-artefact controls.** Nothing compares one reporting artefact with another — the
-  gap that let P4-D-02 survive.
 * **Actual scenario only** is consolidated in full. Budget and Forecast share the grain, the
   engine and the layers but are not exercised end to end.
 * **The covenant FX add-back has no population** — accounts 740100/740200 are never posted to,
-  so CA-030 is structurally nil in the modelled window.
+  so CA-030 is structurally nil in the modelled window. It is presented as **0.00**, and no
+  adjustment row was fabricated to make the arithmetic non-null.
+* **Covenant EBITDA equals Adjusted EBITDA in this window.** The sponsor fee runs below the
+  CA-027 cap and the CA-030 add-back has no population, so the two definitions happen to
+  coincide. The cap is computed from the agreement's own term rather than assumed away, because
+  it would bite at a higher fee.
 
 ## 22. Recommendation for Phase 5
 
-Two items first, before any new phase:
+Per [`roadmap.md`](roadmap.md):
 
-1. **Decide P4-D-01 and P4-D-02** and correct them in a short Phase 4C, with a **cross-artefact
-   control family** and fault fixtures for it. Both defects are repeats of faults already fixed
-   elsewhere in the same phase, in an artefact nothing was checking; the control family is the
-   substantive fix, not the two one-line corrections.
-
-Then, per [`roadmap.md`](roadmap.md):
-
-2. **Phase 5 — reporting marts and the automated control suite.** Reporting-shaped marts over
+**Phase 5 — reporting marts and the automated control suite.** Reporting-shaped marts over
    `fact_financials` for the statements, variance, bridges, working capital, headcount, capex,
    debt and covenants; Parquet exports; the full control suite executable as one command. This
    is the right next dependency: the Excel and Power BI phases both consume the marts, and

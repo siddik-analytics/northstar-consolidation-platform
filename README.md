@@ -24,9 +24,10 @@ figure back to the source journal that produced it.
 | **2.1 — Source data correction pass** | ✅ **Complete** | [Report](docs/phases/phase-02-1-report.md) |
 | **2.2 — Source-layer integrity pass** | ✅ **Complete** | [Report](docs/phases/phase-02-2-report.md) |
 | **3 — Ingestion, staging & COA harmonisation** | ✅ **Complete** | [Report](docs/phases/phase-03-report.md) |
-| **4 — Consolidation engine** | ⚠️ **Built and proved; two reporting defects open** | [Report](docs/phases/phase-04-report.md) |
+| **4 — Consolidation engine** | ✅ **Complete** | [Report](docs/phases/phase-04-report.md) |
 | **4A — Consolidation proof & control gate** | ✅ **Complete** | [Report](docs/phases/phase-04a-proof-gate.md) |
 | **4B — Documentation & release gate** | ✅ **Complete** | [Findings](docs/phases/phase-04b-engine-findings.md) |
+| **4C — Reporting integrity & cross-artefact gate** | ✅ **Complete** | [Report](docs/phases/phase-04c-reporting-integrity.md) |
 | 5 — Reporting marts & control suite | ⏸ | |
 | 6 — Excel FP&A models | ⏸ | |
 | 7 — Power BI semantic model & reports | ⏸ | |
@@ -58,9 +59,9 @@ version-controlled configuration validated in CI — not code, and not tribal kn
 
 **What makes it defensible.** Every transformation between the source trial balance and the
 board number is a separately identifiable layer, so the reconciliation from "what the ERPs
-said" to "what the board sees" is a standing output rather than an investigation. 203
-automated controls — 80 over the generated source, 62 over the pipeline and 61 over the
-consolidation — run at the point of the transformation they protect, and 29 fault fixtures
+said" to "what the board sees" is a standing output rather than an investigation. 214
+automated controls — 80 over the generated source, 62 over the pipeline and 72 over the
+consolidation — run at the point of the transformation they protect, and 33 fault fixtures
 prove each family actually fails when it should.
 
 There are no plugs. The layer-1 balance sheet closes on its own roll-forward, the cumulative
@@ -96,9 +97,9 @@ All integrity assertions passed (BS balances; CF ties to BS cash).
 10 fault fixtures written to data/faults/ ... all DETECTED
 62/62 controls passed, 0 source findings, 0 blocking failures
 10/10 faults handled as intended
-61/61 controls passed, 0 source findings, 0 blocking failures
-19/19 fixtures handled as intended
-421 passed
+72/72 controls passed, 0 source findings, 0 blocking failures
+23/23 fixtures handled as intended
+436 passed
 ```
 
 Full procedure, runtimes and the deterministic build ids:
@@ -166,6 +167,7 @@ tests/           Automated validation
 | [Phase 4 source findings](docs/phases/phase-04-source-findings.md) | the defects the consolidation engine found upstream, and what was decided about each |
 | [Phase 4A proof gate](docs/phases/phase-04a-proof-gate.md) | the NCI anchor closed, a cash flow that ties at the cent, 61 controls and 19 fault fixtures |
 | [Phase 4B engine findings](docs/phases/phase-04b-engine-findings.md) | two reporting defects found by documenting the engine, reported and not corrected |
+| [Phase 4C reporting integrity](docs/phases/phase-04c-reporting-integrity.md) | those defects closed, a third found by the new controls, and the cross-artefact family |
 | [**Architecture lessons**](docs/architecture-lessons.md) | ten defects that balanced perfectly while being wrong, and the design change each produced |
 
 | The consolidation, as built | |
@@ -178,8 +180,9 @@ tests/           Automated validation
 | [Unrealised profit in inventory](docs/unrealised-profit-in-inventory.md) | FIFO layers at their own margins, and why the release is automatic |
 | [Management adjustments](docs/management-adjustments.md) | Layer 4, the approval gate, Adjusted versus Covenant EBITDA |
 | [Consolidated financial statements](docs/consolidated-financial-statements.md) | The three statements, what has been proved, and what has not |
-| [Consolidation controls](docs/consolidation-controls.md) | The 61-control suite and the rule that shapes it |
-| [Fault testing](docs/fault-testing.md) | 29 fixtures, and why detection by the wrong control does not count |
+| [Consolidation controls](docs/consolidation-controls.md) | The 72-control suite and the two rules that shape it |
+| [Reporting artefact contract](docs/reporting-artefact-contract.md) | Grain, upstream fact, close logic and NULL policy for all fifteen artefacts |
+| [Fault testing](docs/fault-testing.md) | 33 fixtures, and why detection by the wrong control does not count |
 | [Data lineage](docs/data-lineage.md) | Native extract to board figure, and the identifier at each step |
 | [Reproducibility](docs/reproducibility.md) | Environment, commands, runtimes, build ids, the clean-tree expectation |
 

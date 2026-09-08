@@ -164,26 +164,65 @@ def build(con: duckdb.DuckDBPyConnection) -> dict[str, int]:
     # ------------------------------------------------------------------ balance sheet
     con.execute("""
     CREATE OR REPLACE TABLE rpt_balance_sheet AS
-    WITH movement AS (
+    WITH pl_period AS (
+        -- Per period: the whole income statement movement, and the fiscal year to date on
+        -- the income statement's own basis. `ytd_usd` restarts each fiscal year because the
+        -- window is partitioned by it -- that restart is what makes the result caption a
+        -- year-to-date figure rather than an ever-growing one.
+        SELECT period_key, fiscal_year,
+               sum(sum(amount_usd)) OVER (PARTITION BY fiscal_year ORDER BY period_key
+                                          ROWS UNBOUNDED PRECEDING) AS all_usd_cum,
+               sum(amount_usd) AS all_usd,
+               sum(coalesce(sum(amount_usd) FILTER (WHERE counts_in_result), 0))
+                   OVER (PARTITION BY fiscal_year ORDER BY period_key
+                         ROWS UNBOUNDED PRECEDING) AS ytd_usd
+        FROM vw_statutory_fact WHERE statement = 'IS' GROUP BY period_key, fiscal_year
+    ),
+    movement AS (
         SELECT period_key, fiscal_year, fs_caption_l2, account_class, sort_order,
                sum(amount_usd) AS movement_usd
         FROM vw_statutory_fact WHERE statement = 'BS' GROUP BY ALL
         UNION ALL BY NAME
-        -- The result of the period is part of equity at any date before it is closed, and
-        -- the amount that is still open is the CUMULATIVE balance of every income statement
-        -- account INCLUDING the close. The close is what makes that work: it reverses each
-        -- year's result into reserves, so the cumulative income statement balance at any
-        -- date is exactly the result not yet in retained earnings -- the current year to
-        -- date, plus the consolidation adjustments that no entity ledger ever closes.
+        -- ------------------------------------------------------------------ P4-D-01
+        -- Equity carries the group's earnings in two captions and the split between them is
+        -- a presentation decision, not an accounting one. Total equity is the same either
+        -- way, which is why getting it wrong is invisible to every balancing control.
         --
-        -- Excluding the close here is what broke it. Retained earnings already contains
-        -- every closed year, so a result line that also contained them counted each closed
-        -- year twice, and the balance sheet was out by the whole of the prior years'
-        -- earnings.
+        -- The rule here: **`Result for the period` is the fiscal year to date, on the same
+        -- basis as the income statement** -- every income statement account for the current
+        -- fiscal year, EXCLUDING the year-end close. Everything else that the cumulative
+        -- income statement contains belongs in retained earnings.
+        --
+        -- Excluding the close is what makes the caption mean one thing in every month. The
+        -- close reverses each entity's own result into its reserves in December; including
+        -- it would make the caption a different measure in December from the one it is in
+        -- November, and it would never agree with the income statement at a year end.
+        --
+        -- What the first version got wrong was the other half. It presented the cumulative
+        -- income statement balance INCLUDING the close, reasoning that the close leaves
+        -- behind exactly what is not yet in reserves. That is true for layer 1 and false for
+        -- the group: **no entity ledger closes a consolidation adjustment**, because
+        -- consolidation adjustments do not exist in any entity's books. So three years of
+        -- PPA amortisation, unrealised profit and NCI attribution accumulated in a caption
+        -- called "the period's result" -- USD 19.869m at December 2025 against a FY2025
+        -- group result of 7.046m -- while total equity stayed exactly right.
+        --
+        -- The two movements below therefore sum, by construction, to the whole income
+        -- statement movement for the period. The split moves; the total cannot.
         SELECT period_key, fiscal_year, 'Result for the period' AS fs_caption_l2,
                'EQUITY' AS account_class, 3999 AS sort_order,
-               sum(amount_usd) AS movement_usd
-        FROM vw_statutory_fact WHERE statement = 'IS' GROUP BY ALL
+               ytd_usd - coalesce(lag(ytd_usd) OVER (ORDER BY period_key), 0)
+                   AS movement_usd
+        FROM pl_period
+        UNION ALL BY NAME
+        -- and the remainder: the prior years' result the entity ledgers closed into their
+        -- own reserves, plus the prior years' consolidation adjustments that nothing closes.
+        -- Both belong in retained earnings by the year end that follows them.
+        SELECT period_key, fiscal_year, 'Retained earnings' AS fs_caption_l2,
+               'EQUITY' AS account_class, 3210 AS sort_order,
+               all_usd - (ytd_usd - coalesce(lag(ytd_usd) OVER (ORDER BY period_key), 0))
+                   AS movement_usd
+        FROM pl_period
     )
     ,
     caption AS (
@@ -356,19 +395,31 @@ def build(con: duckdb.DuckDBPyConnection) -> dict[str, int]:
     # ------------------------------------------------------------------ the bridge
     # Layer by layer, for the measures a reader checks first. This is the artefact that
     # answers "where did this number come from" in one page rather than one week.
+    #
+    # P4-D-03: the income statement measures exclude the year-end close, exactly as
+    # `rpt_income_statement` and `rpt_ebitda_bridge` do. Including it nets layer 1's year to
+    # approximately nil, so the bridge showed the group's net income arriving almost entirely
+    # from the consolidation layers -- the opposite of the truth, in the one artefact whose
+    # job is to say where a number came from. The balance sheet movements below DO include
+    # the close, because moving the result into reserves is a real equity movement.
+    #
+    # Found by `P4-XAR-11` the first time it ran: a third instance of the same close defect,
+    # in a third artefact, none of which any accounting control could see.
     con.execute("""
     CREATE OR REPLACE TABLE rpt_layer_bridge AS
     WITH measure AS (
         SELECT f.layer_id, f.fiscal_year,
-               round(-sum(f.amount_usd) FILTER (WHERE a.is_ebitda), 2) AS ebitda_usd,
-               round(-sum(f.amount_usd) FILTER (
-                   WHERE a.statement = 'IS' AND a.group_account <> '850100'), 2)
-                   AS net_income_usd,
-               round(sum(f.amount_usd) FILTER (
-                   WHERE a.statement = 'BS' AND a.account_class = 'ASSET'), 2)
+               round(-coalesce(sum(f.amount_usd) FILTER (
+                   WHERE a.is_ebitda AND f.journal_character <> 'CLOSE'), 0), 2)
+                   AS ebitda_usd,
+               round(-coalesce(sum(f.amount_usd) FILTER (
+                   WHERE a.statement = 'IS' AND a.group_account <> '850100'
+                     AND f.journal_character <> 'CLOSE'), 0), 2) AS net_income_usd,
+               round(coalesce(sum(f.amount_usd) FILTER (
+                   WHERE a.statement = 'BS' AND a.account_class = 'ASSET'), 0), 2)
                    AS total_assets_movement_usd,
-               round(-sum(f.amount_usd) FILTER (
-                   WHERE a.statement = 'BS' AND a.account_class = 'EQUITY'), 2)
+               round(-coalesce(sum(f.amount_usd) FILTER (
+                   WHERE a.statement = 'BS' AND a.account_class = 'EQUITY'), 0), 2)
                    AS total_equity_movement_usd
         FROM fact_financials f JOIN dim_account a USING (group_account)
         GROUP BY ALL
@@ -404,42 +455,42 @@ def build(con: duckdb.DuckDBPyConnection) -> dict[str, int]:
     ),
     flow AS (
         SELECT layer_id, fiscal_year, 'Revenue' AS measure,
-               -sum(amount_usd) FILTER (WHERE group_account LIKE '4%'
-                                          AND group_account NOT LIKE '49%') AS v
+               -coalesce(sum(amount_usd) FILTER (WHERE group_account LIKE '4%'
+                                          AND group_account NOT LIKE '49%'), 0) AS v
         FROM m WHERE counts_in_result GROUP BY ALL
         UNION ALL BY NAME
         SELECT layer_id, fiscal_year, 'Gross profit' AS measure,
-               -sum(amount_usd) FILTER (WHERE (group_account LIKE '4%'
+               -coalesce(sum(amount_usd) FILTER (WHERE (group_account LIKE '4%'
                                                AND group_account NOT LIKE '49%')
-                                           OR group_account LIKE '5%') AS v
+                                           OR group_account LIKE '5%'), 0) AS v
         FROM m WHERE counts_in_result GROUP BY ALL
         UNION ALL BY NAME
         SELECT layer_id, fiscal_year, 'EBITDA' AS measure,
-               -sum(amount_usd) FILTER (WHERE is_ebitda) AS v
+               -coalesce(sum(amount_usd) FILTER (WHERE is_ebitda), 0) AS v
         FROM m WHERE counts_in_result GROUP BY ALL
         UNION ALL BY NAME
         SELECT layer_id, fiscal_year, 'EBIT' AS measure,
-               -sum(amount_usd) FILTER (WHERE is_ebitda
+               -coalesce(sum(amount_usd) FILTER (WHERE is_ebitda
                                            OR group_account LIKE '71%'
-                                           OR group_account LIKE '72%') AS v
+                                           OR group_account LIKE '72%'), 0) AS v
         FROM m WHERE counts_in_result GROUP BY ALL
         UNION ALL BY NAME
         SELECT layer_id, fiscal_year, 'Net income' AS measure,
-               -sum(amount_usd) FILTER (WHERE statement = 'IS'
-                                          AND group_account <> '850100') AS v
+               -coalesce(sum(amount_usd) FILTER (WHERE statement = 'IS'
+                                          AND group_account <> '850100'), 0) AS v
         FROM m WHERE counts_in_result GROUP BY ALL
     ),
     yend AS (SELECT fiscal_year AS fy, max(period_key) AS pk
              FROM fact_financials GROUP BY 1),
     bal AS (
         SELECT m.layer_id, y.fy AS fiscal_year, 'Total assets' AS measure,
-               sum(m.amount_usd) FILTER (WHERE m.account_class = 'ASSET') AS v
+               coalesce(sum(m.amount_usd) FILTER (WHERE m.account_class = 'ASSET'), 0) AS v
         FROM m CROSS JOIN yend y
         WHERE m.statement = 'BS' AND m.period_key <= y.pk
         GROUP BY 1, 2
         UNION ALL BY NAME
         SELECT m.layer_id, y.fy AS fiscal_year, 'Total equity' AS measure,
-               -sum(m.amount_usd) FILTER (WHERE m.account_class = 'EQUITY') AS v
+               -coalesce(sum(m.amount_usd) FILTER (WHERE m.account_class = 'EQUITY'), 0) AS v
         FROM m CROSS JOIN yend y
         WHERE m.statement = 'BS' AND m.period_key <= y.pk
         GROUP BY 1, 2

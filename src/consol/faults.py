@@ -16,6 +16,11 @@ Two rules, both of which cost more to honour than to skip:
   * a fault caught only by an **unrelated** control is an `ACCIDENTAL_DETECTION` and is
     reported as a control-design defect. Every fixture names the control family that owns it.
 
+The `F4-XAR-*` fixtures are the deliberate exception to the first rule. They corrupt a
+reporting **artefact** and leave the consolidated fact correct, because the thing they test is
+the reporting layer: the accounting is right and the report is wrong. That is the shape of
+both defects the Phase 4B documentation pass found, and no accounting control can see it.
+
 `F02` is the fixture Phase 3 deferred. It is a one-sided intercompany difference, and no
 Phase 3 artefact contains both sides of the pair, so every Phase 3 control was correct to pass
 on it. Here it runs through the whole pipeline AND the Phase 4 elimination engine, and it must
@@ -193,6 +198,54 @@ FAULTS: list[dict] = [
             "empirical half of the proof that P4-LAY-03 and P4-BAS-01 make structurally",
         csv_edit=("consolidation/management_adjustment.csv", "add_approved", ""),
     ),
+    dict(
+        fault_id="F4-XAR-01", name="Period result presented wrongly, equity still balanced",
+        category="REPORTING", family="P4-XAR",
+        why="moves USD 5m from the period result into retained earnings. Total equity is "
+            "untouched and the balance sheet still balances at 0.00, so every accounting "
+            "control passes -- which is precisely what P4-D-01 looked like",
+        post_sql=[
+            "UPDATE rpt_balance_sheet SET balance_usd = balance_usd - 5000000 "
+            "WHERE fs_caption_l2 = 'Result for the period'",
+            "UPDATE rpt_balance_sheet SET balance_usd = balance_usd + 5000000 "
+            "WHERE fs_caption_l2 = 'Retained earnings'",
+        ],
+    ),
+    dict(
+        fault_id="F4-XAR-02", name="EBITDA bridge sums the year including the close",
+        category="REPORTING", family="P4-XAR",
+        why="recomputes statutory EBITDA without excluding the year-end close, reproducing "
+            "P4-D-02 exactly. The income statement is untouched and correct, so the only "
+            "evidence is that the two artefacts disagree",
+        post_sql=[
+            "UPDATE rpt_ebitda_bridge SET statutory_ebitda_usd = ("
+            "  SELECT round(-coalesce(sum(v.amount_usd) FILTER (WHERE v.is_ebitda), 0), 2)"
+            "  FROM vw_statutory_fact v WHERE v.fiscal_year = rpt_ebitda_bridge.fiscal_year)",
+        ],
+    ),
+    dict(
+        fault_id="F4-XAR-03", name="An empty add-back category returns NULL",
+        category="REPORTING", family="P4-XAR",
+        why="the CA-030 unrealised foreign exchange add-back has no population in this "
+            "window. Letting a nil FILTER stay NULL rather than coalescing it to zero voids "
+            "the whole covenant expression -- and a NULL covenant metric is not a small "
+            "number, it is no number at all",
+        post_sql=[
+            "UPDATE rpt_ebitda_bridge SET covenant_fx_addback_usd = NULL, "
+            "covenant_ebitda_usd = NULL",
+        ],
+    ),
+    dict(
+        fault_id="F4-XAR-04", name="A reporting artefact shows different closing cash",
+        category="REPORTING", family="P4-XAR",
+        why="moves closing cash in the cash flow while the consolidated fact stays correct. "
+            "The accounting is right and the report is wrong, which is the whole class of "
+            "defect this family exists for",
+        post_sql=[
+            "UPDATE rpt_cash_flow SET closing_cash_usd = closing_cash_usd + 1000000 "
+            "WHERE period_key >= 202506",
+        ],
+    ),
 ]
 
 
@@ -307,6 +360,13 @@ def _run_one(fault: dict, con: duckdb.DuckDBPyConnection, tmp: Path) -> list[dic
             tree = _config_tree(tmp / fault["fault_id"], fault["csv_edit"])
             investments.CONFIG = mgmt.CONFIG = tree
         consol_run.run(con, with_controls=False)
+        # The cross-artefact family is the one place a fixture corrupts an ARTEFACT rather
+        # than an input, and it has to: the thing under test is the reporting layer itself.
+        # The consolidated fact is deliberately left correct, so the accounting stays right
+        # while the report goes wrong -- which is exactly what P4-D-01 and P4-D-02 were, and
+        # exactly what no accounting control could see.
+        for stmt in fault.get("post_sql", []):
+            con.execute(stmt)
         # A fixture that proves a negative has to show its working. "Nothing broke" is also
         # what an edit that never reached the engine looks like, so both the suppression and
         # the separation fixtures read the engine's own output back.

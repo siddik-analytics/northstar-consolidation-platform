@@ -1,7 +1,12 @@
 # Phase 4B — defects found in the Phase 4 engine by documentation work
 
+> **Both defects are CLOSED in Phase 4C**, together with a third of the same kind that the
+> new controls found on their first run. See
+> [`phase-04c-reporting-integrity.md`](phase-04c-reporting-integrity.md). This document is kept
+> as the record of what was found and why nothing was corrected here.
+
 Two defects were found while writing the Phase 4B documentation package. Both are in **Phase 4
-reporting artefacts**. Neither has been corrected: the Phase 4B brief is documentation and
+reporting artefacts**. Neither was corrected in Phase 4B: that brief is documentation and
 release-readiness only, and it requires that a genuine defect be reported rather than silently
 fixed under cover of documentation.
 
@@ -9,16 +14,17 @@ Both were found the same way — by writing down what an artefact contains and c
 what another artefact says about the same thing. Neither is caught by any of the 61 controls,
 and that absence is itself part of each finding.
 
-| | Defect | Artefact | Measurement wrong? | Controls affected |
-|---|---|---|---|---|
-| **P4-D-01** | prior years' unclosed consolidation result presented as the current period's result | `rpt_balance_sheet` | no — classification within equity | none |
-| **P4-D-02** | statutory EBITDA computed including the year-end close; Covenant EBITDA voided by a NULL | `rpt_ebitda_bridge` | **yes** | none |
+| | Defect | Artefact | Measurement wrong? | Controls affected | Status |
+|---|---|---|---|---|---|
+| **P4-D-01** | prior years' unclosed consolidation result presented as the current period's result | `rpt_balance_sheet` | no — classification within equity | none | **CLOSED 4C** |
+| **P4-D-02** | statutory EBITDA computed including the year-end close; Covenant EBITDA voided by a NULL | `rpt_ebitda_bridge` | **yes** | none | **CLOSED 4C** |
+| **P4-D-03** | the same close defect in a third artefact, found by `P4-XAR-11` on its first run | `rpt_layer_bridge` | **yes** | none | **CLOSED 4C** |
 
 ---
 
 ## P4-D-01 — "Result for the period" accumulates prior years' consolidation adjustments
 
-**Status:** OPEN, awaiting owner decision. Not corrected.
+**Status:** **CLOSED in Phase 4C.**
 
 ### What it is
 
@@ -92,7 +98,7 @@ documentation phase.
 
 ## P4-D-02 — the EBITDA bridge is wrong in three of four years, and Covenant EBITDA is NULL
 
-**Status:** OPEN, awaiting owner decision. Not corrected. **The artefact should not be used.**
+**Status:** **CLOSED in Phase 4C.**
 
 ### What it is
 

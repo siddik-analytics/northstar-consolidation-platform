@@ -1,7 +1,7 @@
 # Architecture lessons
 
-Ten defects found across Phases 2 to 4 that a balancing control could not have caught, and the
-design change each one produced.
+Eleven defects found across Phases 2 to 4 that a balancing control could not have caught, and
+the design change each one produced.
 
 They share a shape. Every one of them **balanced**. The trial balance closed, the journal
 summed to zero, the statement footed, and the number was wrong. That is the failure mode this
@@ -199,6 +199,37 @@ fails if one returns. [ADR-0022](adr/0022-money-is-decimal-and-artefacts-are-tot
 is the reason this is a test and not a preference: a build whose bytes move between runs of
 identical data cannot be used as evidence of anything.
 
+## 11. Three artefacts disagreeing about the same measure
+
+**Symptom.** The balance sheet presented USD 19.869m as "the result for the period" while the
+income statement reported a 7.046m profit for the same year. The EBITDA bridge reported
+statutory EBITDA of (0.535)m for a year in which the income statement reported 28.705m. The
+layer bridge showed the group's net income arriving almost entirely from the consolidation
+layers.
+
+**Root cause.** Two faults, each repeated across artefacts. The year-end close was included in
+income statement measures in three artefacts, which nets a fiscal year to approximately nil.
+And a `FILTER` matching nothing yielded NULL, voiding the whole Covenant EBITDA expression.
+Both had already been found and fixed in `rpt_income_statement` during Phase 4 — and nothing
+carried the fix to the artefacts nobody was comparing it against.
+
+**Why controls miss it.** All 61 accounting controls passed throughout. Nothing was out of
+balance: total equity was right, the balance sheet balanced at 0.00, the cash flow tied at
+0.00, and every layer, elimination and roll-forward control was green. The defects were
+entirely in the reporting layer, and **no control compared one artefact with another**. A
+control suite that only tests the accounting cannot see a reporting error, however large.
+
+**Permanent fix.** A second design rule, and a control family that implements it:
+
+> **Different artefacts expressing the same financial measure must reconcile to one
+> authoritative definition.**
+
+Eleven `P4-XAR-*` controls, each with at least one side recomputed from `fact_financials` and
+never both sides from the same reporting calculation. `P4-XAR-11` found the third instance on
+its first run. Plus a written NULL policy — *a component with no population contributes zero,
+never NULL* — enforced by a lint test, because that same fault has now caused three separate
+defects here.
+
 ---
 
 ## What these have in common
@@ -215,6 +246,11 @@ read only by the control.
 **A control's population is a design decision.** Item 6 is the general case of item 4, and the
 reason four more instances were found in Phase 4A. If a control iterates the output, it can
 only find wrong rows. Missing rows are invisible, and missing rows are worse.
+
+**A control suite tests what it was pointed at.** Item 11 is the general case: 61 controls
+proved the accounting and none of them looked at whether the reports agreed with it. Every
+control family has a blind spot shaped exactly like the thing it was not asked about, and the
+only way to find it is to break something deliberately and see whether anything objects.
 
 **Determinism is an accounting property.** Item 10 has no accounting consequence at all, and it
 would still have made every artefact unusable as evidence. If a rebuild can differ, nothing

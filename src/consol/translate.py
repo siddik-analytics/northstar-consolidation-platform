@@ -152,8 +152,10 @@ def build(con: duckdb.DuckDBPyConnection, rate_set: str = "ACTUAL",
     WITH bs AS (
         SELECT entity_code, bu_code, cost_center_code, group_account, partner_entity_code,
                period_key, fiscal_year, currency_code, statement, fx_method, account_class,
-               sum(amount_local) FILTER (WHERE movement_type = 'OPENING') AS opening_local,
-               sum(amount_local) FILTER (WHERE movement_type <> 'OPENING') AS movement_local
+               coalesce(sum(amount_local) FILTER (
+                   WHERE movement_type = 'OPENING'), 0) AS opening_local,
+               coalesce(sum(amount_local) FILTER (
+                   WHERE movement_type <> 'OPENING'), 0) AS movement_local
         FROM stg_entity_movement
         WHERE fx_method = 'CLOSE'
         GROUP BY ALL
@@ -370,12 +372,14 @@ def cta_movement(con: duckdb.DuckDBPyConnection) -> dict[str, int]:
     -- not only as a number
     by_cause AS (
         SELECT entity_code, period_key,
-               round(sum(fx_revaluation_usd) FILTER (WHERE group_account = '110100'), 2)
+               round(coalesce(sum(fx_revaluation_usd) FILTER (
+                   WHERE group_account = '110100'), 0), 2)
                    AS cta_on_cash,
-               round(sum(fx_revaluation_usd) FILTER (
-                   WHERE group_account LIKE '15%' OR group_account LIKE '158%'), 2)
+               round(coalesce(sum(fx_revaluation_usd) FILTER (
+                   WHERE group_account LIKE '15%' OR group_account LIKE '158%'), 0), 2)
                    AS cta_on_ppe,
-               round(sum(fx_revaluation_usd) FILTER (WHERE group_account LIKE '16%'), 2)
+               round(coalesce(sum(fx_revaluation_usd) FILTER (
+                   WHERE group_account LIKE '16%'), 0), 2)
                    AS cta_on_intangibles,
                round(sum(fx_revaluation_usd), 2) AS cta_on_all_balances
         FROM fact_layer1_usd GROUP BY ALL

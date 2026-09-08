@@ -85,7 +85,7 @@ tie is now measured at `TOL_STATEMENT_USD` = 0.01 like every other structural id
 | FY2023 | (61.541) | (313.616) | 390.057 | 0.100 | 0.08 |
 | FY2024 | 13.128 | (47.909) | 34.981 | (0.199) | 0.03 |
 | FY2025 | 26.130 | (13.019) | (6.355) | 0.244 | 0.03 |
-| FY2026 (8m) | (7.478) | (1.956) | 1.961 | 0.053 | 0.00 |
+| FY2026 | (7.478) | (1.956) | 1.961 | 0.053 | 0.00 |
 
 FY2023 is the year the platform was funded and the acquisitions were paid for, which is why
 investing and financing dominate it.

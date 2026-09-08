@@ -191,14 +191,17 @@ def rollforward(con: duckdb.DuckDBPyConnection) -> None:
     CREATE OR REPLACE TABLE rpt_nci_rollforward AS
     WITH movement AS (
         SELECT fiscal_year, related_entity_code AS entity_code,
-               round(-sum(amount_usd) FILTER (WHERE group_account = '{NCI_RESULT}'), 2)
+               round(-coalesce(sum(amount_usd) FILTER (
+                   WHERE group_account = '{NCI_RESULT}'), 0), 2)
                    AS share_of_result_usd,
-               round(-sum(amount_usd) FILTER (WHERE group_account = '{NCI_DIVIDEND}'), 2)
+               round(-coalesce(sum(amount_usd) FILTER (
+                   WHERE group_account = '{NCI_DIVIDEND}'), 0), 2)
                    AS distributions_usd,
-               round(-sum(amount_usd) FILTER (WHERE group_account = '{NCI_CTA}'), 2)
+               round(-coalesce(sum(amount_usd) FILTER (
+                   WHERE group_account = '{NCI_CTA}'), 0), 2)
                    AS share_of_cta_usd,
-               round(-sum(amount_usd) FILTER (WHERE group_account IN ('{NCI_OPENING}',
-                                                                      '{NCI_OWNERSHIP}')), 2)
+               round(-coalesce(sum(amount_usd) FILTER (
+                   WHERE group_account IN ('{NCI_OPENING}', '{NCI_OWNERSHIP}')), 0), 2)
                    AS acquisition_and_ownership_usd
         FROM fact_consol_journal
         WHERE group_account IN ('{NCI_OPENING}', '{NCI_RESULT}', '{NCI_DIVIDEND}',

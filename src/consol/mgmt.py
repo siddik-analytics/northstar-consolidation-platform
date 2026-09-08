@@ -130,36 +130,63 @@ def ebitda_bridges(con: duckdb.DuckDBPyConnection) -> None:
         SELECT CAST(value AS DOUBLE) * 1e6 FROM ref_covenant_term WHERE term_id = 'CA-027'
     """).fetchone()[0]
 
+    # ------------------------------------------------------------------ P4-D-02
+    # Two rules govern every line below, and this artefact broke both.
+    #
+    # 1. **The year-end close is excluded.** The close reverses each entity's own income
+    #    statement into its reserves in December, so summing a fiscal year WITH the close
+    #    nets the year to approximately nil. Three of four years of statutory EBITDA came
+    #    out at roughly zero and only FY2026 -- which has no close in the fact -- was right.
+    #    `counts_in_result` is the same predicate `rpt_income_statement` uses, which is the
+    #    point: two artefacts expressing one measure must compute it one way.
+    #
+    # 2. **A component with no population contributes zero, not NULL.** A `FILTER` that
+    #    matches nothing yields NULL, and one NULL anywhere in an arithmetic expression
+    #    voids the whole result. Accounts 740100/740200 are never posted to, so the CA-030
+    #    add-back has no population -- and Covenant EBITDA came back NULL in every year
+    #    rather than "the same as Adjusted EBITDA plus a nil add-back". Those are completely
+    #    different statements: one says the add-back is zero, the other says the calculation
+    #    failed. Every aggregate here is coalesced where it is built.
     con.execute(f"""
     CREATE OR REPLACE TABLE rpt_ebitda_bridge AS
     WITH statutory AS (
         SELECT fiscal_year,
-               round(-sum(amount_usd) FILTER (WHERE is_ebitda), 2) AS statutory_ebitda_usd,
-               round(sum(amount_usd) FILTER (WHERE is_ebitda_addback), 2)
+               round(-coalesce(sum(amount_usd) FILTER (WHERE is_ebitda), 0), 2)
+                   AS statutory_ebitda_usd,
+               round(coalesce(sum(amount_usd) FILTER (WHERE is_ebitda_addback), 0), 2)
                    AS approved_addbacks_usd,
-               round(sum(amount_usd) FILTER (WHERE group_account = '{SPONSOR_FEE_ACCOUNT}'), 2)
+               round(coalesce(sum(amount_usd)
+                   FILTER (WHERE group_account = '{SPONSOR_FEE_ACCOUNT}'), 0), 2)
                    AS sponsor_fee_usd,
-               round(sum(amount_usd) FILTER (WHERE group_account IN ({fx_accounts})), 2)
+               round(coalesce(sum(amount_usd)
+                   FILTER (WHERE group_account IN ({fx_accounts})), 0), 2)
                    AS unrealised_fx_usd
-        FROM vw_statutory_fact GROUP BY 1
+        FROM vw_statutory_fact WHERE counts_in_result GROUP BY 1
     ),
     mgmt AS (
-        SELECT fiscal_year, round(-sum(amount_usd) FILTER (WHERE is_ebitda), 2)
-                   AS management_ebitda_effect_usd
-        FROM vw_management_fact WHERE layer_id = 4 GROUP BY 1
+        SELECT fiscal_year,
+               round(-coalesce(sum(amount_usd) FILTER (WHERE is_ebitda), 0), 2)
+                   AS management_layer4_effect_usd
+        FROM vw_management_fact WHERE layer_id = 4 AND counts_in_result GROUP BY 1
     )
     SELECT s.fiscal_year,
            s.statutory_ebitda_usd,
-           coalesce(m.management_ebitda_effect_usd, 0) AS management_layer4_effect_usd,
+           coalesce(m.management_layer4_effect_usd, 0) AS management_layer4_effect_usd,
            s.approved_addbacks_usd,
-           -- Adjusted EBITDA: the approved add-back policy, applied to the statutory result
+           -- Adjusted EBITDA: the approved add-back policy applied to the statutory result,
+           -- plus whatever layer 4 does to EBITDA. Layer 4 is empty on the clean baseline,
+           -- so this equals the income statement's Adjusted EBITDA exactly -- and P4-XAR-04
+           -- requires that, rather than assuming it.
            round(s.statutory_ebitda_usd + s.approved_addbacks_usd
-                 + coalesce(m.management_ebitda_effect_usd, 0), 2) AS adjusted_ebitda_usd,
-           -- Covenant EBITDA: the agreement's own definition. The sponsor fee is capped and
-           -- unrealised foreign exchange is permitted, so the two measures are not equal by
-           -- construction and are not assumed to be.
+                 + coalesce(m.management_layer4_effect_usd, 0), 2) AS adjusted_ebitda_usd,
+           -- Covenant EBITDA: the agreement's own definition. The sponsor fee is capped
+           -- (CA-027) and unrealised foreign exchange is permitted (CA-030), so the two
+           -- measures are not equal by construction and are not assumed to be.
            round(least(s.sponsor_fee_usd, {cap}) - s.sponsor_fee_usd, 2)
                AS sponsor_fee_cap_effect_usd,
+           -- nil in this window: accounts 740100/740200 have no population. Nil is stated as
+           -- zero, because "no add-back was available" and "the add-back could not be
+           -- computed" are different facts and only one of them is true.
            s.unrealised_fx_usd AS covenant_fx_addback_usd,
            round(s.statutory_ebitda_usd + s.approved_addbacks_usd
                  + least(s.sponsor_fee_usd, {cap}) - s.sponsor_fee_usd

@@ -5,6 +5,10 @@ What the engine produces, how each statement is built, and what has been proved 
 All figures USD m unless stated. Built from source layer `fd7afb8f…`, consolidation build
 `78e406e139662392`.
 
+FY2026 is consolidated for all twelve months under the Actual scenario. The business scenario
+has eight actual months and four forecast; the generator produces the whole fiscal year on one
+basis, so the consolidation covers 202301-202612 in 48 monthly periods.
+
 ---
 
 ## 1. Income statement
@@ -16,7 +20,7 @@ Every measure is coalesced where it is built. A `FILTER` that matches nothing yi
 one NULL anywhere in a subtraction voids the whole line — an entity with cost and no revenue
 silently removed its own gross profit from the group total until that was fixed.
 
-| | FY2023 | FY2024 | FY2025 | FY2026 (8m) |
+| | FY2023 | FY2024 | FY2025 | FY2026 |
 |---|---|---|---|---|
 | Revenue | 328.000 | 371.400 | 412.100 | 278.981 |
 | Gross profit | 91.205 | 105.291 | 119.250 | 77.082 |
@@ -69,10 +73,10 @@ At 31 December 2025:
 | **Intangible assets, net** | **52.476** | Other long-term liabilities | 4.000 |
 | Investments in subsidiaries | **—** | | **372.048** |
 | Intercompany balances | **—** | Contributed capital | 168.600 |
-| Other non-current assets | 7.800 | Retained earnings | (57.832) |
+| Other non-current assets | 7.800 | Retained earnings | (84.747) |
 | | | Cumulative translation adjustment | 0.283 |
 | | | Non-controlling interests | 2.158 |
-| | | Result for the period | (19.869) |
+| | | Result for the period | 7.046 |
 | | | | **93.340** |
 | **Total assets** | **465.390** | **Total liabilities and equity** | **465.390** |
 
@@ -93,10 +97,16 @@ Four captions are the consolidation's own work and would not exist in any entity
 side, so the elimination is visible on both. It is presented once per account class; collapsing
 it to a single row is what made the artefact non-deterministic before Phase 4A.
 
-> **`Result for the period` is defective.** It accumulates prior years' consolidation
-> adjustments rather than showing the period's result. Total equity is correct; the split
-> between it and retained earnings is not. See
-> [`phase-04b-engine-findings.md`](phases/phase-04b-engine-findings.md), defect **P4-D-01**.
+**`Result for the period` is the fiscal year to date on the income statement's own basis** —
+every income statement account for the current fiscal year, excluding the year-end close.
+Whatever else the cumulative income statement contains belongs to retained earnings. At
+31 December 2025 it is a credit of 7.046, exactly the FY2025 net income attributable to the
+parent, and `P4-XAR-06` proves that against the fact in all 48 months.
+
+It previously presented the cumulative income statement *including* the close — correct for
+layer 1 and wrong for the group, because no entity ledger closes a consolidation adjustment.
+Three years of them accumulated in it while total equity stayed exactly right (defect P4-D-01,
+closed in [Phase 4C](phases/phase-04c-reporting-integrity.md)).
 
 Three controls guard presentation, and each exists because of a defect that balanced perfectly
 while being wrong: `P4-BS-02` (one caption per account — an account in two captions is counted
@@ -124,7 +134,7 @@ wrong line.
 > difference of exactly 0.00 in all 48 periods.** Closing cash ties to the consolidated balance
 > sheet at exactly 0.00 in all 48 periods. (`P4-CF-01`, `P4-CF-02`)
 
-| | FY2023 | FY2024 | FY2025 | FY2026 (8m) |
+| | FY2023 | FY2024 | FY2025 | FY2026 |
 |---|---|---|---|---|
 | Net income attributable to parent | (6.795) | (1.072) | 7.046 | (2.058) |
 | Non-cash and other | (2.280) | 18.111 | 13.255 | 8.335 |
