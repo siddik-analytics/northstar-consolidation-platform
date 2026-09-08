@@ -1,0 +1,27 @@
+{
+  "phase": 5,
+  "workbook": "Northstar_Consolidation_Management_Reporting.xlsx",
+  "build_digest": "ee8bf988bdfe9a567885989b9e84f6cf661e6065b0a6fd3fa6420c98551d4fb8",
+  "reporting_mart_build_id": "2caac83888d04d3f",
+  "consolidation_build_id": "78e406e139662392",
+  "source_layer_digest": "fd7afb8fd7dc80580d4ca64016ae9ca51a96209c546555dfff01813d1a525836",
+  "report_period": 202608,
+  "sheets": [
+    "00 Cover",
+    "01 Executive Summary",
+    "02 P&L",
+    "03 Business Units",
+    "04 Entities",
+    "05 Balance Sheet",
+    "06 Cash Flow",
+    "07 Working Capital",
+    "08 EBITDA Bridge",
+    "09 Debt & Covenants",
+    "10 Headcount",
+    "11 CapEx",
+    "12 FX",
+    "13 Consolidation & Controls",
+    "14 Variance Detail",
+    "15 Data & Technical"
+  ]
+}

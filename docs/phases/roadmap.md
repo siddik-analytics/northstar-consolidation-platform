@@ -344,6 +344,25 @@ seventeen un-coalesced aggregates were found and fixed. See
 
 ---
 
+## Phase 5 — Reporting marts & Excel management reporting ✅
+
+**Complete.** Nineteen governed reporting marts over the frozen consolidation, and a sixteen-tab
+Excel management reporting workbook built on them as code. Every figure in the workbook is a
+lookup into a mart; the workbook computes variance, subtotals and display logic and no
+accounting policy.
+
+**36 of 36** mart controls pass and **17 of 17** workbook reconciliations agree with the marts,
+with zero layout findings. The consolidation is untouched: source digest, consolidation build id
+and all fifteen consolidation artefacts are byte-identical.
+
+The visual review found eleven defects that no programmatic check would have caught, including
+a covenant leverage computed on a fiscal-year EBITDA for a year in progress — which reported
+7.38x against a 4.50x limit — and a **breach stamped on two dates the credit agreement never
+tests**. Both are corrected; the group is compliant at every test date with 0.29 turns of
+headroom. See [`phase-05-report.md`](phase-05-report.md).
+
+---
+
 ## Phase 5 — Reporting marts & automated control suite
 
 **Deliverables**

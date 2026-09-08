@@ -28,6 +28,9 @@ data/10_staging/*
 data/20_warehouse/*
 data/30_marts/*
 data/90_exports/*
+# The workbook IS the Phase 5 deliverable and its QA step needs Windows and Excel, so a
+# reviewer on another platform can rebuild the marts and not the file. It is committed.
+!data/90_exports/Northstar_Consolidation_Management_Reporting.xlsx
 !data/**/.gitkeep
 *.duckdb
 *.duckdb.wal

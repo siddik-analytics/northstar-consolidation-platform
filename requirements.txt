@@ -6,7 +6,14 @@ numpy==2.5.3
 pandas==3.0.5
 pyarrow==25.0.1
 
-# Phase 3 onward (installed when those phases begin):
+# Phase 3 onward
 duckdb==1.5.5
-# openpyxl==3.1.5
+
+# Phase 5 reporting: the workbook is authored with openpyxl, then calculated, inspected and
+# rendered in Excel itself through COM. pymupdf turns the rendered PDF into images so the
+# visual review looks at what Excel actually draws rather than at what the library intended.
+openpyxl==3.1.5
+pywin32==311          # Windows only; the workbook builds without it, the QA render does not
+pymupdf==1.26.5
+pillow==11.3.0
 # PyYAML==6.0.2

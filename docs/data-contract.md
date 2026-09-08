@@ -307,6 +307,15 @@ it should not (`CTL-CON-10`).
 
 ## 4. Facts
 
+### The Phase 5 reporting marts
+
+Nineteen published marts sit between `fact_financials` and everything that reads it. They are
+the **only** thing Excel and Power BI query: no reporting tool reads the consolidation directly
+and none re-derives an accounting definition. Grain, rows and the measure model are in
+[`reporting-marts.md`](reporting-marts.md); the rule that keeps them honest is that every
+reconciliation recomputes one side from `fact_financials` rather than reading it back from the
+mart under test.
+
 ### `fact_consol_journal` — the consolidation entry fact
 
 Added in Phase 4 ([ADR-0024](adr/0024-two-reconciled-consolidation-facts.md)). Every

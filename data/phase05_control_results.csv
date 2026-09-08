@@ -1,0 +1,37 @@
+control_id,control_name,severity,status,measured,threshold,detail
+P5-REC-01,The financial mart reconciles to the consolidated fact,BLOCKING,PASS,0.00,0.05,"every income statement measure, every month, recomputed from fact_financials rather than read back from the mart. Business consequence: every report downstream is built on this mart, so a difference here is a difference in everything"
+P5-REC-02,Every consolidated period reaches the mart,BLOCKING,PASS,0,0,"iterated from the fact's periods, so a month the mart failed to build fails here rather than being absent from the results"
+P5-REC-03,The balance sheet mart reproduces the consolidated statement and balances,BLOCKING,PASS,"caption difference 0.00, A=L+E 0.00",0.01 USD,the mart adds prior month and prior year to the approved statement and must change nothing else
+P5-REC-04,The cash flow mart reproduces the statement and still ties,BLOCKING,PASS,"difference 0.00, tie 0.00",0.01 USD,adding liquidity and year-to-date columns must not disturb the tie
+P5-REC-05,Closing cash agrees between the cash flow and balance sheet marts,BLOCKING,PASS,0.00,0.01 USD,"the single number every reader checks first, held in two marts"
+P5-GRN-01,The monthly mart holds its declared grain,BLOCKING,PASS,0,0,a duplicated grain row doubles a measure and every subtotal above it still foots
+P5-GRN-02,The measure mart holds its declared grain,BLOCKING,PASS,0,0,
+P5-GRN-03,Every declared measure is populated,BLOCKING,PASS,0,0,"iterated from the measure dimension, so a measure the mart failed to build fails rather than quietly disappearing from the workbook"
+P5-CAL-01,Every stored subtotal equals its components,BLOCKING,PASS,0.00,0.01 USD,"subtotals are stored rather than left to the workbook, because a subtotal computed in a spreadsheet is a definition living in a spreadsheet"
+P5-CAL-02,Year to date and full year are the sums of their months,BLOCKING,PASS,"YTD 0.00, FY 0.00",0.01 USD,"and the year to date restarts each fiscal year, which is the part that is easy to get wrong and impossible to see in a total"
+P5-SCN-01,No reserved scenario is exposed as a reporting option,BLOCKING,PASS,0,0,the Downside case is architecture that has not been populated. Offering it would hand a reader an empty report that looks like a real one
+P5-SCN-02,Every offered version carries data,BLOCKING,PASS,0,0,"iterated from the options a report offers, so an option with nothing behind it fails"
+P5-SCN-03,Each scenario has exactly one default version,BLOCKING,PASS,0,0,three forecasts are retained and only the current one is the default. A superseded forecast presented as the forecast is a reporting error nobody would notice
+P5-SCN-04,Every plan version covers a complete fiscal year,BLOCKING,PASS,0,0,a budget missing a month understates the full year and every variance against it
+P5-BAS-01,No management adjustment reaches the statutory mart,BLOCKING,PASS,0,0,"the bases are selected from the layer architecture upstream and carried onto every mart row, so a report cannot pick the wrong one by filtering wrongly"
+P5-BAS-02,The two bases differ by layer 4 and by nothing else,BLOCKING,PASS,"EBITDA difference 0.00, layer 4 rows 0",explained by layer 4,"layer 4 is empty on the approved register, so the two bases are identical and the control says so rather than letting a table of zeros look like a proof"
+P5-CMP-01,Excluding intercompany accounts is a no-op on Actual,BLOCKING,PASS,0.04,1.00 USD,"the comparability rule removes intercompany accounts from both sides of every comparison so that a consolidated actual can be compared with a plan that was never consolidated. On Actual the consolidation has already netted them, and this proves it -- so the rule changes the plan side only"
+P5-CMP-02,Plan intercompany trade exists and is excluded from the measures,BLOCKING,PASS,2976 plan IC rows excluded,"> 0 present, 0 in measures",if the plan carried no intercompany rows the exclusion would be untested and the rule would look like it worked
+P5-CMP-03,Plan measures above EBIT are marked comparable,BLOCKING,PASS,0,0,"plan carries no consolidation entries, so a budget variance is like for like down to EBIT and is not below it. The flag says which rather than leaving a reader to discover it"
+P5-VAR-01,Every variance is the base less the comparator,BLOCKING,PASS,0.00,0.01 USD,
+P5-VAR-02,"Favourability is account-aware, not sign-aware",BLOCKING,PASS,0,0,revenue above plan is favourable; operating expense above plan is not. Colouring every positive variance green says the opposite in half the statement
+P5-VAR-03,Both favourability directions actually occur,BLOCKING,PASS,0,0,"a rule that only ever produces one answer has not been exercised, and a control over it has not been tested"
+P5-VAR-04,Every declared comparison is populated,BLOCKING,PASS,0,0,"Actual vs Budget, vs Forecast, vs Prior Year and Forecast vs Budget, iterated from the comparison dimension"
+P5-AGG-01,Business unit totals reconcile to the measure mart,BLOCKING,PASS,0.00,0.05,
+P5-AGG-02,Entity totals reconcile to the measure mart,BLOCKING,PASS,0.00,0.05,"the elimination entities are excluded from the entity view and included in the group, which is why this compares like with like rather than against the group"
+P5-COV-01,At each year end the rolling window equals the approved bridge,BLOCKING,PASS,"3 year ends, worst 0.00",0.01 USD,"the mart chooses the window and never the definition. Using a fiscal-year EBITDA for a year in progress divides a full net debt balance by a part-year result, which reported a covenant breach at August 2026 that does not exist"
+P5-COV-05,No leverage is reported on an incomplete window,BLOCKING,PASS,0,0,"the first eleven months of the dataset cannot support a twelve-month measure, and a ratio computed on a partial year is worse than no ratio"
+P5-COV-02,No covenant measure is null,BLOCKING,PASS,0,0,"a null covenant metric is not a small number, it is no number at all, and this is the measure a lender tests leverage on"
+P5-COV-03,The leverage limit steps down as the agreement requires,BLOCKING,PASS,0,0,"6.00x, 5.50x, 5.00x then 4.50x, each read from its own credit agreement term rather than written into the mart"
+P5-COV-04,Headroom is the limit less the ratio,BLOCKING,PASS,0.0,0.0005,
+P5-OPS-01,The headcount mart reproduces the headcount fact,BLOCKING,PASS,0.0,0.01 FTE,
+P5-OPS-02,Headcount is continuous month to month and moves with net hiring,BLOCKING,PASS,"continuity 0.0 FTE, 0 months moving against net hires","0.0001 FTE, 0 contradictions","each month's opening FTE is the prior month's closing at the finest grain. Hires and leavers are headcount counts and are reported beside FTE rather than netted into it, because a part-time joiner is one hire and a fraction of an FTE"
+P5-OPS-03,Every capital project row carries a project and a translated amount,BLOCKING,PASS,0,0,
+P5-OPS-04,The debt roll-forward closes for every instrument and month,BLOCKING,PASS,0.01,0.01 USD,
+P5-FX-01,The FX mart's translation adjustment is the engine's,BLOCKING,PASS,0.0,0.01 USD,"constant currency is an operating measure and CTA is an equity reserve. The mart carries both, in separate columns, and never treats one as the other"
+P5-FX-02,Constant currency equals reported for the presentation currency,BLOCKING,PASS,0,0,every constant-currency rule must give the same answer at a rate of one; any difference is a defect in the rule itself

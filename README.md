@@ -28,7 +28,7 @@ figure back to the source journal that produced it.
 | **4A — Consolidation proof & control gate** | ✅ **Complete** | [Report](docs/phases/phase-04a-proof-gate.md) |
 | **4B — Documentation & release gate** | ✅ **Complete** | [Findings](docs/phases/phase-04b-engine-findings.md) |
 | **4C — Reporting integrity & cross-artefact gate** | ✅ **Complete** | [Report](docs/phases/phase-04c-reporting-integrity.md) |
-| 5 — Reporting marts & control suite | ⏸ | |
+| **5 — Reporting marts & Excel management model** | ✅ **Complete** | [Report](docs/phases/phase-05-report.md) |
 | 6 — Excel FP&A models | ⏸ | |
 | 7 — Power BI semantic model & reports | ⏸ | |
 | 8 — Board pack & commentary framework | ⏸ | |
@@ -59,10 +59,10 @@ version-controlled configuration validated in CI — not code, and not tribal kn
 
 **What makes it defensible.** Every transformation between the source trial balance and the
 board number is a separately identifiable layer, so the reconciliation from "what the ERPs
-said" to "what the board sees" is a standing output rather than an investigation. 214
-automated controls — 80 over the generated source, 62 over the pipeline and 72 over the
-consolidation — run at the point of the transformation they protect, and 33 fault fixtures
-prove each family actually fails when it should.
+said" to "what the board sees" is a standing output rather than an investigation. 250
+automated controls — 80 over the generated source, 62 over the pipeline, 72 over the
+consolidation and 36 over the reporting layer — run at the point of the transformation they
+protect, and 33 fault fixtures prove each family actually fails when it should.
 
 There are no plugs. The layer-1 balance sheet closes on its own roll-forward, the cumulative
 translation adjustment is computed from source balances and published as the expectation the
@@ -86,6 +86,9 @@ python -m src.pipeline.run             # ingest, normalise, map and conform (~60
 python -m src.pipeline.faults          # run every fault fixture through the real pipeline
 python -m src.consol.run               # consolidate the group and run its control suite
 python -m src.consol.faults            # run every fault fixture through the real engine
+python -m src.marts.run                # build the governed reporting marts
+python -m src.excel.build              # build the Excel management reporting model
+python -m src.excel.qa                 # calculate, inspect and render the workbook in Excel
 python -m pytest tests -q              # validate every accounting identity, seed and dataset
 ```
 
@@ -99,7 +102,10 @@ All integrity assertions passed (BS balances; CF ties to BS cash).
 10/10 faults handled as intended
 72/72 controls passed, 0 source findings, 0 blocking failures
 23/23 fixtures handled as intended
-436 passed
+36/36 reporting controls passed, 0 blocking failures
+workbook written: data/90_exports/Northstar_Consolidation_Management_Reporting.xlsx
+reconciliation: 17/17 agree with the marts
+454 passed
 ```
 
 Full procedure, runtimes and the deterministic build ids:
@@ -130,7 +136,8 @@ data/
   faults/        Injected-fault variants and expected results
   10_staging/    parsed → standardised → mapped → conformed (Phase 3)
   20_warehouse/  DuckDB finance data model (Phase 3)
-  30_marts/      → 90_exports/  (Phases 5+)
+  30_marts/      Governed reporting marts, published as Parquet (Phase 5)
+  90_exports/    The Excel management reporting workbook (Phase 5)
 docs/            Design documentation
   adr/           25 architecture decision records
   phases/        Roadmap and per-phase reports
@@ -142,6 +149,8 @@ src/
   generation/    Synthetic source system generators (Phase 2)
   pipeline/      Ingestion, harmonisation and conformance (Phase 3)
   consol/        Group consolidation engine, controls and fault fixtures (Phase 4)
+  marts/         Governed reporting marts and their controls (Phase 5)
+  excel/         The Excel management reporting model, built as code (Phase 5)
 tools/           Maintenance utilities (anchor derivation, source diff manifest)
 tests/           Automated validation
 ```
@@ -168,6 +177,7 @@ tests/           Automated validation
 | [Phase 4A proof gate](docs/phases/phase-04a-proof-gate.md) | the NCI anchor closed, a cash flow that ties at the cent, 61 controls and 19 fault fixtures |
 | [Phase 4B engine findings](docs/phases/phase-04b-engine-findings.md) | two reporting defects found by documenting the engine, reported and not corrected |
 | [Phase 4C reporting integrity](docs/phases/phase-04c-reporting-integrity.md) | those defects closed, a third found by the new controls, and the cross-artefact family |
+| [**Phase 5 report**](docs/phases/phase-05-report.md) | the governed reporting marts and the Excel management model |
 | [**Architecture lessons**](docs/architecture-lessons.md) | ten defects that balanced perfectly while being wrong, and the design change each produced |
 
 | The consolidation, as built | |
@@ -182,6 +192,13 @@ tests/           Automated validation
 | [Consolidated financial statements](docs/consolidated-financial-statements.md) | The three statements, what has been proved, and what has not |
 | [Consolidation controls](docs/consolidation-controls.md) | The 72-control suite and the two rules that shape it |
 | [Reporting artefact contract](docs/reporting-artefact-contract.md) | Grain, upstream fact, close logic and NULL policy for all fifteen artefacts |
+
+| The reporting layer | |
+|---|---|
+| [Reporting marts](docs/reporting-marts.md) | Nineteen governed marts, the measure model, scenarios and the comparability rule |
+| [Excel model](docs/excel-model.md) | The sixteen-tab management reporting workbook and what it may and may not compute |
+| [Excel style guide](docs/excel-style-guide.md) | One style system: palette, number formats, layout, charts |
+| [Reporting controls](docs/reporting-controls.md) | 36 mart controls, 17 workbook reconciliations, and what the visual review found |
 | [Fault testing](docs/fault-testing.md) | 33 fixtures, and why detection by the wrong control does not count |
 | [Data lineage](docs/data-lineage.md) | Native extract to board figure, and the identifier at each step |
 | [Reproducibility](docs/reproducibility.md) | Environment, commands, runtimes, build ids, the clean-tree expectation |

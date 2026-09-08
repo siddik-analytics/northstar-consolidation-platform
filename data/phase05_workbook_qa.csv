@@ -1,0 +1,18 @@
+kind,sheet,check,severity,detail
+reconciliation,,P&L year to date · REVENUE,INFO,workbook 278.981 vs mart 278.981 — PASS
+reconciliation,,P&L year to date · COST_OF_SALES,INFO,workbook 203.000 vs mart 203.000 — PASS
+reconciliation,,P&L year to date · GROSS_PROFIT,INFO,workbook 75.981 vs mart 75.981 — PASS
+reconciliation,,P&L year to date · OPEX,INFO,workbook 47.880 vs mart 47.880 — PASS
+reconciliation,,P&L year to date · EBITDA,INFO,workbook 28.101 vs mart 28.101 — PASS
+reconciliation,,P&L year to date · ADDBACKS,INFO,workbook 3.810 vs mart 3.810 — PASS
+reconciliation,,P&L year to date · ADJ_EBITDA,INFO,workbook 31.911 vs mart 31.911 — PASS
+reconciliation,,P&L year to date · DA,INFO,workbook 12.627 vs mart 12.627 — PASS
+reconciliation,,P&L year to date · EBIT,INFO,workbook 15.473 vs mart 15.473 — PASS
+reconciliation,,P&L year to date · NET_FINANCE,INFO,workbook 12.765 vs mart 12.765 — PASS
+reconciliation,,P&L year to date · TAX,INFO,workbook 3.647 vs mart 3.647 — PASS
+reconciliation,,P&L year to date · NET_INCOME,INFO,workbook -0.939 vs mart -0.939 — PASS
+reconciliation,,P&L year to date · NCI,INFO,workbook -0.168 vs mart -0.168 — PASS
+reconciliation,,P&L year to date · NI_PARENT,INFO,workbook -0.771 vs mart -0.771 — PASS
+reconciliation,,Balance sheet balances in the workbook,INFO,workbook 0.0000 vs mart 0.0000 — PASS
+reconciliation,,Closing cash,INFO,workbook 14.580 vs mart 14.580 — PASS
+reconciliation,,Net leverage at the reporting date,INFO,workbook 4.214 vs mart 4.214 — PASS
