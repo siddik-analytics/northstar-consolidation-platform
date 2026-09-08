@@ -23,9 +23,9 @@ dtl,Deferred tax liabilities,15.500000,17.900000,16.300000,14.700000,14.800000
 other_ltl,Other long-term liabilities,3.500000,3.800000,4.000000,4.000000,4.200000
 total_liabilities,Total liabilities,318.265326,366.613545,367.952394,353.136491,367.271890
 contributed_capital,Contributed capital and APIC,166.000000,167.200000,168.600000,170.100000,170.100000
-retained_earnings,Retained earnings / (accumulated deficit),-82.335388,-82.702065,-74.584956,-58.189369,-64.208182
+retained_earnings,Retained earnings / (accumulated deficit),-81.957999,-81.825710,-73.082652,-56.067097,-62.125910
 cta,Cumulative translation adjustment,-0.892756,-5.557934,2.183014,2.183014,3.183014
-nci,Non-controlling interests,3.050708,3.161342,3.380356,3.570356,3.547279
+nci,Non-controlling interests,2.673319,2.284987,1.878052,1.448084,1.465007
 total_equity,Total equity,85.822564,82.101343,99.578414,117.664001,112.622111
 total_liabilities_and_equity,TOTAL LIABILITIES AND EQUITY,404.087890,448.714888,467.530808,470.800492,479.894001
 tlb_gross,"Memo: term loan B, gross principal",201.200000,228.900000,226.600000,214.300000,224.300000

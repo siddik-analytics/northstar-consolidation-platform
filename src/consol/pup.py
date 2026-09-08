@@ -43,7 +43,7 @@ from __future__ import annotations
 
 import duckdb
 
-from .config import LAYER, PUP_COS, PUP_INVENTORY
+from .config import LAYER, PUP_COS, PUP_INVENTORY, REFERENCE
 from .journals import post_sql
 
 
@@ -52,6 +52,20 @@ def build(con: duckdb.DuckDBPyConnection, scenario: str = "ACT",
     layer = LAYER["CONSOL_ADJ"]
 
     # ------------------------------------------------------------------ the calculation
+    # The transaction file is the AUTHORITY for this calculation: every intercompany goods
+    # movement the group made. `ref_ic_inventory_holding` is derived from it, so a control
+    # that iterated the holdings would be asking the answer whether it agrees with itself.
+    # `P4-PUP-02` iterates these transactions instead.
+    con.execute(f"""
+    CREATE OR REPLACE TABLE ref_ic_inventory_transaction AS
+    SELECT ic_transaction_id, CAST(period_key AS INTEGER) AS period_key,
+           seller_entity, buyer_entity, product_category,
+           CAST(transfer_price_usd AS DOUBLE) AS transfer_price_usd,
+           CAST(ic_gross_profit_usd AS DOUBLE) AS ic_gross_profit_usd,
+           CAST(buyer_inventory_account AS VARCHAR) AS buyer_inventory_account
+    FROM read_csv('{(REFERENCE / "ic_inventory_transactions.csv").as_posix()}', header=true)
+    """)
+
     # One row per surviving purchase layer per month: what is still held, at what margin, and
     # therefore how much profit the group has recognised on goods it still owns.
     con.execute("""

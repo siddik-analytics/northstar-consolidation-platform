@@ -1,4 +1,4 @@
-.PHONY: help anchors derive build validate faults pipeline pipeline-faults test check clean
+.PHONY: help anchors derive build validate faults pipeline pipeline-faults consolidate consol-faults test check clean
 
 help:
 	@echo "anchors  - rebuild financial anchors and docs/financial-anchors.md"
@@ -8,6 +8,8 @@ help:
 	@echo "faults   - inject the fault fixtures and prove each is detected"
 	@echo "pipeline - ingest, normalise, map and conform the source layer (Phase 3)"
 	@echo "pipeline-faults - run every fault fixture through the real Phase 3 pipeline"
+	@echo "consolidate - run the Phase 4 group consolidation and its control suite"
+	@echo "consol-faults - run every Phase 4 fault fixture through the real engine"
 	@echo "test     - run the full validation suite"
 	@echo "check    - rebuild anchors then validate (use this before committing)"
 
@@ -31,6 +33,12 @@ pipeline:
 
 pipeline-faults:
 	python -m src.pipeline.faults
+
+consolidate:
+	python -m src.consol.run
+
+consol-faults:
+	python -m src.consol.faults
 
 test:
 	python -m pytest tests -q

@@ -271,6 +271,11 @@ def build(con: duckdb.DuckDBPyConnection, scenario: str = "ACT",
     charge AS (
         SELECT p.ppa_id, p.acquisition_id, p.intangible_class, p.group_account,
                p.gross_usd, p.useful_life_years, p.amortisation_start_period,
+               -- amortisation already charged before the group's reporting window opened.
+               -- It is nil for every tranche in the approved schedules, and carrying it
+               -- anyway is the difference between a configuration field the engine honours
+               -- and one it silently ignores.
+               p.accum_at_open_usd,
                m.period_key, m.fiscal_year,
                CASE WHEN m.period_key >= p.amortisation_start_period
                     THEN round(p.gross_usd / (p.useful_life_years * 12.0), 2)
@@ -283,19 +288,19 @@ def build(con: duckdb.DuckDBPyConnection, scenario: str = "ACT",
                -- an intangible cannot amortise past its cost: the last month of a tranche
                -- carries whatever is left rather than a full month's charge
                least(monthly_amortisation_usd,
-                     greatest(gross_usd - coalesce(sum(monthly_amortisation_usd) OVER w
-                                                   - monthly_amortisation_usd, 0), 0))
+                     greatest(gross_usd - accum_at_open_usd
+                              - coalesce(sum(monthly_amortisation_usd) OVER w
+                                         - monthly_amortisation_usd, 0), 0))
                    AS amortisation_usd
         FROM charge
         WINDOW w AS (PARTITION BY ppa_id ORDER BY period_key ROWS UNBOUNDED PRECEDING)
     )
     SELECT ppa_id, acquisition_id, intangible_class, group_account, period_key, fiscal_year,
            gross_usd, amortisation_usd,
-           sum(amortisation_usd) OVER (PARTITION BY ppa_id ORDER BY period_key
-                                       ROWS UNBOUNDED PRECEDING) AS accumulated_usd,
-           gross_usd - sum(amortisation_usd) OVER (PARTITION BY ppa_id ORDER BY period_key
-                                                   ROWS UNBOUNDED PRECEDING) AS closing_nbv_usd
+           accum_at_open_usd + sum(amortisation_usd) OVER w AS accumulated_usd,
+           gross_usd - accum_at_open_usd - sum(amortisation_usd) OVER w AS closing_nbv_usd
     FROM capped
+    WINDOW w AS (PARTITION BY ppa_id ORDER BY period_key ROWS UNBOUNDED PRECEDING)
     ORDER BY ppa_id, period_key
     """)
 

@@ -116,13 +116,13 @@ def build(con: duckdb.DuckDBPyConnection, scenario: str = "ACT",
     holder AS (
         SELECT relationship, entity_code AS holder_entity,
                partner_entity_code AS owing_entity, period_key, fiscal_year,
-               any_value(currency_code) AS holder_currency, sum(position_usd) AS holder_usd
+               min(currency_code) AS holder_currency, sum(position_usd) AS holder_usd
         FROM sided WHERE side = 'HOLDER' GROUP BY ALL
     ),
     owing AS (
         SELECT relationship, partner_entity_code AS holder_entity,
                entity_code AS owing_entity, period_key, fiscal_year,
-               any_value(currency_code) AS owing_currency, sum(position_usd) AS owing_usd
+               min(currency_code) AS owing_currency, sum(position_usd) AS owing_usd
         FROM sided WHERE side = 'OWING' GROUP BY ALL
     ),
     paired AS (

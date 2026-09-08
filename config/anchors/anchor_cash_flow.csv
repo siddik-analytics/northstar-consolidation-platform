@@ -20,7 +20,7 @@ equity_contribution,Sponsor equity contribution,20.000000,0.000000,0.000000,0.00
 nci_dividend,Dividends to non-controlling interests,-0.000000,-0.150000,-0.200000,-0.250000,-0.250000
 financing_cash_flow,NET CASH FROM FINANCING ACTIVITIES,47.607093,31.930811,-9.805035,-24.128494,-8.968895
 fx_effect_on_cash,Effect of exchange rate changes,0.200000,-0.300000,0.400000,0.000000,0.200000
-net_change_in_cash,NET CHANGE IN CASH,-1.400000,-0.000000,7.000000,-0.000000,0.000000
+net_change_in_cash,NET CHANGE IN CASH,-1.400000,0.000000,7.000000,0.000000,0.000000
 opening_cash,Cash at beginning of period,16.400000,15.000000,15.000000,22.000000,22.000000
 closing_cash,CASH AT END OF PERIOD,15.000000,15.000000,22.000000,22.000000,22.000000
 free_cash_flow,Memo: free cash flow (OCF less capex),0.992907,5.269189,16.405035,24.128494,8.768895

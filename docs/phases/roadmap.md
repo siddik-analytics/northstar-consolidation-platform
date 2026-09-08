@@ -256,6 +256,38 @@ moved. See [`phase-03-2-report.md`](phase-03-2-report.md).
 
 ---
 
+## Phase 4A — Consolidation proof and control gate ✅
+
+**Deliverables**
+- The P3-D-07 owner decision applied: the entity ledger supersedes the Phase 1 NCI estimate
+- A cash flow that ties in every period, with CTA and the effect of exchange rates on cash
+  kept apart
+- The statutory and management bases proved to differ by layer 4 and by nothing else
+- The full Phase 4 control suite, and fault fixtures for it
+- F02, deferred by Phase 3, put through the Phase 4 elimination engine
+
+**Delivered.** `NCI_INCOME` is now derived by `tools/derive_nci_anchor.py` rather than typed
+in, converging at iteration 1 with a difference of 0.000000, and the roll-forward closes every
+year — so P3-D-07 is closed by decision (ADR-0025, `SX-010`) with neither the transfer price
+moved nor the engine scaled.
+
+The cash flow ties at **0.00 in all 48 periods** and closing cash ties to the balance sheet at
+**0.00**. Two defects were found getting there: the translation accounts sit in the operating
+bucket in the approved chart, so excluding them from financing alone counted the translation
+twice; and the year-end close carries a few cents of translation that excluding both its sides
+stranded. The second is now presented as its own line, computed from the close entry rather
+than derived as whatever makes the statement tie — which let the 0.10 USD tolerance an earlier
+draft carried be **removed** rather than kept.
+
+**61 of 61** Phase 4 controls pass and **19 of 19** fault fixtures are handled as intended,
+with no accidental detections. F02 is caught by `P4-IC-01`, the pair reconciliation that owns
+it, after a full pipeline and consolidation run. Four controls that could not have failed were
+found by fixtures and rewritten to iterate from the authority that requires the data; one
+non-deterministic artefact and one ignored configuration field were found by the self-audit.
+See [`phase-04a-proof-gate.md`](phase-04a-proof-gate.md).
+
+---
+
 ## Phase 5 — Reporting marts & automated control suite
 
 **Deliverables**

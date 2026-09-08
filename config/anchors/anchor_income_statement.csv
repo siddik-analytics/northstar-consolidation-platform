@@ -14,8 +14,8 @@ net_interest,Net interest expense,18.224227,21.766617,20.988903,17.524053,19.329
 pbt,Profit before tax,-4.284227,-0.192617,11.856097,23.062447,14.864515
 tax,Income tax expense/(benefit),0.771161,-0.105939,3.378988,6.226861,4.087742
 net_income,Net income,-5.055388,-0.086678,8.477110,16.835587,10.776773
-nci,Less: non-controlling interests,0.180000,0.280000,0.360000,0.440000,0.400000
-ni_parent,Net income attributable to the group,-5.235388,-0.366678,8.117110,16.395587,10.376773
+nci,Less: non-controlling interests,-0.197389,-0.218966,-0.265949,-0.179968,-0.179968
+ni_parent,Net income attributable to the group,-4.857999,0.132288,8.743059,17.015555,10.956741
 interest_tlb,Memo: interest expense - term loan,15.365700,17.956675,17.764500,16.092850,16.796025
 interest_rcf,Memo: interest expense - revolving facility,1.327195,2.258739,1.845267,0.147000,1.147883
 interest_lease,Memo: interest expense - finance leases,0.655476,0.670713,0.689631,0.694203,0.710203

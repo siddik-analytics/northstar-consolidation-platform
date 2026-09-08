@@ -65,10 +65,17 @@ def build(con: duckdb.DuckDBPyConnection) -> dict[str, int]:
     ),
     resolved AS (
         SELECT period_key, fiscal_year, entity_code,
-               any_value(direct_pct) AS direct_ownership_pct,
-               any_value(direct_nci_pct) AS direct_nci_pct,
-               any_value(consolidation_method) AS consolidation_method,
-               any_value(nci_holder) AS nci_holder,
+               -- `min()` rather than an arbitrary-row aggregate. Each of these is
+               -- single valued
+               -- within the group -- `P4-OWN-03` proves the register does not overlap,
+               -- so a month resolves to exactly one row -- and taking the minimum makes
+               -- the artefact reproducible instead of dependent on which row the
+               -- aggregate happened to see first. A build whose bytes move between runs
+               -- of identical data cannot be used as evidence (ADR-0022).
+               min(direct_pct) AS direct_ownership_pct,
+               min(direct_nci_pct) AS direct_nci_pct,
+               min(consolidation_method) AS consolidation_method,
+               min(nci_holder) AS nci_holder,
                max(tier) AS tiers_to_parent,
                -- the row that reached the ultimate parent carries the effective percentage
                max(CASE WHEN parent_entity_code = '{ULTIMATE_PARENT}'

@@ -134,8 +134,9 @@ register and reports this gap as a `SOURCE_FINDING` naming the relationship and 
 
 ## P3-D-07 — the NCI anchor and NIG-510's ledger have never agreed
 
-**Status:** OPEN — escalated to the owner. Nothing has been patched, and the engine has **not**
-been scaled to the anchor.
+**Status:** **CLOSED at the Phase 4A gate** by owner decision, recorded as `SX-010` and
+[ADR-0025](../adr/0025-the-entity-ledger-supersedes-the-phase-1-nci-estimate.md). The engine was
+never scaled to the anchor and the transfer price was never moved to fit it.
 
 **What it is.** `docs/nci-policy.md` anchors the non-controlling interest's share of result at
 **0.18 / 0.28 / 0.36** USD m for FY2023-25. Derived from the generated ledger the same figure
@@ -178,6 +179,22 @@ the source, or (b) restate the NCI anchor from the ledger, as Phase 2.2 did for 
 when it was found to be an estimate rather than a derivation. Then add a control that compares
 the two, which is the thing whose absence let them diverge.
 
-**How Phase 4 behaves in the meantime.** The engine allocates the minority's share of the
-result NIG-510 actually made, adjusted for the consolidation entries attributable to it, and
-reports the difference against the anchor rather than absorbing it.
+**Owner decision, Phase 4A.** Option (b). *The generated entity ledger and the approved
+transfer-pricing economics are the authority; the Phase 1 NCI earnings anchor is superseded.*
+
+**What was done.**
+
+| | |
+|---|---|
+| Anchor | `NCI_INCOME` is now **derived** by `tools/derive_nci_anchor.py` from `stg_nci_result`, not transcribed. It has a `--check` mode, and `tests/test_phase04a_proof_gate.py` runs it. |
+| Convergence | The anchor feeds net income, which feeds retained earnings, which feeds the ledgers, which feed the consolidation that produces the anchor — the same loop as the CTA anchor in Phase 2.2. It converged at **iteration 1**, difference **0.000000**. |
+| Revised series (USD m) | FY2023A (0.197389) · FY2024A (0.218966) · FY2025A (0.265949) · FY2026B (0.179968) · FY2026F (0.179968) |
+| Attribution base | `NIG-510`'s own result plus the **layer-3** adjustments attributable to it, at its own effective percentage. Layer 2 is excluded: an intercompany elimination removes a matched pair and changes group profit by nothing, so attributing the buyer's half alone would hand `NIG-510` its purchases free — which is what made the first figure five times the anchor, in the wrong direction. |
+| Roll-forward | Closes every year within 0.01 USD (`P4-NCI-04`), which was the owner's condition for closing this. |
+| The missing control | `P4-NCI-01` to `P4-NCI-05` now iterate from the ownership register's non-controlling percentages, so an entity the engine fails to allocate fails a control instead of vanishing from one. |
+
+**What was deliberately not done.** The transfer price was not changed; the engine was not
+scaled; the anchor was not typed in by hand. Downstream figures are unaffected: NCI is an
+attribution below the tax line and inside equity, so consolidated revenue, EBITDA, net income
+before attribution, total equity, cash and debt are unchanged. What moves is the split of
+equity between the group and the minority.

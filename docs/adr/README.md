@@ -29,3 +29,5 @@ answer are documented in the design docs, not here.
 | [0021](0021-source-findings-are-baselined-not-downgraded.md) | Three control states, and a source finding baselined at its population | Accepted |
 | [0022](0022-money-is-decimal-and-artefacts-are-totally-ordered.md) | Money is DECIMAL; every committed artefact is written in a total order | Accepted |
 | [0023](0023-intercompany-balances-are-built-pair-by-pair.md) | Intercompany balances built pair by pair; every posting names its counterparty | Accepted |
+| [0024](0024-two-reconciled-consolidation-facts.md) | Two reconciled consolidation facts: a journal at leg grain and a fact at reporting grain | Accepted |
+| [0025](0025-the-entity-ledger-supersedes-the-phase-1-nci-estimate.md) | The entity ledger supersedes the Phase 1 NCI earnings estimate | Accepted |

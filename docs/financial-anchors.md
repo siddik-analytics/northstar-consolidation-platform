@@ -46,8 +46,8 @@
 | **Profit before tax** | **-4.3** | **-0.2** | **11.9** | **23.1** | **14.9** |
 | Income tax expense/(benefit) | 0.8 | -0.1 | 3.4 | 6.2 | 4.1 |
 | **Net income** | **-5.1** | **-0.1** | **8.5** | **16.8** | **10.8** |
-| Less: non-controlling interests | 0.2 | 0.3 | 0.4 | 0.4 | 0.4 |
-| **Net income attributable to the group** | **-5.2** | **-0.4** | **8.1** | **16.4** | **10.4** |
+| Less: non-controlling interests | -0.2 | -0.2 | -0.3 | -0.2 | -0.2 |
+| **Net income attributable to the group** | **-4.9** | **0.1** | **8.7** | **17.0** | **11.0** |
 | Memo: interest expense - term loan | 15.4 | 18.0 | 17.8 | 16.1 | 16.8 |
 | Memo: interest expense - revolving facility | 1.3 | 2.3 | 1.8 | 0.1 | 1.1 |
 | Memo: interest expense - finance leases | 0.7 | 0.7 | 0.7 | 0.7 | 0.7 |
@@ -103,9 +103,9 @@
 | Other long-term liabilities | 3.5 | 3.8 | 4.0 | 4.0 | 4.2 |
 | **Total liabilities** | **318.3** | **366.6** | **368.0** | **353.1** | **367.3** |
 | Contributed capital and APIC | 166.0 | 167.2 | 168.6 | 170.1 | 170.1 |
-| Retained earnings / (accumulated deficit) | -82.3 | -82.7 | -74.6 | -58.2 | -64.2 |
+| Retained earnings / (accumulated deficit) | -82.0 | -81.8 | -73.1 | -56.1 | -62.1 |
 | Cumulative translation adjustment | -0.9 | -5.6 | 2.2 | 2.2 | 3.2 |
-| Non-controlling interests | 3.1 | 3.2 | 3.4 | 3.6 | 3.5 |
+| Non-controlling interests | 2.7 | 2.3 | 1.9 | 1.4 | 1.5 |
 | **Total equity** | **85.8** | **82.1** | **99.6** | **117.7** | **112.6** |
 | **TOTAL LIABILITIES AND EQUITY** | **404.1** | **448.7** | **467.5** | **470.8** | **479.9** |
 | Memo: term loan B, gross principal | 201.2 | 228.9 | 226.6 | 214.3 | 224.3 |
@@ -147,7 +147,7 @@
 | Dividends to non-controlling interests | -0.0 | -0.1 | -0.2 | -0.2 | -0.2 |
 | **NET CASH FROM FINANCING ACTIVITIES** | **47.6** | **31.9** | **-9.8** | **-24.1** | **-9.0** |
 | Effect of exchange rate changes | 0.2 | -0.3 | 0.4 | 0.0 | 0.2 |
-| **NET CHANGE IN CASH** | **-1.4** | **-0.0** | **7.0** | **-0.0** | **0.0** |
+| **NET CHANGE IN CASH** | **-1.4** | **0.0** | **7.0** | **0.0** | **0.0** |
 | Cash at beginning of period | 16.4 | 15.0 | 15.0 | 22.0 | 22.0 |
 | **CASH AT END OF PERIOD** | **15.0** | **15.0** | **22.0** | **22.0** | **22.0** |
 | Memo: free cash flow (OCF less capex) | 1.0 | 5.3 | 16.4 | 24.1 | 8.8 |

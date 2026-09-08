@@ -120,7 +120,7 @@ data/
   20_warehouse/  DuckDB finance data model (Phase 3)
   30_marts/      → 90_exports/  (Phases 5+)
 docs/            Design documentation
-  adr/           20 architecture decision records
+  adr/           25 architecture decision records
   phases/        Roadmap and per-phase reports
 excel/           Excel deliverables (Phase 6)
 powerbi/         PBIP project (Phase 7)
@@ -129,7 +129,8 @@ src/
   anchors/       The financial anchor model (Phase 1)
   generation/    Synthetic source system generators (Phase 2)
   pipeline/      Ingestion, harmonisation and conformance (Phase 3)
-tools/           Maintenance utilities (anchor input derivation)
+  consol/        Group consolidation engine, controls and fault fixtures (Phase 4)
+tools/           Maintenance utilities (anchor derivation, source diff manifest)
 tests/           Automated validation
 ```
 
@@ -150,6 +151,8 @@ tests/           Automated validation
 | [Phase 3 report](docs/phases/phase-03-report.md) | 1.08m lines ingested from three ERPs, harmonised to one chart, and four source defects found |
 | [Phase 3.1 report](docs/phases/phase-03-1-report.md) | those four defects corrected at the generator, the source regenerated, and both control baselines clean |
 | [Phase 3.2 report](docs/phases/phase-03-2-report.md) | two more defects, found by the consolidation engine rather than by a source control, corrected at the generator |
+| [Phase 4 source findings](docs/phases/phase-04-source-findings.md) | the defects the consolidation engine found upstream, and what was decided about each |
+| [Phase 4A proof gate](docs/phases/phase-04a-proof-gate.md) | the NCI anchor closed, a cash flow that ties at the cent, 61 controls and 19 fault fixtures |
 
 | Design | |
 |---|---|

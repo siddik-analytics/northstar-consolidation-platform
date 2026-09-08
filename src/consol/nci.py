@@ -96,8 +96,8 @@ def build(con: duckdb.DuckDBPyConnection, scenario: str = "ACT",
     )
     SELECT c.entity_code, c.period_key, c.fiscal_year,
            round(sum(c.result_usd), 2) AS consolidated_result_usd,
-           any_value(o.effective_nci_pct) AS nci_pct,
-           round(sum(c.result_usd) * any_value(o.effective_nci_pct), 2) AS nci_share_usd
+           min(o.effective_nci_pct) AS nci_pct,
+           round(sum(c.result_usd) * min(o.effective_nci_pct), 2) AS nci_share_usd
     FROM combined c
     JOIN dim_ownership_period o
       ON o.entity_code = c.entity_code AND o.period_key = c.period_key

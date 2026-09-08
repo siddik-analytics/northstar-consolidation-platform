@@ -104,7 +104,7 @@ IC_FLOW_OWING = ("590100", "590200", "695100", "695200", "695300", "795200")
 #: Tolerances. Structural identities are tested at the cent; derived comparisons against an
 #: independently produced expectation carry the tolerance the policy states.
 TOL_BALANCE_USD = 0.01          # a journal, a trial balance, a roll-forward
-TOL_STATEMENT_USD = 0.01        # assets = liabilities + equity, cash flow ties
+TOL_STATEMENT_USD = 0.01        # assets = liabilities + equity, and the cash flow tie
 TOL_IC_RESIDUAL_USD = 1.00      # CTL-IC-01: an entity pair, after elimination
 TOL_CTA_WARN = 0.005            # CTL-FX-04: 0.5% of the movement warns
 TOL_CTA_BLOCK = 0.02            # 2% blocks

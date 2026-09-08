@@ -63,7 +63,7 @@ from __future__ import annotations
 
 import duckdb
 
-from .config import HISTORICAL_EQUITY, RETAINED_EARNINGS
+from .config import RETAINED_EARNINGS
 
 #: Accounts whose USD value is carried forward rather than translated: the opening balances
 #: of retained earnings, CTA and NCI. They are established by the opening journal and by the
