@@ -24,7 +24,9 @@ figure back to the source journal that produced it.
 | **2.1 — Source data correction pass** | ✅ **Complete** | [Report](docs/phases/phase-02-1-report.md) |
 | **2.2 — Source-layer integrity pass** | ✅ **Complete** | [Report](docs/phases/phase-02-2-report.md) |
 | **3 — Ingestion, staging & COA harmonisation** | ✅ **Complete** | [Report](docs/phases/phase-03-report.md) |
-| 4 — Consolidation engine | ⏸ | |
+| **4 — Consolidation engine** | ⚠️ **Built and proved; two reporting defects open** | [Report](docs/phases/phase-04-report.md) |
+| **4A — Consolidation proof & control gate** | ✅ **Complete** | [Report](docs/phases/phase-04a-proof-gate.md) |
+| **4B — Documentation & release gate** | ✅ **Complete** | [Findings](docs/phases/phase-04b-engine-findings.md) |
 | 5 — Reporting marts & control suite | ⏸ | |
 | 6 — Excel FP&A models | ⏸ | |
 | 7 — Power BI semantic model & reports | ⏸ | |
@@ -56,8 +58,10 @@ version-controlled configuration validated in CI — not code, and not tribal kn
 
 **What makes it defensible.** Every transformation between the source trial balance and the
 board number is a separately identifiable layer, so the reconciliation from "what the ERPs
-said" to "what the board sees" is a standing output rather than an investigation. 84 automated
-controls, 69 of them blocking, run at the point of the transformation they protect.
+said" to "what the board sees" is a standing output rather than an investigation. 203
+automated controls — 80 over the generated source, 62 over the pipeline and 61 over the
+consolidation — run at the point of the transformation they protect, and 29 fault fixtures
+prove each family actually fails when it should.
 
 There are no plugs. The layer-1 balance sheet closes on its own roll-forward, the cumulative
 translation adjustment is computed from source balances and published as the expectation the
@@ -77,8 +81,10 @@ python src/anchors/build_anchors.py    # rebuild the financial anchors and their
 python -m src.generation.build         # generate the source systems (~30 s, 1.08m journal lines)
 python -m src.generation.validate      # run the 80 source controls
 python -m src.generation.faults        # inject and detect the source fault fixtures
-python -m src.pipeline.run             # ingest, normalise, map and conform (~110 s)
+python -m src.pipeline.run             # ingest, normalise, map and conform (~60 s)
 python -m src.pipeline.faults          # run every fault fixture through the real pipeline
+python -m src.consol.run               # consolidate the group and run its control suite
+python -m src.consol.faults            # run every fault fixture through the real engine
 python -m pytest tests -q              # validate every accounting identity, seed and dataset
 ```
 
@@ -90,8 +96,13 @@ All integrity assertions passed (BS balances; CF ties to BS cash).
 10 fault fixtures written to data/faults/ ... all DETECTED
 62/62 controls passed, 0 source findings, 0 blocking failures
 10/10 faults handled as intended
-401 passed
+61/61 controls passed, 0 source findings, 0 blocking failures
+19/19 fixtures handled as intended
+421 passed
 ```
+
+Full procedure, runtimes and the deterministic build ids:
+[`docs/reproducibility.md`](docs/reproducibility.md).
 
 The generated data is ~166 MB and is not committed — it rebuilds byte-for-byte from a fixed
 seed. The manifest, per-file checksums, control results and samples that prove that **are**
@@ -106,7 +117,7 @@ config/          Version-controlled configuration — the platform's inputs
   anchors/       Generated financial anchors (the contract for Phases 2 and 9)
   coa/           Group chart of accounts, three source charts, ERP profiles
   debt/          Synthetic credit agreement terms, covenants, add-backs and treasury policy
-  controls/      The 87-control register
+  controls/      The source and consolidation control registers
   dimensions/    Business units, departments, scenarios, versions, consolidation layers
   entities/      Legal entity master and effective-dated ownership register
   fx/            FX translation policy
@@ -151,15 +162,33 @@ tests/           Automated validation
 | [Phase 3 report](docs/phases/phase-03-report.md) | 1.08m lines ingested from three ERPs, harmonised to one chart, and four source defects found |
 | [Phase 3.1 report](docs/phases/phase-03-1-report.md) | those four defects corrected at the generator, the source regenerated, and both control baselines clean |
 | [Phase 3.2 report](docs/phases/phase-03-2-report.md) | two more defects, found by the consolidation engine rather than by a source control, corrected at the generator |
+| [**Phase 4 report**](docs/phases/phase-04-report.md) | the formal consolidation completion report: layers, statements, controls, evidence and open items |
 | [Phase 4 source findings](docs/phases/phase-04-source-findings.md) | the defects the consolidation engine found upstream, and what was decided about each |
 | [Phase 4A proof gate](docs/phases/phase-04a-proof-gate.md) | the NCI anchor closed, a cash flow that ties at the cent, 61 controls and 19 fault fixtures |
+| [Phase 4B engine findings](docs/phases/phase-04b-engine-findings.md) | two reporting defects found by documenting the engine, reported and not corrected |
+| [**Architecture lessons**](docs/architecture-lessons.md) | ten defects that balanced perfectly while being wrong, and the design change each produced |
+
+| The consolidation, as built | |
+|---|---|
+| [Consolidation engine](docs/consolidation-engine.md) | Architecture, layers, the two facts, ownership traversal, build sequence |
+| [FX translation](docs/fx-translation.md) | Rates, opening balances, a derived CTA, and CTA versus the FX effect on cash |
+| [Intercompany elimination](docs/intercompany-elimination.md) | Pair-level matching, classification, and F02 as a worked control example |
+| [Investment and PPA](docs/investment-and-ppa.md) | The register, second-tier holdings, the goodwill bridge, acquired intangibles |
+| [Non-controlling interests](docs/nci.md) | Attribution, the roll-forward, and the anchor that the ledger superseded |
+| [Unrealised profit in inventory](docs/unrealised-profit-in-inventory.md) | FIFO layers at their own margins, and why the release is automatic |
+| [Management adjustments](docs/management-adjustments.md) | Layer 4, the approval gate, Adjusted versus Covenant EBITDA |
+| [Consolidated financial statements](docs/consolidated-financial-statements.md) | The three statements, what has been proved, and what has not |
+| [Consolidation controls](docs/consolidation-controls.md) | The 61-control suite and the rule that shapes it |
+| [Fault testing](docs/fault-testing.md) | 29 fixtures, and why detection by the wrong control does not count |
+| [Data lineage](docs/data-lineage.md) | Native extract to board figure, and the identifier at each step |
+| [Reproducibility](docs/reproducibility.md) | Environment, commands, runtimes, build ids, the clean-tree expectation |
 
 | Design | |
 |---|---|
 | [Consolidation design](docs/consolidation-design.md) | Layers, COA harmonisation, FX, elimination, adjustments, cash flow |
 | [Data contract](docs/data-contract.md) | Dimensions, facts, grain, relationships, volumes |
 | [Reporting design](docs/reporting-design.md) | Excel workbooks, Power BI pages, metric definitions |
-| [Control framework](docs/control-framework.md) | 86 controls and why they are placed where they are |
+| [Control framework](docs/control-framework.md) | The design register, the 203 implemented controls, and why each sits where it does |
 | [NCI policy](docs/nci-policy.md) | Complete non-controlling interest treatment, end to end |
 | [FX and CTA policy](docs/fx-cta-policy.md) | Full translation policy and the deterministic CTA roll-forward |
 | [ADRs](docs/adr/README.md) | 19 live decisions with their alternatives and consequences, and 1 superseded |

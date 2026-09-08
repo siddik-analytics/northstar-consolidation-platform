@@ -1,8 +1,8 @@
 # ADR-0024 — two reconciled consolidation facts, not one
 
 **Status:** accepted, Phase 4
-**Related:** [ADR-0003](0003-five-consolidation-layers.md),
-[ADR-0014](0014-consolidation-entries-are-posted-to-virtual-entities.md),
+**Related:** [ADR-0003](0003-consolidation-layer-model.md),
+[ADR-0014](0014-elimination-entities.md),
 [ADR-0019](0019-five-layer-ingestion-with-line-level-lineage.md)
 
 ## Context

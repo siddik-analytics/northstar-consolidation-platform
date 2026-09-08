@@ -1,5 +1,12 @@
 # FX Translation and CTA Policy
 
+> **As built.** This document is the approved policy. The consolidation engine implements
+> it in `src/consol/translate.py` and `src/consol/cta.py`; what it actually does, the
+> defect that made the opening-rate rule structural (P3-D-05), and the evidence that CTA is
+> derived rather than plugged are in [`fx-translation.md`](fx-translation.md). CTA now
+> reproduces the independent expectation for **243 of 243** entity-periods.
+
+
 The complete foreign currency translation policy, including a deterministic CTA
 roll-forward and the controls that will prove it once the consolidation engine exists.
 

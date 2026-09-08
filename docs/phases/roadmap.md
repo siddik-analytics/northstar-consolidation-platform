@@ -229,9 +229,29 @@ moved. See [`phase-03-2-report.md`](phase-03-2-report.md).
 
 ---
 
-## Phase 4 — Consolidation engine
+## Phase 4 — Consolidation engine ⚠️
 
-**Deliverables**
+**Delivered, proved, and not yet signed off.** The engine is built and frozen at `4847d64`:
+five layers, FX translation with a derived CTA, pair-level intercompany elimination,
+investment elimination and PPA, NCI, unrealised profit, the management layer and the three
+consolidated statements — with **61 of 61** controls passing, **19 of 19** fault fixtures
+handled as intended, a balance sheet that balances at 0.00 in all 48 months and a cash flow
+that ties at 0.00 in all 48.
+
+Two defects in Phase 4 **reporting artefacts** were found during the Phase 4B documentation
+pass and reported rather than corrected, because Phase 4B is documentation only:
+
+| | | |
+|---|---|---|
+| **P4-D-01** | `rpt_balance_sheet` presents prior years' unclosed consolidation result as the period's result | classification within equity; total equity correct |
+| **P4-D-02** | `rpt_ebitda_bridge` includes the year-end close and returns NULL Covenant EBITDA | the artefact is unusable |
+
+Neither touches the accounting engine and neither is caught by any control — the gap is that
+nothing compares one reporting artefact with another. See
+[`phase-04-report.md`](phase-04-report.md) and
+[`phase-04b-engine-findings.md`](phase-04b-engine-findings.md).
+
+**Original deliverables**
 - FX translation: monthly average P&L, closing balance sheet, historical equity, computed
   CTA — tested against `data/reference/cta_expectation.csv`, the per-entity, per-month
   expectation Phase 2.2 derived from source balances before the engine existed (`CTL-FX-12`)
@@ -288,6 +308,42 @@ See [`phase-04a-proof-gate.md`](phase-04a-proof-gate.md).
 
 ---
 
+## Phase 4B — Consolidation documentation & release gate ✅
+
+**Deliverables**
+- The as-built documentation package: engine, FX, intercompany, investments and PPA, NCI,
+  unrealised profit, management adjustments, the statements, the control framework, fault
+  testing, lineage and reproducibility
+- The formal Phase 4 report
+- A cross-document consistency audit
+- No change to accounting code or economics
+
+**Delivered.** Twelve documents written or rewritten and the Phase 4 report completed, with
+every figure taken from the built warehouse rather than restated from memory. The full
+regression was re-run unchanged afterwards — 80/80, 62/62, 10/10, 61/61, 19/19, 421 tests, the
+same build id and a clean tree — because documentation work must not change financial results.
+
+The pass found **two defects in Phase 4 reporting artefacts**, both by comparing what one
+artefact says with what another says about the same figure. Neither was corrected, per the
+brief. See [`phase-04b-engine-findings.md`](phase-04b-engine-findings.md).
+
+---
+
+## Phase 4C — Reporting-artefact correction (recommended, not started)
+
+**Deliverables**
+- P4-D-01 and P4-D-02 corrected, once the owner has decided the presentation policy for the
+  consolidated result caption
+- A **cross-artefact control family** — nothing currently compares one reporting artefact with
+  another, which is the gap that let both defects survive
+- Fault fixtures for that family
+
+Both defects are repeats of faults already found and fixed elsewhere in Phase 4, in an artefact
+nothing was checking. The control family is the substantive fix; the two corrections are one
+line each.
+
+---
+
 ## Phase 5 — Reporting marts & automated control suite
 
 **Deliverables**
@@ -302,7 +358,7 @@ See [`phase-04a-proof-gate.md`](phase-04a-proof-gate.md).
 
 **Exit criteria**
 - One command rebuilds everything from raw in under five minutes
-- All 86 controls execute and report; no blocking failure on any period
+- Every implemented control executes and reports; no blocking failure on any period
 - No mart publishes from a period with a failed blocking control
 
 ---

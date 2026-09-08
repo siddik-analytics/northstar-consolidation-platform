@@ -2,7 +2,7 @@
 
 **Status:** accepted, Phase 4A
 **Supersedes:** the `NCI_INCOME` series in `docs/nci-policy.md` as approved in Phase 1
-**Related:** [ADR-0011](0011-anchors-are-the-contract-for-generated-data.md),
+**Related:** [ADR-0011](0011-anchor-first-deterministic-modelling.md),
 [ADR-0021](0021-source-findings-are-baselined-not-downgraded.md), defect P3-D-07
 
 ## Context

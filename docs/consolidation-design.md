@@ -1,5 +1,15 @@
 # Consolidation Design
 
+> **As built.** This is the Phase 1 design. The engine that implements it is documented in
+> [`consolidation-engine.md`](consolidation-engine.md), with the accounting areas split out:
+> [FX](fx-translation.md), [intercompany](intercompany-elimination.md),
+> [investments and PPA](investment-and-ppa.md), [NCI](nci.md),
+> [unrealised profit](unrealised-profit-in-inventory.md),
+> [management adjustments](management-adjustments.md) and the
+> [statements](consolidated-financial-statements.md). Where the two differ, the as-built
+> documents are authoritative and say why.
+
+
 How twelve legal entities, on three ERP systems, in four currencies, become one set of
 group financial statements — and how every step of that journey can be traced backwards.
 

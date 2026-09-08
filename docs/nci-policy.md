@@ -1,5 +1,16 @@
 # Non-Controlling Interest Policy
 
+> **The earnings anchors in this document are SUPERSEDED.** The accounting treatment below —
+> 100% consolidation with separate presentation, the five-account roll-forward, the loss
+> allocation rule, the equity presentation and the cash-flow treatment — remains the approved
+> policy and is what the engine implements. The **anchor tables** were Phase 1 top-down
+> estimates made before entity-level profitability existed, and the generated ledger
+> contradicted them: `NIG-510` is loss-making on its own books at the approved transfer price,
+> so the minority's share of result is negative. Superseded at the Phase 4A gate by
+> [ADR-0025](adr/0025-the-entity-ledger-supersedes-the-phase-1-nci-estimate.md); see
+> [`nci.md`](nci.md) for the derived figures and the roll-forward as built. The tables are kept
+> as written, marked, because the disagreement between them and the ledger is the point.
+
 Complete accounting and data-model treatment of the group's single non-controlling interest.
 Specified in full at Phase 1.1 so that Phase 2 source generation does not need redesign.
 
@@ -58,11 +69,12 @@ Only the group share flows to retained earnings (`320200` *Current year result a
 the group*). This is what makes `CTL-FS-05` (retained earnings roll-forward) work: retained
 earnings moves by the parent share, not by total net income.
 
-**Anchors:**
+**Anchors — SUPERSEDED (ADR-0025).** Derived from the ledger the figures are
+(0.197) / (0.219) / (0.266) / (0.180) / (0.180):
 
 | USD m | FY2023A | FY2024A | FY2025A | FY2026B | FY2026F |
 |---|---|---|---|---|---|
-| Net income attributable to NCI | 0.18 | 0.28 | 0.36 | 0.44 | 0.40 |
+| ~~Net income attributable to NCI~~ | ~~0.18~~ | ~~0.28~~ | ~~0.36~~ | ~~0.44~~ | ~~0.40~~ |
 
 **Losses are allocated on the same basis.** A loss-making period allocates the NCI share of
 the loss to non-controlling interests even where that drives the NCI balance negative. There
@@ -92,17 +104,18 @@ Closing NCI = 340100 opening
             + 340500 acquisition and ownership changes
 ```
 
-**Anchors:**
+**Anchors — SUPERSEDED (ADR-0025).** The roll-forward as built is in
+[`nci.md`](nci.md) §5; closing NCI is 2.673 / 2.405 / 2.158 / 1.945 USD m.
 
 | USD m | FY2023A | FY2024A | FY2025A | FY2026B | FY2026F |
 |---|---|---|---|---|---|
-| Opening NCI | 2.80 | 3.08 | 3.16 | 3.50 | 3.50 |
-| Share of result | 0.18 | 0.28 | 0.36 | 0.44 | 0.40 |
-| Dividends and distributions | — | (0.15) | (0.20) | (0.25) | (0.25) |
-| Share of translation adjustment | 0.10 | (0.05) | 0.18 | — | 0.05 |
-| **Closing NCI** | **3.08** | **3.16** | **3.50** | **3.69** | **3.70** |
+| ~~Opening NCI~~ | ~~2.80~~ | ~~3.08~~ | ~~3.16~~ | ~~3.50~~ | ~~3.50~~ |
+| ~~Share of result~~ | ~~0.18~~ | ~~0.28~~ | ~~0.36~~ | ~~0.44~~ | ~~0.40~~ |
+| ~~Dividends and distributions~~ | ~~—~~ | ~~(0.15)~~ | ~~(0.20)~~ | ~~(0.25)~~ | ~~(0.25)~~ |
+| ~~Share of translation adjustment~~ | ~~0.10~~ | ~~(0.05)~~ | ~~0.18~~ | ~~—~~ | ~~0.05~~ |
+| ~~**Closing NCI**~~ | ~~**3.08**~~ | ~~**3.16**~~ | ~~**3.50**~~ | ~~**3.69**~~ | ~~**3.70**~~ |
 
-NCI is 3.4% of total group equity at FY2025. FY2026 Budget and Forecast both open from the
+NCI is 2.3% of total group equity at FY2025 as built. FY2026 Budget and Forecast both open from the
 FY2025 actual close of $3.50m, consistent with the rule that alternative views of one fiscal
 year share an opening balance sheet.
 

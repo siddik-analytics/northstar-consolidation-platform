@@ -307,6 +307,14 @@ it should not (`CTL-CON-10`).
 
 ## 4. Facts
 
+### `fact_consol_journal` — the consolidation entry fact
+
+Added in Phase 4 ([ADR-0024](adr/0024-two-reconciled-consolidation-facts.md)). Every
+consolidation entry at **leg grain**, carrying `layer_id`, `process`, `rule_id`,
+`related_entity_code`, `partner_entity_code`, `narrative` and `evidence`. 6,532 legs across
+3,343 entries. Layers 2 to 5 of `fact_financials` are aggregated from it, and `P4-FCT-01`
+proves the two reconcile. Layer 1 is never copied into it (`P4-FCT-02`).
+
 ### `fact_financials` — the core fact
 | | |
 |---|---|
@@ -530,7 +538,7 @@ across `dim_entity`, `dim_cost_center` and `dim_account`.
 | Table | Estimated rows | Rationale |
 |---|---|---|
 | `fact_journal_line` | ~1,500,000 | 12 entities × 45 months × ~2,800 lines/month. Enterprise-realistic without being gratuitous. |
-| `fact_financials` | ~1,100,000 | The consolidation grain across three scenarios and five layers |
+| `fact_financials` | **48,202 built** (Actual; the design estimate of ~1,100,000 covers all three scenarios at line grain) | The consolidation grain across scenarios and five layers |
 | `fact_revenue_detail` | ~380,000 | |
 | `fact_headcount` | ~95,000 | |
 | `fact_capex` | ~60,000 | |

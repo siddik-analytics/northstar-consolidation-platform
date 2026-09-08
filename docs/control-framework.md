@@ -1,8 +1,23 @@
 # Control Framework
 
-**87 controls across 10 categories.** The full machine-readable register is
-[`config/controls/control_register.csv`](../config/controls/control_register.csv); this
+**The design register: 87 controls across 10 categories**, in
+[`config/controls/control_register.csv`](../config/controls/control_register.csv). This
 document explains the design.
+
+**What is implemented and running, as at Phase 4B:**
+
+| | Controls | Register | Results |
+|---|---|---|---|
+| Phase 2 — generated source | **80** | `src/generation/validate.py` | `data/phase02_control_results.csv` |
+| Phase 3 — ingestion and mapping | **62** | `src/pipeline/controls.py` | `data/phase03_control_results.csv` |
+| Phase 4 — consolidation | **61** | [`config/controls/phase04_control_register.csv`](../config/controls/phase04_control_register.csv) | `data/phase04_control_results.csv` |
+
+The Phase 4 suite has its own document — [`consolidation-controls.md`](consolidation-controls.md)
+— because it introduced the design rule that now governs all of them: **controls iterate from
+the authority that requires the data, not from the data being tested.** The design register's
+`CTL-*` identifiers map onto the implemented `P2-*`, `P3-*` and `P4-*` controls; where a design
+control was split or reshaped in implementation, the implemented control names the `CTL-*` it
+descends from.
 
 ## 1. Why this exists
 
