@@ -75,7 +75,15 @@ def build(con: duckdb.DuckDBPyConnection) -> dict[str, int]:
     -- Every scenario and version a report may offer, and no others. A reserved scenario is
     -- architecture that has not been populated: offering it would hand a reader an empty
     -- report that looks like a real one, so `P5-SCN-02` requires it to be absent.
+    --
+    -- "Populated" means something different for a derived version. A stored version is
+    -- populated when rows exist carrying its code. A DERIVED version has no stored rows by
+    -- construction -- Prior Year is the approved Actual shifted twelve months and is
+    -- materialised nowhere (ADR-0004) -- so it is populated when *the version it derives
+    -- from* is. Testing a derived version for stored rows is what excluded PY_DERIVED from
+    -- this dimension while 12,516 mart rows joined on it (P7-D-01, ADR-0027).
     SELECT v.version_code, v.scenario_code, s.scenario_name, v.version_name,
+           v.scenario_type AS version_type, s.derived_from_scenario_code,
            v.fiscal_year, v.actual_months, v.forecast_months,
            v.is_default, v.is_locked, v.approved_by, v.approved_date,
            s.sort_order * 1000 + v.sort_order AS sort_order,
@@ -83,9 +91,16 @@ def build(con: duckdb.DuckDBPyConnection) -> dict[str, int]:
     FROM dim_version v JOIN dim_scenario s USING (scenario_code)
     WHERE NOT v.is_reserved AND NOT s.is_reserved
       AND v.scenario_code NOT IN ({reserved})
-      AND EXISTS (SELECT 1 FROM fact_plan p WHERE p.version_code = v.version_code
-                  UNION ALL SELECT 1 FROM fact_financials f
-                  WHERE f.version_code = v.version_code)
+      AND CASE WHEN v.scenario_type = 'DERIVED'
+               -- the scenario it derives from has a populated default version
+               THEN EXISTS (SELECT 1 FROM dim_version sv
+                            JOIN fact_financials f ON f.version_code = sv.version_code
+                            WHERE sv.scenario_code = s.derived_from_scenario_code
+                              AND sv.is_default)
+               ELSE EXISTS (SELECT 1 FROM fact_plan p WHERE p.version_code = v.version_code
+                            UNION ALL SELECT 1 FROM fact_financials f
+                            WHERE f.version_code = v.version_code)
+          END
     ORDER BY sort_order
     """)
     rows("dim_report_scenario")
@@ -255,8 +270,11 @@ def build(con: duckdb.DuckDBPyConnection) -> dict[str, int]:
     # another. Superseded forecasts stay available and are never the default.
     con.execute("""
     CREATE OR REPLACE TABLE ref_default_version AS
+    -- One authoritative source for version membership: the governed dimension, and nothing
+    -- unioned in by hand. Prior Year used to be appended here because it had no version row
+    -- to be the default of; it has one now (ADR-0027), so the workaround is gone and there
+    -- is no second definition of what a valid version is.
     SELECT scenario_code, version_code FROM dim_report_scenario WHERE is_default
-    UNION ALL SELECT 'PY', 'PY_DERIVED'
     """)
 
     con.execute("""

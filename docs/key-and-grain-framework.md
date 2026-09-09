@@ -34,10 +34,10 @@ Declared("fact_capex_project", "FACT", ("project_id",), FORBIDDEN,
          note="THE P6-D-01 CONTRACT. project_id alone identifies a capital project...")
 ```
 
-**61 keyed objects** are declared: 17 dimensions, 20 references, 9 facts and 15 marts. Every
-key was established against the real population rather than assumed from the column names, and
-several needed a column the obvious guess omitted — which is the same class of mistake P6-D-01
-was:
+**61 keyed objects** are declared — 17 dimensions, 20 references, 9 facts and 15 marts — with
+**39 foreign keys** between them. Every key was established against the real population rather
+than assumed from the column names, and several needed a column the obvious guess omitted,
+which is the same class of mistake P6-D-01 was:
 
 | object | the column the obvious key missed | why |
 |---|---|---|
@@ -63,17 +63,18 @@ declared set, and `P7-NUL-<object>-declared` fails a permission with no reason o
 no permission. Uniqueness over such a key is proved with NULL treated as a value, which is the
 semantics every join in the platform already relies on.
 
-## The five families
+## The six families
 
 | family | controls | asserts |
 |---|---|---|
 | `P7-REG` | 4 | the registry is complete, resolves, and its waivers carry reasons |
 | `P7-KEY` | 61 | every declared key is unique over its whole population |
 | `P7-NUL` | 122 | no null in an unpermitted key column, and every permission is declared |
-| `P7-REF` | 33 | every declared foreign key resolves |
+| `P7-REF` | 39 | every declared foreign key resolves |
 | `P7-CPX` | 9 | the capital-project chain, end to end |
+| `P7-VER` | 14 | scenario and version governance, including the derived-version policy |
 
-**229 controls. 228 pass; one is a recorded open finding.**
+**249 controls, 249 pass, nothing quarantined.**
 
 Control ids carry the object name rather than a sequence number — `P7-KEY-mart_capex`, not
 `P7-KEY-12` — so a failure says what broke without a lookup, and inserting a registry entry
@@ -114,9 +115,9 @@ because identifier integrity is only worth having if the amounts follow the iden
 
 ## Fault fixtures
 
-Nine, each breaking one thing and naming in advance the control that must catch it. A fixture
-caught by *some other* control is reported as a miss: "something went red" is not "the right
-thing went red". Each runs inside a transaction that is rolled back.
+Eighteen, each breaking one thing and naming in advance the control that must catch it. A
+fixture caught by *some other* control is reported as a miss: "something went red" is not "the
+right thing went red". Each runs inside a transaction that is rolled back.
 
 | fixture | what it breaks | must be caught by |
 |---|---|---|
@@ -129,30 +130,63 @@ thing went red". Each runs inside a transaction that is rolled back.
 | `F7-CPX-01` | an asset contradicts its project on asset class | `P7-CPX-04` |
 | `F7-CPX-02` | an asset contradicts its project on owning entity | `P7-CPX-05` |
 | `F7-CPX-03` | asset cost no longer reconciles to project spend | `P7-CPX-07` |
+| `F7-VER-01` | **a version code in use is removed from the master — P7-D-01 recreated** | `P7-VER-01` |
+| `F7-VER-02` | a derived version is filed under the wrong scenario | `P7-VER-02` |
+| `F7-VER-03` | two forecast versions are both marked as the current default | `P7-VER-04` |
+| `F7-VER-04` | a derived version is unlocked, so a derived figure becomes editable | `P7-VER-08` |
+| `F7-VER-05` | a derived version is source-loaded as stored data | `P7-VER-07` |
+| `F7-VER-06` | a default version exists outside the governed master | `P7-VER-05` |
+| `F7-VER-07` | a reserved scenario becomes reportable because it is configured | `P7-VER-12` |
+| `F7-VER-08` | Prior Year drifts from the Actual it is a view of | `P7-VER-10` |
+| `F7-VER-09` | a derived version does not say what it derives from | `P7-VER-09` |
 
-**9/9 detected by their intended control.**
+**18/18 detected by their intended control.**
 
-`F7-KEY-01` is the one worth keeping. It recreates the warehouse exactly as it stood at the
-approved Phase 5 baseline `026bf43`, when every control in the platform passed.
+Two of them are worth keeping for what they recreate. `F7-KEY-01` restores the warehouse
+exactly as it stood at the approved Phase 5 baseline `026bf43`; `F7-VER-01` restores it as it
+stood at `dd46611`. Every control in the platform passed in both states.
 
-## Open finding P7-D-01
+## Scenario and version governance
 
-`PY_DERIVED` is used as a version code by 12,516 rows of `mart_financial_ytd` and by the
-prior-year comparator rows of `mart_variance`, but no such row exists in `dim_version` or
-`dim_report_scenario` — even though `PY` *is* a first-class scenario in `dim_scenario`. Prior
-year is derived in the mart by shifting Actual twelve months and stored nowhere
-(`src/marts/build.py:158`), and `ref_default_version` unions the PY default in by hand, which
-is the design already working around the gap.
+The framework found its second defect on its first run, in a different dimension with a
+different cause and exactly the same shape: an identifier in use that resolved to nothing.
 
-The framework found it on its first run. It is quarantined at its exact population under
-[ADR-0021](adr/0021-source-findings-are-baselined-not-downgraded.md): the control reports
-`SOURCE_FINDING` at exactly 12,516 orphans and **fails** at any other number, so a new defect of
-the same shape cannot hide inside a known one and a silent upstream fix does not go unnoticed
-either.
+`PY_DERIVED` was used as a version code by 12,516 rows of `mart_financial_ytd` and by every
+prior-year comparator in `mart_variance`, and existed in no version master — though `PY` *was* a
+first-class scenario. Prior Year is derived from Actual at *t − 12* and stored nowhere
+(ADR-0004), so its data has no rows; the mistake was concluding that its **identity** therefore
+needed no row either. `ref_default_version` unioned the PY default in by hand, which is the
+design already working around the gap.
 
-It is reported, not fixed. The fix belongs to the Phase 5 scenario architecture — a derived
-version needs a row in the version master, or the mart should not put PY in a column called
-`version_code` — and that is a design decision, not an identifier correction.
+**Defect P7-D-01, closed under [ADR-0027](adr/0027-a-derived-version-is-still-a-governed-version.md).**
+Prior Year now has a governed derived version in the master; the hand-written union is gone;
+`ref_default_version` derives from the governed dimension alone. The ADR-0021 acceptance that
+held the finding at exactly 12,516 orphans is retired, not relaxed.
+
+> **Deriving a figure is not a reason to leave its identity ungoverned.** Where a number comes
+> from and whether the thing has a governed identity are separate questions.
+
+| control | asserts |
+|---|---|
+| `P7-VER-01` | every version code in every fact and mart resolves — iterated from the eleven version-bearing columns, so a fact nobody thought about fails rather than being out of scope |
+| `P7-VER-02` | a version's type is the type its scenario declares, not merely a scenario that exists |
+| `P7-VER-03` | a reporting row's scenario matches its version's scenario |
+| `P7-VER-04` | each reportable scenario has exactly one default version |
+| `P7-VER-05` | no default version exists outside the governed master |
+| `P7-VER-06` | Prior Year is a governed derived version — the P7-D-01 condition, as membership |
+| `P7-VER-07` | a derived version carries no source-loaded rows |
+| `P7-VER-08` | a derived version is locked against editing |
+| `P7-VER-09` | a derived version names the scenario it derives from, and it exists |
+| `P7-VER-10` | Prior Year equals Actual twelve months earlier, to the cent |
+| `P7-VER-11` | every Actual month has its prior-year row a year later — iterated from Actual, because a PY row the derivation failed to build is invisible from PY |
+| `P7-VER-12` | no reserved scenario or version is reportable |
+| `P7-VER-13` | no reserved version carries reporting data |
+| `P7-VER-14` | every reportable version and scenario is named, so no blank member is possible |
+
+Note `P7-VER-10` and `P7-VER-11` together. One proves every Prior Year row is the right Actual;
+the other proves no Actual month is missing its Prior Year. A control iterating Prior Year can
+only find rows that are wrong — a row the derivation never built is invisible to it. That is
+the Phase 4A lesson about control populations, applied here.
 
 ## Proving a rebuild changed no money
 

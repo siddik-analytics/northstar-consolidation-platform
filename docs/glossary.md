@@ -89,8 +89,13 @@ months to date with forecast months to year end. `FC_FY26_08` is 8 actual + 4 fo
 
 **8+4** — Shorthand for a forecast version's actual/forecast month split.
 
-**Prior Year (PY)** — Last year's Actual, viewed as a comparative. **Derived** by a twelve-month
-date offset, never stored. See ADR-0004.
+**Prior Year (PY)** — Last year's Actual, viewed as a comparative. The **scenario**. Its data
+is **derived** by a twelve-month date offset and never stored (ADR-0004).
+
+**`PY_DERIVED`** — The governed derived **version** the PY scenario uses. Derived is not the
+same as ungoverned: the data is a view of Actual, but the version has a row in the master, a
+type (`DERIVED`), a lock, and a stated source, because a version code that reporting rows join
+on has to resolve to something (defect P7-D-01, ADR-0027).
 
 **Favourable / Unfavourable (F/U)** — Variance direction accounting for the account's normal
 balance. An overspend is a positive number and an unfavourable variance; the logic is defined

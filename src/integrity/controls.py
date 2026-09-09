@@ -15,6 +15,7 @@ Five families:
 ``P7-NUL``  no key column is null
 ``P7-REF``  every declared foreign key resolves
 ``P7-CPX``  the capital project chain, end to end, at the grain the business reads
+``P7-VER``  scenario and version governance, including the derived-version policy
 
 The control ids carry the object name rather than a sequence number, so a failure says what
 broke without a lookup, and inserting a registry entry does not renumber the suite.
@@ -276,12 +277,196 @@ def _capital_projects(con, r: Result) -> None:
          "this is the grain the Power BI CapEx fact and Capital Project dimension declare")
 
 
+# --------------------------------------------------------------------------- P7-VER
+def _versions(con, r: Result) -> None:
+    """
+    Scenario and version governance.
+
+    P7-D-01: `PY_DERIVED` was used as a version code by 12,516 mart rows and by every
+    prior-year comparator, while existing in no version master at all. It worked because
+    nothing ever asked a version to resolve -- the same shape as P6-D-01, one dimension over.
+
+    The rule these controls hold is that **a figure being derived is not a reason to leave its
+    identity ungoverned**. A derived version is still a version: it has a row, a scenario, a
+    policy, and a stated derivation. What it does not have is stored data, and that distinction
+    is what is tested here rather than assumed.
+    """
+    # ---------------------------------------------------------------- referential integrity
+    # Iterated from the facts that carry a version, so a fact nobody thought about fails here
+    # rather than being silently out of scope.
+    carriers = [(t, c) for t, c in (
+        ("fact_plan", "version_code"), ("fact_financials", "version_code"),
+        ("fact_trial_balance", "version_code"), ("fact_consol_journal", "version_code"),
+        ("mart_financial_ytd", "version_code"), ("mart_financial_monthly", "version_code"),
+        ("mart_business_unit", "version_code"), ("mart_entity_performance", "version_code"),
+        ("mart_variance", "base_version"), ("mart_variance", "comparator_version"),
+        ("ref_default_version", "version_code"),
+    ) if t in _tables(con)]
+    unresolved = 0
+    detail = []
+    for table, column in carriers:
+        n = _one(con, f"""
+            SELECT count(*) FROM {table} c WHERE c.{column} IS NOT NULL
+              AND NOT EXISTS (SELECT 1 FROM dim_version v
+                              WHERE v.version_code = c.{column})""")
+        unresolved += n
+        if n:
+            detail.append(f"{table}.{column}={n}")
+    r.ok("P7-VER-01", "Every version code in every fact and mart resolves to the version master",
+         "BLOCKING", unresolved == 0, unresolved, 0,
+         "; ".join(detail) if detail
+         else f"{len(carriers)} version-bearing columns, all resolve")
+
+    # ---------------------------------------------------------------- scenario compatibility
+    # A version's scenario must exist, and its type must be the type its scenario declares.
+    # Existence alone would let a Budget version sit under the Forecast scenario.
+    incompatible = _one(con, """
+        SELECT count(*) FROM dim_version v
+        LEFT JOIN dim_scenario s USING (scenario_code)
+        WHERE s.scenario_code IS NULL OR v.scenario_type <> s.scenario_type""")
+    r.ok("P7-VER-02", "Every version is permitted for the scenario it belongs to", "BLOCKING",
+         incompatible == 0, incompatible, 0,
+         "the version's type must be the type its scenario declares, not merely a scenario "
+         "that happens to exist")
+
+    # A fact row's scenario and version must agree with the master, not just each exist.
+    mismatched = _one(con, """
+        SELECT count(*) FROM mart_financial_ytd m
+        JOIN dim_version v ON v.version_code = m.version_code
+        WHERE m.scenario_code <> v.scenario_code""")
+    r.ok("P7-VER-03", "Every reporting row's scenario matches its version's scenario",
+         "BLOCKING", mismatched == 0, mismatched, 0,
+         "a row claiming scenario FC on a Budget version would reconcile perfectly and report "
+         "the wrong thing")
+
+    # ---------------------------------------------------------------- default uniqueness
+    bad_defaults = _one(con, """
+        SELECT count(*) FROM (
+            SELECT s.scenario_code, count(*) FILTER (WHERE v.is_default) AS n
+            FROM dim_scenario s JOIN dim_version v USING (scenario_code)
+            WHERE NOT s.is_reserved AND NOT v.is_reserved
+            GROUP BY s.scenario_code HAVING count(*) FILTER (WHERE v.is_default) <> 1)""")
+    r.ok("P7-VER-04", "Each reportable scenario has exactly one default version", "BLOCKING",
+         bad_defaults == 0, bad_defaults, 0,
+         "three forecasts are retained and only the current one is the default; a superseded "
+         "forecast presented as the forecast is an error nobody would notice")
+
+    # ---------------------------------------------------------------- one authority
+    # The defaults a report uses must BE the governed defaults, not a list assembled beside
+    # them. `ref_default_version` used to union Prior Year in by hand because PY_DERIVED had
+    # no version row to be the default of.
+    off_book = _one(con, """
+        SELECT count(*) FROM (
+            SELECT scenario_code, version_code FROM ref_default_version
+            EXCEPT
+            SELECT scenario_code, version_code FROM dim_version
+            WHERE is_default AND NOT is_reserved)""")
+    r.ok("P7-VER-05", "No default version exists outside the governed version master",
+         "BLOCKING", off_book == 0, off_book, 0,
+         "one authoritative source for version membership; a second definition is a second "
+         "answer waiting to disagree")
+
+    # ---------------------------------------------------------------- derived-version policy
+    derived = [row[0] for row in con.execute(
+        "SELECT version_code FROM dim_version WHERE scenario_type = 'DERIVED'").fetchall()]
+    r.ok("P7-VER-06", "Prior Year is a governed derived version, not an absent one", "BLOCKING",
+         "PY_DERIVED" in derived, ", ".join(derived) or "none", "PY_DERIVED",
+         "the P7-D-01 condition, stated as membership rather than as a convention")
+
+    # A derived version is derived. It must not be loaded from anywhere.
+    loaded = _one(con, """
+        SELECT count(*) FROM fact_plan p JOIN dim_version v USING (version_code)
+        WHERE v.scenario_type = 'DERIVED'""") + _one(con, """
+        SELECT count(*) FROM fact_financials f JOIN dim_version v USING (version_code)
+        WHERE v.scenario_type = 'DERIVED'""")
+    r.ok("P7-VER-07", "A derived version carries no source-loaded rows", "BLOCKING",
+         loaded == 0, loaded, 0,
+         "Prior Year is a view of Actual. A stored PY row would be a second copy of a figure "
+         "that is supposed to have one source, free to drift from it")
+
+    unlocked = _one(con, """
+        SELECT count(*) FROM dim_version
+        WHERE scenario_type = 'DERIVED' AND NOT is_locked""")
+    r.ok("P7-VER-08", "A derived version is locked against editing", "BLOCKING",
+         unlocked == 0, unlocked, 0,
+         "a derived figure that can be edited is no longer derived")
+
+    orphan_derived = _one(con, """
+        SELECT count(*) FROM dim_version v JOIN dim_scenario s USING (scenario_code)
+        WHERE v.scenario_type = 'DERIVED'
+          AND (s.derived_from_scenario_code IS NULL
+               OR NOT EXISTS (SELECT 1 FROM dim_scenario p
+                              WHERE p.scenario_code = s.derived_from_scenario_code))""")
+    r.ok("P7-VER-09", "A derived version names the scenario it derives from, and it exists",
+         "BLOCKING", orphan_derived == 0, orphan_derived, 0,
+         "a derivation with no stated source is an assertion")
+
+    # The derivation itself: Prior Year IS Actual, twelve months earlier. Recomputed from the
+    # Actual rows rather than compared with another prior-year calculation.
+    worst = _one(con, """
+        SELECT coalesce(max(abs(py.ytd_usd - act.ytd_usd)), 0)
+        FROM mart_financial_ytd py
+        JOIN mart_financial_ytd act
+          ON act.version_code = 'ACTUAL' AND act.period_key = py.period_key - 100
+         AND act.basis = py.basis AND act.entity_code = py.entity_code
+         AND act.bu_code = py.bu_code AND act.measure_code = py.measure_code
+        WHERE py.version_code = 'PY_DERIVED'""")
+    r.ok("P7-VER-10", "Prior Year equals Actual twelve months earlier, to the cent", "BLOCKING",
+         worst == 0, f"{worst:.2f}", "0.00",
+         "the derivation stated in the master, proved against the Actual it claims to be")
+
+    missing_py = _one(con, """
+        SELECT count(*) FROM mart_financial_ytd act
+        WHERE act.version_code = 'ACTUAL' AND act.period_key < 202600
+          AND NOT EXISTS (
+              SELECT 1 FROM mart_financial_ytd py
+              WHERE py.version_code = 'PY_DERIVED' AND py.period_key = act.period_key + 100
+                AND py.basis = act.basis AND py.entity_code = act.entity_code
+                AND py.bu_code = act.bu_code AND py.measure_code = act.measure_code)""")
+    r.ok("P7-VER-11", "Every Actual month has its prior-year row a year later", "BLOCKING",
+         missing_py == 0, missing_py, 0,
+         "iterated from Actual, not from Prior Year: a PY row the derivation failed to build "
+         "is invisible to a control that iterates PY")
+
+    # ---------------------------------------------------------------- reserved scenarios
+    reserved_leak = _one(con, """
+        SELECT count(*) FROM dim_report_scenario d
+        WHERE EXISTS (SELECT 1 FROM dim_scenario s
+                      WHERE s.scenario_code = d.scenario_code AND s.is_reserved)
+           OR EXISTS (SELECT 1 FROM dim_version v
+                      WHERE v.version_code = d.version_code AND v.is_reserved)""")
+    r.ok("P7-VER-12", "No reserved scenario or version is reportable", "BLOCKING",
+         reserved_leak == 0, reserved_leak, 0,
+         "a placeholder in configuration must not become reportable by being configured; "
+         "Downside stays reserved until it is approved and populated")
+
+    reserved_data = _one(con, """
+        SELECT count(*) FROM mart_financial_ytd m JOIN dim_version v USING (version_code)
+        WHERE v.is_reserved""")
+    r.ok("P7-VER-13", "No reserved version carries reporting data", "BLOCKING",
+         reserved_data == 0, reserved_data, 0,
+         "reserved means unpopulated, and an empty report that looks like a real one is worse "
+         "than no report")
+
+    # ---------------------------------------------------------------- no blank members
+    # Every version a report can select must be nameable. A code with no name is the blank
+    # member a semantic model would otherwise invent.
+    blank = _one(con, """
+        SELECT count(*) FROM dim_report_scenario
+        WHERE version_code IS NULL OR trim(coalesce(version_name, '')) = ''
+           OR scenario_code IS NULL OR trim(coalesce(scenario_name, '')) = ''""")
+    r.ok("P7-VER-14", "Every reportable version and scenario is named", "BLOCKING",
+         blank == 0, blank, 0,
+         "an unnamed member becomes a blank in every downstream report")
+
+
 def run(con: duckdb.DuckDBPyConnection) -> Result:
     r = Result()
     _registry_completeness(con, r)
     _keys(con, r)
     _references(con, r)
     _capital_projects(con, r)
+    _versions(con, r)
     return r
 
 

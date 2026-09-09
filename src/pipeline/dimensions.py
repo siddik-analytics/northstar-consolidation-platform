@@ -149,9 +149,15 @@ def build(con: duckdb.DuckDBPyConnection) -> dict[str, int]:
             FROM {_csv('config/anchors/anchor_fx_rates.csv')}
         """,
         # ------------------------------------------------------ scenario/version
+        # `derived_from_scenario_code` is the master's own `parent_code` on a scenario row,
+        # and it was being dropped. A derived scenario has to be able to name what it is
+        # derived from, or the platform cannot tell "PY comes from Actual" from "PY comes
+        # from nowhere" -- which is how PY_DERIVED came to be used as a version code with no
+        # version behind it (P7-D-01, ADR-0027).
         "dim_scenario": f"""
             SELECT code AS scenario_code, name AS scenario_name, scenario_type,
-                   fx_rate_set, is_default = 'TRUE' AS is_default,
+                   fx_rate_set, nullif(parent_code, '') AS derived_from_scenario_code,
+                   is_default = 'TRUE' AS is_default,
                    is_reserved = 'TRUE' AS is_reserved,
                    CAST(sort_order AS INTEGER) AS sort_order, description,
                    'config/dimensions/scenario_version.csv' AS source_config

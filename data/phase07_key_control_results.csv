@@ -30,7 +30,7 @@ P7-NUL-dim_consolidation_layer-declared,dim_consolidation_layer states a reason 
 P7-KEY-dim_scenario,dim_scenario is unique on its declared key (scenario_code),BLOCKING,PASS,0 duplicate rows,0,"5 rows, 5 distinct keys; owner Phase 3; authority config/masters/scenarios.yml"
 P7-NUL-dim_scenario,dim_scenario has no null in an unpermitted key column,BLOCKING,PASS,0,0,1 of 1 key columns must never be null
 P7-NUL-dim_scenario-declared,dim_scenario states a reason for every nullable key column,BLOCKING,PASS,coherent,coherent,a nullable key column needs a reason a reviewer would accept
-P7-KEY-dim_version,dim_version is unique on its declared key (version_code),BLOCKING,PASS,0 duplicate rows,0,"8 rows, 8 distinct keys; owner Phase 3; authority config/masters/scenarios.yml"
+P7-KEY-dim_version,dim_version is unique on its declared key (version_code),BLOCKING,PASS,0 duplicate rows,0,"9 rows, 9 distinct keys; owner Phase 3; authority config/masters/scenarios.yml"
 P7-NUL-dim_version,dim_version has no null in an unpermitted key column,BLOCKING,PASS,0,0,1 of 1 key columns must never be null
 P7-NUL-dim_version-declared,dim_version states a reason for every nullable key column,BLOCKING,PASS,coherent,coherent,a nullable key column needs a reason a reviewer would accept
 P7-KEY-dim_source_account,"dim_source_account is unique on its declared key (erp_system, source_account)",BLOCKING,PASS,0 duplicate rows,0,"392 rows, 392 distinct keys; owner Phase 3; authority config/mapping/"
@@ -42,7 +42,7 @@ P7-NUL-dim_intercompany_partner-declared,dim_intercompany_partner states a reaso
 P7-KEY-dim_ownership_period,"dim_ownership_period is unique on its declared key (period_key, entity_code)",BLOCKING,PASS,0 duplicate rows,0,"555 rows, 555 distinct keys; owner Phase 4; authority data/reference/ownership.csv"
 P7-NUL-dim_ownership_period,dim_ownership_period has no null in an unpermitted key column,BLOCKING,PASS,0,0,2 of 2 key columns must never be null
 P7-NUL-dim_ownership_period-declared,dim_ownership_period states a reason for every nullable key column,BLOCKING,PASS,coherent,coherent,a nullable key column needs a reason a reviewer would accept
-P7-KEY-dim_report_scenario,dim_report_scenario is unique on its declared key (version_code),BLOCKING,PASS,0 duplicate rows,0,"5 rows, 5 distinct keys; owner Phase 5; authority src/marts/config.py"
+P7-KEY-dim_report_scenario,dim_report_scenario is unique on its declared key (version_code),BLOCKING,PASS,0 duplicate rows,0,"6 rows, 6 distinct keys; owner Phase 5; authority src/marts/config.py"
 P7-NUL-dim_report_scenario,dim_report_scenario has no null in an unpermitted key column,BLOCKING,PASS,0,0,1 of 1 key columns must never be null
 P7-NUL-dim_report_scenario-declared,dim_report_scenario states a reason for every nullable key column,BLOCKING,PASS,coherent,coherent,a nullable key column needs a reason a reviewer would accept
 P7-KEY-dim_report_measure,dim_report_measure is unique on its declared key (measure_code),BLOCKING,PASS,0 duplicate rows,0,"14 rows, 14 distinct keys; owner Phase 5; authority src/marts/config.py MEASURES"
@@ -209,7 +209,13 @@ P7-REF-fact_financials->dim_consolidation_layer,fact_financials.(layer_id) resol
 P7-REF-fact_trial_balance->dim_account,fact_trial_balance.(group_account) resolves in dim_account,BLOCKING,PASS,0,0,owner Phase 3
 P7-REF-fact_layer1_usd->dim_account,fact_layer1_usd.(group_account) resolves in dim_account,BLOCKING,PASS,0,0,owner Phase 4
 P7-REF-mart_financial_ytd->dim_report_measure,mart_financial_ytd.(measure_code) resolves in dim_report_measure,BLOCKING,PASS,0,0,owner Phase 5
-P7-REF-mart_financial_ytd->dim_report_scenario,mart_financial_ytd.(version_code) resolves in dim_report_scenario,BLOCKING,SOURCE_FINDING,12516,12516 accepted (P7-D-01),"owner Phase 5; PY_DERIVED has no row in the version master.. Open finding P7-D-01, unchanged at 12516 rows."
+P7-REF-mart_financial_ytd->dim_report_scenario,mart_financial_ytd.(version_code) resolves in dim_report_scenario,BLOCKING,PASS,0,0,owner Phase 5
+P7-REF-mart_financial_ytd->dim_version,mart_financial_ytd.(version_code) resolves in dim_version,BLOCKING,PASS,0,0,owner Phase 5
+P7-REF-mart_financial_monthly->dim_version,mart_financial_monthly.(version_code) resolves in dim_version,BLOCKING,PASS,0,0,owner Phase 5
+P7-REF-mart_variance->dim_version,mart_variance.(base_version) resolves in dim_version,BLOCKING,PASS,0,0,owner Phase 5
+P7-REF-mart_variance->dim_version,mart_variance.(comparator_version) resolves in dim_version,BLOCKING,PASS,0,0,owner Phase 5; Nullable: a comparison whose comparator is not yet issued has none.
+P7-REF-ref_default_version->dim_version,ref_default_version.(version_code) resolves in dim_version,BLOCKING,PASS,0,0,owner Phase 5
+P7-REF-dim_version->dim_scenario,dim_version.(scenario_code) resolves in dim_scenario,BLOCKING,PASS,0,0,owner Phase 3; Every version belongs to a scenario that exists. The compatibility of the two beyond mere existence is P7-VER-02.
 P7-REF-mart_financial_ytd->dim_entity,mart_financial_ytd.(entity_code) resolves in dim_entity,BLOCKING,PASS,0,0,owner Phase 5
 P7-REF-mart_financial_monthly->dim_account,mart_financial_monthly.(group_account) resolves in dim_account,BLOCKING,PASS,0,0,owner Phase 5
 P7-REF-mart_variance->dim_report_comparison,mart_variance.(comparison_code) resolves in dim_report_comparison,BLOCKING,PASS,0,0,owner Phase 5
@@ -228,3 +234,17 @@ P7-CPX-06,A fixed asset is acquired in its project's period,BLOCKING,PASS,0,0,an
 P7-CPX-07,"Fixed asset cost reconciles to project spend, project by project",BLOCKING,PASS,0.00,0.00,identifier integrity is only worth having if the amounts follow the identifier
 P7-CPX-08,Every capital project created at least one asset,BLOCKING,PASS,0,0,
 P7-CPX-09,The CapEx mart carries the corrected key through to reporting,BLOCKING,PASS,"1,846 rows / 1,846 ids",equal,this is the grain the Power BI CapEx fact and Capital Project dimension declare
+P7-VER-01,Every version code in every fact and mart resolves to the version master,BLOCKING,PASS,0,0,"11 version-bearing columns, all resolve"
+P7-VER-02,Every version is permitted for the scenario it belongs to,BLOCKING,PASS,0,0,"the version's type must be the type its scenario declares, not merely a scenario that happens to exist"
+P7-VER-03,Every reporting row's scenario matches its version's scenario,BLOCKING,PASS,0,0,a row claiming scenario FC on a Budget version would reconcile perfectly and report the wrong thing
+P7-VER-04,Each reportable scenario has exactly one default version,BLOCKING,PASS,0,0,three forecasts are retained and only the current one is the default; a superseded forecast presented as the forecast is an error nobody would notice
+P7-VER-05,No default version exists outside the governed version master,BLOCKING,PASS,0,0,one authoritative source for version membership; a second definition is a second answer waiting to disagree
+P7-VER-06,"Prior Year is a governed derived version, not an absent one",BLOCKING,PASS,PY_DERIVED,PY_DERIVED,"the P7-D-01 condition, stated as membership rather than as a convention"
+P7-VER-07,A derived version carries no source-loaded rows,BLOCKING,PASS,0,0,"Prior Year is a view of Actual. A stored PY row would be a second copy of a figure that is supposed to have one source, free to drift from it"
+P7-VER-08,A derived version is locked against editing,BLOCKING,PASS,0,0,a derived figure that can be edited is no longer derived
+P7-VER-09,"A derived version names the scenario it derives from, and it exists",BLOCKING,PASS,0,0,a derivation with no stated source is an assertion
+P7-VER-10,"Prior Year equals Actual twelve months earlier, to the cent",BLOCKING,PASS,0.00,0.00,"the derivation stated in the master, proved against the Actual it claims to be"
+P7-VER-11,Every Actual month has its prior-year row a year later,BLOCKING,PASS,0,0,"iterated from Actual, not from Prior Year: a PY row the derivation failed to build is invisible to a control that iterates PY"
+P7-VER-12,No reserved scenario or version is reportable,BLOCKING,PASS,0,0,a placeholder in configuration must not become reportable by being configured; Downside stays reserved until it is approved and populated
+P7-VER-13,No reserved version carries reporting data,BLOCKING,PASS,0,0,"reserved means unpopulated, and an empty report that looks like a real one is worse than no report"
+P7-VER-14,Every reportable version and scenario is named,BLOCKING,PASS,0,0,an unnamed member becomes a blank in every downstream report

@@ -189,14 +189,30 @@ The plausible-rate bounds are used by `CTL-FX-05` to reject inverted quotations 
 ### `dim_scenario` and `dim_version`
 Source `config/dimensions/scenario_version.csv`.
 
-`dim_scenario`: `ACT`, `BUD`, `FC`, `PY`. `PY` is marked `scenario_type = 'DERIVED'` and has
-no stored rows — it exists so that the semantic layer can present it as a first-class
-scenario while the data remains a date offset over `ACT` (ADR-0004).
+`dim_scenario`: `ACT`, `BUD`, `FC`, `PY`, and the reserved `DS`. `PY` is marked
+`scenario_type = 'DERIVED'` and has no stored rows — it exists so that the semantic layer can
+present it as a first-class scenario while the data remains a date offset over `ACT`
+(ADR-0004). It carries `derived_from_scenario_code = 'ACT'`: a derivation has to be able to
+name its source, or the platform cannot tell "PY comes from Actual" from "PY comes from
+nowhere".
 
 `dim_version`: `ACTUAL`, `BUD_FY25_V1`, `BUD_FY26_V1`, `FC_FY26_02`, `FC_FY26_05`,
-`FC_FY26_08`, `FC_FY27_P1`. Columns include `parent_scenario_code`, `fiscal_year`,
-`fx_rate_set`, `actual_months`, `forecast_months`, `is_default`, `is_locked`, `approved_by`,
-`approved_date`, `version_hash`.
+`FC_FY26_08`, `FC_FY27_P1`, `PY_DERIVED`, and the reserved `DS_FY26_STRESS`. Columns include
+`parent_scenario_code`, `fiscal_year`, `fx_rate_set`, `actual_months`, `forecast_months`,
+`is_default`, `is_locked`, `approved_by`, `approved_date`, `version_hash`.
+
+**`PY_DERIVED` is a governed derived version.** Prior Year is still derived and still stored
+nowhere; what changed is that its *identity* is now registered
+([ADR-0027](adr/0027-a-derived-version-is-still-a-governed-version.md)). It had none, and
+12,516 mart rows joined on a version code that resolved to nothing (defect P7-D-01). The rule:
+
+> Deriving a figure is not a reason to leave its identity ungoverned. Where a number comes from
+> and whether the thing has a governed identity are separate questions.
+
+A `DERIVED` version is typed `DERIVED`, locked, never source-loaded, and names what it derives
+from — proved by `P7-VER-06` through `P7-VER-11` rather than asserted. "Populated" means
+something different for it: a stored version is populated when rows carry its code, a derived
+version when *the version it derives from* is.
 
 `version_hash` is stamped when a version locks. `CTL-SCN-03` recomputes it on every build,
 so a locked budget cannot be quietly edited.

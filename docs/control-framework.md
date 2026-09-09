@@ -68,7 +68,7 @@ month, people stop reading them, and the one that mattered gets lost in the nois
 | `SCENARIO` | 6 | 5 | Budget and forecast are complete, locked, comparable and isolated |
 | `RECONCILIATION` | 6 | 4–9 | Every figure traces back to its source |
 | `REASONABLENESS` | 5 | 4–8 | The numbers make business sense, not just arithmetic sense |
-| `KEY_AND_GRAIN` | 229 | 2–5 | Every declared key is unique and every declared grain holds, over the full population |
+| `KEY_AND_GRAIN` | 249 | 2–5 | Every declared key is unique, every declared grain holds, and every scenario/version resolves, over the full population |
 
 ## 4. Control points in the pipeline
 
@@ -97,16 +97,19 @@ detected after consolidation costs a day of bisecting.
 One family deliberately runs across the whole chain rather than at a point in it:
 
 ```
-  ALL LAYERS ───► P7-REG, P7-KEY, P7-NUL, P7-REF, P7-CPX
-                  every declared key and grain, source through mart
+  ALL LAYERS ───► P7-REG, P7-KEY, P7-NUL, P7-REF, P7-CPX, P7-VER
+                  every declared key, grain and version, source through mart
 ```
 
 `python -m src.integrity.controls`. Keys are the one thing a point-in-the-pipeline control
 cannot protect, because a broken key is broken *everywhere at once* and looks correct at every
 individual step. `project_id` passed ingestion, consolidation and the marts for four phases
 while identifying 1,846 capital projects with 395 values — every join it took part in returned
-rows, just five times too many. See [the key and grain framework](key-and-grain-framework.md)
-and [ADR-0026](adr/0026-a-declared-key-is-a-contract.md).
+rows, just five times too many. The same family found `PY_DERIVED` in use as a version
+code with no row in the version master (P7-D-01), a different dimension with the same
+shape. See [the key and grain framework](key-and-grain-framework.md),
+[ADR-0026](adr/0026-a-declared-key-is-a-contract.md) and
+[ADR-0027](adr/0027-a-derived-version-is-still-a-governed-version.md).
 
 ## 5. The controls that matter most
 

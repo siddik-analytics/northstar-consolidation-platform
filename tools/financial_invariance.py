@@ -74,13 +74,44 @@ SPECS: dict[str, tuple[tuple[str, ...], tuple[str, ...], str]] = {
 
     "mart_variance": (
         ("comparison_code", "basis", "entity_code", "bu_code", "measure_code", "period_key"),
-        ("base_ytd", "comp_ytd", "var_ytd_usd", "var_fy_usd"),
+        ("base_mtd", "base_ytd", "base_fy", "comp_mtd", "comp_ytd", "comp_fy",
+         "var_mtd_usd", "var_ytd_usd", "var_fy_usd", "var_ytd_pct", "var_fy_pct"),
         """SELECT comparison_code, basis, entity_code, bu_code, measure_code, period_key,
+                  round(sum(base_mtd), 2)    AS base_mtd,
+                  round(sum(base_ytd), 2)    AS base_ytd,
+                  round(sum(base_fy), 2)     AS base_fy,
+                  round(sum(comp_mtd), 2)    AS comp_mtd,
+                  round(sum(comp_ytd), 2)    AS comp_ytd,
+                  round(sum(comp_fy), 2)     AS comp_fy,
+                  round(sum(var_mtd_usd), 2) AS var_mtd_usd,
+                  round(sum(var_ytd_usd), 2) AS var_ytd_usd,
+                  round(sum(var_fy_usd), 2)  AS var_fy_usd,
+                  round(sum(var_ytd_pct), 6) AS var_ytd_pct,
+                  round(sum(var_fy_pct), 6)  AS var_fy_pct
+           FROM mart_variance GROUP BY ALL"""),
+
+    # Prior year on its own. The version this correction gives a governed identity to, at the
+    # grain a report reads it, so "PY is unchanged" is a measured statement rather than an
+    # inference from a total that happens to include it.
+    "prior_year_measure_grain": (
+        ("basis", "entity_code", "bu_code", "measure_code", "period_key"),
+        ("mtd_usd", "ytd_usd", "fy_usd"),
+        """SELECT basis, entity_code, bu_code, measure_code, period_key,
+                  round(sum(mtd_usd), 2) AS mtd_usd,
+                  round(sum(ytd_usd), 2) AS ytd_usd,
+                  round(sum(fy_usd),  2) AS fy_usd
+           FROM mart_financial_ytd WHERE version_code = 'PY_DERIVED' GROUP BY ALL"""),
+
+    "prior_year_comparison": (
+        ("basis", "entity_code", "bu_code", "measure_code", "period_key"),
+        ("base_ytd", "comp_ytd", "var_ytd_usd", "var_ytd_pct", "var_fy_usd"),
+        """SELECT basis, entity_code, bu_code, measure_code, period_key,
                   round(sum(base_ytd), 2)    AS base_ytd,
                   round(sum(comp_ytd), 2)    AS comp_ytd,
                   round(sum(var_ytd_usd), 2) AS var_ytd_usd,
+                  round(sum(var_ytd_pct), 6) AS var_ytd_pct,
                   round(sum(var_fy_usd), 2)  AS var_fy_usd
-           FROM mart_variance GROUP BY ALL"""),
+           FROM mart_variance WHERE comparison_code = 'ACT_VS_PY' GROUP BY ALL"""),
 
     "mart_balance_sheet": (
         ("period_key", "account_class", "caption"),

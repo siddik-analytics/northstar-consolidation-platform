@@ -9,6 +9,33 @@ workbook. Together they close the last gap in the chain: the consolidation is pr
 
 ---
 
+## Scenario and version integrity
+
+The mart controls prove the reporting numbers. They do not prove that the *versions* those
+numbers are filed under exist, and for four phases one of them did not: `PY_DERIVED` was the
+comparator in one of the four approved comparisons and had no row in any version master
+(defect P7-D-01, [ADR-0027](adr/0027-a-derived-version-is-still-a-governed-version.md)).
+
+That family lives with the rest of the identity controls rather than here, because a version
+that resolves to nothing is the same failure as a key that is not unique — see
+[the key and grain framework](key-and-grain-framework.md):
+
+    python -m src.integrity.controls
+
+| control | asserts |
+|---|---|
+| `P7-VER-01` | every version code in every fact and mart resolves to the version master |
+| `P7-VER-02` `P7-VER-03` | a version is compatible with its scenario, and a row with its version |
+| `P7-VER-04` `P7-VER-05` | exactly one default per scenario, and no default outside the master |
+| `P7-VER-06` … `P7-VER-11` | the derived-version policy: typed, locked, never source-loaded, naming its source, and equal to Actual at *t − 12* in both directions |
+| `P7-VER-12` `P7-VER-13` | reserved scenarios stay unreportable and unpopulated |
+| `P7-VER-14` | every reportable member is named, so no blank member is possible |
+
+`P5-SCN-03` (each scenario has exactly one default version) remains where it is and now tests a
+`ref_default_version` that is derived wholly from the governed dimension, with nothing unioned
+in by hand.
+
+
 ## The rule, carried forward
 
 > ### Different artefacts expressing the same financial measure must reconcile to one authoritative definition.

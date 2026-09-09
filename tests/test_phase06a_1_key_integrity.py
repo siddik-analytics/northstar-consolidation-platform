@@ -207,18 +207,35 @@ def test_the_control_suite_has_no_blocking_failure(con):
 
 
 # ===================================================================== no economic drift
-def test_the_correction_moved_no_money():
+def test_every_rebaseline_snapshot_pair_shows_no_drift():
     """
     The pre/post comparison, asserted rather than eyeballed.
 
-    Skipped rather than failed when the snapshots are absent, because they are evidence of a
-    particular rebuild and not something a fresh clone can reproduce.
+    Every complete `before_X` / `after_X` pair under `data/95_invariance/` is compared, so a
+    later correction is covered by adding its snapshots rather than by editing this test.
+
+    Skipped rather than failed when a pair is absent or predates the current comparison specs:
+    the snapshots are evidence of a particular rebuild, they are not committed, and a fresh
+    clone cannot reproduce a comparison whose "before" no longer exists. A stale pair is not a
+    finding about the platform, it is a finding about the snapshot.
     """
-    before = ROOT / "data" / "95_invariance" / "before"
-    after = ROOT / "data" / "95_invariance" / "after"
-    if not before.exists() or not after.exists():
-        pytest.skip("the invariance snapshots are not present")
+    root = ROOT / "data" / "95_invariance"
+    if not root.exists():
+        pytest.skip("no invariance snapshots present")
     sys.path.insert(0, str(ROOT / "tools"))
     import financial_invariance
 
-    assert financial_invariance.compare(before, after) == 0
+    expected = {f"{name}.parquet" for name in financial_invariance.SPECS}
+    pairs = []
+    for before in sorted(root.glob("before*")):
+        after = root / before.name.replace("before", "after", 1)
+        if not after.is_dir():
+            continue
+        have = {f.name for f in before.iterdir()} & {f.name for f in after.iterdir()}
+        if expected <= have:
+            pairs.append((before, after))
+
+    if not pairs:
+        pytest.skip("no snapshot pair matches the current comparison specs")
+    for before, after in pairs:
+        assert financial_invariance.compare(before, after) == 0,             f"{before.name} -> {after.name} shows economic drift"

@@ -397,10 +397,36 @@ def test_scenario_and_version_definitions_are_consistent():
         if r["table"] == "version":
             assert r["parent_code"] in scenarios, \
                 f"version {r['code']} references unknown scenario {r['parent_code']}"
-    # Prior Year must be derived, never stored as its own version
+    # Prior Year is DERIVED, and it has a governed version row.
+    #
+    # This assertion used to read "no version may belong to PY", which conflated two
+    # different things: where a figure comes from, and whether its identity is governed.
+    # Prior Year is still never stored -- P7-VER-07 proves no PY row is source-loaded and
+    # P7-VER-10 proves every PY value is the Actual twelve months earlier. But 12,516 mart
+    # rows join on the version code PY_DERIVED, and a code that is joined on must resolve
+    # (P7-D-01, ADR-0027). Deriving a figure is not a reason to leave its identity ungoverned.
     py = next(r for r in rows if r["table"] == "scenario" and r["code"] == "PY")
     assert py["scenario_type"] == "DERIVED", "Prior Year must be derived (ADR-0004)"
-    assert not any(r["parent_code"] == "PY" for r in rows if r["table"] == "version")
+    assert py["parent_code"] == "ACT", "Prior Year must say what it derives from"
+
+    py_versions = [r for r in rows if r["table"] == "version" and r["parent_code"] == "PY"]
+    assert len(py_versions) == 1, "Prior Year needs exactly one governed derived version"
+    v = py_versions[0]
+    assert v["code"] == "PY_DERIVED"
+    assert v["scenario_type"] == "DERIVED", "a PY version must be typed DERIVED, not stored"
+    assert v["is_locked"] == "TRUE", "a derived version must not be editable"
+    assert v["is_default"] == "TRUE", "the one PY version is the PY default"
+    assert v["is_reserved"] == "FALSE"
+    assert not v["fiscal_year"], "Prior Year spans years, like Actual"
+    assert not v["approved_by"], "a derived version inherits its approval from Actual"
+
+    # Exactly one default per non-reserved scenario, in the configuration itself.
+    from collections import Counter
+    defaults = Counter(r["parent_code"] for r in rows
+                       if r["table"] == "version" and r["is_default"] == "TRUE"
+                       and r["is_reserved"] == "FALSE")
+    for scenario in ("ACT", "BUD", "FC", "PY"):
+        assert defaults[scenario] == 1,             f"scenario {scenario} has {defaults[scenario]} default versions, expected 1"
 
 
 def test_department_business_unit_references_are_valid():

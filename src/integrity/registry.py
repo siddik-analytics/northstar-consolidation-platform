@@ -342,17 +342,26 @@ REFERENCES: tuple[Reference, ...] = (
     # ------------------------------------------- the marts to their dimensions
     Reference("mart_financial_ytd", ("measure_code",), "dim_report_measure",
               ("measure_code",), "Phase 5"),
-    # OPEN FINDING P7-D-01. Prior year is derived in the mart by shifting Actual twelve
-    # months (src/marts/build.py:158) and given the version code PY_DERIVED, but no such row
-    # exists in dim_version or in dim_report_scenario -- even though PY *is* a first-class
-    # scenario in dim_scenario. So 12,516 rows of mart_financial_ytd, and the PY comparator
-    # rows of mart_variance, carry a version code with no version behind it. The reference is
-    # declared rather than quietly dropped, because dropping it would be deciding the
-    # question. Reported, not fixed: the fix belongs to the Phase 5 scenario architecture and
-    # is outside an identifier correction.
+    # P7-D-01, CLOSED. Prior year is derived by shifting Actual twelve months and is stored
+    # nowhere, and for that reason it had no version row -- so 12,516 mart rows joined on a
+    # version code with no version behind it. PY_DERIVED is now a governed derived version in
+    # the master (ADR-0027) and this resolves at zero, with no acceptance.
     Reference("mart_financial_ytd", ("version_code",), "dim_report_scenario",
-              ("version_code",), "Phase 5", accepted=12516, defect="P7-D-01",
-              note="PY_DERIVED has no row in the version master."),
+              ("version_code",), "Phase 5"),
+    Reference("mart_financial_ytd", ("version_code",), "dim_version", ("version_code",),
+              "Phase 5"),
+    Reference("mart_financial_monthly", ("version_code",), "dim_version", ("version_code",),
+              "Phase 5"),
+    Reference("mart_variance", ("base_version",), "dim_version", ("version_code",), "Phase 5"),
+    Reference("mart_variance", ("comparator_version",), "dim_version", ("version_code",),
+              "Phase 5",
+              note="Nullable: a comparison whose comparator is not yet issued has none."),
+    Reference("ref_default_version", ("version_code",), "dim_version", ("version_code",),
+              "Phase 5"),
+    Reference("dim_version", ("scenario_code",), "dim_scenario", ("scenario_code",),
+              "Phase 3",
+              note="Every version belongs to a scenario that exists. The compatibility of the "
+                   "two beyond mere existence is P7-VER-02."),
     Reference("mart_financial_ytd", ("entity_code",), "dim_entity", ("entity_code",),
               "Phase 5"),
     Reference("mart_financial_monthly", ("group_account",), "dim_account", ("group_account",),

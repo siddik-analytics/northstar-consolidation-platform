@@ -29,7 +29,7 @@ figure back to the source journal that produced it.
 | **4B — Documentation & release gate** | ✅ **Complete** | [Findings](docs/phases/phase-04b-engine-findings.md) |
 | **4C — Reporting integrity & cross-artefact gate** | ✅ **Complete** | [Report](docs/phases/phase-04c-reporting-integrity.md) |
 | **5 — Reporting marts & Excel management model** | ✅ **Complete** | [Report](docs/phases/phase-05-report.md) |
-| **5.1 — Upstream dimensional-integrity correction** | ✅ **Complete** | [Report](docs/phases/phase-05-1-key-integrity.md) |
+| **5.1 — Upstream dimensional-integrity correction** | ✅ **Complete** | [Report](docs/phases/phase-05-1-key-integrity.md) · [Scenario dimension](docs/phases/phase-05-1-scenario-integrity.md) |
 | 6 — Excel FP&A models | ⏸ | |
 | 7 — Power BI semantic model & reports | ⏸ | |
 | 8 — Board pack & commentary framework | ⏸ | |
@@ -184,7 +184,9 @@ tests/           Automated validation
 | [Phase 4C reporting integrity](docs/phases/phase-04c-reporting-integrity.md) | those defects closed, a third found by the new controls, and the cross-artefact family |
 | [**Phase 5 report**](docs/phases/phase-05-report.md) | the governed reporting marts and the Excel management model |
 | [Phase 5.1 key integrity](docs/phases/phase-05-1-key-integrity.md) | a business key that was never a key, corrected at the generator, and the framework that now proves every one of them |
-| [Key and grain framework](docs/key-and-grain-framework.md) | 61 declared keys, 229 controls, 9 fixtures, and the defect that made them necessary |
+| [Phase 5.1 scenario integrity](docs/phases/phase-05-1-scenario-integrity.md) | the second defect that framework found: a version code in use that resolved to nothing |
+| [Key and grain framework](docs/key-and-grain-framework.md) | 61 declared keys, 249 controls, 18 fixtures, and the two defects that made them necessary |
+| [Defect register](docs/defect-register.md) | every defect found, what closed it, and the control that now stops it recurring |
 | [**Architecture lessons**](docs/architecture-lessons.md) | ten defects that balanced perfectly while being wrong, and the design change each produced |
 
 | The consolidation, as built | |

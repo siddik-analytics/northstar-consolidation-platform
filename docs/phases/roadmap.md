@@ -381,10 +381,21 @@ fixtures** — with `P7-REG-01` failing whenever a keyed table exists that the r
 heard of. It found a second gap on its first run (**P7-D-01**, `PY_DERIVED` used as a version
 code with no row in the version master), reported and quarantined rather than fixed.
 
+The framework found a second defect on its first run: **P7-D-01**, `PY_DERIVED` used as a
+version code by 12,516 mart rows with no row in any version master. Reported rather than fixed
+at the time, and closed in the follow-on pass -- Prior Year now has a governed derived version
+in the master, the hand-written `ref_default_version` union is gone, and fourteen `P7-VER`
+controls with nine fixtures govern scenario and version integrity. The framework finishes at
+**249/249 with nothing quarantined**, and again no money moved: 325,000 rows compared across
+eighteen grains at `0.00`, including Prior Year isolated on its own.
+
 Phase 6A remains **not resumed**; its WIP is preserved on `wip/phase-06a-semantic-model` and
-must be rebased onto this baseline. See
-[`phase-05-1-key-integrity.md`](phase-05-1-key-integrity.md) and
-[ADR-0026](../adr/0026-a-declared-key-is-a-contract.md).
+must be rebased onto this baseline, updating both its Capital Project key and its
+scenario/version assumptions. See
+[`phase-05-1-key-integrity.md`](phase-05-1-key-integrity.md),
+[`phase-05-1-scenario-integrity.md`](phase-05-1-scenario-integrity.md),
+[ADR-0026](../adr/0026-a-declared-key-is-a-contract.md) and
+[ADR-0027](../adr/0027-a-derived-version-is-still-a-governed-version.md).
 
 ---
 

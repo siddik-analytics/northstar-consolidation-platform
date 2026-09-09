@@ -1,6 +1,6 @@
 # Architecture lessons
 
-Twelve defects found across Phases 2 to 6 that a balancing control could not have caught, and
+Thirteen defects found across Phases 2 to 6 that a balancing control could not have caught, and
 the design change each one produced.
 
 They share a shape. Every one of them **balanced**. The trial balance closed, the journal
@@ -8,8 +8,9 @@ summed to zero, the statement footed, and the number was wrong. That is the fail
 platform is built against, because it is the failure mode that survives a review: a reviewer
 checks that it balances, it does, and the review ends.
 
-The twelfth did not even need the number to be wrong. It balanced, footed, tied and
-reconciled — and still could not say which project bought which asset.
+The last two did not even need the number to be wrong. They balanced, footed, tied and
+reconciled — and still could not say which project bought which asset, or what version half the
+reporting rows belonged to.
 
 Each entry: **symptom → root cause → why ordinary controls miss it → permanent fix**.
 
@@ -274,6 +275,42 @@ row in the version master), which is the usual sign that a control family was wo
 
 ---
 
+## 13. A version code that resolved to nothing
+
+**Symptom.** `PY_DERIVED` was the version code on 12,516 rows of `mart_financial_ytd` and on
+every prior-year comparator in `mart_variance`. It existed in no version master. `PY` *was* a
+first-class scenario; its version simply had no row.
+
+**Root cause.** A sound decision, followed by a step that does not follow from it. Prior Year is
+derived from Actual at *t − 12* and stored nowhere, so it cannot drift (ADR-0004). Because the
+**data** is not stored, the **identity** was never registered — and those are different
+questions. `dim_report_scenario` admitted a version only if rows existed carrying its code,
+which is the right test for a stored version and the wrong test for a derived one.
+
+**Why controls miss it.** The same reason as item 12, one dimension over: every query still
+returned rows. A version code that resolves to nothing does not fail a join, it just never
+appears in a dimension nobody was joining it to. And there was a **workaround already in the
+code** — `ref_default_version` unioned the PY default in by hand, with a comment — which is
+usually the clearest available signal that something is wrong and the easiest thing in the world
+to read past.
+
+**Permanent fix.** [ADR-0027](adr/0027-a-derived-version-is-still-a-governed-version.md):
+
+> **Deriving a figure is not a reason to leave its identity ungoverned.** Where a number comes
+> from and whether the thing has a governed identity are separate questions.
+
+`PY_DERIVED` is now a governed derived version in the master — typed `DERIVED`, locked, never
+source-loaded, naming what it derives from. Fourteen `P7-VER` controls and nine fixtures hold
+it, including a pair worth copying: `P7-VER-10` proves every Prior Year row is the right Actual,
+and `P7-VER-11` proves no Actual month is *missing* its Prior Year. One iterates PY, the other
+iterates Actual, because a row the derivation never built is invisible to a control that
+iterates the output.
+
+The `UNION ALL` is gone and `P7-VER-05` fails if a default ever appears outside the master
+again.
+
+---
+
 ## What these have in common
 
 **A plug makes controls pass.** Items 1 and 4 both had a residual absorbing the defect, and in
@@ -298,7 +335,16 @@ only way to find it is to break something deliberately and see whether anything 
 would still have made every artefact unusable as evidence. If a rebuild can differ, nothing
 built on it can be relied upon.
 
-**A join that returns rows is not a join that is right.** Item 12 is the one defect here that
-never made a number wrong. Every control that could have seen it was measuring amounts, and the
-amounts were correct — the identity was not. Structure needs its own controls, because a
-platform that only checks its arithmetic will believe anything its keys tell it.
+**A join that returns rows is not a join that is right.** Items 12 and 13 are the two defects
+here that never made a number wrong. Every control that could have seen them was measuring
+amounts, and the amounts were correct — the identity was not. Structure needs its own controls,
+because a platform that only checks its arithmetic will believe anything its keys tell it.
+
+**A workaround is a defect somebody already found.** Item 13 had a hand-written `UNION ALL`
+sitting in the mart build with a comment beside it. Nobody had written it for fun; it was there
+because the governed dimension was missing a row, and the quickest way past that was to add the
+row by hand at the point of use. Code that routes around its own data model is worth reading as
+a report of a defect rather than as an implementation detail.
+
+**A control family earns its keep by finding the next one.** The framework built for item 12
+found item 13 within a day of existing — different dimension, different cause, same shape.

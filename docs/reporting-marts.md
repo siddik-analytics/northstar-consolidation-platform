@@ -8,6 +8,32 @@ and nothing downstream re-derives an accounting definition.
 
 ---
 
+## Scenario and version
+
+One authoritative source for what a valid version is: `dim_report_scenario`, built from the
+governed master in `config/dimensions/scenario_version.csv`. `ref_default_version` is
+`SELECT scenario_code, version_code FROM dim_report_scenario WHERE is_default` and nothing
+else — it used to union Prior Year in by hand, because `PY_DERIVED` had no version row to be
+the default of ([ADR-0027](adr/0027-a-derived-version-is-still-a-governed-version.md)).
+
+| scenario | default version | |
+|---|---|---|
+| `ACT` | `ACTUAL` | one version; restatements are adjustment postings, never overwrites |
+| `BUD` | `BUD_FY26_V1` | locked on board approval |
+| `FC` | `FC_FY26_08` | three forecasts retained, only the current one is the default |
+| `PY` | `PY_DERIVED` | **derived**: Actual at *t − 12*, stored nowhere, locked |
+| `DS` | — | reserved and unpopulated; excluded by `P5-SCN-02` and `P7-VER-12` |
+
+A derived version is admitted to `dim_report_scenario` when the scenario it derives from has a
+populated default version, not when rows exist carrying its own code — a derived version has
+none by construction, and testing it for stored rows is what excluded Prior Year from the
+dimension that governs what a report may offer.
+
+`P7-VER-01` … `P7-VER-14` govern this: every version code in every fact and mart resolves,
+each version is compatible with its scenario, each scenario has exactly one default, no default
+exists outside the master, and the derived-version policy holds.
+
+
 ## 1. Why a mart layer at all
 
 The consolidation fact is shaped for accounting: entity × account × cost centre × partner ×

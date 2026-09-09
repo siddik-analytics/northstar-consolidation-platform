@@ -42,8 +42,8 @@ fault sweep is more than half — it runs ten complete pipelines.
 | 9 | `python -m src.marts.run` | the governed reporting marts and their controls — **36/36** | 4 s |
 | 10 | `python -m src.excel.build` | the Excel management reporting workbook | 8 s |
 | 11 | `python -m src.excel.qa` | Excel calculation, reconciliation and render — **17/17** | 32 s |
-| 12 | `python -m src.integrity.controls` | every declared key and grain — **228/229**, 1 open finding | 2 s |
-| 13 | `python -m src.integrity.faults` | nine deliberate key breakages — **9/9 detected** | 3 s |
+| 12 | `python -m src.integrity.controls` | every declared key, grain and version — **249/249** | 2 s |
+| 13 | `python -m src.integrity.faults` | eighteen deliberate breakages — **18/18 detected** | 6 s |
 | 14 | `python -m pytest tests -q` | **469** automated tests | 119 s |
 
 A `Makefile` wraps steps 1, 2, 3, 4, 5, 6, 7, 8 and 9 as `anchors`, `build`, `validate`,
@@ -94,8 +94,8 @@ Determinism is engineered, not hoped for:
 * every identifier is derived from the business keys it represents, never from a counter or a
   clock — **and carries the full grain that makes its subject distinct**, which is the part
   `project_id` got wrong for four phases (ADR-0026);
-* every declared key is proved unique over its whole population on every build, by
-  `src/integrity/controls.py`;
+* every declared key is proved unique over its whole population on every build, and
+  every version code is proved to resolve, by `src/integrity/controls.py`;
 * random draws come from a single declared master seed.
 
 ## 4. The clean-tree expectation

@@ -1,5 +1,12 @@
 # ADR-0004 — Prior Year derived by date offset, not stored as a scenario
 
+> **Extended by [ADR-0027](0027-a-derived-version-is-still-a-governed-version.md).**
+> Prior Year is still derived and still stored nowhere — that decision stands unchanged.
+> What ADR-0027 adds is that being derived is not a reason to have no governed
+> identity: `PY_DERIVED` now has a version row in the master, because 12,516 mart rows
+> joined on a version code that resolved to nothing (defect P7-D-01).
+
+
 **Status:** Accepted · **Date:** 2026-09-06 · **Phase:** 1
 
 ## Context
