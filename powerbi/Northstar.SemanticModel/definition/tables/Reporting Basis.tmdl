@@ -1,0 +1,49 @@
+/// Statutory or Management. Membership is settled upstream and carried on every fact row; the
+/// model never infers it.
+table 'Reporting Basis'
+	lineageTag: 1b857345-7adf-5390-84fd-a33a84fcde21
+
+	column basis
+		dataType: string
+		isKey
+		lineageTag: 4cfbd0e3-6111-547f-aaab-7e8da6198aea
+		summarizeBy: none
+		sourceColumn: basis
+
+		annotation SummarizationSetBy = Automatic
+
+	column basis_name
+		dataType: string
+		lineageTag: b7acb4b2-6b30-5ea4-8e56-78b7428101f1
+		summarizeBy: none
+		sourceColumn: basis_name
+		sortByColumn: sort_order
+
+		annotation SummarizationSetBy = Automatic
+
+	column sort_order
+		dataType: int64
+		isHidden
+		lineageTag: e5f6e514-1db2-54ef-b3c1-04f5f062df8b
+		summarizeBy: none
+		sourceColumn: sort_order
+
+		annotation SummarizationSetBy = Automatic
+
+	column description
+		dataType: string
+		lineageTag: 1a18fea5-c54b-5976-bb7a-fb0105d26b57
+		summarizeBy: none
+		sourceColumn: description
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'Reporting Basis' = m
+		mode: import
+		source =
+				let
+				    Source = Parquet.Document(File.Contents(DataFolder & "\35_semantic\dim_semantic_basis.parquet"))
+				in
+				    Source
+
+	annotation PBI_ResultType = Table

@@ -1,0 +1,56 @@
+/// The four approved comparisons.
+table 'Comparison'
+	lineageTag: 6f5171ef-c436-5329-9d89-36bdd07b2b95
+
+	column comparison_code
+		dataType: string
+		isKey
+		lineageTag: b1020024-7141-5614-8c99-6e565e8038dc
+		summarizeBy: none
+		sourceColumn: comparison_code
+
+		annotation SummarizationSetBy = Automatic
+
+	column comparison_name
+		dataType: string
+		lineageTag: 421feea5-6640-5405-9d4e-13f8160265f0
+		summarizeBy: none
+		sourceColumn: comparison_name
+		sortByColumn: sort_order
+
+		annotation SummarizationSetBy = Automatic
+
+	column base_scenario
+		dataType: string
+		lineageTag: 228ce073-e5e2-5f7d-8c5d-89558721ebc5
+		summarizeBy: none
+		sourceColumn: base_scenario
+
+		annotation SummarizationSetBy = Automatic
+
+	column comparator_scenario
+		dataType: string
+		lineageTag: b32a06f0-69aa-5b29-ab9c-8ad6f9b0661a
+		summarizeBy: none
+		sourceColumn: comparator_scenario
+
+		annotation SummarizationSetBy = Automatic
+
+	column sort_order
+		dataType: int64
+		isHidden
+		lineageTag: aded1b2c-6fc9-5449-ad17-ff229697fc15
+		summarizeBy: none
+		sourceColumn: sort_order
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'Comparison' = m
+		mode: import
+		source =
+				let
+				    Source = Parquet.Document(File.Contents(DataFolder & "\30_marts\dim_report_comparison.parquet"))
+				in
+				    Source
+
+	annotation PBI_ResultType = Table

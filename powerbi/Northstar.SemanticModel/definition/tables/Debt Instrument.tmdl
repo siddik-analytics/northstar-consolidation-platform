@@ -1,0 +1,87 @@
+/// Debt instruments, with the covenant flag the net debt definition uses.
+table 'Debt Instrument'
+	lineageTag: fb99c62d-7c9a-57f4-b39a-20c6fa45d2f1
+
+	column instrument_id
+		dataType: string
+		isKey
+		lineageTag: 23e8073a-3849-5a76-b23d-b82dbceea261
+		summarizeBy: none
+		sourceColumn: instrument_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column instrument_name
+		dataType: string
+		lineageTag: fb39050f-8cde-5893-9ddf-534372c00aa9
+		summarizeBy: none
+		sourceColumn: instrument_name
+
+		annotation SummarizationSetBy = Automatic
+
+	column instrument_type
+		dataType: string
+		lineageTag: 37bb8714-1751-5166-9bf8-8195ea36c604
+		summarizeBy: none
+		sourceColumn: instrument_type
+
+		annotation SummarizationSetBy = Automatic
+
+	column borrower_entity
+		dataType: string
+		lineageTag: c59ecf99-5777-5d49-8ac1-3640c6786341
+		summarizeBy: none
+		sourceColumn: borrower_entity
+
+		annotation SummarizationSetBy = Automatic
+
+	column currency_code
+		dataType: string
+		lineageTag: ec775ef9-c00a-5cb0-964b-1d8b35343bdb
+		summarizeBy: none
+		sourceColumn: currency_code
+
+		annotation SummarizationSetBy = Automatic
+
+	column rate_type
+		dataType: string
+		lineageTag: c296c6ad-cea6-5d98-9384-6c3e19c0fa03
+		summarizeBy: none
+		sourceColumn: rate_type
+
+		annotation SummarizationSetBy = Automatic
+
+	column is_hedged
+		dataType: boolean
+		lineageTag: ccdd704d-b4ce-5625-8794-b86de50e8a75
+		summarizeBy: none
+		sourceColumn: is_hedged
+
+		annotation SummarizationSetBy = Automatic
+
+	column maturity_date
+		dataType: dateTime
+		lineageTag: a43e5b17-470d-5644-9c52-178aea73ec90
+		summarizeBy: none
+		sourceColumn: maturity_date
+		formatString: yyyy-mm-dd
+
+		annotation SummarizationSetBy = Automatic
+
+	column counts_toward_covenant_debt
+		dataType: boolean
+		lineageTag: f52dd1cd-9e24-5b2c-a215-7a0e6173bb36
+		summarizeBy: none
+		sourceColumn: counts_toward_covenant_debt
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'Debt Instrument' = m
+		mode: import
+		source =
+				let
+				    Source = Parquet.Document(File.Contents(DataFolder & "\35_semantic\dim_semantic_instrument.parquet"))
+				in
+				    Source
+
+	annotation PBI_ResultType = Table

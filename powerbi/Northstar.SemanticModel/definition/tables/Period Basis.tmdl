@@ -1,0 +1,42 @@
+/// Month, year to date or full year. DISCONNECTED on purpose: it is read by the statement
+/// measures to choose which governed column to aggregate, and it filters no fact. Relating it
+/// to anything would filter rows, which is not what it is for.
+table 'Period Basis'
+	lineageTag: 0dedadeb-9ff5-5774-a628-ceab24a4c1f6
+
+	column basis_code
+		dataType: string
+		isKey
+		lineageTag: 0052941a-e89b-54be-82aa-dfe0081d3156
+		summarizeBy: none
+		sourceColumn: basis_code
+
+		annotation SummarizationSetBy = Automatic
+
+	column basis_name
+		dataType: string
+		lineageTag: 6b6e1986-5f2b-569b-b402-325a047b41b5
+		summarizeBy: none
+		sourceColumn: basis_name
+		sortByColumn: sort_order
+
+		annotation SummarizationSetBy = Automatic
+
+	column sort_order
+		dataType: int64
+		isHidden
+		lineageTag: ce3b5874-a06d-5264-90f7-da97fa7ba50f
+		summarizeBy: none
+		sourceColumn: sort_order
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'Period Basis' = m
+		mode: import
+		source =
+				let
+				    Source = Parquet.Document(File.Contents(DataFolder & "\35_semantic\dim_semantic_period_basis.parquet"))
+				in
+				    Source
+
+	annotation PBI_ResultType = Table

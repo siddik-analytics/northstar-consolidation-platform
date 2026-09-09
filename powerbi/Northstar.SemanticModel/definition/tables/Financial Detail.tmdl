@@ -1,0 +1,146 @@
+/// Account grain, for drill-down from any measure to the accounts behind it. The measure layer
+/// reads Financials, not this.
+table 'Financial Detail'
+	lineageTag: 03b215ab-5204-5305-a97f-b39821c97822
+
+	column basis
+		dataType: string
+		isHidden
+		lineageTag: c3304c74-d94d-5969-b1d0-1ca5c066d041
+		summarizeBy: none
+		sourceColumn: basis
+
+		annotation SummarizationSetBy = Automatic
+
+	column scenario_code
+		dataType: string
+		isHidden
+		lineageTag: 23251150-a43f-57f3-82af-36d26d0da486
+		summarizeBy: none
+		sourceColumn: scenario_code
+
+		annotation SummarizationSetBy = Automatic
+
+	column version_code
+		dataType: string
+		isHidden
+		lineageTag: 2c211eca-7ac6-5615-a45c-43d58bc5a568
+		summarizeBy: none
+		sourceColumn: version_code
+
+		annotation SummarizationSetBy = Automatic
+
+	column entity_code
+		dataType: string
+		isHidden
+		lineageTag: 669d72ea-5e60-5d53-aa6a-a8b8fe2f8073
+		summarizeBy: none
+		sourceColumn: entity_code
+
+		annotation SummarizationSetBy = Automatic
+
+	column bu_code
+		dataType: string
+		isHidden
+		lineageTag: 0bd26c95-33e3-577d-b7f4-183b90607785
+		summarizeBy: none
+		sourceColumn: bu_code
+
+		annotation SummarizationSetBy = Automatic
+
+	column cost_center_code
+		dataType: string
+		isHidden
+		lineageTag: fd55f342-9817-5be7-b46f-6300d0a439b0
+		summarizeBy: none
+		sourceColumn: cost_center_code
+
+		annotation SummarizationSetBy = Automatic
+
+	column group_account
+		dataType: string
+		isHidden
+		lineageTag: 6fbd6381-f342-5db7-b923-c624c8afcbab
+		summarizeBy: none
+		sourceColumn: group_account
+
+		annotation SummarizationSetBy = Automatic
+
+	column line
+		dataType: string
+		isHidden
+		lineageTag: 37ac4351-0b38-5a44-8b7d-2e3333cb6560
+		summarizeBy: none
+		sourceColumn: line
+
+		annotation SummarizationSetBy = Automatic
+
+	column is_addback
+		dataType: boolean
+		lineageTag: f3b96844-501b-5b1f-8ba9-5e6a157017ee
+		summarizeBy: none
+		sourceColumn: is_addback
+
+		annotation SummarizationSetBy = Automatic
+
+	column is_intercompany
+		dataType: boolean
+		lineageTag: c26160b3-4399-5c9e-a6a8-2097cd6ef938
+		summarizeBy: none
+		sourceColumn: is_intercompany
+
+		annotation SummarizationSetBy = Automatic
+
+	column period_key
+		dataType: int64
+		isHidden
+		lineageTag: bcd0be12-fcdc-52db-8022-d165df4c04e9
+		summarizeBy: none
+		sourceColumn: period_key
+
+		annotation SummarizationSetBy = Automatic
+
+	column fiscal_year
+		dataType: int64
+		isHidden
+		lineageTag: a00386f1-d610-54ec-8add-0e981ef6fe36
+		summarizeBy: none
+		sourceColumn: fiscal_year
+
+		annotation SummarizationSetBy = Automatic
+
+	column accounting_period
+		dataType: int64
+		isHidden
+		lineageTag: 44eed2d2-e9cc-535a-bc20-a6918beaf40e
+		summarizeBy: none
+		sourceColumn: accounting_period
+
+		annotation SummarizationSetBy = Automatic
+
+	column fiscal_quarter
+		dataType: int64
+		isHidden
+		lineageTag: 3f06c090-655a-5d5f-a853-9e1ffefb22bf
+		summarizeBy: none
+		sourceColumn: fiscal_quarter
+
+		annotation SummarizationSetBy = Automatic
+
+	column amount_usd
+		dataType: decimal
+		lineageTag: 20b73e89-843f-5f18-8f63-475debb02586
+		summarizeBy: none
+		sourceColumn: amount_usd
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'Financial Detail' = m
+		mode: import
+		source =
+				let
+				    Source = Parquet.Document(File.Contents(DataFolder & "\30_marts\mart_financial_monthly.parquet"))
+				in
+				    Source
+
+	annotation PBI_ResultType = Table

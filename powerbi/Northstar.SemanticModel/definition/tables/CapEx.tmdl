@@ -1,0 +1,110 @@
+/// Capital expenditure by project and month.
+table 'CapEx'
+	lineageTag: e0294039-fada-5f5a-9ffe-8d05cd0f92c5
+
+	column period_key
+		dataType: int64
+		isHidden
+		lineageTag: 3f3f087e-5c3a-5058-90af-8c40346b8c91
+		summarizeBy: none
+		sourceColumn: period_key
+
+		annotation SummarizationSetBy = Automatic
+
+	column fiscal_year
+		dataType: int64
+		isHidden
+		lineageTag: 0a02e0d9-c843-57ce-9a9c-13258f3a5093
+		summarizeBy: none
+		sourceColumn: fiscal_year
+
+		annotation SummarizationSetBy = Automatic
+
+	column project_id
+		dataType: string
+		isHidden
+		lineageTag: cb405fae-2e25-5ec3-92cb-0cbba5a3bae3
+		summarizeBy: none
+		sourceColumn: project_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column project_name
+		dataType: string
+		isHidden
+		lineageTag: 4030f6ac-10a0-540d-af04-786f8e4c65f7
+		summarizeBy: none
+		sourceColumn: project_name
+
+		annotation SummarizationSetBy = Automatic
+
+	column asset_class
+		dataType: string
+		isHidden
+		lineageTag: 185bff22-3e78-5822-a050-5dcb7c96ea70
+		summarizeBy: none
+		sourceColumn: asset_class
+
+		annotation SummarizationSetBy = Automatic
+
+	column entity_code
+		dataType: string
+		isHidden
+		lineageTag: cdb8235d-79e4-5ffc-9614-8fc54a81d017
+		summarizeBy: none
+		sourceColumn: entity_code
+
+		annotation SummarizationSetBy = Automatic
+
+	column entity_name
+		dataType: string
+		isHidden
+		lineageTag: 8f16223a-815f-51c3-b648-0ccba456ed75
+		summarizeBy: none
+		sourceColumn: entity_name
+
+		annotation SummarizationSetBy = Automatic
+
+	column bu_code
+		dataType: string
+		isHidden
+		lineageTag: d0892746-a9c5-5b62-9faf-871a5971af0e
+		summarizeBy: none
+		sourceColumn: bu_code
+
+		annotation SummarizationSetBy = Automatic
+
+	column bu_name
+		dataType: string
+		isHidden
+		lineageTag: 54879981-7afd-53e9-90d1-7de8d625cf8e
+		summarizeBy: none
+		sourceColumn: bu_name
+
+		annotation SummarizationSetBy = Automatic
+
+	column spend_usd
+		dataType: double
+		lineageTag: 08a2fb0b-1094-5036-af93-0546d1e8cea2
+		summarizeBy: none
+		sourceColumn: spend_usd
+
+		annotation SummarizationSetBy = Automatic
+
+	column approved_usd
+		dataType: double
+		lineageTag: 7daca468-f224-5741-b37e-187bd8210c2a
+		summarizeBy: none
+		sourceColumn: approved_usd
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'CapEx' = m
+		mode: import
+		source =
+				let
+				    Source = Parquet.Document(File.Contents(DataFolder & "\30_marts\mart_capex.parquet"))
+				in
+				    Source
+
+	annotation PBI_ResultType = Table

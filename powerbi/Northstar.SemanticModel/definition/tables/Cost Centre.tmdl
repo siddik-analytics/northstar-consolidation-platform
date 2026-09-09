@@ -1,0 +1,87 @@
+/// Cost centres, keyed by entity and code because the same code is reused across entities.
+table 'Cost Centre'
+	lineageTag: 3384d7b7-c3e3-5d84-83d9-ff48a75c5faa
+
+	column cost_centre_key
+		dataType: string
+		isHidden
+		isKey
+		lineageTag: ab691b10-8d50-5df7-b40a-ba59d4d62273
+		summarizeBy: none
+		sourceColumn: cost_centre_key
+
+		annotation SummarizationSetBy = Automatic
+
+	column cost_center_code
+		dataType: string
+		lineageTag: d00aa0f6-d381-5aa2-b20d-54b33022f10f
+		summarizeBy: none
+		sourceColumn: cost_center_code
+
+		annotation SummarizationSetBy = Automatic
+
+	column cost_center_name
+		dataType: string
+		lineageTag: 4f52d15a-d6e8-5fde-bc49-e5c230892bf8
+		summarizeBy: none
+		sourceColumn: cost_center_name
+
+		annotation SummarizationSetBy = Automatic
+
+	column entity_code
+		dataType: string
+		lineageTag: 75997364-fbee-55c6-9280-b2077fe99302
+		summarizeBy: none
+		sourceColumn: entity_code
+
+		annotation SummarizationSetBy = Automatic
+
+	column department_code
+		dataType: string
+		lineageTag: 095c61dd-1173-5d0f-99f8-0e2122cf545c
+		summarizeBy: none
+		sourceColumn: department_code
+
+		annotation SummarizationSetBy = Automatic
+
+	column department_name
+		dataType: string
+		lineageTag: b36ff0d0-eec1-5cff-8df6-95ab2a41395e
+		summarizeBy: none
+		sourceColumn: department_name
+
+		annotation SummarizationSetBy = Automatic
+
+	column function_group
+		dataType: string
+		lineageTag: cbcddd75-1e2e-5c02-9e53-e199997dc068
+		summarizeBy: none
+		sourceColumn: function_group
+
+		annotation SummarizationSetBy = Automatic
+
+	column cost_type
+		dataType: string
+		lineageTag: 1708f1a8-e656-537a-ab01-4b4b67f62bdd
+		summarizeBy: none
+		sourceColumn: cost_type
+
+		annotation SummarizationSetBy = Automatic
+
+	column bu_code
+		dataType: string
+		lineageTag: 80d275cc-9030-57f1-a2ad-5e559686c3fa
+		summarizeBy: none
+		sourceColumn: bu_code
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'Cost Centre' = m
+		mode: import
+		source =
+				let
+				    Source = Parquet.Document(File.Contents(DataFolder & "\35_semantic\dim_semantic_cost_centre.parquet"))
+				in
+				    Source
+
+	annotation PBI_ResultType = Table

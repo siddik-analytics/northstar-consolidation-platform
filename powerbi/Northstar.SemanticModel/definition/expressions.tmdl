@@ -1,0 +1,10 @@
+/// The folder holding the published reporting marts and semantic dimensions. This is
+/// the only absolute path in the project. It is written from the repository location
+/// when the model is generated, and `P6-SEM-08` checks it still points at this
+/// repository's published data.
+expression DataFolder = "C:\\Dev\\northstar-consolidation-platform\\data" meta [IsParameterQuery=true, Type="Text", IsParameterQueryRequired=true]
+	lineageTag: 367c1d32-95e1-53b5-a588-1c0c220d5fdd
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Text

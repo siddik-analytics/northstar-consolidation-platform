@@ -1,0 +1,122 @@
+/// Scenario and version in one dimension, keyed by version. Reserved scenarios are absent by
+/// construction -- the mart never publishes them.
+table 'Scenario'
+	lineageTag: bbe1d3b2-a616-57bc-b8b0-360f46c6127b
+
+	column version_code
+		dataType: string
+		isKey
+		lineageTag: 514142d9-084e-50c4-8668-078abdab3237
+		summarizeBy: none
+		sourceColumn: version_code
+
+		annotation SummarizationSetBy = Automatic
+
+	column scenario_code
+		dataType: string
+		lineageTag: 20711935-fe2a-55c2-a422-385c5799b2fd
+		summarizeBy: none
+		sourceColumn: scenario_code
+
+		annotation SummarizationSetBy = Automatic
+
+	column scenario_name
+		dataType: string
+		lineageTag: 1c495c1e-471b-5815-b6c3-7f03d3cdae67
+		summarizeBy: none
+		sourceColumn: scenario_name
+
+		annotation SummarizationSetBy = Automatic
+
+	column version_name
+		dataType: string
+		lineageTag: 3a2d781c-81d0-5d3a-9ff5-1d43c69abb15
+		summarizeBy: none
+		sourceColumn: version_name
+		sortByColumn: sort_order
+
+		annotation SummarizationSetBy = Automatic
+
+	column fiscal_year
+		dataType: int64
+		lineageTag: e910528c-277e-5b97-8498-dd5f5baabfd9
+		summarizeBy: none
+		sourceColumn: fiscal_year
+
+		annotation SummarizationSetBy = Automatic
+
+	column actual_months
+		dataType: int64
+		lineageTag: af3e958b-5c7a-5338-b963-42510294fe23
+		summarizeBy: none
+		sourceColumn: actual_months
+
+		annotation SummarizationSetBy = Automatic
+
+	column forecast_months
+		dataType: int64
+		lineageTag: 415862ea-79f8-5deb-99e1-f389010055c7
+		summarizeBy: none
+		sourceColumn: forecast_months
+
+		annotation SummarizationSetBy = Automatic
+
+	column is_default
+		dataType: boolean
+		lineageTag: 99d1f4c1-03d0-5a0a-b97d-ecbaa8f51528
+		summarizeBy: none
+		sourceColumn: is_default
+
+		annotation SummarizationSetBy = Automatic
+
+	column is_locked
+		dataType: boolean
+		lineageTag: f9090fc3-38a4-5ee0-abe4-27f2a43a23b1
+		summarizeBy: none
+		sourceColumn: is_locked
+
+		annotation SummarizationSetBy = Automatic
+
+	column approved_by
+		dataType: string
+		lineageTag: 651ae254-f546-58a8-aa5f-0d162348e67a
+		summarizeBy: none
+		sourceColumn: approved_by
+
+		annotation SummarizationSetBy = Automatic
+
+	column approved_date
+		dataType: dateTime
+		lineageTag: 00448d5f-cd42-53df-9358-089a0346b26d
+		summarizeBy: none
+		sourceColumn: approved_date
+		formatString: yyyy-mm-dd
+
+		annotation SummarizationSetBy = Automatic
+
+	column sort_order
+		dataType: int64
+		isHidden
+		lineageTag: b62c3ee6-d712-51cf-952e-d15959cb7675
+		summarizeBy: none
+		sourceColumn: sort_order
+
+		annotation SummarizationSetBy = Automatic
+
+	column description
+		dataType: string
+		lineageTag: 68cd3b5d-3b3d-5712-9a34-bcfa86b6768b
+		summarizeBy: none
+		sourceColumn: description
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'Scenario' = m
+		mode: import
+		source =
+				let
+				    Source = Parquet.Document(File.Contents(DataFolder & "\30_marts\dim_report_scenario.parquet"))
+				in
+				    Source
+
+	annotation PBI_ResultType = Table

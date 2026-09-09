@@ -1,0 +1,945 @@
+/// Every measure in the model. Measures are grouped by display folder, not by
+/// the table they read, so a report author finds them by what they mean.
+table Measures
+	lineageTag: 4d29837c-7652-57c3-bf06-9ac22de91ce7
+
+	/// The period key of the reporting close, August 2026. Held as one measure so the cutoff is
+	/// defined once and everything that depends on it moves together when the close moves.
+	measure 'Reporting Period Key' =
+			202608
+		formatString: 0
+		lineageTag: 661bb414-76bc-5606-8647-189dc4fa39b0
+		displayFolder: 00 Model context
+
+	/// The reporting close as a label, for a report header. Reads the Date dimension, so it cannot
+	/// disagree with the calendar.
+	measure 'Reporting Period' =
+			CALCULATE (
+			    MAX ( 'Date'[month_label_long] ),
+			    ALL ( 'Date' ),
+			    'Date'[period_key] = [Reporting Period Key]
+			)
+		lineageTag: f364ae76-482f-5f9a-b970-1418cffb7a05
+		displayFolder: 00 Model context
+
+	/// The one forecast version marked default upstream. Three forecasts are retained and exactly
+	/// one is current; a superseded forecast presented as THE forecast is a reporting error nobody
+	/// would notice, so the model never selects by name or by sort order.
+	measure 'Current Forecast Version' =
+			CALCULATE (
+			    MAX ( 'Scenario'[version_code] ),
+			    ALL ( 'Scenario' ),
+			    'Scenario'[scenario_code] = "FC",
+			    'Scenario'[is_default] = TRUE
+			)
+		lineageTag: 79710a67-5077-50f4-86fd-b3fff47f3f3b
+		displayFolder: 00 Model context
+
+	/// The reporting basis in force, defaulting to Statutory. Membership of a basis is settled
+	/// upstream and carried on every fact row; this only says which one is being looked at.
+	measure 'Selected Basis' =
+			SELECTEDVALUE ( 'Reporting Basis'[basis], "STATUTORY" )
+		lineageTag: 6b396dd1-284b-5975-aa5d-9f9bf0ed8778
+		displayFolder: 00 Model context
+
+	/// Month, Year to date or Full year. Chooses which governed column the statement measures read;
+	/// it does not change how any of them is calculated.
+	measure 'Selected Period Basis' =
+			SELECTEDVALUE ( 'Period Basis'[basis_name], "Year to date" )
+		lineageTag: c549e4e1-ff0c-5d41-81f9-86f98e6b6826
+		displayFolder: 00 Model context
+
+	/// Consolidated revenue from the governed measure mart. Intercompany revenue is excluded
+	/// upstream on both sides of every comparison, so a plan variance is like for like.
+	measure 'Revenue' =
+			VAR _Basis = SELECTEDVALUE ( 'Period Basis'[basis_code], "YTD" )
+			VAR _Value =
+			    CALCULATE (
+			        SWITCH (
+			            _Basis,
+			            "MTD", SUM ( 'Financials'[mtd_usd] ),
+			            "FY", SUM ( 'Financials'[fy_usd] ),
+			            SUM ( 'Financials'[ytd_usd] )
+			        ),
+			        KEEPFILTERS ( 'Measure Line'[measure_code] = "REVENUE" )
+			    )
+			RETURN _Value
+		formatString: #,0.0,,;(#,0.0,,);"–"
+		lineageTag: ab1c1b25-f87b-5749-8268-c7a4c7976350
+		displayFolder: 01 Income statement
+
+	/// Cost of sales, positive on the management sign convention.
+	measure 'Cost of Sales' =
+			VAR _Basis = SELECTEDVALUE ( 'Period Basis'[basis_code], "YTD" )
+			VAR _Value =
+			    CALCULATE (
+			        SWITCH (
+			            _Basis,
+			            "MTD", SUM ( 'Financials'[mtd_usd] ),
+			            "FY", SUM ( 'Financials'[fy_usd] ),
+			            SUM ( 'Financials'[ytd_usd] )
+			        ),
+			        KEEPFILTERS ( 'Measure Line'[measure_code] = "COST_OF_SALES" )
+			    )
+			RETURN _Value
+		formatString: #,0.0,,;(#,0.0,,);"–"
+		lineageTag: 2870624b-313c-54be-8408-1a481be642c6
+		displayFolder: 01 Income statement
+
+	/// Gross profit. Stored as a subtotal upstream rather than computed here, because a subtotal
+	/// computed in a reporting tool is a definition living in a reporting tool.
+	measure 'Gross Profit' =
+			VAR _Basis = SELECTEDVALUE ( 'Period Basis'[basis_code], "YTD" )
+			VAR _Value =
+			    CALCULATE (
+			        SWITCH (
+			            _Basis,
+			            "MTD", SUM ( 'Financials'[mtd_usd] ),
+			            "FY", SUM ( 'Financials'[fy_usd] ),
+			            SUM ( 'Financials'[ytd_usd] )
+			        ),
+			        KEEPFILTERS ( 'Measure Line'[measure_code] = "GROSS_PROFIT" )
+			    )
+			RETURN _Value
+		formatString: #,0.0,,;(#,0.0,,);"–"
+		lineageTag: ed4680a3-5c50-5668-ad9b-d9359c908a9b
+		displayFolder: 01 Income statement
+
+	/// Gross profit over revenue. A ratio of two governed measures, which is presentation
+	/// arithmetic rather than a definition.
+	measure 'Gross Margin %' =
+			DIVIDE ( [Gross Profit], [Revenue] )
+		formatString: 0.0%;(0.0%);"–"
+		lineageTag: 2004a9c0-313c-5c5e-af5c-cb7266bb65ba
+		displayFolder: 01 Income statement
+
+	/// Operating expenses, positive. Includes the non-recurring items the add-back policy later
+	/// removes, because they sit inside operating expenses at layer 1 (ADR-0013).
+	measure 'Operating Expenses' =
+			VAR _Basis = SELECTEDVALUE ( 'Period Basis'[basis_code], "YTD" )
+			VAR _Value =
+			    CALCULATE (
+			        SWITCH (
+			            _Basis,
+			            "MTD", SUM ( 'Financials'[mtd_usd] ),
+			            "FY", SUM ( 'Financials'[fy_usd] ),
+			            SUM ( 'Financials'[ytd_usd] )
+			        ),
+			        KEEPFILTERS ( 'Measure Line'[measure_code] = "OPEX" )
+			    )
+			RETURN _Value
+		formatString: #,0.0,,;(#,0.0,,);"–"
+		lineageTag: 4e54a200-d327-55a8-a60b-08fbfd82664b
+		displayFolder: 01 Income statement
+
+	/// EBITDA on the reported result, driven by the `is_ebitda` attribute on the account in the
+	/// consolidation rather than by an account list here. **Distinct from Management Adjusted
+	/// EBITDA and from Covenant EBITDA**, each of which has its own lineage.
+	measure 'Statutory EBITDA' =
+			VAR _Basis = SELECTEDVALUE ( 'Period Basis'[basis_code], "YTD" )
+			VAR _Value =
+			    CALCULATE (
+			        SWITCH (
+			            _Basis,
+			            "MTD", SUM ( 'Financials'[mtd_usd] ),
+			            "FY", SUM ( 'Financials'[fy_usd] ),
+			            SUM ( 'Financials'[ytd_usd] )
+			        ),
+			        KEEPFILTERS ( 'Measure Line'[measure_code] = "EBITDA" )
+			    )
+			RETURN _Value
+		formatString: #,0.0,,;(#,0.0,,);"–"
+		lineageTag: 892dddc4-515d-51f7-8fb5-88b7597ff732
+		displayFolder: 01 Income statement
+
+	/// The approved add-back policy (ADR-0013): restructuring, transaction and integration costs,
+	/// legal settlements, retention bonuses and the sponsor monitoring fee. **Coalesced to zero**,
+	/// because a category with no population in a period contributes nothing and must not propagate
+	/// a blank into Adjusted EBITDA.
+	measure 'Approved Add-backs' =
+			VAR _Basis = SELECTEDVALUE ( 'Period Basis'[basis_code], "YTD" )
+			VAR _Value =
+			    CALCULATE (
+			        SWITCH (
+			            _Basis,
+			            "MTD", SUM ( 'Financials'[mtd_usd] ),
+			            "FY", SUM ( 'Financials'[fy_usd] ),
+			            SUM ( 'Financials'[ytd_usd] )
+			        ),
+			        KEEPFILTERS ( 'Measure Line'[measure_code] = "ADDBACKS" )
+			    )
+			RETURN _Value + 0
+		formatString: #,0.0,,;(#,0.0,,);"–"
+		lineageTag: 4ed7c178-267f-5df7-92a7-1719d2503bde
+		displayFolder: 01 Income statement
+
+	/// Statutory EBITDA plus the approved add-backs plus any layer-4 management adjustment. **This
+	/// is not Covenant EBITDA.** The two are equal in the current baseline because the sponsor fee
+	/// runs below its cap and the covenant foreign exchange add-back has no population — an
+	/// outcome, not a definition.
+	measure 'Management Adjusted EBITDA' =
+			VAR _Basis = SELECTEDVALUE ( 'Period Basis'[basis_code], "YTD" )
+			VAR _Value =
+			    CALCULATE (
+			        SWITCH (
+			            _Basis,
+			            "MTD", SUM ( 'Financials'[mtd_usd] ),
+			            "FY", SUM ( 'Financials'[fy_usd] ),
+			            SUM ( 'Financials'[ytd_usd] )
+			        ),
+			        KEEPFILTERS ( 'Measure Line'[measure_code] = "ADJ_EBITDA" )
+			    )
+			RETURN _Value
+		formatString: #,0.0,,;(#,0.0,,);"–"
+		lineageTag: c1440af7-5951-5f36-a5db-3f5db39bf27f
+		displayFolder: 01 Income statement
+
+	/// Statutory EBITDA over revenue.
+	measure 'EBITDA Margin %' =
+			DIVIDE ( [Statutory EBITDA], [Revenue] )
+		formatString: 0.0%;(0.0%);"–"
+		lineageTag: bdf90b5a-bccc-5281-be49-7429293bac8d
+		displayFolder: 01 Income statement
+
+	/// Management Adjusted EBITDA over revenue.
+	measure 'Adjusted EBITDA Margin %' =
+			DIVIDE ( [Management Adjusted EBITDA], [Revenue] )
+		formatString: 0.0%;(0.0%);"–"
+		lineageTag: 694147a4-4bc1-55e5-825b-48d147203d37
+		displayFolder: 01 Income statement
+
+	/// Depreciation and the amortisation of acquired intangibles, positive.
+	measure 'Depreciation and Amortisation' =
+			VAR _Basis = SELECTEDVALUE ( 'Period Basis'[basis_code], "YTD" )
+			VAR _Value =
+			    CALCULATE (
+			        SWITCH (
+			            _Basis,
+			            "MTD", SUM ( 'Financials'[mtd_usd] ),
+			            "FY", SUM ( 'Financials'[fy_usd] ),
+			            SUM ( 'Financials'[ytd_usd] )
+			        ),
+			        KEEPFILTERS ( 'Measure Line'[measure_code] = "DA" )
+			    )
+			RETURN _Value
+		formatString: #,0.0,,;(#,0.0,,);"–"
+		lineageTag: 7a416717-1d81-5743-9749-a5f06f12864a
+		displayFolder: 01 Income statement
+
+	/// Statutory EBITDA less depreciation and amortisation. Stored upstream.
+	measure 'EBIT' =
+			VAR _Basis = SELECTEDVALUE ( 'Period Basis'[basis_code], "YTD" )
+			VAR _Value =
+			    CALCULATE (
+			        SWITCH (
+			            _Basis,
+			            "MTD", SUM ( 'Financials'[mtd_usd] ),
+			            "FY", SUM ( 'Financials'[fy_usd] ),
+			            SUM ( 'Financials'[ytd_usd] )
+			        ),
+			        KEEPFILTERS ( 'Measure Line'[measure_code] = "EBIT" )
+			    )
+			RETURN _Value
+		formatString: #,0.0,,;(#,0.0,,);"–"
+		lineageTag: f11cb447-faa1-5f0b-89e1-b0e5029c838a
+		displayFolder: 01 Income statement
+
+	/// Interest expense and income, foreign exchange and other non-operating items, net and
+	/// positive as a cost.
+	measure 'Net Finance Costs' =
+			VAR _Basis = SELECTEDVALUE ( 'Period Basis'[basis_code], "YTD" )
+			VAR _Value =
+			    CALCULATE (
+			        SWITCH (
+			            _Basis,
+			            "MTD", SUM ( 'Financials'[mtd_usd] ),
+			            "FY", SUM ( 'Financials'[fy_usd] ),
+			            SUM ( 'Financials'[ytd_usd] )
+			        ),
+			        KEEPFILTERS ( 'Measure Line'[measure_code] = "NET_FINANCE" )
+			    )
+			RETURN _Value
+		formatString: #,0.0,,;(#,0.0,,);"–"
+		lineageTag: f6513199-abe8-55c7-be73-2710c0b1b9a4
+		displayFolder: 01 Income statement
+
+	/// Current and deferred tax, positive as a charge.
+	measure 'Income Tax' =
+			VAR _Basis = SELECTEDVALUE ( 'Period Basis'[basis_code], "YTD" )
+			VAR _Value =
+			    CALCULATE (
+			        SWITCH (
+			            _Basis,
+			            "MTD", SUM ( 'Financials'[mtd_usd] ),
+			            "FY", SUM ( 'Financials'[fy_usd] ),
+			            SUM ( 'Financials'[ytd_usd] )
+			        ),
+			        KEEPFILTERS ( 'Measure Line'[measure_code] = "TAX" )
+			    )
+			RETURN _Value
+		formatString: #,0.0,,;(#,0.0,,);"–"
+		lineageTag: 99711611-72e5-5a76-89e0-dfbb0ee3e46c
+		displayFolder: 01 Income statement
+
+	/// Consolidated net income before the non-controlling attribution.
+	measure 'Net Income' =
+			VAR _Basis = SELECTEDVALUE ( 'Period Basis'[basis_code], "YTD" )
+			VAR _Value =
+			    CALCULATE (
+			        SWITCH (
+			            _Basis,
+			            "MTD", SUM ( 'Financials'[mtd_usd] ),
+			            "FY", SUM ( 'Financials'[fy_usd] ),
+			            SUM ( 'Financials'[ytd_usd] )
+			        ),
+			        KEEPFILTERS ( 'Measure Line'[measure_code] = "NET_INCOME" )
+			    )
+			RETURN _Value
+		formatString: #,0.0,,;(#,0.0,,);"–"
+		lineageTag: 27b3d14c-307b-5048-a604-1d9d6e2ce61a
+		displayFolder: 01 Income statement
+
+	/// The minority's share of the result, below tax and outside EBITDA. Coalesced to zero: most
+	/// entities have no minority, and a blank must not void the parent attribution.
+	measure 'Non-controlling Interests' =
+			VAR _Basis = SELECTEDVALUE ( 'Period Basis'[basis_code], "YTD" )
+			VAR _Value =
+			    CALCULATE (
+			        SWITCH (
+			            _Basis,
+			            "MTD", SUM ( 'Financials'[mtd_usd] ),
+			            "FY", SUM ( 'Financials'[fy_usd] ),
+			            SUM ( 'Financials'[ytd_usd] )
+			        ),
+			        KEEPFILTERS ( 'Measure Line'[measure_code] = "NCI" )
+			    )
+			RETURN _Value + 0
+		formatString: #,0.0,,;(#,0.0,,);"–"
+		lineageTag: e3419450-3a8e-5917-b54d-45c9a4d603f4
+		displayFolder: 01 Income statement
+
+	/// Net income less the non-controlling attribution. The bottom line of the group.
+	measure 'Net Income Attributable to Parent' =
+			VAR _Basis = SELECTEDVALUE ( 'Period Basis'[basis_code], "YTD" )
+			VAR _Value =
+			    CALCULATE (
+			        SWITCH (
+			            _Basis,
+			            "MTD", SUM ( 'Financials'[mtd_usd] ),
+			            "FY", SUM ( 'Financials'[fy_usd] ),
+			            SUM ( 'Financials'[ytd_usd] )
+			        ),
+			        KEEPFILTERS ( 'Measure Line'[measure_code] = "NI_PARENT" )
+			    )
+			RETURN _Value
+		formatString: #,0.0,,;(#,0.0,,);"–"
+		lineageTag: 38b8291a-f0f0-5fbd-8fb2-fefbc824f0a1
+		displayFolder: 01 Income statement
+
+	/// Revenue on the Actual scenario, **blank after the reporting close**. The consolidation
+	/// generates Actual rows for the whole fiscal year and the group has closed eight months of it;
+	/// returning zero for the rest draws a company falling off a cliff.
+	measure 'Actual Revenue' =
+			VAR _Latest = MAX ( 'Date'[period_key] )
+			RETURN IF ( _Latest > [Reporting Period Key], BLANK (), CALCULATE ( [Revenue], 'Scenario'[scenario_code] = "ACT" ) )
+		formatString: #,0.0,,;(#,0.0,,);"–"
+		lineageTag: 92daad6e-ffc4-5d36-a40d-fc73f0d188be
+		displayFolder: 02 Scenario
+
+	/// Management Adjusted EBITDA on Actual, blank after the reporting close.
+	measure 'Actual Adjusted EBITDA' =
+			VAR _Latest = MAX ( 'Date'[period_key] )
+			RETURN IF ( _Latest > [Reporting Period Key], BLANK (), CALCULATE ( [Management Adjusted EBITDA], 'Scenario'[scenario_code] = "ACT" ) )
+		formatString: #,0.0,,;(#,0.0,,);"–"
+		lineageTag: 83d9d76a-d28a-52df-aa41-7d767b654970
+		displayFolder: 02 Scenario
+
+	/// EBIT on Actual, blank after the reporting close.
+	measure 'Actual EBIT' =
+			VAR _Latest = MAX ( 'Date'[period_key] )
+			RETURN IF ( _Latest > [Reporting Period Key], BLANK (), CALCULATE ( [EBIT], 'Scenario'[scenario_code] = "ACT" ) )
+		formatString: #,0.0,,;(#,0.0,,);"–"
+		lineageTag: 2957b6e4-0928-50c8-a414-f9d7f9ea800c
+		displayFolder: 02 Scenario
+
+	/// Revenue on the board-approved budget, which covers the whole fiscal year and is therefore
+	/// not subject to the actual cutoff.
+	measure 'Budget Revenue' =
+			CALCULATE ( [Revenue], 'Scenario'[scenario_code] = "BUD" )
+		formatString: #,0.0,,;(#,0.0,,);"–"
+		lineageTag: 933fee17-445e-539c-87ae-d6716a54586c
+		displayFolder: 02 Scenario
+
+	/// Management Adjusted EBITDA on the approved budget.
+	measure 'Budget Adjusted EBITDA' =
+			CALCULATE ( [Management Adjusted EBITDA], 'Scenario'[scenario_code] = "BUD" )
+		formatString: #,0.0,,;(#,0.0,,);"–"
+		lineageTag: 1923c739-dde9-5eb5-b318-83aa40aabd7c
+		displayFolder: 02 Scenario
+
+	/// Revenue on the **current** forecast, selected by the upstream default flag rather than by
+	/// name, so a superseded forecast can never be presented as the forecast.
+	measure 'Forecast Revenue' =
+			CALCULATE ( [Revenue], 'Scenario'[version_code] = [Current Forecast Version] )
+		formatString: #,0.0,,;(#,0.0,,);"–"
+		lineageTag: 90cfca9c-d986-521d-95fa-cb12c11c3eea
+		displayFolder: 02 Scenario
+
+	/// Revenue twelve months earlier. Derived upstream from Actual by a date offset and never
+	/// stored (ADR-0004), so it cannot drift from the actual it is a view of.
+	measure 'Prior Year Revenue' =
+			CALCULATE ( [Revenue], 'Scenario'[scenario_code] = "PY" )
+		formatString: #,0.0,,;(#,0.0,,);"–"
+		lineageTag: 3fc9e9fe-4101-59e8-877f-04cef73a5922
+		displayFolder: 02 Scenario
+
+	/// The measure being assessed, on the selected comparison. Reads the governed variance mart;
+	/// the model does not derive a comparison.
+	measure 'Variance Base' =
+			SUM ( 'Variance'[base_ytd] )
+		formatString: #,0.0,,;(#,0.0,,);"–"
+		lineageTag: d652815b-67fe-5eae-a3cf-036ce897376f
+		displayFolder: 03 Variance
+
+	/// What the base is assessed against, on the selected comparison.
+	measure 'Variance Comparator' =
+			SUM ( 'Variance'[comp_ytd] )
+		formatString: #,0.0,,;(#,0.0,,);"–"
+		lineageTag: 9b50478a-0282-5f61-864d-caa804814477
+		displayFolder: 03 Variance
+
+	/// Base less comparator in dollars, precomputed upstream so the sign convention cannot differ
+	/// between two reporting tools.
+	measure 'Variance' =
+			SUM ( 'Variance'[var_ytd_usd] )
+		formatString: #,0.0,,;(#,0.0,,);"–"
+		lineageTag: 35579685-eb0d-5927-b70c-43674d30fe9e
+		displayFolder: 03 Variance
+
+	/// Variance over the absolute comparator, so a percentage against a negative base still reads
+	/// in the same direction as the dollars.
+	measure 'Variance %' =
+			DIVIDE ( [Variance], ABS ( [Variance Comparator] ) )
+		formatString: 0.0%;(0.0%);"–"
+		lineageTag: bf883bd6-e224-5562-be6a-561892e4c1ea
+		displayFolder: 03 Variance
+
+	/// Favourable, Unfavourable or Neutral, decided by the **measure's own favourable direction**
+	/// and not by the sign of the number. Revenue above plan is favourable; operating expense above
+	/// plan is not, and colouring every positive variance green says the opposite on half a
+	/// statement.
+	measure 'Variance Favourability' =
+			VAR _Fav = SELECTEDVALUE ( 'Measure Line'[favourable_direction] )
+			VAR _Var = [Variance]
+			RETURN
+			    SWITCH (
+			        TRUE (),
+			        ISBLANK ( _Var ), BLANK (),
+			        _Fav = "NEUTRAL", "Neutral",
+			        _Fav = "HIGHER" && _Var > 0, "Favourable",
+			        _Fav = "HIGHER" && _Var < 0, "Unfavourable",
+			        _Fav = "LOWER" && _Var < 0, "Favourable",
+			        _Fav = "LOWER" && _Var > 0, "Unfavourable",
+			        "Neutral"
+			    )
+		lineageTag: 3b57ea1e-ba4e-5bf4-bd52-15cfa12cd099
+		displayFolder: 03 Variance
+
+	/// Whether the selected comparison is like for like. Budget and forecast are built at entity
+	/// level and carry no consolidation entries, so a plan comparison is comparable down to EBIT
+	/// and is not below it. The flag is set upstream.
+	measure 'Variance Is Comparable' =
+			IF ( MIN ( 'Variance'[is_comparable] ) = 1, "Yes", "Not comparable" )
+		lineageTag: 2f7b307b-02b2-5e64-87ef-a3ff5b37d4df
+		displayFolder: 03 Variance
+
+	/// Total assets at the selected month end, from the approved consolidated balance sheet.
+	measure 'Total Assets' =
+			CALCULATE (
+			    SUM ( 'Balance Sheet'[balance_usd] ),
+			    'Balance Sheet'[account_class] = "ASSET",
+			    'Date'[period_key] = MAX ( 'Date'[period_key] )
+			)
+		formatString: #,0.0,,;(#,0.0,,);"–"
+		lineageTag: c25ac57c-0686-56a8-a0e1-2c305f00d66f
+		displayFolder: 04 Balance sheet
+
+	/// Total liabilities, sign-flipped to the positive presentation a reader expects.
+	measure 'Total Liabilities' =
+			-CALCULATE (
+			    SUM ( 'Balance Sheet'[balance_usd] ),
+			    'Balance Sheet'[account_class] = "LIABILITY",
+			    'Date'[period_key] = MAX ( 'Date'[period_key] )
+			)
+		formatString: #,0.0,,;(#,0.0,,);"–"
+		lineageTag: a5e09027-e317-56a5-8e9d-ed03420501c1
+		displayFolder: 04 Balance sheet
+
+	/// Total equity, including the unclosed result for the period, the translation reserve and the
+	/// non-controlling interest.
+	measure 'Total Equity' =
+			-CALCULATE (
+			    SUM ( 'Balance Sheet'[balance_usd] ),
+			    'Balance Sheet'[account_class] = "EQUITY",
+			    'Date'[period_key] = MAX ( 'Date'[period_key] )
+			)
+		formatString: #,0.0,,;(#,0.0,,);"–"
+		lineageTag: ecf81153-515b-531f-a592-7ce2dbfeef5e
+		displayFolder: 04 Balance sheet
+
+	/// Assets less liabilities and equity. Nil in every period, and shown rather than assumed.
+	measure 'Balance Sheet Check' =
+			[Total Assets] - [Total Liabilities] - [Total Equity]
+		formatString: #,0.00,,;(#,0.00,,);"–"
+		lineageTag: 8c46faca-167f-5251-bc02-b450ef99f6a3
+		displayFolder: 04 Balance sheet
+
+	/// Cash and cash equivalents at the month end.
+	measure 'Cash' =
+			CALCULATE (
+			    SUM ( 'Balance Sheet'[balance_usd] ),
+			    'Balance Sheet'[caption] = "Cash and cash equivalents",
+			    'Balance Sheet'[account_class] = "ASSET",
+			    'Date'[period_key] = MAX ( 'Date'[period_key] )
+			)
+		formatString: #,0.0,,;(#,0.0,,);"–"
+		lineageTag: 22c503e1-631f-5e9b-9c90-533a5df5ffd7
+		displayFolder: 04 Balance sheet
+
+	/// Trade receivables, net of provision.
+	measure 'Accounts Receivable' =
+			CALCULATE (
+			    SUM ( 'Balance Sheet'[balance_usd] ),
+			    'Balance Sheet'[caption] = "Accounts receivable, net",
+			    'Balance Sheet'[account_class] = "ASSET",
+			    'Date'[period_key] = MAX ( 'Date'[period_key] )
+			)
+		formatString: #,0.0,,;(#,0.0,,);"–"
+		lineageTag: 05208ddc-03f1-5b7e-80bc-b732a2535ff6
+		displayFolder: 04 Balance sheet
+
+	/// Inventory, net of the unrealised profit provision the consolidation posts against it.
+	measure 'Inventory' =
+			CALCULATE (
+			    SUM ( 'Balance Sheet'[balance_usd] ),
+			    'Balance Sheet'[caption] = "Inventory, net",
+			    'Balance Sheet'[account_class] = "ASSET",
+			    'Date'[period_key] = MAX ( 'Date'[period_key] )
+			)
+		formatString: #,0.0,,;(#,0.0,,);"–"
+		lineageTag: 1aea23de-1ada-5dc1-9cd1-156c048e14cd
+		displayFolder: 04 Balance sheet
+
+	/// Trade payables, positive.
+	measure 'Accounts Payable' =
+			-CALCULATE (
+			    SUM ( 'Balance Sheet'[balance_usd] ),
+			    'Balance Sheet'[caption] = "Accounts payable",
+			    'Balance Sheet'[account_class] = "LIABILITY",
+			    'Date'[period_key] = MAX ( 'Date'[period_key] )
+			)
+		formatString: #,0.0,,;(#,0.0,,);"–"
+		lineageTag: 3a162892-0c9a-55ae-942b-87b7c4652185
+		displayFolder: 04 Balance sheet
+
+	/// Receivables plus inventory less payables plus other working capital, from the governed
+	/// working capital mart rather than re-added here.
+	measure 'Net Working Capital' =
+			CALCULATE (
+			    SUM ( 'Working Capital'[nwc_usd] ),
+			    'Date'[period_key] = MAX ( 'Date'[period_key] )
+			)
+		formatString: #,0.0,,;(#,0.0,,);"–"
+		lineageTag: 8367f233-1523-5bf3-9f1b-83b8a18794b6
+		displayFolder: 04 Balance sheet
+
+	/// Owned fixed assets, net.
+	measure 'Property Plant and Equipment' =
+			CALCULATE (
+			    SUM ( 'Balance Sheet'[balance_usd] ),
+			    'Balance Sheet'[caption] = "Property, plant and equipment, net",
+			    'Balance Sheet'[account_class] = "ASSET",
+			    'Date'[period_key] = MAX ( 'Date'[period_key] )
+			)
+		formatString: #,0.0,,;(#,0.0,,);"–"
+		lineageTag: 9b35df39-67b8-52f9-9eef-97e02dd90a77
+		displayFolder: 04 Balance sheet
+
+	/// Goodwill on eleven acquisitions, derived from the goodwill bridge in the consolidation and
+	/// never plugged.
+	measure 'Goodwill' =
+			CALCULATE (
+			    SUM ( 'Balance Sheet'[balance_usd] ),
+			    'Balance Sheet'[caption] = "Goodwill",
+			    'Balance Sheet'[account_class] = "ASSET",
+			    'Date'[period_key] = MAX ( 'Date'[period_key] )
+			)
+		formatString: #,0.0,,;(#,0.0,,);"–"
+		lineageTag: 9878fd19-78d6-542d-be20-0c38f93bc9c8
+		displayFolder: 04 Balance sheet
+
+	/// Acquired customer relationships and technology at fair value, less accumulated amortisation.
+	measure 'Intangible Assets' =
+			CALCULATE (
+			    SUM ( 'Balance Sheet'[balance_usd] ),
+			    'Balance Sheet'[caption] = "Intangible assets, net",
+			    'Balance Sheet'[account_class] = "ASSET",
+			    'Date'[period_key] = MAX ( 'Date'[period_key] )
+			)
+		formatString: #,0.0,,;(#,0.0,,);"–"
+		lineageTag: b029d952-f86b-5bcc-b3b9-a206220f3344
+		displayFolder: 04 Balance sheet
+
+	/// Accumulated earnings closed into reserves. Positive means accumulated profit.
+	measure 'Retained Earnings' =
+			-CALCULATE (
+			    SUM ( 'Balance Sheet'[balance_usd] ),
+			    'Balance Sheet'[caption] = "Retained earnings",
+			    'Balance Sheet'[account_class] = "EQUITY",
+			    'Date'[period_key] = MAX ( 'Date'[period_key] )
+			)
+		formatString: #,0.0,,;(#,0.0,,);"–"
+		lineageTag: 7d57b0e9-5306-543f-b689-a2cf37f4edfd
+		displayFolder: 04 Balance sheet
+
+	/// The equity reserve arising because assets and liabilities translate at closing rates while
+	/// equity translates at historical rates. **Not the foreign exchange effect on cash**, which is
+	/// an operating item on the cash flow.
+	measure 'Cumulative Translation Adjustment' =
+			-CALCULATE (
+			    SUM ( 'Balance Sheet'[balance_usd] ),
+			    'Balance Sheet'[caption] = "Cumulative translation adjustment",
+			    'Balance Sheet'[account_class] = "EQUITY",
+			    'Date'[period_key] = MAX ( 'Date'[period_key] )
+			)
+		formatString: #,0.0,,;(#,0.0,,);"–"
+		lineageTag: 5a8ff180-f4fe-5875-980f-740809a3402a
+		displayFolder: 04 Balance sheet
+
+	/// The minority's share of net assets, a separate component of equity.
+	measure 'Non-controlling Interest Equity' =
+			-CALCULATE (
+			    SUM ( 'Balance Sheet'[balance_usd] ),
+			    'Balance Sheet'[caption] = "Non-controlling interests",
+			    'Balance Sheet'[account_class] = "EQUITY",
+			    'Date'[period_key] = MAX ( 'Date'[period_key] )
+			)
+		formatString: #,0.0,,;(#,0.0,,);"–"
+		lineageTag: dd14e7f9-ce79-569d-bd46-6bb883f5ccc7
+		displayFolder: 04 Balance sheet
+
+	/// Operating cash flow, derived upstream from balance sheet movements (ADR-0006).
+	measure 'Operating Cash Flow' =
+			SUM ( 'Cash Flow'[operating_cash_flow_usd] )
+		formatString: #,0.0,,;(#,0.0,,);"–"
+		lineageTag: 623f32dc-5525-5055-8db4-e31d3bf78ea4
+		displayFolder: 05 Cash flow
+
+	/// Investing cash flow.
+	measure 'Investing Cash Flow' =
+			SUM ( 'Cash Flow'[investing_cash_flow_usd] )
+		formatString: #,0.0,,;(#,0.0,,);"–"
+		lineageTag: 98c87ee0-2dd2-5bb0-8c30-7c6900a46e7b
+		displayFolder: 05 Cash flow
+
+	/// Financing cash flow.
+	measure 'Financing Cash Flow' =
+			SUM ( 'Cash Flow'[financing_cash_flow_usd] )
+		formatString: #,0.0,,;(#,0.0,,);"–"
+		lineageTag: 2dd99c58-2db7-5b5c-8b2d-9e0d17da087a
+		displayFolder: 05 Cash flow
+
+	/// The retranslation of foreign-currency cash balances. **Not the cumulative translation
+	/// adjustment**, which arises on net assets and sits in equity. Conflating the two makes a cash
+	/// flow tie while reporting an implausible exchange effect on a mostly-USD balance.
+	measure 'FX Effect on Cash' =
+			SUM ( 'Cash Flow'[fx_effect_on_cash_usd] )
+		formatString: #,0.0,,;(#,0.0,,);"–"
+		lineageTag: c66625c4-64e2-59a1-8e5f-5dd6423a2534
+		displayFolder: 05 Cash flow
+
+	/// The movement in cash, measured from the cash accounts themselves. Cash is never the residual
+	/// of the statement.
+	measure 'Net Change in Cash' =
+			SUM ( 'Cash Flow'[net_change_in_cash_usd] )
+		formatString: #,0.0,,;(#,0.0,,);"–"
+		lineageTag: bb6ac47d-ca16-52d3-8a60-75a8bbeb83d7
+		displayFolder: 05 Cash flow
+
+	/// Cash at the start of the selected range.
+	measure 'Opening Cash' =
+			CALCULATE (
+			    SUM ( 'Cash Flow'[opening_cash_usd] ),
+			    'Date'[period_key] = MIN ( 'Date'[period_key] )
+			)
+		formatString: #,0.0,,;(#,0.0,,);"–"
+		lineageTag: 34bd7760-3e09-547d-a0c4-8073329463f6
+		displayFolder: 05 Cash flow
+
+	/// Cash at the end of the selected range. Ties to the balance sheet's cash caption at 0.00 in
+	/// every period.
+	measure 'Closing Cash' =
+			CALCULATE (
+			    SUM ( 'Cash Flow'[closing_cash_usd] ),
+			    'Date'[period_key] = MAX ( 'Date'[period_key] )
+			)
+		formatString: #,0.0,,;(#,0.0,,);"–"
+		lineageTag: 0440219c-1d03-509c-b835-b17ead33debf
+		displayFolder: 05 Cash flow
+
+	/// Opening plus the movements less closing. Nil in every period.
+	measure 'Cash Flow Check' =
+			[Opening Cash] + [Operating Cash Flow] + [Investing Cash Flow]
+			    + [Financing Cash Flow] + [FX Effect on Cash] - [Closing Cash]
+		formatString: #,0.00,,;(#,0.00,,);"–"
+		lineageTag: 65018963-85fc-5777-81b2-63f4cd452fc4
+		displayFolder: 05 Cash flow
+
+	/// Cash plus the undrawn revolving facility at the selected month end.
+	measure 'Total Liquidity' =
+			CALCULATE (
+			    SUM ( 'Cash Flow'[liquidity_usd] ),
+			    'Date'[period_key] = MAX ( 'Date'[period_key] )
+			)
+		formatString: #,0.0,,;(#,0.0,,);"–"
+		lineageTag: f6345d8e-98ed-5058-b3db-c92efbca0895
+		displayFolder: 05 Cash flow
+
+	/// All debt instruments at the month end, whether or not the agreement counts them.
+	measure 'Gross Debt' =
+			CALCULATE (
+			    SUM ( 'Covenants'[gross_debt_usd] ),
+			    'Date'[period_key] = MAX ( 'Date'[period_key] )
+			)
+		formatString: #,0.0,,;(#,0.0,,);"–"
+		lineageTag: 181e82e9-6318-5427-afe9-ee7704e61cc8
+		displayFolder: 06 Debt and covenants
+
+	/// Debt that counts toward the covenant, per the instrument's own flag in the debt schedule:
+	/// the term loan, the revolver and finance leases, and not operating leases (CA-018).
+	measure 'Covenant Debt' =
+			CALCULATE (
+			    SUM ( 'Covenants'[covenant_debt_usd] ),
+			    'Date'[period_key] = MAX ( 'Date'[period_key] )
+			)
+		formatString: #,0.0,,;(#,0.0,,);"–"
+		lineageTag: 57789a1f-30d6-5d18-ab63-4d10b8d67452
+		displayFolder: 06 Debt and covenants
+
+	/// Covenant debt less unrestricted cash (CA-019). There is no cash netting cap (CA-020).
+	measure 'Covenant Net Debt' =
+			CALCULATE (
+			    SUM ( 'Covenants'[net_debt_usd] ),
+			    'Date'[period_key] = MAX ( 'Date'[period_key] )
+			)
+		formatString: #,0.0,,;(#,0.0,,);"–"
+		lineageTag: c94ba204-6210-58e3-b749-5b49f43085fb
+		displayFolder: 06 Debt and covenants
+
+	/// EBITDA on the **credit agreement's** definition, over a rolling twelve months: the permitted
+	/// add-backs (CA-021 to CA-025), the sponsor fee capped at USD 1.5m (CA-027) and unrealised
+	/// foreign exchange (CA-030). **Its own lineage, not Management Adjusted EBITDA** — the two are
+	/// equal in this baseline only because the cap does not bite and the foreign exchange add-back
+	/// has no population.
+	measure 'Covenant EBITDA' =
+			CALCULATE (
+			    SUM ( 'Covenants'[covenant_ebitda_usd] ),
+			    'Date'[period_key] = MAX ( 'Date'[period_key] )
+			)
+		formatString: #,0.0,,;(#,0.0,,);"–"
+		lineageTag: aca0f552-412c-5fb6-8aaa-7b4e2181e5aa
+		displayFolder: 06 Debt and covenants
+
+	/// Covenant net debt over twelve months of covenant EBITDA. Using a fiscal-year EBITDA for a
+	/// year in progress divides a full net debt balance by a part-year result and reports a breach
+	/// that does not exist.
+	measure 'Covenant Net Leverage' =
+			DIVIDE ( [Covenant Net Debt], [Covenant EBITDA] )
+		formatString: 0.00"x";(0.00"x");"–"
+		lineageTag: 8bf9e2a0-ad16-5672-b85e-f8921720e3e3
+		displayFolder: 06 Debt and covenants
+
+	/// The maximum leverage the agreement permits for the fiscal year: 6.00x FY2023, 5.50x FY2024,
+	/// 5.00x FY2025 and 4.50x from FY2026, each read from its own agreement term.
+	measure 'Covenant Limit' =
+			CALCULATE (
+			    MAX ( 'Covenants'[max_net_leverage] ),
+			    'Date'[period_key] = MAX ( 'Date'[period_key] )
+			)
+		formatString: 0.00"x";(0.00"x");"–"
+		lineageTag: 808def5b-3af6-564a-be7a-c1a699c32e27
+		displayFolder: 06 Debt and covenants
+
+	/// Turns of headroom against the limit. Negative would be a breach.
+	measure 'Covenant Headroom' =
+			[Covenant Limit] - [Covenant Net Leverage]
+		formatString: 0.00"x";(0.00"x");"–"
+		lineageTag: a9ef1dac-4aae-576d-b2e3-f411a800cf46
+		displayFolder: 06 Debt and covenants
+
+	/// Whether the selected month is a date the agreement actually tests. The agreement sets a
+	/// maximum per **fiscal year**, so the test dates are the year ends. A quarterly presentation
+	/// once stamped BREACH on two dates the agreement never tests.
+	measure 'Is Covenant Test Date' =
+			IF ( SELECTEDVALUE ( 'Date'[accounting_period] ) = 12, TRUE, FALSE )
+		lineageTag: cb1e3854-b06e-5d8d-b877-af84fd01dcbb
+		displayFolder: 06 Debt and covenants
+
+	/// Compliant or Breach at a real test date, and **Indicative** anywhere else. Telling a board
+	/// it breached a covenant it did not breach is the most expensive mistake a reporting layer can
+	/// make, so a verdict is given only where the agreement gives one.
+	measure 'Covenant Status' =
+			VAR _Headroom = [Covenant Headroom]
+			RETURN
+			    SWITCH (
+			        TRUE (),
+			        ISBLANK ( _Headroom ), BLANK (),
+			        NOT [Is Covenant Test Date], "Indicative",
+			        _Headroom >= 0, "Compliant",
+			        "Breach"
+			    )
+		lineageTag: ffcbd323-c59a-50e2-bf9a-849ff3e857b3
+		displayFolder: 06 Debt and covenants
+
+	/// Leverage including operating lease liabilities, which the agreement excludes. Shown because
+	/// a reader should see both.
+	measure 'Economic Leverage' =
+			CALCULATE (
+			    MAX ( 'Covenants'[economic_leverage] ),
+			    'Date'[period_key] = MAX ( 'Date'[period_key] )
+			)
+		formatString: 0.00"x";(0.00"x");"–"
+		lineageTag: 02a4ee0d-ae8b-5e87-94d9-ca9e9a50fd76
+		displayFolder: 06 Debt and covenants
+
+	/// Full-time equivalents at the start of the selected range.
+	measure 'Opening FTE' =
+			CALCULATE (
+			    SUM ( 'Headcount'[fte_opening] ),
+			    'Date'[period_key] = MIN ( 'Date'[period_key] )
+			)
+		formatString: #,0.0
+		lineageTag: 3f6a053f-9661-5a40-a62a-36fe66021c41
+		displayFolder: 07 Workforce
+
+	/// People joining. A **count**, not an FTE: a part-time joiner is one hire and a fraction of an
+	/// FTE, so hires are never netted against the FTE movement.
+	measure 'Hires' =
+			SUM ( 'Headcount'[hires] )
+		formatString: #,0
+		lineageTag: 1a7a90b1-fcf5-557b-bec2-f0c699a014de
+		displayFolder: 07 Workforce
+
+	/// People leaving, on the same basis as hires.
+	measure 'Exits' =
+			SUM ( 'Headcount'[leavers] )
+		formatString: #,0
+		lineageTag: 272c97ee-f46a-5a2c-ad78-61e2ebd0f552
+		displayFolder: 07 Workforce
+
+	/// Full-time equivalents at the end of the selected range. Continuous with the prior month at
+	/// the finest grain.
+	measure 'Closing FTE' =
+			CALCULATE (
+			    SUM ( 'Headcount'[fte_closing] ),
+			    'Date'[period_key] = MAX ( 'Date'[period_key] )
+			)
+		formatString: #,0.0
+		lineageTag: c9933950-c1c1-5d68-85fc-098ee1d815aa
+		displayFolder: 07 Workforce
+
+	/// The mean of the monthly averages over the selected range, rather than the average of a sum,
+	/// which would scale with the number of months.
+	measure 'Average FTE' =
+			AVERAGEX (
+			    VALUES ( 'Date'[period_key] ),
+			    CALCULATE ( SUM ( 'Headcount'[fte_average] ) )
+			)
+		formatString: #,0.0
+		lineageTag: b86793ef-5295-56b7-8d13-853dd2c7c682
+		displayFolder: 07 Workforce
+
+	/// Personnel cost from the income statement detail, so it agrees with operating expenses rather
+	/// than with a payroll extract.
+	measure 'Personnel Cost' =
+			CALCULATE (
+			    SUM ( 'Financial Detail'[amount_usd] ),
+			    'Account'[fs_caption_l2] = "Personnel costs"
+			)
+		formatString: #,0.0,,;(#,0.0,,);"–"
+		lineageTag: 3ed1c39d-070c-5280-9e55-8765386750f1
+		displayFolder: 07 Workforce
+
+	/// Personnel cost over average full-time equivalents.
+	measure 'Cost per Average FTE' =
+			DIVIDE ( [Personnel Cost], [Average FTE] )
+		formatString: #,0
+		lineageTag: 5ad5d4fc-328c-5bb1-ad70-1d4c90e74c4e
+		displayFolder: 07 Workforce
+
+	/// Capital spend, blank after the reporting close on the same rule as every other Actual
+	/// measure.
+	measure 'Actual CapEx' =
+			VAR _Latest = MAX ( 'Date'[period_key] )
+			RETURN IF ( _Latest > [Reporting Period Key], BLANK (), SUM ( 'CapEx'[spend_usd] ) )
+		formatString: #,0.0,,;(#,0.0,,);"–"
+		lineageTag: 60225886-de21-5747-8c44-b7ba1ee31885
+		displayFolder: 08 Capital expenditure
+
+	/// The approved budget for the projects in scope.
+	measure 'Approved CapEx' =
+			SUM ( 'CapEx'[approved_usd] )
+		formatString: #,0.0,,;(#,0.0,,);"–"
+		lineageTag: d47bfa42-ea39-52ed-88bd-f1851222e37a
+		displayFolder: 08 Capital expenditure
+
+	/// Capital spend as a multiple of the depreciation charge — the usual test of whether an asset
+	/// base is being maintained.
+	measure 'CapEx to Depreciation' =
+			DIVIDE ( [Actual CapEx], [Depreciation and Amortisation] )
+		formatString: 0.00"x";(0.00"x");"–"
+		lineageTag: 0e5b11b0-ee40-537d-9ef4-8ed60c69f7a8
+		displayFolder: 08 Capital expenditure
+
+	/// This year's activity restated at last year's average rate. An **operating** measure: what a
+	/// reader means by how much of the revenue movement was currency. Not the translation
+	/// adjustment.
+	measure 'Constant Currency Revenue' =
+			SUM ( 'FX'[revenue_constant_ccy_usd] )
+		formatString: #,0.0,,;(#,0.0,,);"–"
+		lineageTag: 8c26091f-a2f7-51eb-9ca8-9abb3b7468cd
+		displayFolder: 09 Foreign exchange
+
+	/// Reported revenue less constant currency revenue.
+	measure 'FX Translation Effect on Revenue' =
+			SUM ( 'FX'[revenue_usd] ) - [Constant Currency Revenue]
+		formatString: #,0.0,,;(#,0.0,,);"–"
+		lineageTag: 3109ded3-317b-5249-b736-a9265d92842a
+		displayFolder: 09 Foreign exchange
+
+	/// The movement in the cumulative translation adjustment, an equity reserve. Derived by the
+	/// consolidation as the residual of the translated trial balance, never plugged.
+	measure 'CTA Movement' =
+			SUM ( 'FX'[cta_movement_usd] )
+		formatString: #,0.0,,;(#,0.0,,);"–"
+		lineageTag: 88f85f0c-8111-5f76-9081-8ba13fbc3738
+		displayFolder: 09 Foreign exchange
+
+	column _placeholder
+		isHidden
+		dataType: int64
+		lineageTag: d4ae866e-2a73-536e-8fe0-1ec48c95d65e
+		summarizeBy: none
+		sourceColumn: _placeholder
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Measures = m
+		mode: import
+		source =
+				let
+				    Source = #table(type table [_placeholder = Int64.Type], {})
+				in
+				    Source
+
+	annotation PBI_ResultType = Table

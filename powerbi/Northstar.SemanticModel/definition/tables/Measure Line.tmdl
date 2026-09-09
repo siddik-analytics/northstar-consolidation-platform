@@ -1,0 +1,65 @@
+/// The income statement line hierarchy, in presentation order, with the indent level and the
+/// favourable direction that makes variance colouring account-aware.
+table 'Measure Line'
+	lineageTag: 81866aff-c265-5da2-87af-b9b98bd94efa
+
+	column measure_code
+		dataType: string
+		isKey
+		lineageTag: 3e542df5-d6f6-5732-a22b-2f0c21c9e27f
+		summarizeBy: none
+		sourceColumn: measure_code
+
+		annotation SummarizationSetBy = Automatic
+
+	column measure_name
+		dataType: string
+		lineageTag: f58af6f1-066a-583a-ab99-6ce5b88d53cc
+		summarizeBy: none
+		sourceColumn: measure_name
+		sortByColumn: sort_order
+
+		annotation SummarizationSetBy = Automatic
+
+	column indent_level
+		dataType: int64
+		lineageTag: 2ba36ca4-f4d0-5702-9257-72003fe1e19a
+		summarizeBy: none
+		sourceColumn: indent_level
+
+		annotation SummarizationSetBy = Automatic
+
+	column is_subtotal
+		dataType: boolean
+		lineageTag: abbd3333-d4a3-5ee0-b4c1-91f6d84700ff
+		summarizeBy: none
+		sourceColumn: is_subtotal
+
+		annotation SummarizationSetBy = Automatic
+
+	column favourable_direction
+		dataType: string
+		lineageTag: 63b3f2dd-4f53-57e9-a2cf-2397f95e0005
+		summarizeBy: none
+		sourceColumn: favourable_direction
+
+		annotation SummarizationSetBy = Automatic
+
+	column sort_order
+		dataType: int64
+		isHidden
+		lineageTag: 1f942941-7f79-5c54-91ad-8be211194ad7
+		summarizeBy: none
+		sourceColumn: sort_order
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'Measure Line' = m
+		mode: import
+		source =
+				let
+				    Source = Parquet.Document(File.Contents(DataFolder & "\30_marts\dim_report_measure.parquet"))
+				in
+				    Source
+
+	annotation PBI_ResultType = Table

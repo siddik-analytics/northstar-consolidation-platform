@@ -1,0 +1,194 @@
+/// Debt by instrument and month.
+table 'Debt'
+	lineageTag: f754f8dc-6a6f-57b4-93df-73c5cefe81b2
+
+	column period_key
+		dataType: int64
+		isHidden
+		lineageTag: cf4041a9-08c5-5186-a810-bfdeaad41729
+		summarizeBy: none
+		sourceColumn: period_key
+
+		annotation SummarizationSetBy = Automatic
+
+	column fiscal_year
+		dataType: int64
+		isHidden
+		lineageTag: e4e4e9c3-015a-529a-83f5-136056148e99
+		summarizeBy: none
+		sourceColumn: fiscal_year
+
+		annotation SummarizationSetBy = Automatic
+
+	column instrument_id
+		dataType: string
+		isHidden
+		lineageTag: 622f7b37-a8a6-54db-8916-4a928faaa111
+		summarizeBy: none
+		sourceColumn: instrument_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column instrument_name
+		dataType: string
+		isHidden
+		lineageTag: 713d49c4-ede2-5013-8481-74d5df868d62
+		summarizeBy: none
+		sourceColumn: instrument_name
+
+		annotation SummarizationSetBy = Automatic
+
+	column instrument_type
+		dataType: string
+		isHidden
+		lineageTag: ed08d196-cecc-5da5-99cd-cafabbec30b0
+		summarizeBy: none
+		sourceColumn: instrument_type
+
+		annotation SummarizationSetBy = Automatic
+
+	column borrower_entity
+		dataType: string
+		isHidden
+		lineageTag: 31c98009-2abf-57bd-94c0-288a59a9488c
+		summarizeBy: none
+		sourceColumn: borrower_entity
+
+		annotation SummarizationSetBy = Automatic
+
+	column currency_code
+		dataType: string
+		isHidden
+		lineageTag: e02c4a52-a8b4-5dd4-b5f5-1da39566e52b
+		summarizeBy: none
+		sourceColumn: currency_code
+
+		annotation SummarizationSetBy = Automatic
+
+	column rate_type
+		dataType: string
+		isHidden
+		lineageTag: 9a3e51b9-7d9e-54e5-bac4-e4b661e85cf5
+		summarizeBy: none
+		sourceColumn: rate_type
+
+		annotation SummarizationSetBy = Automatic
+
+	column is_hedged
+		dataType: boolean
+		isHidden
+		lineageTag: 91a89207-c3da-5fdb-9f8b-5add5992c062
+		summarizeBy: none
+		sourceColumn: is_hedged
+
+		annotation SummarizationSetBy = Automatic
+
+	column maturity_date
+		dataType: string
+		isHidden
+		lineageTag: 9a7ded20-2bdb-5581-bbfb-8f5a96c4e286
+		summarizeBy: none
+		sourceColumn: maturity_date
+
+		annotation SummarizationSetBy = Automatic
+
+	column interest_rate_basis
+		dataType: string
+		isHidden
+		lineageTag: e09abad9-6c28-5a4e-907c-fe6cac0bb85f
+		summarizeBy: none
+		sourceColumn: interest_rate_basis
+
+		annotation SummarizationSetBy = Automatic
+
+	column counts_toward_covenant_debt
+		dataType: boolean
+		isHidden
+		lineageTag: 14cfbd55-08f6-538f-bd31-5211d20d7631
+		summarizeBy: none
+		sourceColumn: counts_toward_covenant_debt
+
+		annotation SummarizationSetBy = Automatic
+
+	column covenant_reference
+		dataType: string
+		isHidden
+		lineageTag: faaf587f-c22e-55f9-aa36-a81bcc634237
+		summarizeBy: none
+		sourceColumn: covenant_reference
+
+		annotation SummarizationSetBy = Automatic
+
+	column opening_principal_usd
+		dataType: double
+		lineageTag: d8048808-ad32-5aa2-892a-e9760b3b5c78
+		summarizeBy: none
+		sourceColumn: opening_principal_usd
+
+		annotation SummarizationSetBy = Automatic
+
+	column drawings_usd
+		dataType: double
+		lineageTag: ba2d6045-c101-553d-91dc-5959d80adaff
+		summarizeBy: none
+		sourceColumn: drawings_usd
+
+		annotation SummarizationSetBy = Automatic
+
+	column repayments_usd
+		dataType: double
+		lineageTag: f1d20441-734c-5def-91a0-57af47076f09
+		summarizeBy: none
+		sourceColumn: repayments_usd
+
+		annotation SummarizationSetBy = Automatic
+
+	column closing_principal_usd
+		dataType: double
+		lineageTag: e650f80e-b974-57b4-b287-312855c9ac89
+		summarizeBy: none
+		sourceColumn: closing_principal_usd
+
+		annotation SummarizationSetBy = Automatic
+
+	column undrawn_commitment_usd
+		dataType: double
+		lineageTag: e4b4e839-731f-590a-ac02-1588668e08e7
+		summarizeBy: none
+		sourceColumn: undrawn_commitment_usd
+
+		annotation SummarizationSetBy = Automatic
+
+	column interest_expense_usd
+		dataType: double
+		lineageTag: 26995789-93d3-519a-a318-9d6bb26eb192
+		summarizeBy: none
+		sourceColumn: interest_expense_usd
+
+		annotation SummarizationSetBy = Automatic
+
+	column commitment_fee_usd
+		dataType: double
+		lineageTag: 1e82cb1f-78b5-5b88-9d26-6251a11b9a93
+		summarizeBy: none
+		sourceColumn: commitment_fee_usd
+
+		annotation SummarizationSetBy = Automatic
+
+	column average_daily_drawn_usd
+		dataType: double
+		lineageTag: 79ff73ab-7456-50ee-a356-05cda58f3e87
+		summarizeBy: none
+		sourceColumn: average_daily_drawn_usd
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'Debt' = m
+		mode: import
+		source =
+				let
+				    Source = Parquet.Document(File.Contents(DataFolder & "\30_marts\mart_debt.parquet"))
+				in
+				    Source
+
+	annotation PBI_ResultType = Table

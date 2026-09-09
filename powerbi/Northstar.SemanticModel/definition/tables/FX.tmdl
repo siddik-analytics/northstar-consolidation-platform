@@ -1,0 +1,112 @@
+/// Rates, currency exposure, constant currency and the translation adjustment.
+table 'FX'
+	lineageTag: 37015ef3-8c73-595c-91dd-7e56a6d444d1
+
+	column currency_code
+		dataType: string
+		isHidden
+		lineageTag: 79bd28b2-e9b6-50a3-b38c-d73ccc255a6a
+		summarizeBy: none
+		sourceColumn: currency_code
+
+		annotation SummarizationSetBy = Automatic
+
+	column period_key
+		dataType: int64
+		isHidden
+		lineageTag: 87903430-13fa-5caf-9c3a-7afebadd9df0
+		summarizeBy: none
+		sourceColumn: period_key
+
+		annotation SummarizationSetBy = Automatic
+
+	column fiscal_year
+		dataType: int64
+		isHidden
+		lineageTag: 3c706137-4e52-5a0b-8828-5904ccdb3b07
+		summarizeBy: none
+		sourceColumn: fiscal_year
+
+		annotation SummarizationSetBy = Automatic
+
+	column avg_rate
+		dataType: double
+		lineageTag: 5695436d-effb-514d-b85a-a8b2157a070f
+		summarizeBy: none
+		sourceColumn: avg_rate
+
+		annotation SummarizationSetBy = Automatic
+
+	column close_rate
+		dataType: double
+		lineageTag: 209f79fc-17f8-5b80-8357-1713a863109a
+		summarizeBy: none
+		sourceColumn: close_rate
+
+		annotation SummarizationSetBy = Automatic
+
+	column avg_rate_py
+		dataType: double
+		lineageTag: 110b8717-ef39-53bf-98dc-70adc98242d1
+		summarizeBy: none
+		sourceColumn: avg_rate_py
+
+		annotation SummarizationSetBy = Automatic
+
+	column revenue_usd
+		dataType: decimal
+		lineageTag: 263e1edb-2ebb-557a-a17b-83bb51144f27
+		summarizeBy: none
+		sourceColumn: revenue_usd
+
+		annotation SummarizationSetBy = Automatic
+
+	column ebitda_usd
+		dataType: decimal
+		lineageTag: 70b68e1a-8326-56d0-9a43-7f26c1eb444c
+		summarizeBy: none
+		sourceColumn: ebitda_usd
+
+		annotation SummarizationSetBy = Automatic
+
+	column revenue_constant_ccy_usd
+		dataType: double
+		lineageTag: 24410446-0811-5e2c-8dfb-bee3a1605eeb
+		summarizeBy: none
+		sourceColumn: revenue_constant_ccy_usd
+
+		annotation SummarizationSetBy = Automatic
+
+	column cta_movement_usd
+		dataType: double
+		lineageTag: cd5af13e-f77e-58a5-abb2-78971fa96c5f
+		summarizeBy: none
+		sourceColumn: cta_movement_usd
+
+		annotation SummarizationSetBy = Automatic
+
+	column cta_group_usd
+		dataType: double
+		lineageTag: 1a4ae1b1-7bfb-5740-95a2-3d38fd9bd62f
+		summarizeBy: none
+		sourceColumn: cta_group_usd
+
+		annotation SummarizationSetBy = Automatic
+
+	column cta_nci_usd
+		dataType: double
+		lineageTag: e53fb305-92b5-57ab-a3a4-33ca718e0204
+		summarizeBy: none
+		sourceColumn: cta_nci_usd
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'FX' = m
+		mode: import
+		source =
+				let
+				    Source = Parquet.Document(File.Contents(DataFolder & "\30_marts\mart_fx.parquet"))
+				in
+				    Source
+
+	annotation PBI_ResultType = Table

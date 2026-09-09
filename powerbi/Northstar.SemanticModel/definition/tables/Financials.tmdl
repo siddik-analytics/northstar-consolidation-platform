@@ -1,0 +1,181 @@
+/// The measure grain: month, year to date and full year for fourteen income statement measures,
+/// on both bases and every scenario. Subtotals are stored upstream, not derived here.
+table 'Financials'
+	lineageTag: 517230ea-bc80-50e4-82cd-5bbb2a1d58f3
+
+	column basis
+		dataType: string
+		isHidden
+		lineageTag: ccf8ec7d-4520-5e3a-a365-e5483d2fadfd
+		summarizeBy: none
+		sourceColumn: basis
+
+		annotation SummarizationSetBy = Automatic
+
+	column scenario_code
+		dataType: string
+		isHidden
+		lineageTag: d1438233-b0d5-52b4-a0ab-e33bb98f926b
+		summarizeBy: none
+		sourceColumn: scenario_code
+
+		annotation SummarizationSetBy = Automatic
+
+	column version_code
+		dataType: string
+		isHidden
+		lineageTag: 2b9aa64b-0503-5ad8-99a5-9964ffcc1460
+		summarizeBy: none
+		sourceColumn: version_code
+
+		annotation SummarizationSetBy = Automatic
+
+	column entity_code
+		dataType: string
+		isHidden
+		lineageTag: d84d0094-fd23-579e-bed6-64e28011585d
+		summarizeBy: none
+		sourceColumn: entity_code
+
+		annotation SummarizationSetBy = Automatic
+
+	column bu_code
+		dataType: string
+		isHidden
+		lineageTag: bcc47cf5-1d2f-5a66-bc4d-b964562a975e
+		summarizeBy: none
+		sourceColumn: bu_code
+
+		annotation SummarizationSetBy = Automatic
+
+	column measure_code
+		dataType: string
+		isHidden
+		lineageTag: 61378f8f-2df5-5aa0-bd01-d073904cd451
+		summarizeBy: none
+		sourceColumn: measure_code
+
+		annotation SummarizationSetBy = Automatic
+
+	column period_key
+		dataType: int64
+		isHidden
+		lineageTag: 5c114cf9-907d-5248-bf6f-3d3e6ee22c87
+		summarizeBy: none
+		sourceColumn: period_key
+
+		annotation SummarizationSetBy = Automatic
+
+	column fiscal_year
+		dataType: int64
+		isHidden
+		lineageTag: 66482ada-eda1-559c-9d93-729372d4987f
+		summarizeBy: none
+		sourceColumn: fiscal_year
+
+		annotation SummarizationSetBy = Automatic
+
+	column accounting_period
+		dataType: int64
+		isHidden
+		lineageTag: 3c5d5fc4-31c7-5942-a84e-44ff1de70984
+		summarizeBy: none
+		sourceColumn: accounting_period
+
+		annotation SummarizationSetBy = Automatic
+
+	column fiscal_quarter
+		dataType: int64
+		isHidden
+		lineageTag: 42ef2b7e-175d-51a0-a49c-0c9d8a0a44d8
+		summarizeBy: none
+		sourceColumn: fiscal_quarter
+
+		annotation SummarizationSetBy = Automatic
+
+	column mtd_usd
+		dataType: decimal
+		lineageTag: 17bed676-f7a0-5b5b-b6f2-28032a305180
+		summarizeBy: none
+		sourceColumn: mtd_usd
+
+		annotation SummarizationSetBy = Automatic
+
+	column ytd_usd
+		dataType: decimal
+		lineageTag: 6713b0b0-4de9-5944-8ec3-318b7215bfb4
+		summarizeBy: none
+		sourceColumn: ytd_usd
+
+		annotation SummarizationSetBy = Automatic
+
+	column fy_usd
+		dataType: decimal
+		lineageTag: 5fa6fb8a-a2ee-52aa-a930-a64d865e4e4f
+		summarizeBy: none
+		sourceColumn: fy_usd
+
+		annotation SummarizationSetBy = Automatic
+
+	column measure_name
+		dataType: string
+		isHidden
+		lineageTag: 31d6adb2-81c0-5431-a61c-f058c8afe341
+		summarizeBy: none
+		sourceColumn: measure_name
+
+		annotation SummarizationSetBy = Automatic
+
+	column indent_level
+		dataType: int64
+		isHidden
+		lineageTag: be7aa38a-bec5-50aa-9607-b074ee210de6
+		summarizeBy: none
+		sourceColumn: indent_level
+
+		annotation SummarizationSetBy = Automatic
+
+	column is_subtotal
+		dataType: boolean
+		isHidden
+		lineageTag: 30a2eb0d-ea64-5df0-8d07-70a854942009
+		summarizeBy: none
+		sourceColumn: is_subtotal
+
+		annotation SummarizationSetBy = Automatic
+
+	column favourable_direction
+		dataType: string
+		isHidden
+		lineageTag: a8ba96f1-46d9-5a46-b9bb-1362e63ec251
+		summarizeBy: none
+		sourceColumn: favourable_direction
+
+		annotation SummarizationSetBy = Automatic
+
+	column measure_sort
+		dataType: int64
+		isHidden
+		lineageTag: 7d838d48-c986-5084-a0c6-6f7e327d7f98
+		summarizeBy: none
+		sourceColumn: measure_sort
+
+		annotation SummarizationSetBy = Automatic
+
+	column is_comparable
+		dataType: boolean
+		lineageTag: e852d75b-ec7a-5ec9-9a4d-162f651d71d4
+		summarizeBy: none
+		sourceColumn: is_comparable
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'Financials' = m
+		mode: import
+		source =
+				let
+				    Source = Parquet.Document(File.Contents(DataFolder & "\30_marts\mart_financial_ytd.parquet"))
+				in
+				    Source
+
+	annotation PBI_ResultType = Table

@@ -1,0 +1,104 @@
+/// The consolidated balance sheet by caption and account class.
+table 'Balance Sheet'
+	lineageTag: ca79ebbc-65af-5abb-a561-26d5904c6cbf
+
+	column period_key
+		dataType: int64
+		isHidden
+		lineageTag: c264bd56-7ffb-5a97-9492-665810f0c31f
+		summarizeBy: none
+		sourceColumn: period_key
+
+		annotation SummarizationSetBy = Automatic
+
+	column fiscal_year
+		dataType: int64
+		isHidden
+		lineageTag: 1e136826-f76e-5a5d-ac13-3788c5642340
+		summarizeBy: none
+		sourceColumn: fiscal_year
+
+		annotation SummarizationSetBy = Automatic
+
+	column caption
+		dataType: string
+		lineageTag: e9fc0fb9-5495-5e45-b628-c841e4f0d4df
+		summarizeBy: none
+		sourceColumn: caption
+
+		annotation SummarizationSetBy = Automatic
+
+	column account_class
+		dataType: string
+		lineageTag: c5343931-48e6-528b-a852-f414425b43ba
+		summarizeBy: none
+		sourceColumn: account_class
+
+		annotation SummarizationSetBy = Automatic
+
+	column sort_order
+		dataType: int64
+		isHidden
+		lineageTag: 806b09af-6b07-565b-9778-51249e19d5da
+		summarizeBy: none
+		sourceColumn: sort_order
+
+		annotation SummarizationSetBy = Automatic
+
+	column balance_usd
+		dataType: decimal
+		lineageTag: 18b5c973-6b54-5293-8965-48dfaab75a38
+		summarizeBy: none
+		sourceColumn: balance_usd
+
+		annotation SummarizationSetBy = Automatic
+
+	column movement_usd
+		dataType: decimal
+		lineageTag: d0f7e347-2c68-5f79-a4dd-a6b1efd722a5
+		summarizeBy: none
+		sourceColumn: movement_usd
+
+		annotation SummarizationSetBy = Automatic
+
+	column prior_month_usd
+		dataType: decimal
+		lineageTag: a3efb441-1943-5042-8929-99a7cf8782e7
+		summarizeBy: none
+		sourceColumn: prior_month_usd
+
+		annotation SummarizationSetBy = Automatic
+
+	column prior_year_usd
+		dataType: decimal
+		lineageTag: 3325c92c-7fd2-523e-b5b4-277d6c077341
+		summarizeBy: none
+		sourceColumn: prior_year_usd
+
+		annotation SummarizationSetBy = Automatic
+
+	column mom_movement_usd
+		dataType: decimal
+		lineageTag: 299ec95f-76fa-5e01-a5bd-bd8207aad054
+		summarizeBy: none
+		sourceColumn: mom_movement_usd
+
+		annotation SummarizationSetBy = Automatic
+
+	column yoy_movement_usd
+		dataType: decimal
+		lineageTag: d888df7d-d3e5-5c81-b484-55874131db0f
+		summarizeBy: none
+		sourceColumn: yoy_movement_usd
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'Balance Sheet' = m
+		mode: import
+		source =
+				let
+				    Source = Parquet.Document(File.Contents(DataFolder & "\30_marts\mart_balance_sheet.parquet"))
+				in
+				    Source
+
+	annotation PBI_ResultType = Table

@@ -1,0 +1,64 @@
+/// The five reportable segments.
+table 'Business Unit'
+	lineageTag: 95a8f32a-53d4-509b-a96d-20e7def295cc
+
+	column bu_code
+		dataType: string
+		isKey
+		lineageTag: 34e7598d-39cd-5367-ad4f-839b1c7091d8
+		summarizeBy: none
+		sourceColumn: bu_code
+
+		annotation SummarizationSetBy = Automatic
+
+	column bu_name
+		dataType: string
+		lineageTag: bc3e4b29-89df-571f-8243-d72a08e5062a
+		summarizeBy: none
+		sourceColumn: bu_name
+		sortByColumn: sort_order
+
+		annotation SummarizationSetBy = Automatic
+
+	column bu_short_name
+		dataType: string
+		lineageTag: 833f3f9f-65c0-5ad7-9fd4-43edd8477008
+		summarizeBy: none
+		sourceColumn: bu_short_name
+
+		annotation SummarizationSetBy = Automatic
+
+	column segment_type
+		dataType: string
+		lineageTag: 9eade6da-9436-5f98-9fbd-78aecaee34ec
+		summarizeBy: none
+		sourceColumn: segment_type
+
+		annotation SummarizationSetBy = Automatic
+
+	column is_reportable_segment
+		dataType: boolean
+		lineageTag: 71cd6cee-92ff-5618-afba-fbed4571ceda
+		summarizeBy: none
+		sourceColumn: is_reportable_segment
+
+		annotation SummarizationSetBy = Automatic
+
+	column sort_order
+		dataType: int64
+		isHidden
+		lineageTag: f412f4a3-9764-5ec7-8967-125698afd981
+		summarizeBy: none
+		sourceColumn: sort_order
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'Business Unit' = m
+		mode: import
+		source =
+				let
+				    Source = Parquet.Document(File.Contents(DataFolder & "\35_semantic\dim_semantic_business_unit.parquet"))
+				in
+				    Source
+
+	annotation PBI_ResultType = Table

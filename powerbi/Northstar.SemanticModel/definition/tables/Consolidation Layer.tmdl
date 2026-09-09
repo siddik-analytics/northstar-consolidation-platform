@@ -1,0 +1,72 @@
+/// The five consolidation layers and their view membership.
+table 'Consolidation Layer'
+	lineageTag: e6e50511-e52b-5397-9679-32a8b5633450
+
+	column layer_id
+		dataType: int64
+		isKey
+		lineageTag: 7bce802f-a7a7-5b62-aa2c-78eed1192bf7
+		summarizeBy: none
+		sourceColumn: layer_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column layer_code
+		dataType: string
+		lineageTag: c18f30e0-d0a7-55e0-8145-304915267df7
+		summarizeBy: none
+		sourceColumn: layer_code
+
+		annotation SummarizationSetBy = Automatic
+
+	column layer_name
+		dataType: string
+		lineageTag: dd578f88-0a7c-57cd-9184-d812e606b840
+		summarizeBy: none
+		sourceColumn: layer_name
+		sortByColumn: sort_order
+
+		annotation SummarizationSetBy = Automatic
+
+	column in_statutory_view
+		dataType: boolean
+		lineageTag: 64c4ded3-239f-57e3-9e50-1ccec302d24f
+		summarizeBy: none
+		sourceColumn: in_statutory_view
+
+		annotation SummarizationSetBy = Automatic
+
+	column in_management_view
+		dataType: boolean
+		lineageTag: 57f472f0-10a0-5f73-99b1-b6d3bd39c5dc
+		summarizeBy: none
+		sourceColumn: in_management_view
+
+		annotation SummarizationSetBy = Automatic
+
+	column sort_order
+		dataType: int64
+		isHidden
+		lineageTag: 1d8194f7-4cd8-5a52-a34b-8c2d852c5262
+		summarizeBy: none
+		sourceColumn: sort_order
+
+		annotation SummarizationSetBy = Automatic
+
+	column description
+		dataType: string
+		lineageTag: 1f62cbc7-01c5-58d5-b168-80293a6b7580
+		summarizeBy: none
+		sourceColumn: description
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'Consolidation Layer' = m
+		mode: import
+		source =
+				let
+				    Source = Parquet.Document(File.Contents(DataFolder & "\35_semantic\dim_semantic_layer.parquet"))
+				in
+				    Source
+
+	annotation PBI_ResultType = Table

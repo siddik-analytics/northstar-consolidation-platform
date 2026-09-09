@@ -1,0 +1,184 @@
+/// The consolidated cash flow and the liquidity position, monthly.
+table 'Cash Flow'
+	lineageTag: 99c7d1a8-af3a-5c19-abd8-dbd8b86c669b
+
+	column period_key
+		dataType: int64
+		isHidden
+		lineageTag: 5d96007e-b69a-5c93-9685-e0b29c33b01a
+		summarizeBy: none
+		sourceColumn: period_key
+
+		annotation SummarizationSetBy = Automatic
+
+	column fiscal_year
+		dataType: int64
+		isHidden
+		lineageTag: b1101b17-d221-5cea-b8e4-9cf48f7dd828
+		summarizeBy: none
+		sourceColumn: fiscal_year
+
+		annotation SummarizationSetBy = Automatic
+
+	column accounting_period
+		dataType: int64
+		isHidden
+		lineageTag: d8581fc4-c24a-5132-8ff7-25a3370a69ad
+		summarizeBy: none
+		sourceColumn: accounting_period
+
+		annotation SummarizationSetBy = Automatic
+
+	column opening_cash_usd
+		dataType: decimal
+		lineageTag: 5fe00221-7dd5-5549-8216-44b2c1af62ed
+		summarizeBy: none
+		sourceColumn: opening_cash_usd
+
+		annotation SummarizationSetBy = Automatic
+
+	column result_usd
+		dataType: decimal
+		lineageTag: 25c66a30-08af-5539-aed3-b6a0899bfad6
+		summarizeBy: none
+		sourceColumn: result_usd
+
+		annotation SummarizationSetBy = Automatic
+
+	column non_cash_and_other_usd
+		dataType: decimal
+		lineageTag: 3e331752-c647-572f-8e8c-a9be152dbe38
+		summarizeBy: none
+		sourceColumn: non_cash_and_other_usd
+
+		annotation SummarizationSetBy = Automatic
+
+	column working_capital_usd
+		dataType: decimal
+		lineageTag: df0f5710-56b0-582c-a069-4aa4d68fac99
+		summarizeBy: none
+		sourceColumn: working_capital_usd
+
+		annotation SummarizationSetBy = Automatic
+
+	column fx_non_cash_usd
+		dataType: decimal
+		lineageTag: 6cfa992f-a596-501c-ab23-15fbd4a6ee7b
+		summarizeBy: none
+		sourceColumn: fx_non_cash_usd
+
+		annotation SummarizationSetBy = Automatic
+
+	column close_translation_usd
+		dataType: decimal
+		lineageTag: 08922b4c-c9ac-5502-b546-535e06d9220e
+		summarizeBy: none
+		sourceColumn: close_translation_usd
+
+		annotation SummarizationSetBy = Automatic
+
+	column operating_cash_flow_usd
+		dataType: decimal
+		lineageTag: fe164317-deea-594a-a8ee-73e5ac07292a
+		summarizeBy: none
+		sourceColumn: operating_cash_flow_usd
+
+		annotation SummarizationSetBy = Automatic
+
+	column investing_cash_flow_usd
+		dataType: decimal
+		lineageTag: 011dced1-f72e-53a5-b86e-cae46a7d5efa
+		summarizeBy: none
+		sourceColumn: investing_cash_flow_usd
+
+		annotation SummarizationSetBy = Automatic
+
+	column financing_cash_flow_usd
+		dataType: decimal
+		lineageTag: 0f09e8e3-e2e6-5489-9910-6b1ae6572997
+		summarizeBy: none
+		sourceColumn: financing_cash_flow_usd
+
+		annotation SummarizationSetBy = Automatic
+
+	column fx_effect_on_cash_usd
+		dataType: decimal
+		lineageTag: 1fb07750-246c-509f-b7fb-4609d1cb32f5
+		summarizeBy: none
+		sourceColumn: fx_effect_on_cash_usd
+
+		annotation SummarizationSetBy = Automatic
+
+	column net_change_in_cash_usd
+		dataType: decimal
+		lineageTag: de4847f5-db87-57d1-9694-b0d93522ccce
+		summarizeBy: none
+		sourceColumn: net_change_in_cash_usd
+
+		annotation SummarizationSetBy = Automatic
+
+	column closing_cash_usd
+		dataType: decimal
+		lineageTag: d9a22edf-0b66-59e3-9839-1348f7093e8a
+		summarizeBy: none
+		sourceColumn: closing_cash_usd
+
+		annotation SummarizationSetBy = Automatic
+
+	column operating_ytd_usd
+		dataType: decimal
+		lineageTag: e6538254-7428-508e-92ea-aa06942d7d7d
+		summarizeBy: none
+		sourceColumn: operating_ytd_usd
+
+		annotation SummarizationSetBy = Automatic
+
+	column investing_ytd_usd
+		dataType: decimal
+		lineageTag: c1f7ab23-2be6-5d2f-a86a-61de6a035591
+		summarizeBy: none
+		sourceColumn: investing_ytd_usd
+
+		annotation SummarizationSetBy = Automatic
+
+	column financing_ytd_usd
+		dataType: decimal
+		lineageTag: bb58f14b-02a1-57fd-8470-b1286eb5ba56
+		summarizeBy: none
+		sourceColumn: financing_ytd_usd
+
+		annotation SummarizationSetBy = Automatic
+
+	column revolver_drawn_usd
+		dataType: double
+		lineageTag: becd3631-15ad-5599-86af-92277e313df3
+		summarizeBy: none
+		sourceColumn: revolver_drawn_usd
+
+		annotation SummarizationSetBy = Automatic
+
+	column revolver_available_usd
+		dataType: double
+		lineageTag: da25e00f-89d6-5203-941c-31656f4ac672
+		summarizeBy: none
+		sourceColumn: revolver_available_usd
+
+		annotation SummarizationSetBy = Automatic
+
+	column liquidity_usd
+		dataType: double
+		lineageTag: dfc8f7b0-614e-50c9-85e0-0607da60bfd6
+		summarizeBy: none
+		sourceColumn: liquidity_usd
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'Cash Flow' = m
+		mode: import
+		source =
+				let
+				    Source = Parquet.Document(File.Contents(DataFolder & "\30_marts\mart_cash_flow.parquet"))
+				in
+				    Source
+
+	annotation PBI_ResultType = Table

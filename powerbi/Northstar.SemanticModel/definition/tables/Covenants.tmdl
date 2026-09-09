@@ -1,0 +1,168 @@
+/// Net leverage on a rolling twelve-month covenant EBITDA, the agreement's limit for the fiscal
+/// year, and headroom.
+table 'Covenants'
+	lineageTag: 466af543-4b89-57af-a263-ffa6266845ba
+
+	column period_key
+		dataType: int64
+		isHidden
+		lineageTag: ce119847-4c48-521d-827b-25818f9176dc
+		summarizeBy: none
+		sourceColumn: period_key
+
+		annotation SummarizationSetBy = Automatic
+
+	column fiscal_year
+		dataType: int64
+		isHidden
+		lineageTag: 1a311b48-6446-5367-9d55-211bdb51ccba
+		summarizeBy: none
+		sourceColumn: fiscal_year
+
+		annotation SummarizationSetBy = Automatic
+
+	column max_net_leverage
+		dataType: double
+		lineageTag: 7dfada0d-ffe2-5653-8b75-a8c3492d873b
+		summarizeBy: none
+		sourceColumn: max_net_leverage
+
+		annotation SummarizationSetBy = Automatic
+
+	column months_in_window
+		dataType: int64
+		lineageTag: 43ef0fe9-d208-583a-b2f9-93062fcbce7c
+		summarizeBy: none
+		sourceColumn: months_in_window
+
+		annotation SummarizationSetBy = Automatic
+
+	column covenant_debt_usd
+		dataType: double
+		lineageTag: 71b11f4a-ed5f-5ca8-98f6-48c56a9e1258
+		summarizeBy: none
+		sourceColumn: covenant_debt_usd
+
+		annotation SummarizationSetBy = Automatic
+
+	column gross_debt_usd
+		dataType: double
+		lineageTag: c4ea4b8e-c3a2-5958-86b3-b2607085dbac
+		summarizeBy: none
+		sourceColumn: gross_debt_usd
+
+		annotation SummarizationSetBy = Automatic
+
+	column finance_lease_usd
+		dataType: double
+		lineageTag: 53a5f965-901a-5f44-bbb5-077d8ffebc3b
+		summarizeBy: none
+		sourceColumn: finance_lease_usd
+
+		annotation SummarizationSetBy = Automatic
+
+	column cash_usd
+		dataType: decimal
+		lineageTag: 3e22500f-7fa9-5f3d-b012-ee9dc02a9dcd
+		summarizeBy: none
+		sourceColumn: cash_usd
+
+		annotation SummarizationSetBy = Automatic
+
+	column net_debt_usd
+		dataType: double
+		lineageTag: aa94ded2-0a8f-5f7c-8a60-d39dafb0715b
+		summarizeBy: none
+		sourceColumn: net_debt_usd
+
+		annotation SummarizationSetBy = Automatic
+
+	column economic_net_debt_usd
+		dataType: double
+		lineageTag: 9ab9746f-0081-551c-8ba8-d26ca86153ea
+		summarizeBy: none
+		sourceColumn: economic_net_debt_usd
+
+		annotation SummarizationSetBy = Automatic
+
+	column covenant_ebitda_usd
+		dataType: decimal
+		lineageTag: 25b30e7c-6c99-5e02-a860-9cf6660a35bc
+		summarizeBy: none
+		sourceColumn: covenant_ebitda_usd
+
+		annotation SummarizationSetBy = Automatic
+
+	column adjusted_ebitda_usd
+		dataType: decimal
+		lineageTag: d6a7cac3-bd58-52c2-b2f1-300c7ee57bef
+		summarizeBy: none
+		sourceColumn: adjusted_ebitda_usd
+
+		annotation SummarizationSetBy = Automatic
+
+	column sponsor_fee_cap_effect_usd
+		dataType: decimal
+		lineageTag: 91dd15bb-b382-5471-839c-9eae7995bea2
+		summarizeBy: none
+		sourceColumn: sponsor_fee_cap_effect_usd
+
+		annotation SummarizationSetBy = Automatic
+
+	column covenant_fx_addback_usd
+		dataType: decimal
+		lineageTag: 2c264d7c-2f68-5370-b724-2ea1ee96935d
+		summarizeBy: none
+		sourceColumn: covenant_fx_addback_usd
+
+		annotation SummarizationSetBy = Automatic
+
+	column net_leverage
+		dataType: double
+		lineageTag: 4e8d3d23-a092-50e3-a043-9f144fe6592b
+		summarizeBy: none
+		sourceColumn: net_leverage
+
+		annotation SummarizationSetBy = Automatic
+
+	column economic_leverage
+		dataType: double
+		lineageTag: 5a7e9c5a-430b-5dd8-9bd6-ffeff375bb0f
+		summarizeBy: none
+		sourceColumn: economic_leverage
+
+		annotation SummarizationSetBy = Automatic
+
+	column headroom_turns
+		dataType: double
+		lineageTag: 19a81aba-844c-574f-9047-4b72eb720058
+		summarizeBy: none
+		sourceColumn: headroom_turns
+
+		annotation SummarizationSetBy = Automatic
+
+	column headroom_usd
+		dataType: double
+		lineageTag: 03b0aa86-4752-5c24-9e1f-f15621044b33
+		summarizeBy: none
+		sourceColumn: headroom_usd
+
+		annotation SummarizationSetBy = Automatic
+
+	column in_compliance
+		dataType: boolean
+		lineageTag: c56d5eee-6d64-57d2-a856-9ab0f954fb49
+		summarizeBy: none
+		sourceColumn: in_compliance
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'Covenants' = m
+		mode: import
+		source =
+				let
+				    Source = Parquet.Document(File.Contents(DataFolder & "\30_marts\mart_covenants.parquet"))
+				in
+				    Source
+
+	annotation PBI_ResultType = Table

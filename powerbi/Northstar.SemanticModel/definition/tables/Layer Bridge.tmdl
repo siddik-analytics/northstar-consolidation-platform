@@ -1,0 +1,115 @@
+/// What each consolidation layer contributed, by fiscal year.
+table 'Layer Bridge'
+	lineageTag: b6014956-ceef-5030-8ca2-43bab0c1e249
+
+	column layer_id
+		dataType: int64
+		isHidden
+		lineageTag: 456c194a-3aa8-5b49-abfa-c0935fc207b4
+		summarizeBy: none
+		sourceColumn: layer_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column layer_code
+		dataType: string
+		isHidden
+		lineageTag: 2c91e034-aee5-569b-b23f-4a59b924cbd7
+		summarizeBy: none
+		sourceColumn: layer_code
+
+		annotation SummarizationSetBy = Automatic
+
+	column layer_name
+		dataType: string
+		isHidden
+		lineageTag: b3a3a804-9c89-516b-9efc-31393ea20d33
+		summarizeBy: none
+		sourceColumn: layer_name
+
+		annotation SummarizationSetBy = Automatic
+
+	column in_statutory_view
+		dataType: boolean
+		isHidden
+		lineageTag: 0fb931f8-d095-52b4-b039-6380462ec0f9
+		summarizeBy: none
+		sourceColumn: in_statutory_view
+
+		annotation SummarizationSetBy = Automatic
+
+	column in_management_view
+		dataType: boolean
+		isHidden
+		lineageTag: a3cf459e-c6cd-5320-aec4-7545cda9e178
+		summarizeBy: none
+		sourceColumn: in_management_view
+
+		annotation SummarizationSetBy = Automatic
+
+	column fiscal_year
+		dataType: int64
+		isHidden
+		lineageTag: 2a2a7ced-eb1d-507f-b6ff-177769e27b4e
+		summarizeBy: none
+		sourceColumn: fiscal_year
+
+		annotation SummarizationSetBy = Automatic
+
+	column ebitda_usd
+		dataType: decimal
+		lineageTag: f5a4c49e-b562-5f6c-aa02-88845682fef2
+		summarizeBy: none
+		sourceColumn: ebitda_usd
+
+		annotation SummarizationSetBy = Automatic
+
+	column net_income_usd
+		dataType: decimal
+		lineageTag: 20d5fc3d-7796-59e2-8790-0b69ccf9d26b
+		summarizeBy: none
+		sourceColumn: net_income_usd
+
+		annotation SummarizationSetBy = Automatic
+
+	column total_assets_movement_usd
+		dataType: decimal
+		lineageTag: badf27e7-34a2-5eaf-8b0f-155fbb0f176e
+		summarizeBy: none
+		sourceColumn: total_assets_movement_usd
+
+		annotation SummarizationSetBy = Automatic
+
+	column total_equity_movement_usd
+		dataType: decimal
+		lineageTag: c635be2b-6c33-5add-8ba7-0035edcbc6ba
+		summarizeBy: none
+		sourceColumn: total_equity_movement_usd
+
+		annotation SummarizationSetBy = Automatic
+
+	column entries
+		dataType: int64
+		lineageTag: fca0fb91-7944-5463-992b-a3faf4c04ab2
+		summarizeBy: none
+		sourceColumn: entries
+
+		annotation SummarizationSetBy = Automatic
+
+	column legs
+		dataType: int64
+		lineageTag: da13e4ef-3e19-5aba-b894-c939d66676df
+		summarizeBy: none
+		sourceColumn: legs
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'Layer Bridge' = m
+		mode: import
+		source =
+				let
+				    Source = Parquet.Document(File.Contents(DataFolder & "\30_marts\mart_consolidation_bridge.parquet"))
+				in
+				    Source
+
+	annotation PBI_ResultType = Table

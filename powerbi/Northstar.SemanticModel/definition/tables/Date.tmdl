@@ -1,0 +1,135 @@
+/// The fiscal calendar. One date table for the whole model: every fact joins to it on
+/// period_key, so a filter on Date filters everything.
+table 'Date'
+	lineageTag: 0503665e-754d-5c8e-81a8-6d6a75844cfd
+
+	column period_key
+		dataType: int64
+		isHidden
+		isKey
+		lineageTag: 07370d91-bca2-5e18-8144-59deaa1c99ac
+		summarizeBy: none
+		sourceColumn: period_key
+
+		annotation SummarizationSetBy = Automatic
+
+	column fiscal_year
+		dataType: int64
+		lineageTag: 732c8be7-be4b-5626-9c8d-13ca2a637a1c
+		summarizeBy: none
+		sourceColumn: fiscal_year
+
+		annotation SummarizationSetBy = Automatic
+
+	column accounting_period
+		dataType: int64
+		lineageTag: 773f7099-e41c-536f-a8a4-eee48037e195
+		summarizeBy: none
+		sourceColumn: accounting_period
+
+		annotation SummarizationSetBy = Automatic
+
+	column fiscal_quarter
+		dataType: int64
+		lineageTag: 5b73141d-5049-5790-87db-50a5f8d0dd2c
+		summarizeBy: none
+		sourceColumn: fiscal_quarter
+
+		annotation SummarizationSetBy = Automatic
+
+	column month_start
+		dataType: dateTime
+		lineageTag: 01c02d80-7ad3-51c3-9b58-950b7e7840d0
+		summarizeBy: none
+		sourceColumn: month_start
+		formatString: yyyy-mm-dd
+
+		annotation SummarizationSetBy = Automatic
+
+	column month_end
+		dataType: dateTime
+		isHidden
+		lineageTag: 235e7a6a-0e1e-5d89-8d97-18bb9805c0d1
+		summarizeBy: none
+		sourceColumn: month_end
+		formatString: yyyy-mm-dd
+
+		annotation SummarizationSetBy = Automatic
+
+	column fiscal_year_label
+		dataType: string
+		lineageTag: 72bd1e83-dd07-5be3-af3e-ad37c699ab26
+		summarizeBy: none
+		sourceColumn: fiscal_year_label
+
+		annotation SummarizationSetBy = Automatic
+
+	column month_label
+		dataType: string
+		lineageTag: 865251f5-2393-5d50-b71d-6700a945a712
+		summarizeBy: none
+		sourceColumn: month_label
+		sortByColumn: period_key
+
+		annotation SummarizationSetBy = Automatic
+
+	column month_label_long
+		dataType: string
+		lineageTag: 94e601b3-8075-5134-a306-d960ef908334
+		summarizeBy: none
+		sourceColumn: month_label_long
+		sortByColumn: period_key
+
+		annotation SummarizationSetBy = Automatic
+
+	column quarter_label
+		dataType: string
+		lineageTag: 3795efdb-2875-5d76-bd04-432162f07909
+		summarizeBy: none
+		sourceColumn: quarter_label
+		sortByColumn: fiscal_quarter
+
+		annotation SummarizationSetBy = Automatic
+
+	column fy_quarter_label
+		dataType: string
+		lineageTag: 86b70899-78a5-5f2a-b1fa-3652e9f50f94
+		summarizeBy: none
+		sourceColumn: fy_quarter_label
+
+		annotation SummarizationSetBy = Automatic
+
+	column quarter_key
+		dataType: int64
+		isHidden
+		lineageTag: 82e5cfe9-4bee-5b94-86e2-6e1e773f5f3d
+		summarizeBy: none
+		sourceColumn: quarter_key
+
+		annotation SummarizationSetBy = Automatic
+
+	column is_actual_month
+		dataType: boolean
+		lineageTag: 1b1b554b-a058-5e8e-bba1-7658c540c8e2
+		summarizeBy: none
+		sourceColumn: is_actual_month
+
+		annotation SummarizationSetBy = Automatic
+
+	column is_reporting_month
+		dataType: boolean
+		lineageTag: c194e3ca-d98d-55bc-a469-eec784344bf1
+		summarizeBy: none
+		sourceColumn: is_reporting_month
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'Date' = m
+		mode: import
+		source =
+				let
+				    Source = Parquet.Document(File.Contents(DataFolder & "\35_semantic\dim_semantic_date.parquet"))
+				in
+				    Source
+
+	annotation PBI_ResultType = Table

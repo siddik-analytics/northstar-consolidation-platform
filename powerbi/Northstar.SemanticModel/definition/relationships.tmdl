@@ -1,0 +1,155 @@
+relationship e8e29eea-bdc4-5679-848f-e4797f7db622
+	fromColumn: 'Financials'.period_key
+	toColumn: 'Date'.period_key
+
+relationship dedbb604-b758-597e-a170-768be703bd7b
+	fromColumn: 'Financials'.entity_code
+	toColumn: 'Entity'.entity_code
+
+relationship 57013514-3a6a-5e57-8dfe-3d8bcb3db08a
+	fromColumn: 'Financials'.measure_code
+	toColumn: 'Measure Line'.measure_code
+
+relationship a8cd14ea-c4bd-5a23-b1a4-bc01b0dc9b9c
+	fromColumn: 'Financials'.version_code
+	toColumn: 'Scenario'.version_code
+
+relationship 25c18ad1-6602-5403-ac55-d73495373dda
+	fromColumn: 'Financials'.basis
+	toColumn: 'Reporting Basis'.basis
+
+relationship 61fbfae7-e55f-5e0f-9eab-e8ac1f559e88
+	fromColumn: 'Financial Detail'.period_key
+	toColumn: 'Date'.period_key
+
+relationship 8494e124-39a1-5c54-b2dc-a80b74738e2b
+	fromColumn: 'Financial Detail'.entity_code
+	toColumn: 'Entity'.entity_code
+
+relationship a9fb920d-b563-5564-93b4-abc4e2969833
+	fromColumn: 'Financial Detail'.group_account
+	toColumn: 'Account'.group_account
+
+relationship dc8c47c3-109c-5e1a-b437-ed82dc910087
+	fromColumn: 'Financial Detail'.version_code
+	toColumn: 'Scenario'.version_code
+
+relationship 98c9ab08-c9d2-52bc-bad2-58abc7524cd7
+	fromColumn: 'Financial Detail'.basis
+	toColumn: 'Reporting Basis'.basis
+
+relationship 01ce2a75-7c2e-5e8c-925c-2e33b76a289e
+	fromColumn: 'Financial Detail'.cost_centre_key
+	toColumn: 'Cost Centre'.cost_centre_key
+
+relationship a0504d80-09ba-54e1-a929-595931cf04ab
+	fromColumn: 'Variance'.period_key
+	toColumn: 'Date'.period_key
+
+relationship e59574c6-c584-586b-9c33-89a770f8fc0d
+	fromColumn: 'Variance'.entity_code
+	toColumn: 'Entity'.entity_code
+
+relationship c75419f7-258e-5a04-97e6-9439062979d9
+	fromColumn: 'Variance'.measure_code
+	toColumn: 'Measure Line'.measure_code
+
+relationship fd69adec-be66-5a90-8dc7-ab4866d9f231
+	fromColumn: 'Variance'.comparison_code
+	toColumn: 'Comparison'.comparison_code
+
+relationship 44853632-589e-5f75-aa3f-8a7d68f11600
+	fromColumn: 'Variance'.basis
+	toColumn: 'Reporting Basis'.basis
+
+relationship aa64c198-8974-5620-b613-1dd1085633ab
+	fromColumn: 'Balance Sheet'.period_key
+	toColumn: 'Date'.period_key
+
+relationship a8a4cec3-9877-5f47-aa35-41609218a2e6
+	fromColumn: 'Cash Flow'.period_key
+	toColumn: 'Date'.period_key
+
+relationship f1d5f12e-4ca7-5dfb-8e1e-27abf98e4917
+	fromColumn: 'Working Capital'.period_key
+	toColumn: 'Date'.period_key
+
+relationship 1e3a654d-bed3-5c8e-82d9-8f5ef73a62f6
+	fromColumn: 'Covenants'.period_key
+	toColumn: 'Date'.period_key
+
+relationship a9fd9651-2d78-5739-9f31-29761f651109
+	fromColumn: 'Debt'.period_key
+	toColumn: 'Date'.period_key
+
+relationship 057a216c-dd18-5120-8b5d-b063faac90a2
+	fromColumn: 'Debt'.instrument_id
+	toColumn: 'Debt Instrument'.instrument_id
+
+relationship 797c21a9-3498-5b64-b007-e197a8ca6c72
+	fromColumn: 'Headcount'.period_key
+	toColumn: 'Date'.period_key
+
+relationship a399b6e9-dcf9-5242-b8ba-90298783b228
+	fromColumn: 'Headcount'.entity_code
+	toColumn: 'Entity'.entity_code
+
+relationship e093cd49-66d9-5adb-b4ee-55d806da0203
+	fromColumn: 'Headcount'.cost_centre_key
+	toColumn: 'Cost Centre'.cost_centre_key
+
+relationship 8f28e55b-619d-5866-9126-34cf11e173d2
+	fromColumn: 'CapEx'.period_key
+	toColumn: 'Date'.period_key
+
+relationship 0f84f64a-7daf-543d-b41c-b2696b311d0c
+	fromColumn: 'CapEx'.entity_code
+	toColumn: 'Entity'.entity_code
+
+relationship 8bf294ca-58d6-5aa0-9db1-e25b85ff9f79
+	fromColumn: 'CapEx'.project_id
+	toColumn: 'Capital Project'.project_id
+
+relationship 3df3c6b1-7335-58b9-a27d-e345095f2540
+	fromColumn: 'FX'.period_key
+	toColumn: 'Date'.period_key
+
+relationship 484fc702-8346-5c99-be92-5f7c50c972cb
+	fromColumn: 'FX'.currency_code
+	toColumn: 'Currency'.currency_code
+
+relationship d804bd1e-9a50-596a-bfc3-88b0d2acb527
+	fromColumn: 'Layer Bridge'.layer_id
+	toColumn: 'Consolidation Layer'.layer_id
+
+/// Financials reaches Business Unit through Entity, so a second direct path would make every
+/// business unit total ambiguous. Entity is the active path because an entity belongs to
+/// exactly one unit.
+relationship cdb507ce-c8a3-5bda-b321-2844996288a0
+	isActive: false
+	fromColumn: 'Financials'.bu_code
+	toColumn: 'Business Unit'.bu_code
+
+/// Same shape as Financials.
+relationship b4603d77-582d-554d-8be8-d45dcc01468d
+	isActive: false
+	fromColumn: 'Variance'.bu_code
+	toColumn: 'Business Unit'.bu_code
+
+/// Same shape as Financials.
+relationship 8987f342-2a91-5835-b741-e25aa6a398d2
+	isActive: false
+	fromColumn: 'Financial Detail'.bu_code
+	toColumn: 'Business Unit'.bu_code
+
+/// Same shape as Financials.
+relationship 81d5109a-5f0e-52e7-9480-28205ad6c6a2
+	isActive: false
+	fromColumn: 'Headcount'.bu_code
+	toColumn: 'Business Unit'.bu_code
+
+/// Same shape as Financials.
+relationship 699dc126-38ea-5ddf-b94f-3c031aae9bee
+	isActive: false
+	fromColumn: 'CapEx'.bu_code
+	toColumn: 'Business Unit'.bu_code

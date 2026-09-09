@@ -1,0 +1,54 @@
+/// Capital projects and their asset class.
+table 'Capital Project'
+	lineageTag: d600e6d8-a781-5140-b961-483335a08667
+
+	column project_id
+		dataType: string
+		isKey
+		lineageTag: 15877890-03e0-59b7-8c73-ea2e5413d8da
+		summarizeBy: none
+		sourceColumn: project_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column project_name
+		dataType: string
+		lineageTag: ff23b226-1f9d-5f18-981c-b898a188a56b
+		summarizeBy: none
+		sourceColumn: project_name
+
+		annotation SummarizationSetBy = Automatic
+
+	column asset_class
+		dataType: string
+		lineageTag: b3ba9e61-589b-557a-9922-b20ad32d3cf7
+		summarizeBy: none
+		sourceColumn: asset_class
+
+		annotation SummarizationSetBy = Automatic
+
+	column entity_code
+		dataType: string
+		lineageTag: 52be1d00-f622-5907-9d9f-69f40b340f67
+		summarizeBy: none
+		sourceColumn: entity_code
+
+		annotation SummarizationSetBy = Automatic
+
+	column bu_code
+		dataType: string
+		lineageTag: b265058d-09c0-5c82-8225-7985f7a90fe6
+		summarizeBy: none
+		sourceColumn: bu_code
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'Capital Project' = m
+		mode: import
+		source =
+				let
+				    Source = Parquet.Document(File.Contents(DataFolder & "\35_semantic\dim_semantic_project.parquet"))
+				in
+				    Source
+
+	annotation PBI_ResultType = Table

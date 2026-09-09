@@ -1,0 +1,295 @@
+"""
+Paths and the shape of the semantic layer.
+
+Nothing here reads data. It exists so that the star schema, the dimension conformance and the
+measure layer are declared in one place, and the TMDL, the documentation and the controls are
+all generated from that declaration rather than written three times and kept in step by hand.
+"""
+
+from __future__ import annotations
+
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[2]
+DATA = ROOT / "data"
+MARTS_DIR = DATA / "30_marts"
+SEMANTIC_DIR = DATA / "35_semantic"
+PBIP_DIR = ROOT / "powerbi"
+
+DUCKDB_PATH = DATA / "20_warehouse" / "northstar.duckdb"
+MANIFEST = DATA / "phase06a_manifest.json"
+CONTROL_RESULTS = DATA / "phase06a_control_results.csv"
+FAULT_RESULTS = DATA / "phase06a_fault_results.csv"
+DAX_RESULTS = DATA / "phase06a_dax_results.csv"
+
+PROJECT = "Northstar"
+MODEL_DIR = PBIP_DIR / f"{PROJECT}.SemanticModel"
+REPORT_DIR = PBIP_DIR / f"{PROJECT}.Report"
+
+#: The reporting close. Actual stops here; everything after it is forecast, and an Actual
+#: measure must return BLANK rather than zero beyond it (Phase 5, carried forward as a rule).
+REPORT_PERIOD = 202608
+REPORT_FY = 2026
+ACT_VERSION = "ACTUAL"
+BUD_VERSION = "BUD_FY26_V1"
+FC_VERSION = "FC_FY26_08"
+PY_VERSION = "PY_DERIVED"
+
+#: Tolerances. A semantic model against the mart it reads is a structural identity, so it is
+#: tested at the cent. `TOL_RATIO` covers a leverage multiple carried to four decimals.
+TOL_XAR_USD = 0.05
+TOL_RATIO = 0.0005
+
+#: The dimension tables the semantic model needs that the Phase 5 marts do not publish.
+#: They are conformance only -- selections and relabellings of dimensions the warehouse
+#: already holds -- and they are published to their own folder so that the Phase 5 marts stay
+#: frozen and their manifest digest does not move.
+SEMANTIC_DIMENSIONS: tuple[tuple[str, str], ...] = (
+    ("dim_semantic_date", """
+        SELECT period_key, fiscal_year, accounting_period, fiscal_quarter,
+               month_start, month_end, fiscal_year_label,
+               strftime(month_start, '%b %y') AS month_label,
+               strftime(month_start, '%b %Y') AS month_label_long,
+               'Q' || CAST(fiscal_quarter AS VARCHAR) AS quarter_label,
+               fiscal_year_label || ' Q' || CAST(fiscal_quarter AS VARCHAR) AS fy_quarter_label,
+               fiscal_year * 10 + fiscal_quarter AS quarter_key,
+               period_key <= {report_period} AS is_actual_month,
+               period_key = {report_period} AS is_reporting_month
+        FROM dim_date WHERE accounting_period <= 12
+          AND period_key BETWEEN (SELECT min(period_key) FROM mart_cash_flow)
+                             AND (SELECT max(period_key) FROM mart_cash_flow)
+        ORDER BY period_key"""),
+    ("dim_semantic_entity", """
+        SELECT entity_code, entity_name, short_name, bu_code, country_code, country_name,
+               region, functional_currency, erp_system, entity_type, consolidation_method,
+               ownership_pct, nci_pct, is_elimination_entity
+        FROM dim_entity ORDER BY entity_code"""),
+    ("dim_semantic_business_unit", """
+        SELECT bu_code, bu_name, bu_short_name, segment_type, is_reportable_segment,
+               sort_order FROM dim_business_unit ORDER BY sort_order"""),
+    ("dim_semantic_account", """
+        SELECT group_account, account_name, statement, fs_caption_l1, fs_caption_l2,
+               account_class, normal_balance, cash_flow_category, is_intercompany,
+               is_ebitda, is_ebitda_addback, sort_order
+        FROM dim_account WHERE NOT is_statistical ORDER BY group_account"""),
+    ("dim_semantic_cost_centre", """
+        SELECT DISTINCT entity_code || '|' || cost_center_code AS cost_centre_key,
+               cost_center_code, cost_center_name, entity_code, department_code,
+               department_name, function_group, cost_type, bu_code
+        FROM dim_cost_center ORDER BY 1"""),
+    ("dim_semantic_layer", """
+        SELECT layer_id, layer_code, layer_name, in_statutory_view, in_management_view,
+               layer_sequence AS sort_order, description
+        FROM dim_consolidation_layer ORDER BY layer_id"""),
+    ("dim_semantic_basis", """
+        SELECT 'STATUTORY' AS basis, 'Statutory' AS basis_name, 1 AS sort_order,
+               'Layers 1 + 2 + 3 + 5. The reported result.' AS description
+        UNION ALL
+        SELECT 'MANAGEMENT', 'Management', 2,
+               'Statutory plus layer 4, the approved management adjustments.'
+        ORDER BY sort_order"""),
+    ("dim_semantic_currency", """
+        SELECT currency_code, currency_name, is_presentation_currency, quote_convention
+        FROM dim_currency ORDER BY currency_code"""),
+    ("dim_semantic_instrument", """
+        SELECT DISTINCT instrument_id, instrument_name, instrument_type, borrower_entity,
+               currency_code, rate_type, is_hedged,
+               CAST(maturity_date AS DATE) AS maturity_date,
+               counts_toward_covenant_debt
+        FROM mart_debt ORDER BY instrument_type, instrument_id"""),
+    ("dim_semantic_project", """
+        SELECT DISTINCT project_id, project_name, asset_class, entity_code, bu_code
+        FROM mart_capex ORDER BY project_id"""),
+)
+
+#: Every table the model loads. `source` is the Parquet stem, `folder` says which published
+#: directory it comes from, `key` is the declared grain (checked by `P6-SEM-02`) and `hide`
+#: lists the technical columns a report should never see.
+TABLES: tuple[dict, ...] = (
+    # ---------------------------------------------------------------- dimensions
+    dict(name="Date", source="dim_semantic_date", folder="semantic", kind="dimension",
+         key=("period_key",),
+         sort={"month_label": "period_key", "month_label_long": "period_key",
+               "quarter_label": "fiscal_quarter"},
+         hide=("period_key", "quarter_key", "month_end"),
+         description="The fiscal calendar. One date table for the whole model: every fact "
+                     "joins to it on period_key, so a filter on Date filters everything."),
+    dict(name="Entity", source="dim_semantic_entity", folder="semantic", kind="dimension",
+         key=("entity_code",), sort={}, hide=(),
+         description="Legal entities, including the three virtual elimination entities that "
+                     "carry the consolidation entries."),
+    dict(name="Business Unit", source="dim_semantic_business_unit", folder="semantic",
+         kind="dimension", key=("bu_code",), sort={"bu_name": "sort_order"},
+         hide=("sort_order",),
+         description="The five reportable segments."),
+    dict(name="Account", source="dim_semantic_account", folder="semantic", kind="dimension",
+         key=("group_account",), sort={"fs_caption_l2": "sort_order"}, hide=("sort_order",),
+         description="The group chart of accounts, with the statement, the caption and the "
+                     "attributes the consolidation drives EBITDA and the add-back policy "
+                     "from."),
+    dict(name="Cost Centre", source="dim_semantic_cost_centre", folder="semantic",
+         kind="dimension", key=("cost_centre_key",), sort={}, hide=("cost_centre_key",),
+         description="Cost centres, keyed by entity and code because the same code is reused "
+                     "across entities."),
+    dict(name="Consolidation Layer", source="dim_semantic_layer", folder="semantic",
+         kind="dimension", key=("layer_id",), sort={"layer_name": "sort_order"},
+         hide=("sort_order",),
+         description="The five consolidation layers and their view membership."),
+    dict(name="Reporting Basis", source="dim_semantic_basis", folder="semantic",
+         kind="dimension", key=("basis",), sort={"basis_name": "sort_order"},
+         hide=("sort_order",),
+         description="Statutory or Management. Membership is settled upstream and carried on "
+                     "every fact row; the model never infers it."),
+    dict(name="Currency", source="dim_semantic_currency", folder="semantic",
+         kind="dimension", key=("currency_code",), sort={}, hide=(),
+         description="Transaction and functional currencies. The presentation currency is USD."),
+    dict(name="Scenario", source="dim_report_scenario", folder="marts", kind="dimension",
+         key=("version_code",), sort={"version_name": "sort_order"}, hide=("sort_order",),
+         description="Scenario and version in one dimension, keyed by version. Reserved "
+                     "scenarios are absent by construction -- the mart never publishes them."),
+    dict(name="Measure Line", source="dim_report_measure", folder="marts", kind="dimension",
+         key=("measure_code",), sort={"measure_name": "sort_order"}, hide=("sort_order",),
+         description="The income statement line hierarchy, in presentation order, with the "
+                     "indent level and the favourable direction that makes variance colouring "
+                     "account-aware."),
+    dict(name="Comparison", source="dim_report_comparison", folder="marts", kind="dimension",
+         key=("comparison_code",), sort={"comparison_name": "sort_order"},
+         hide=("sort_order",),
+         description="The four approved comparisons."),
+    dict(name="Debt Instrument", source="dim_semantic_instrument", folder="semantic",
+         kind="dimension", key=("instrument_id",), sort={}, hide=(),
+         description="Debt instruments, with the covenant flag the net debt definition uses."),
+    dict(name="Capital Project", source="dim_semantic_project", folder="semantic",
+         kind="dimension", key=("project_id",), sort={}, hide=(),
+         description="Capital projects and their asset class."),
+
+    # ---------------------------------------------------------------- facts
+    dict(name="Financials", source="mart_financial_ytd", folder="marts", kind="fact",
+         key=("basis", "version_code", "entity_code", "bu_code", "measure_code",
+              "period_key"),
+         sort={},
+         hide=("basis", "version_code", "scenario_code", "entity_code", "bu_code",
+               "measure_code", "period_key", "fiscal_year", "accounting_period",
+               "fiscal_quarter", "measure_name", "indent_level", "is_subtotal",
+               "favourable_direction", "measure_sort"),
+         description="The measure grain: month, year to date and full year for fourteen "
+                     "income statement measures, on both bases and every scenario. Subtotals "
+                     "are stored upstream, not derived here."),
+    dict(name="Financial Detail", source="mart_financial_monthly", folder="marts",
+         kind="fact",
+         key=("basis", "version_code", "entity_code", "bu_code", "cost_center_code",
+              "group_account", "period_key"),
+         sort={},
+         hide=("basis", "version_code", "scenario_code", "entity_code", "bu_code",
+               "cost_center_code", "cost_centre_key", "group_account", "period_key",
+               "fiscal_year", "accounting_period", "fiscal_quarter", "line"),
+         description="Account grain, for drill-down from any measure to the accounts behind "
+                     "it. The measure layer reads Financials, not this."),
+    dict(name="Variance", source="mart_variance", folder="marts", kind="fact",
+         key=("comparison_code", "basis", "entity_code", "bu_code", "measure_code",
+              "period_key"),
+         sort={},
+         hide=("comparison_code", "basis", "entity_code", "bu_code", "measure_code",
+               "period_key", "fiscal_year", "accounting_period", "sort_order",
+               "comparison_name", "measure_name", "indent_level", "is_subtotal",
+               "favourable_direction", "measure_sort", "base_version",
+               "comparator_version"),
+         description="Every approved comparison, precomputed upstream: base, comparator, "
+                     "variance and favourability. The model reads these rather than deriving "
+                     "a comparison in DAX."),
+    dict(name="Balance Sheet", source="mart_balance_sheet", folder="marts", kind="fact",
+         key=("caption", "account_class", "period_key"), sort={},
+         hide=("period_key", "fiscal_year", "sort_order"),
+         description="The consolidated balance sheet by caption and account class."),
+    dict(name="Cash Flow", source="mart_cash_flow", folder="marts", kind="fact",
+         key=("period_key",), sort={},
+         hide=("period_key", "fiscal_year", "accounting_period"),
+         description="The consolidated cash flow and the liquidity position, monthly."),
+    dict(name="Working Capital", source="mart_working_capital", folder="marts", kind="fact",
+         key=("period_key",), sort={}, hide=("period_key", "fiscal_year"),
+         description="Receivables, inventory, payables and the conversion cycle."),
+    dict(name="Covenants", source="mart_covenants", folder="marts", kind="fact",
+         key=("period_key",), sort={}, hide=("period_key", "fiscal_year"),
+         description="Net leverage on a rolling twelve-month covenant EBITDA, the agreement's "
+                     "limit for the fiscal year, and headroom."),
+    dict(name="Debt", source="mart_debt", folder="marts", kind="fact",
+         key=("instrument_id", "period_key"), sort={},
+         hide=("period_key", "fiscal_year", "instrument_id", "instrument_name",
+               "instrument_type", "borrower_entity", "currency_code", "rate_type",
+               "is_hedged", "maturity_date", "interest_rate_basis",
+               "counts_toward_covenant_debt", "covenant_reference"),
+         description="Debt by instrument and month."),
+    dict(name="Headcount", source="mart_headcount", folder="marts", kind="fact",
+         key=("entity_code", "department_code", "job_family_code", "period_key"), sort={},
+         hide=("period_key", "fiscal_year", "entity_code", "entity_name", "bu_code",
+               "country_code", "functional_currency", "department_code", "cost_centre_key"),
+         description="Headcount movement and personnel cost."),
+    dict(name="CapEx", source="mart_capex", folder="marts", kind="fact",
+         key=("project_id", "period_key"), sort={},
+         hide=("period_key", "fiscal_year", "project_id", "project_name", "asset_class",
+               "entity_code", "entity_name", "bu_code", "bu_name"),
+         description="Capital expenditure by project and month."),
+    dict(name="FX", source="mart_fx", folder="marts", kind="fact",
+         key=("currency_code", "period_key"), sort={},
+         hide=("period_key", "fiscal_year", "currency_code"),
+         description="Rates, currency exposure, constant currency and the translation "
+                     "adjustment."),
+    dict(name="Layer Bridge", source="mart_consolidation_bridge", folder="marts",
+         kind="fact", key=("layer_id", "fiscal_year"), sort={},
+         hide=("layer_id", "layer_code", "layer_name", "in_statutory_view",
+               "in_management_view", "fiscal_year"),
+         description="What each consolidation layer contributed, by fiscal year."),
+)
+
+#: Active relationships. Every one is single-direction many-to-one from a fact to a dimension,
+#: which is the shape that has no ambiguity: filters flow one way and there is exactly one
+#: path between any two tables. Anything else is in `INACTIVE_RELATIONSHIPS`, with a reason.
+RELATIONSHIPS: tuple[tuple[str, str, str, str], ...] = (
+    ("Financials", "period_key", "Date", "period_key"),
+    ("Financials", "entity_code", "Entity", "entity_code"),
+    ("Financials", "measure_code", "Measure Line", "measure_code"),
+    ("Financials", "version_code", "Scenario", "version_code"),
+    ("Financials", "basis", "Reporting Basis", "basis"),
+
+    ("Financial Detail", "period_key", "Date", "period_key"),
+    ("Financial Detail", "entity_code", "Entity", "entity_code"),
+    ("Financial Detail", "group_account", "Account", "group_account"),
+    ("Financial Detail", "version_code", "Scenario", "version_code"),
+    ("Financial Detail", "basis", "Reporting Basis", "basis"),
+    ("Financial Detail", "cost_centre_key", "Cost Centre", "cost_centre_key"),
+
+    ("Variance", "period_key", "Date", "period_key"),
+    ("Variance", "entity_code", "Entity", "entity_code"),
+    ("Variance", "measure_code", "Measure Line", "measure_code"),
+    ("Variance", "comparison_code", "Comparison", "comparison_code"),
+    ("Variance", "basis", "Reporting Basis", "basis"),
+
+    ("Balance Sheet", "period_key", "Date", "period_key"),
+    ("Cash Flow", "period_key", "Date", "period_key"),
+    ("Working Capital", "period_key", "Date", "period_key"),
+    ("Covenants", "period_key", "Date", "period_key"),
+    ("Debt", "period_key", "Date", "period_key"),
+    ("Debt", "instrument_id", "Debt Instrument", "instrument_id"),
+    ("Headcount", "period_key", "Date", "period_key"),
+    ("Headcount", "entity_code", "Entity", "entity_code"),
+    ("Headcount", "cost_centre_key", "Cost Centre", "cost_centre_key"),
+    ("CapEx", "period_key", "Date", "period_key"),
+    ("CapEx", "entity_code", "Entity", "entity_code"),
+    ("CapEx", "project_id", "Capital Project", "project_id"),
+    ("FX", "period_key", "Date", "period_key"),
+    ("FX", "currency_code", "Currency", "currency_code"),
+    ("Layer Bridge", "layer_id", "Consolidation Layer", "layer_id"),
+)
+
+#: Relationships deliberately left inactive, and why. An inactive relationship is a documented
+#: decision. An ambiguous active one is a defect.
+INACTIVE_RELATIONSHIPS: tuple[tuple[str, str, str, str, str], ...] = (
+    ("Financials", "bu_code", "Business Unit", "bu_code",
+     "Financials reaches Business Unit through Entity, so a second direct path would make "
+     "every business unit total ambiguous. Entity is the active path because an entity "
+     "belongs to exactly one unit."),
+    ("Variance", "bu_code", "Business Unit", "bu_code", "Same shape as Financials."),
+    ("Financial Detail", "bu_code", "Business Unit", "bu_code", "Same shape as Financials."),
+    ("Headcount", "bu_code", "Business Unit", "bu_code", "Same shape as Financials."),
+    ("CapEx", "bu_code", "Business Unit", "bu_code", "Same shape as Financials."),
+)

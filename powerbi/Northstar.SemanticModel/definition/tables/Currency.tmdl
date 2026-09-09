@@ -1,0 +1,46 @@
+/// Transaction and functional currencies. The presentation currency is USD.
+table 'Currency'
+	lineageTag: 27a26026-c641-538b-b2fc-17cff1d424ff
+
+	column currency_code
+		dataType: string
+		isKey
+		lineageTag: c4097b76-0562-5820-accc-1b850e6aa92a
+		summarizeBy: none
+		sourceColumn: currency_code
+
+		annotation SummarizationSetBy = Automatic
+
+	column currency_name
+		dataType: string
+		lineageTag: a9fa4987-2f37-5fd1-942d-2253e716adf5
+		summarizeBy: none
+		sourceColumn: currency_name
+
+		annotation SummarizationSetBy = Automatic
+
+	column is_presentation_currency
+		dataType: boolean
+		lineageTag: 3acfdb5e-cfbb-5dc0-a1f9-473f0613ffe0
+		summarizeBy: none
+		sourceColumn: is_presentation_currency
+
+		annotation SummarizationSetBy = Automatic
+
+	column quote_convention
+		dataType: string
+		lineageTag: 4d802fe9-7372-5993-bc6c-0c89fd4316a2
+		summarizeBy: none
+		sourceColumn: quote_convention
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'Currency' = m
+		mode: import
+		source =
+				let
+				    Source = Parquet.Document(File.Contents(DataFolder & "\35_semantic\dim_semantic_currency.parquet"))
+				in
+				    Source
+
+	annotation PBI_ResultType = Table

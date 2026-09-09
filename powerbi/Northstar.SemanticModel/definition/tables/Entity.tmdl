@@ -1,0 +1,127 @@
+/// Legal entities, including the three virtual elimination entities that carry the
+/// consolidation entries.
+table 'Entity'
+	lineageTag: 4abab3bd-9f33-580b-a54e-c90be278576b
+
+	column entity_code
+		dataType: string
+		isKey
+		lineageTag: fb4c3535-f9a9-539d-ab2a-da238e0f5385
+		summarizeBy: none
+		sourceColumn: entity_code
+
+		annotation SummarizationSetBy = Automatic
+
+	column entity_name
+		dataType: string
+		lineageTag: bdd48d17-b25e-5db8-938b-1b7e98cd4609
+		summarizeBy: none
+		sourceColumn: entity_name
+
+		annotation SummarizationSetBy = Automatic
+
+	column short_name
+		dataType: string
+		lineageTag: 4756b077-7cd2-590e-b7a2-47234fb64a19
+		summarizeBy: none
+		sourceColumn: short_name
+
+		annotation SummarizationSetBy = Automatic
+
+	column bu_code
+		dataType: string
+		lineageTag: f7a230b9-0d6b-5c18-a20e-6461c287c874
+		summarizeBy: none
+		sourceColumn: bu_code
+
+		annotation SummarizationSetBy = Automatic
+
+	column country_code
+		dataType: string
+		lineageTag: de795de0-1362-51cf-9ae6-65fb320c7994
+		summarizeBy: none
+		sourceColumn: country_code
+
+		annotation SummarizationSetBy = Automatic
+
+	column country_name
+		dataType: string
+		lineageTag: 8ecc2204-ddef-5df2-8ac1-fa8e0cbf01b7
+		summarizeBy: none
+		sourceColumn: country_name
+
+		annotation SummarizationSetBy = Automatic
+
+	column region
+		dataType: string
+		lineageTag: 471f7976-5b6c-5b4a-9b38-3abf2023ffb4
+		summarizeBy: none
+		sourceColumn: region
+
+		annotation SummarizationSetBy = Automatic
+
+	column functional_currency
+		dataType: string
+		lineageTag: 38a12c5c-22f9-5de6-95aa-9540a1ac2a7a
+		summarizeBy: none
+		sourceColumn: functional_currency
+
+		annotation SummarizationSetBy = Automatic
+
+	column erp_system
+		dataType: string
+		lineageTag: f20105b1-77e0-5a0f-9d64-984d32dc8eb5
+		summarizeBy: none
+		sourceColumn: erp_system
+
+		annotation SummarizationSetBy = Automatic
+
+	column entity_type
+		dataType: string
+		lineageTag: b165810d-cf79-54be-9a74-67611f06b6f8
+		summarizeBy: none
+		sourceColumn: entity_type
+
+		annotation SummarizationSetBy = Automatic
+
+	column consolidation_method
+		dataType: string
+		lineageTag: 702adca3-f408-5a8c-aa67-a35a2d8017a5
+		summarizeBy: none
+		sourceColumn: consolidation_method
+
+		annotation SummarizationSetBy = Automatic
+
+	column ownership_pct
+		dataType: double
+		lineageTag: 14e6b2ef-86ba-5b76-9438-ecec7e086d99
+		summarizeBy: none
+		sourceColumn: ownership_pct
+
+		annotation SummarizationSetBy = Automatic
+
+	column nci_pct
+		dataType: double
+		lineageTag: 4c7661dc-5f19-5244-a598-65fff8c83c82
+		summarizeBy: none
+		sourceColumn: nci_pct
+
+		annotation SummarizationSetBy = Automatic
+
+	column is_elimination_entity
+		dataType: boolean
+		lineageTag: c1b64fbc-d57c-5224-ab18-47080f3668fc
+		summarizeBy: none
+		sourceColumn: is_elimination_entity
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'Entity' = m
+		mode: import
+		source =
+				let
+				    Source = Parquet.Document(File.Contents(DataFolder & "\35_semantic\dim_semantic_entity.parquet"))
+				in
+				    Source
+
+	annotation PBI_ResultType = Table

@@ -1,0 +1,113 @@
+/// The group chart of accounts, with the statement, the caption and the attributes the
+/// consolidation drives EBITDA and the add-back policy from.
+table 'Account'
+	lineageTag: 7e682248-657a-55c8-ae83-a4ae9cb40604
+
+	column group_account
+		dataType: string
+		isKey
+		lineageTag: 0ec71ab6-9201-5af8-94be-0dedec3d0aa4
+		summarizeBy: none
+		sourceColumn: group_account
+
+		annotation SummarizationSetBy = Automatic
+
+	column account_name
+		dataType: string
+		lineageTag: ffc6d765-6167-5e20-af1c-eed4df6c45ae
+		summarizeBy: none
+		sourceColumn: account_name
+
+		annotation SummarizationSetBy = Automatic
+
+	column statement
+		dataType: string
+		lineageTag: 3c0e5253-ce2b-56d0-9303-43b3031bd63b
+		summarizeBy: none
+		sourceColumn: statement
+
+		annotation SummarizationSetBy = Automatic
+
+	column fs_caption_l1
+		dataType: string
+		lineageTag: 24015424-5070-5d48-80da-9acc3b84c910
+		summarizeBy: none
+		sourceColumn: fs_caption_l1
+
+		annotation SummarizationSetBy = Automatic
+
+	column fs_caption_l2
+		dataType: string
+		lineageTag: 38c51565-b1a0-5d9b-975a-ea19c850df11
+		summarizeBy: none
+		sourceColumn: fs_caption_l2
+		sortByColumn: sort_order
+
+		annotation SummarizationSetBy = Automatic
+
+	column account_class
+		dataType: string
+		lineageTag: 34972e3c-2330-52f6-92e7-137fd210be91
+		summarizeBy: none
+		sourceColumn: account_class
+
+		annotation SummarizationSetBy = Automatic
+
+	column normal_balance
+		dataType: string
+		lineageTag: 5af74d63-4fcc-5710-b48c-d418a9769569
+		summarizeBy: none
+		sourceColumn: normal_balance
+
+		annotation SummarizationSetBy = Automatic
+
+	column cash_flow_category
+		dataType: string
+		lineageTag: c4706d07-52b2-5f4c-8385-ff6da7b53b2d
+		summarizeBy: none
+		sourceColumn: cash_flow_category
+
+		annotation SummarizationSetBy = Automatic
+
+	column is_intercompany
+		dataType: boolean
+		lineageTag: 44285cfb-def9-5acd-9ba6-3e206625a0b3
+		summarizeBy: none
+		sourceColumn: is_intercompany
+
+		annotation SummarizationSetBy = Automatic
+
+	column is_ebitda
+		dataType: boolean
+		lineageTag: 134cd809-218b-5250-b396-0224332bc4f4
+		summarizeBy: none
+		sourceColumn: is_ebitda
+
+		annotation SummarizationSetBy = Automatic
+
+	column is_ebitda_addback
+		dataType: boolean
+		lineageTag: 0fcab849-13de-51eb-a0dd-4e8591662dd7
+		summarizeBy: none
+		sourceColumn: is_ebitda_addback
+
+		annotation SummarizationSetBy = Automatic
+
+	column sort_order
+		dataType: int64
+		isHidden
+		lineageTag: df37cb08-0b99-577a-aa20-b842124ab7a9
+		summarizeBy: none
+		sourceColumn: sort_order
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'Account' = m
+		mode: import
+		source =
+				let
+				    Source = Parquet.Document(File.Contents(DataFolder & "\35_semantic\dim_semantic_account.parquet"))
+				in
+				    Source
+
+	annotation PBI_ResultType = Table

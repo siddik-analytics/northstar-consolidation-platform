@@ -1,0 +1,103 @@
+/// Receivables, inventory, payables and the conversion cycle.
+table 'Working Capital'
+	lineageTag: 057d1503-f46b-5a3a-86f7-835507c21a01
+
+	column period_key
+		dataType: int64
+		isHidden
+		lineageTag: d8a99fb9-e19f-51ed-89de-f4cbcf9b8e44
+		summarizeBy: none
+		sourceColumn: period_key
+
+		annotation SummarizationSetBy = Automatic
+
+	column fiscal_year
+		dataType: int64
+		isHidden
+		lineageTag: f07b51bc-c18c-50a9-8ed5-c19c0da5411f
+		summarizeBy: none
+		sourceColumn: fiscal_year
+
+		annotation SummarizationSetBy = Automatic
+
+	column ar_usd
+		dataType: decimal
+		lineageTag: 2dcf50f7-3e0d-52d9-8495-cf68e8534a9d
+		summarizeBy: none
+		sourceColumn: ar_usd
+
+		annotation SummarizationSetBy = Automatic
+
+	column inventory_usd
+		dataType: decimal
+		lineageTag: 95905e38-ed15-5e8d-ab10-9bb18f5402b2
+		summarizeBy: none
+		sourceColumn: inventory_usd
+
+		annotation SummarizationSetBy = Automatic
+
+	column ap_usd
+		dataType: decimal
+		lineageTag: d8c40575-948c-5684-abee-d2e350624af0
+		summarizeBy: none
+		sourceColumn: ap_usd
+
+		annotation SummarizationSetBy = Automatic
+
+	column other_wc_usd
+		dataType: decimal
+		lineageTag: bef3fb83-4a6e-5934-b698-da3ef5d6b948
+		summarizeBy: none
+		sourceColumn: other_wc_usd
+
+		annotation SummarizationSetBy = Automatic
+
+	column nwc_usd
+		dataType: decimal
+		lineageTag: 15ac24cb-909f-5548-950d-1fd4600920a1
+		summarizeBy: none
+		sourceColumn: nwc_usd
+
+		annotation SummarizationSetBy = Automatic
+
+	column dso_days
+		dataType: double
+		lineageTag: c295812e-54aa-56a4-bfa2-a5766f8475ee
+		summarizeBy: none
+		sourceColumn: dso_days
+
+		annotation SummarizationSetBy = Automatic
+
+	column dio_days
+		dataType: double
+		lineageTag: 230c2d03-661a-5671-a1dc-3d60063cec0e
+		summarizeBy: none
+		sourceColumn: dio_days
+
+		annotation SummarizationSetBy = Automatic
+
+	column dpo_days
+		dataType: double
+		lineageTag: 715bec6b-d4b8-577d-8a98-d49c57c5a801
+		summarizeBy: none
+		sourceColumn: dpo_days
+
+		annotation SummarizationSetBy = Automatic
+
+	column ccc_days
+		dataType: double
+		lineageTag: 060f74d6-a6a7-5058-8f63-b9d422b5fb7d
+		summarizeBy: none
+		sourceColumn: ccc_days
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'Working Capital' = m
+		mode: import
+		source =
+				let
+				    Source = Parquet.Document(File.Contents(DataFolder & "\30_marts\mart_working_capital.parquet"))
+				in
+				    Source
+
+	annotation PBI_ResultType = Table

@@ -1,0 +1,287 @@
+/// Every approved comparison, precomputed upstream: base, comparator, variance and
+/// favourability. The model reads these rather than deriving a comparison in DAX.
+table 'Variance'
+	lineageTag: 9c9d8485-330f-5e9c-b8f3-4228891ceb30
+
+	column comparison_code
+		dataType: string
+		isHidden
+		lineageTag: 6408bf71-521e-5e54-823e-86e13851498f
+		summarizeBy: none
+		sourceColumn: comparison_code
+
+		annotation SummarizationSetBy = Automatic
+
+	column comparison_name
+		dataType: string
+		isHidden
+		lineageTag: c075cfe5-70af-58bb-9279-d426f8f1dd19
+		summarizeBy: none
+		sourceColumn: comparison_name
+
+		annotation SummarizationSetBy = Automatic
+
+	column sort_order
+		dataType: int64
+		isHidden
+		lineageTag: 0a68bb0e-d14d-525c-8bab-02b68de715a6
+		summarizeBy: none
+		sourceColumn: sort_order
+
+		annotation SummarizationSetBy = Automatic
+
+	column basis
+		dataType: string
+		isHidden
+		lineageTag: 7fecbdf2-e4e8-5f54-83c4-d3f4e05dfa4e
+		summarizeBy: none
+		sourceColumn: basis
+
+		annotation SummarizationSetBy = Automatic
+
+	column entity_code
+		dataType: string
+		isHidden
+		lineageTag: 0e46c025-7d2b-5252-b007-701d8babec38
+		summarizeBy: none
+		sourceColumn: entity_code
+
+		annotation SummarizationSetBy = Automatic
+
+	column bu_code
+		dataType: string
+		isHidden
+		lineageTag: 33628b2c-231c-5167-93b9-e4f81b0d40f8
+		summarizeBy: none
+		sourceColumn: bu_code
+
+		annotation SummarizationSetBy = Automatic
+
+	column measure_code
+		dataType: string
+		isHidden
+		lineageTag: 6b1acec2-693f-5deb-a485-f033fd2e68ed
+		summarizeBy: none
+		sourceColumn: measure_code
+
+		annotation SummarizationSetBy = Automatic
+
+	column measure_name
+		dataType: string
+		isHidden
+		lineageTag: 6544bfd0-a7f6-5cd2-97a0-5ae5537ae582
+		summarizeBy: none
+		sourceColumn: measure_name
+
+		annotation SummarizationSetBy = Automatic
+
+	column indent_level
+		dataType: int64
+		isHidden
+		lineageTag: bd1889a8-74f5-5de9-9934-690d7a28f7ba
+		summarizeBy: none
+		sourceColumn: indent_level
+
+		annotation SummarizationSetBy = Automatic
+
+	column is_subtotal
+		dataType: boolean
+		isHidden
+		lineageTag: c0f1639d-03dc-5b53-8acb-0201acca21fd
+		summarizeBy: none
+		sourceColumn: is_subtotal
+
+		annotation SummarizationSetBy = Automatic
+
+	column favourable_direction
+		dataType: string
+		isHidden
+		lineageTag: f6ec58dc-51c4-5645-907a-4a1aecab1817
+		summarizeBy: none
+		sourceColumn: favourable_direction
+
+		annotation SummarizationSetBy = Automatic
+
+	column measure_sort
+		dataType: int64
+		isHidden
+		lineageTag: f009aab0-00de-5428-aa33-804f398a0d8f
+		summarizeBy: none
+		sourceColumn: measure_sort
+
+		annotation SummarizationSetBy = Automatic
+
+	column period_key
+		dataType: int64
+		isHidden
+		lineageTag: 75108b49-bc52-5ccd-bfec-d03fc7fe6555
+		summarizeBy: none
+		sourceColumn: period_key
+
+		annotation SummarizationSetBy = Automatic
+
+	column fiscal_year
+		dataType: int64
+		isHidden
+		lineageTag: 33f3abbc-3d9f-57d1-9081-0f793da670dd
+		summarizeBy: none
+		sourceColumn: fiscal_year
+
+		annotation SummarizationSetBy = Automatic
+
+	column accounting_period
+		dataType: int64
+		isHidden
+		lineageTag: c1832e0a-3ffe-5f88-a1cf-ede9e6aecb47
+		summarizeBy: none
+		sourceColumn: accounting_period
+
+		annotation SummarizationSetBy = Automatic
+
+	column base_version
+		dataType: string
+		isHidden
+		lineageTag: e9b0ad32-0364-59ad-a189-8374e0287e6a
+		summarizeBy: none
+		sourceColumn: base_version
+
+		annotation SummarizationSetBy = Automatic
+
+	column comparator_version
+		dataType: string
+		isHidden
+		lineageTag: dd14ef3b-1560-5e44-978d-68a0aef8a9d8
+		summarizeBy: none
+		sourceColumn: comparator_version
+
+		annotation SummarizationSetBy = Automatic
+
+	column base_mtd
+		dataType: decimal
+		lineageTag: b0115a08-6eab-564b-bce5-a4bd9df30bba
+		summarizeBy: none
+		sourceColumn: base_mtd
+
+		annotation SummarizationSetBy = Automatic
+
+	column base_ytd
+		dataType: decimal
+		lineageTag: 9bd64853-4d82-5b96-8581-c84c148f503b
+		summarizeBy: none
+		sourceColumn: base_ytd
+
+		annotation SummarizationSetBy = Automatic
+
+	column base_fy
+		dataType: decimal
+		lineageTag: 4b2805fe-9703-552b-9a67-f5f775701502
+		summarizeBy: none
+		sourceColumn: base_fy
+
+		annotation SummarizationSetBy = Automatic
+
+	column comp_mtd
+		dataType: decimal
+		lineageTag: eee2f752-b0e2-5a2c-b927-8e6970ccb391
+		summarizeBy: none
+		sourceColumn: comp_mtd
+
+		annotation SummarizationSetBy = Automatic
+
+	column comp_ytd
+		dataType: decimal
+		lineageTag: 594b3bfa-c9c3-58da-b412-479d42e48188
+		summarizeBy: none
+		sourceColumn: comp_ytd
+
+		annotation SummarizationSetBy = Automatic
+
+	column comp_fy
+		dataType: decimal
+		lineageTag: 6c158048-a63c-5750-a295-0a0255d58f83
+		summarizeBy: none
+		sourceColumn: comp_fy
+
+		annotation SummarizationSetBy = Automatic
+
+	column is_comparable
+		dataType: boolean
+		lineageTag: 82060dd6-8ac1-579b-be9f-8b38d85fe3c4
+		summarizeBy: none
+		sourceColumn: is_comparable
+
+		annotation SummarizationSetBy = Automatic
+
+	column var_mtd_usd
+		dataType: decimal
+		lineageTag: e165c790-69ec-5eae-9f21-42a4b18c9ae9
+		summarizeBy: none
+		sourceColumn: var_mtd_usd
+
+		annotation SummarizationSetBy = Automatic
+
+	column var_ytd_usd
+		dataType: decimal
+		lineageTag: 49221980-9d17-5519-bd36-7a7cb5a36f2d
+		summarizeBy: none
+		sourceColumn: var_ytd_usd
+
+		annotation SummarizationSetBy = Automatic
+
+	column var_fy_usd
+		dataType: decimal
+		lineageTag: b744b866-4a06-5a41-bb85-22e062e765cf
+		summarizeBy: none
+		sourceColumn: var_fy_usd
+
+		annotation SummarizationSetBy = Automatic
+
+	column var_mtd_pct
+		dataType: double
+		lineageTag: b2e92278-6dc1-5a41-82dc-18f7ee6575d7
+		summarizeBy: none
+		sourceColumn: var_mtd_pct
+
+		annotation SummarizationSetBy = Automatic
+
+	column var_ytd_pct
+		dataType: double
+		lineageTag: 023bb0b9-95c3-5907-98c5-1c52ec3fae27
+		summarizeBy: none
+		sourceColumn: var_ytd_pct
+
+		annotation SummarizationSetBy = Automatic
+
+	column var_fy_pct
+		dataType: double
+		lineageTag: 872d3f26-224d-598f-a100-2658071abd52
+		summarizeBy: none
+		sourceColumn: var_fy_pct
+
+		annotation SummarizationSetBy = Automatic
+
+	column ytd_favourability
+		dataType: string
+		lineageTag: b96690cd-f20f-51be-9352-9767060985fb
+		summarizeBy: none
+		sourceColumn: ytd_favourability
+
+		annotation SummarizationSetBy = Automatic
+
+	column fy_favourability
+		dataType: string
+		lineageTag: 3a5b94f3-e2ff-5cd7-8f94-b65072b4e3e5
+		summarizeBy: none
+		sourceColumn: fy_favourability
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'Variance' = m
+		mode: import
+		source =
+				let
+				    Source = Parquet.Document(File.Contents(DataFolder & "\30_marts\mart_variance.parquet"))
+				in
+				    Source
+
+	annotation PBI_ResultType = Table

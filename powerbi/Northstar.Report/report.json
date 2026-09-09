@@ -1,0 +1,16 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/report/1.0.0/schema.json",
+  "themeCollection": {},
+  "sections": [
+    {
+      "name": "TechnicalValidation",
+      "displayName": "Technical validation",
+      "ordinal": 0,
+      "width": 1280,
+      "height": 720,
+      "visualContainers": []
+    }
+  ],
+  "config": "{\"version\": \"5.43\", \"themeCollection\": {}}",
+  "layoutOptimization": 0
+}

@@ -1,0 +1,165 @@
+/// Headcount movement and personnel cost.
+table 'Headcount'
+	lineageTag: 2bf31ad8-5495-5201-b1f3-2c3604fd0d7f
+
+	column period_key
+		dataType: int64
+		isHidden
+		lineageTag: 186e9203-89ea-50f8-b06d-25eeaf61dbea
+		summarizeBy: none
+		sourceColumn: period_key
+
+		annotation SummarizationSetBy = Automatic
+
+	column fiscal_year
+		dataType: int64
+		isHidden
+		lineageTag: 09a554cd-c4cf-5191-aa7c-f0e142e5127d
+		summarizeBy: none
+		sourceColumn: fiscal_year
+
+		annotation SummarizationSetBy = Automatic
+
+	column entity_code
+		dataType: string
+		isHidden
+		lineageTag: 527ac5ec-c842-50c0-b2a8-7455a50bab11
+		summarizeBy: none
+		sourceColumn: entity_code
+
+		annotation SummarizationSetBy = Automatic
+
+	column entity_name
+		dataType: string
+		isHidden
+		lineageTag: d7f8bbc0-06b2-5855-9860-791a8b5e6b2b
+		summarizeBy: none
+		sourceColumn: entity_name
+
+		annotation SummarizationSetBy = Automatic
+
+	column bu_code
+		dataType: string
+		isHidden
+		lineageTag: 2f15ae33-cda1-5a35-8ade-a31a176c4da8
+		summarizeBy: none
+		sourceColumn: bu_code
+
+		annotation SummarizationSetBy = Automatic
+
+	column country_code
+		dataType: string
+		isHidden
+		lineageTag: aacd8ac8-ce45-590c-b508-ff283e6fade9
+		summarizeBy: none
+		sourceColumn: country_code
+
+		annotation SummarizationSetBy = Automatic
+
+	column functional_currency
+		dataType: string
+		isHidden
+		lineageTag: ba581663-38bc-5bc4-a036-26e3ba393a0e
+		summarizeBy: none
+		sourceColumn: functional_currency
+
+		annotation SummarizationSetBy = Automatic
+
+	column department_code
+		dataType: string
+		isHidden
+		lineageTag: 4f747b81-d674-5f46-b9b6-0b97886e838f
+		summarizeBy: none
+		sourceColumn: department_code
+
+		annotation SummarizationSetBy = Automatic
+
+	column department_name
+		dataType: string
+		lineageTag: 9fd01b67-3946-5480-9ce5-543f9d0a9078
+		summarizeBy: none
+		sourceColumn: department_name
+
+		annotation SummarizationSetBy = Automatic
+
+	column function_group
+		dataType: string
+		lineageTag: fa1a7cc3-7288-5eff-8a3e-4d0638d51d2e
+		summarizeBy: none
+		sourceColumn: function_group
+
+		annotation SummarizationSetBy = Automatic
+
+	column job_family_code
+		dataType: string
+		lineageTag: 9b93d88c-9f84-5b13-b1a5-f22ea3f69f47
+		summarizeBy: none
+		sourceColumn: job_family_code
+
+		annotation SummarizationSetBy = Automatic
+
+	column fte_opening
+		dataType: double
+		lineageTag: e8cc9be2-caa7-5ecc-afbc-f5dab017238e
+		summarizeBy: none
+		sourceColumn: fte_opening
+
+		annotation SummarizationSetBy = Automatic
+
+	column hires
+		dataType: double
+		lineageTag: 8a6e06b1-f5e0-58aa-a46a-46ecfbaeef41
+		summarizeBy: none
+		sourceColumn: hires
+
+		annotation SummarizationSetBy = Automatic
+
+	column leavers
+		dataType: double
+		lineageTag: 87283078-6c86-508c-a523-1e5362593d90
+		summarizeBy: none
+		sourceColumn: leavers
+
+		annotation SummarizationSetBy = Automatic
+
+	column fte_closing
+		dataType: double
+		lineageTag: 017aa577-141b-530b-addf-c4815cc644df
+		summarizeBy: none
+		sourceColumn: fte_closing
+
+		annotation SummarizationSetBy = Automatic
+
+	column fte_average
+		dataType: double
+		lineageTag: c5a22c93-2aef-5740-a72e-ea112f1ab30e
+		summarizeBy: none
+		sourceColumn: fte_average
+
+		annotation SummarizationSetBy = Automatic
+
+	column headcount_closing
+		dataType: int64
+		lineageTag: da7fe715-2c8a-5435-94be-6ebb8c65d2a0
+		summarizeBy: none
+		sourceColumn: headcount_closing
+
+		annotation SummarizationSetBy = Automatic
+
+	column base_salary_month_usd
+		dataType: double
+		lineageTag: 724c41ae-e80d-54e6-a9dd-d23cbfa8e907
+		summarizeBy: none
+		sourceColumn: base_salary_month_usd
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'Headcount' = m
+		mode: import
+		source =
+				let
+				    Source = Parquet.Document(File.Contents(DataFolder & "\30_marts\mart_headcount.parquet"))
+				in
+				    Source
+
+	annotation PBI_ResultType = Table
