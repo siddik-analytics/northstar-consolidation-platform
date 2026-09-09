@@ -6,7 +6,7 @@
     "30_marts/dim_report_scenario.parquet": "d1eb28d3a1509aaee2ce5d4ff7a164d32c5415f67d2cc4b1d26e9ab00e49fb8a",
     "30_marts/mart_balance_sheet.parquet": "ea4378657bc8479b5bb94e1aa752df4be9ccabbc92540431649308f466b33d31",
     "30_marts/mart_business_unit.parquet": "8a70d8aa2905548460558c5c4a2b0ef6c13ecfedec7b497929d3560e5a16a642",
-    "30_marts/mart_capex.parquet": "0066ed0b0b6822c88cd6b8aee426d91df6bb73df223b1b01fed1932bc0d297d7",
+    "30_marts/mart_capex.parquet": "208259e122e2b11b9721421d7003e9d8b88c71a9b193d30029160cf7c92c6629",
     "30_marts/mart_cash_flow.parquet": "a76499a595fc09f445a5ee58bd85ec9240c6285c1133f7041198041484dc1c5d",
     "30_marts/mart_consolidation_bridge.parquet": "9e4830cdab2f046071b2af2e75c25a13da44d7286c91f97165035a13ae7998ce",
     "30_marts/mart_covenants.parquet": "09534e6d1362c3c333f9f70dd74b1602d2e43aef3e77cc1462df1166df820c2f",
@@ -20,8 +20,8 @@
     "30_marts/mart_variance.parquet": "0a4e3ec9d09676f99a12e43f4224da47faff6d1e73db3bbb5ef9f55d4047b6c4",
     "30_marts/mart_working_capital.parquet": "e6a919d3c88b190ba0c6a5d5602bb6004c2fcafac9276540c2253a414197d70a"
   },
-  "build_id": "2caac83888d04d3f",
-  "consolidation_build_id": "78e406e139662392",
+  "build_id": "24b65b7f05f7697d",
+  "consolidation_build_id": "a99d9fba5694ad7d",
   "phase": 5,
   "row_counts": {
     "dim_report_comparison": 4,
@@ -45,5 +45,5 @@
     "mart_working_capital": 48,
     "ref_report_line": 97
   },
-  "source_layer_digest": "fd7afb8fd7dc80580d4ca64016ae9ca51a96209c546555dfff01813d1a525836"
+  "source_layer_digest": "8013298c3fee35ef25b790104df6c0fd4f6d8bbacb017f709f17fb82ce2644c7"
 }

@@ -68,6 +68,7 @@ month, people stop reading them, and the one that mattered gets lost in the nois
 | `SCENARIO` | 6 | 5 | Budget and forecast are complete, locked, comparable and isolated |
 | `RECONCILIATION` | 6 | 4–9 | Every figure traces back to its source |
 | `REASONABLENESS` | 5 | 4–8 | The numbers make business sense, not just arithmetic sense |
+| `KEY_AND_GRAIN` | 229 | 2–5 | Every declared key is unique and every declared grain holds, over the full population |
 
 ## 4. Control points in the pipeline
 
@@ -92,6 +93,20 @@ month, people stop reading them, and the one that mattered gets lost in the nois
 Controls run **at the point of the transformation they protect**, not in a batch at the end.
 A trial balance failure detected at ingestion costs minutes to fix; the same failure
 detected after consolidation costs a day of bisecting.
+
+One family deliberately runs across the whole chain rather than at a point in it:
+
+```
+  ALL LAYERS ───► P7-REG, P7-KEY, P7-NUL, P7-REF, P7-CPX
+                  every declared key and grain, source through mart
+```
+
+`python -m src.integrity.controls`. Keys are the one thing a point-in-the-pipeline control
+cannot protect, because a broken key is broken *everywhere at once* and looks correct at every
+individual step. `project_id` passed ingestion, consolidation and the marts for four phases
+while identifying 1,846 capital projects with 395 values — every join it took part in returned
+rows, just five times too many. See [the key and grain framework](key-and-grain-framework.md)
+and [ADR-0026](adr/0026-a-declared-key-is-a-contract.md).
 
 ## 5. The controls that matter most
 

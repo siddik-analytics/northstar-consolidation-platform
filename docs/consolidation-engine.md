@@ -190,8 +190,9 @@ before would double every entry and every total would still look plausible.
 
 `build_id()` is a SHA-256 over the declared inputs — the frozen source digest, the Phase 3
 manifest, and the five configuration files the engine reads — truncated to 16 characters. It
-is a property of the inputs, not of the run. Current value **`78e406e139662392`** on source
-layer `fd7afb8f…`.
+is a property of the inputs, not of the run. Current value **`a99d9fba5694ad7d`** on source
+layer `8013298c…`. Both moved at the Phase 5.1 rebaseline and neither the engine nor any
+consolidated figure changed ([ADR-0026](adr/0026-a-declared-key-is-a-contract.md)).
 
 ---
 

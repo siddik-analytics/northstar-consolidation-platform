@@ -1,5 +1,14 @@
 # Phase 2 Report — Synthetic Source Systems & Reference Data
 
+> **Superseded in part by Phase 5.1.** The `project_id` format recorded here identified
+> 1,846 capital projects with 395 values — defect **P6-D-01**, found in Phase 6A and
+> corrected at the generator under
+> [ADR-0026](../adr/0026-a-declared-key-is-a-contract.md). The build identifiers quoted
+> below are the values as at this phase and have since been rebaselined. No figure in this
+> report changed: the correction moved no money. See
+> [`phase-05-1-key-integrity.md`](phase-05-1-key-integrity.md).
+
+
 **Status:** Complete · **Date:** 2026-09-07 · **Next gate:** Owner review before Phase 3
 
 ---

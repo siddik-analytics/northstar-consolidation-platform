@@ -1,10 +1,10 @@
 {
   "artefacts": {
-    "10_staging/01_parsed/parsed_aurora.parquet": "6f4a968db801ee4c5c3b05b371c578dcc295b6d606d557fa106c72b14d1cef39",
-    "10_staging/01_parsed/parsed_kestrel.parquet": "889970f8fe910b1372948e13ef78309d02676b2f88340f0887bfae07fc4debcc",
-    "10_staging/01_parsed/parsed_sable.parquet": "61bc9487e974b4f05243ded75e24a6ed5f032478de6e93b406c03227660fcb0f",
-    "10_staging/02_standardised/stg_standardised.parquet": "c32693d1175c620d733b5cb283f3765d6c6329b86bffaa924e8185ce9b116aa6",
-    "10_staging/03_mapped/stg_mapped.parquet": "949c48c938a185cec4a0ff6e7938bfe4d8f10379946231ce1ce3c13596f2ec1d",
+    "10_staging/01_parsed/parsed_aurora.parquet": "a4579246f0c932181ce1de8ba5a51063dda261eb6ee67038d309b410db6c565b",
+    "10_staging/01_parsed/parsed_kestrel.parquet": "084ac10d0b613b88a81b4c03554c844c43cdcf37b5de5f1d993d3dd87b9208f4",
+    "10_staging/01_parsed/parsed_sable.parquet": "fdb73c7b9b6152f94c3e275d40a5fee5be6b932e22cdbe73c93249a7d867a377",
+    "10_staging/02_standardised/stg_standardised.parquet": "eb7bd599021104b3d7e771837a63df5728530470ed1f962b96a8527ff78068bb",
+    "10_staging/03_mapped/stg_mapped.parquet": "fd08f4d880b321122a7af3824cb1244611d52a6fc0b6dd1fdd8addd2b8d854e8",
     "10_staging/04_conformed/dim_account.parquet": "f5adf7f5d906942df8c6be8da58fca1cbb64c243cb8cedb4e3e1311b38f5db51",
     "10_staging/04_conformed/dim_business_unit.parquet": "3e182f78cc3964cf1c4ed6e6a5d4da26b6a3d1fbae0a9b0d04a3ce721e15b98d",
     "10_staging/04_conformed/dim_consolidation_layer.parquet": "6c4ea2856b412190d63cb1bf22d2f8b5ab4b056c0a39c0a7fc57d9ce2114935a",
@@ -17,16 +17,16 @@
     "10_staging/04_conformed/dim_scenario.parquet": "b0f9c15eb1d1f463e2585bcdd9c457b485f5ab5350b469163afbe094517b0032",
     "10_staging/04_conformed/dim_source_account.parquet": "a5b3eff43e7b5f39557d89046c1fc0b1a7047f62646ae40012492deed25ef7f3",
     "10_staging/04_conformed/dim_version.parquet": "a8b6cb7a50eef219bf5b3dbd191630bca749feaaf2ad9c66fbb5a8ea5ba21532",
-    "10_staging/04_conformed/fact_capex_project.parquet": "cd251c3b393af869f72a7bf0f8bf86c43b477d2383180d093bcee68cd49b8eed",
+    "10_staging/04_conformed/fact_capex_project.parquet": "01e637bb2adfc28888517b229a0e7f230b7f1140d9f85fc40e390800e9983cbb",
     "10_staging/04_conformed/fact_headcount.parquet": "d075ab782208c8bf7f42a98e9923ee24c58bbe5786d17c4de93edd2f63d207b7",
-    "10_staging/04_conformed/fact_journal_line.parquet": "2142431a89806e9842ae6a225d17145dccabfcea3dfccfb8e7fd5dece3b28e3d",
+    "10_staging/04_conformed/fact_journal_line.parquet": "a385784b7f5cdc17c1e772687bdb00c2add4cc91848fac1c789acc5400decdcd",
     "10_staging/04_conformed/fact_plan.parquet": "b88960226f9977a4d4a78eba618d6ee80bd7f4978043e07c2f26dcdb1fc1865a",
     "10_staging/04_conformed/fact_revenue_detail.parquet": "dd64b0ad82d16ef6983d782e60951e4fe389580e930d441cecdf592f8c4a9bfb",
     "10_staging/04_conformed/fact_trial_balance.parquet": "fcad57f214628ab179c9df3cf34dab553e9ce3004dde2161f97e2975e0bf162e",
     "10_staging/04_conformed/rpt_group_account_coverage.parquet": "70ebd44797943f1840e75586a74adeb0bf57467a1e3abfa9c1205c4cc1643240",
     "10_staging/exceptions/mapping_exceptions.csv": "fd39a2faa56bfbb61a12b1cfe1fc0b9b6f7686ab55924f1343bcc947abda3789"
   },
-  "build_id": "4e860643143938e8",
+  "build_id": "6e0c519360d3669b",
   "mapping_acceptance": {
     "agreement_pct": 100.0,
     "ambiguous": 0,
@@ -92,5 +92,5 @@
     "stg_standardised": 1094997,
     "unmapped": 0
   },
-  "source_layer_digest": "fd7afb8fd7dc80580d4ca64016ae9ca51a96209c546555dfff01813d1a525836"
+  "source_layer_digest": "8013298c3fee35ef25b790104df6c0fd4f6d8bbacb017f709f17fb82ce2644c7"
 }

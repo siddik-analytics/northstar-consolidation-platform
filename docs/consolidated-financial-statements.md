@@ -2,8 +2,11 @@
 
 What the engine produces, how each statement is built, and what has been proved about it.
 
-All figures USD m unless stated. Built from source layer `fd7afb8f…`, consolidation build
-`78e406e139662392`.
+All figures USD m unless stated. Built from source layer `8013298c…`, consolidation build
+`a99d9fba5694ad7d`. Those identifiers moved at the Phase 5.1 rebaseline
+([ADR-0026](adr/0026-a-declared-key-is-a-contract.md)); **every figure below is unchanged**
+— the correction was to a capital-project identifier and moved no money, proved at
+`0.00` over 297,296 rows.
 
 FY2026 is consolidated for all twelve months under the Actual scenario. The business scenario
 has eight actual months and four forecast; the generator produces the whole fiscal year on one

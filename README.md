@@ -29,6 +29,7 @@ figure back to the source journal that produced it.
 | **4B — Documentation & release gate** | ✅ **Complete** | [Findings](docs/phases/phase-04b-engine-findings.md) |
 | **4C — Reporting integrity & cross-artefact gate** | ✅ **Complete** | [Report](docs/phases/phase-04c-reporting-integrity.md) |
 | **5 — Reporting marts & Excel management model** | ✅ **Complete** | [Report](docs/phases/phase-05-report.md) |
+| **5.1 — Upstream dimensional-integrity correction** | ✅ **Complete** | [Report](docs/phases/phase-05-1-key-integrity.md) |
 | 6 — Excel FP&A models | ⏸ | |
 | 7 — Power BI semantic model & reports | ⏸ | |
 | 8 — Board pack & commentary framework | ⏸ | |
@@ -89,6 +90,8 @@ python -m src.consol.faults            # run every fault fixture through the rea
 python -m src.marts.run                # build the governed reporting marts
 python -m src.excel.build              # build the Excel management reporting model
 python -m src.excel.qa                 # calculate, inspect and render the workbook in Excel
+python -m src.integrity.controls       # prove every declared key and grain, source to mart
+python -m src.integrity.faults         # break each one on purpose and prove it is caught
 python -m pytest tests -q              # validate every accounting identity, seed and dataset
 ```
 
@@ -151,7 +154,9 @@ src/
   consol/        Group consolidation engine, controls and fault fixtures (Phase 4)
   marts/         Governed reporting marts and their controls (Phase 5)
   excel/         The Excel management reporting model, built as code (Phase 5)
-tools/           Maintenance utilities (anchor derivation, source diff manifest)
+  integrity/     Declared-key and declared-grain registry, controls and fixtures
+tools/           Maintenance utilities (anchor derivation, source and workbook diffs,
+                 the financial invariance harness)
 tests/           Automated validation
 ```
 
@@ -178,6 +183,8 @@ tests/           Automated validation
 | [Phase 4B engine findings](docs/phases/phase-04b-engine-findings.md) | two reporting defects found by documenting the engine, reported and not corrected |
 | [Phase 4C reporting integrity](docs/phases/phase-04c-reporting-integrity.md) | those defects closed, a third found by the new controls, and the cross-artefact family |
 | [**Phase 5 report**](docs/phases/phase-05-report.md) | the governed reporting marts and the Excel management model |
+| [Phase 5.1 key integrity](docs/phases/phase-05-1-key-integrity.md) | a business key that was never a key, corrected at the generator, and the framework that now proves every one of them |
+| [Key and grain framework](docs/key-and-grain-framework.md) | 61 declared keys, 229 controls, 9 fixtures, and the defect that made them necessary |
 | [**Architecture lessons**](docs/architecture-lessons.md) | ten defects that balanced perfectly while being wrong, and the design change each produced |
 
 | The consolidation, as built | |

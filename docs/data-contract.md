@@ -47,7 +47,7 @@ maintain.
 |---|---|
 | Table names | `dim_*`, `fact_*`, `stg_*`, `mart_*`, `ctl_*`; singular subject, snake_case |
 | Surrogate keys | `<dim>_key`, integer, generated, never business-meaningful |
-| Business keys | `<dim>_code` or `<dim>_id`, preserved from source |
+| Business keys | `<dim>_code` or `<dim>_id`, preserved from source. **Declared in `src/integrity/registry.py` and proved unique on every build** ([ADR-0026](adr/0026-a-declared-key-is-a-contract.md)) |
 | Dates | ISO `date` type; `*_date` for real dates, `period_key` (`YYYYMM` integer) for month keys |
 | Amounts | `DECIMAL(18,2)` for currency. **Never floating point.** |
 | Rates | `DECIMAL(18,8)` |
@@ -55,7 +55,13 @@ maintain.
 | Booleans | Real `BOOLEAN`, not `Y`/`N` strings |
 | Account codes | `VARCHAR`. Kestrel's leading zeros are significant (`CTL-DQ-10`) |
 | Unknown members | Explicit `-1` "Not Applicable" rows in every dimension. **No nulls in foreign keys.** |
+| Composite keys | Where a business key needs more than one column, every column is in the identifier, not merely implied by it. A key column may be null only where the registry names it and gives a reason (`P7-NUL-*`) |
 | Deleted rows | Never. Corrections are new effective-dated rows or reversing entries |
+
+A declared key is a contract, not a naming convention: all 61 keyed objects are declared in `src/integrity/registry.py` and proved over their full population by 229 controls, with nine fault fixtures proving the controls catch what they claim to. See
+[the key and grain framework](key-and-grain-framework.md). The rule exists because
+`project_id` was documented as a key for four phases while identifying 1,846 capital
+projects with 395 values (P6-D-01).
 
 Money is `DECIMAL`, not `DOUBLE`, because a consolidation is judged on whether it balances
 to the cent and binary floating point cannot represent `0.01`. A tolerance of $1 on a

@@ -46,6 +46,18 @@ Two properties make the chain usable rather than merely present:
   the same source line.
 * **`consol_journal_id` is derived from business keys**, not from a counter — so a lineage
   reference printed in a report today still resolves after a rebuild tomorrow.
+* **Every identifier in the chain is proved unique over its own population**, on every
+  build, by `src/integrity/controls.py`. An identifier nobody tests is a naming
+  convention: `project_id` was in this table as a key while five capital programmes
+  shared each value (P6-D-01, [ADR-0026](adr/0026-a-declared-key-is-a-contract.md)).
+  The subledger chain has its own family, because that is where the defect did its
+  damage:
+
+      Capital Project ──► CapEx fact ──► Fixed Asset      (P7-CPX-01 … P7-CPX-09)
+
+  proved link by link on the attributes that must agree — asset class, entity, period —
+  and then on the money, because identifier integrity is only worth having if the
+  amounts follow the identifier.
 
 ## Walking it backwards
 

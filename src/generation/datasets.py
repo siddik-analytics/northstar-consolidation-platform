@@ -149,7 +149,22 @@ def build_headcount(sb: SeriesBuilder, employees: list[dict]) -> list[dict]:
 
 # --------------------------------------------------------------------------- capex
 def build_capex(sb: SeriesBuilder) -> tuple[list[dict], list[dict]]:
-    """Capital projects and the fixed asset register they create."""
+    """
+    Capital projects and the fixed asset register they create.
+
+    ``project_id`` is the business key of a capital project and is therefore built from the
+    full grain that makes a project distinct: the entity that owns it, the month it was
+    approved in, the asset class it creates, and a sequence within those three.
+
+        CP-{entity}-{period}-{asset_class}-{sequence}
+
+    The asset class has to be in there. Without it the sequence -- which restarts inside each
+    asset class -- reissues ``-01`` for every class in the same entity-month, and five
+    different programmes end up sharing one identifier (P6-D-01, ADR-0026). Asset classes are
+    walked in ``ASSET_CLASSES`` declaration order rather than in the order a derived dict
+    happens to yield, because the per-entity generator is consumed in loop order: the sequence
+    of draws, and so the economics, is a function of that order.
+    """
     rows_proj, rows_asset = [], []
     actual = sb.build_actuals()
     by_ent: dict[str, list] = {}
@@ -165,15 +180,15 @@ def build_capex(sb: SeriesBuilder) -> tuple[list[dict], list[dict]]:
                          for a in ASSET_CLASSES}
             prev = em
             p_year, p_month = divmod(em.period_key, 100)
-            for acct, amt in additions.items():
+            for acct, (cls, name, life) in ASSET_CLASSES.items():
+                amt = additions[acct]
                 if amt <= 1000:
                     continue
-                cls, name, life = ASSET_CLASSES[acct]
                 n = int(np.clip(amt / 250_000, 1, 12))
                 for i, part in enumerate(allocate_exact(amt, g.lognormal(0, 0.6, n), 2)):
                     if part < 500:
                         continue
-                    pid = f"CP-{entity[-3:]}-{em.period_key}-{i + 1:02d}"
+                    pid = f"CP-{entity[-3:]}-{em.period_key}-{cls}-{i + 1:02d}"
                     in_service = date(p_year, p_month, min(28, 10 + i))
                     rows_proj.append(dict(
                         project_id=pid, entity_code=entity, project_name=f"{name} programme",

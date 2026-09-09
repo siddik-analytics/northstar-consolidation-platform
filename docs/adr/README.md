@@ -31,3 +31,4 @@ answer are documented in the design docs, not here.
 | [0023](0023-intercompany-balances-are-built-pair-by-pair.md) | Intercompany balances built pair by pair; every posting names its counterparty | Accepted |
 | [0024](0024-two-reconciled-consolidation-facts.md) | Two reconciled consolidation facts: a journal at leg grain and a fact at reporting grain | Accepted |
 | [0025](0025-the-entity-ledger-supersedes-the-phase-1-nci-estimate.md) | The entity ledger supersedes the Phase 1 NCI earnings estimate | Accepted |
+| [0026](0026-a-declared-key-is-a-contract.md) | A declared key is a contract, proved over its population, not a naming convention | Accepted |

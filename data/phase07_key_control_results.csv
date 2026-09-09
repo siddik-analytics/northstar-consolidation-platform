@@ -1,0 +1,230 @@
+control_id,control_name,severity,status,measured,threshold,detail
+P7-REG-01,Every keyed object in the warehouse is declared in the registry,BLOCKING,PASS,0,0,"61 objects in scope, all declared"
+P7-REG-02,Every registry entry names an object that exists,BLOCKING,PASS,0,0,"61 declarations, all resolve"
+P7-REG-03,Every declared key column exists on its object,BLOCKING,PASS,0,0,
+P7-REG-04,Every keyless waiver carries a reason,BLOCKING,PASS,0,0,no waivers in force
+P7-KEY-dim_date,"dim_date is unique on its declared key (period_key, accounting_period)",BLOCKING,PASS,0 duplicate rows,0,"60 rows, 60 distinct keys; owner Phase 3; authority config/calendar.yml"
+P7-NUL-dim_date,dim_date has no null in an unpermitted key column,BLOCKING,PASS,0,0,2 of 2 key columns must never be null
+P7-NUL-dim_date-declared,dim_date states a reason for every nullable key column,BLOCKING,PASS,coherent,coherent,a nullable key column needs a reason a reviewer would accept
+P7-KEY-dim_entity,dim_entity is unique on its declared key (entity_code),BLOCKING,PASS,0 duplicate rows,0,"15 rows, 15 distinct keys; owner Phase 3; authority config/masters/entities.yml"
+P7-NUL-dim_entity,dim_entity has no null in an unpermitted key column,BLOCKING,PASS,0,0,1 of 1 key columns must never be null
+P7-NUL-dim_entity-declared,dim_entity states a reason for every nullable key column,BLOCKING,PASS,coherent,coherent,a nullable key column needs a reason a reviewer would accept
+P7-KEY-dim_business_unit,dim_business_unit is unique on its declared key (bu_code),BLOCKING,PASS,0 duplicate rows,0,"5 rows, 5 distinct keys; owner Phase 3; authority config/masters/business_units.yml"
+P7-NUL-dim_business_unit,dim_business_unit has no null in an unpermitted key column,BLOCKING,PASS,0,0,1 of 1 key columns must never be null
+P7-NUL-dim_business_unit-declared,dim_business_unit states a reason for every nullable key column,BLOCKING,PASS,coherent,coherent,a nullable key column needs a reason a reviewer would accept
+P7-KEY-dim_account,dim_account is unique on its declared key (group_account),BLOCKING,PASS,0 duplicate rows,0,"188 rows, 188 distinct keys; owner Phase 3; authority config/masters/group_chart_of_accounts.csv"
+P7-NUL-dim_account,dim_account has no null in an unpermitted key column,BLOCKING,PASS,0,0,1 of 1 key columns must never be null
+P7-NUL-dim_account-declared,dim_account states a reason for every nullable key column,BLOCKING,PASS,coherent,coherent,a nullable key column needs a reason a reviewer would accept
+P7-KEY-dim_cost_center,"dim_cost_center is unique on its declared key (entity_code, cost_center_code)",BLOCKING,PASS,0 duplicate rows,0,"162 rows, 162 distinct keys; owner Phase 3; authority data/reference/cost_centres.csv"
+P7-NUL-dim_cost_center,dim_cost_center has no null in an unpermitted key column,BLOCKING,PASS,0,0,2 of 2 key columns must never be null
+P7-NUL-dim_cost_center-declared,dim_cost_center states a reason for every nullable key column,BLOCKING,PASS,coherent,coherent,a nullable key column needs a reason a reviewer would accept
+P7-KEY-dim_department,dim_department is unique on its declared key (department_code),BLOCKING,PASS,0 duplicate rows,0,"26 rows, 26 distinct keys; owner Phase 3; authority config/masters/departments.yml"
+P7-NUL-dim_department,dim_department has no null in an unpermitted key column,BLOCKING,PASS,0,0,1 of 1 key columns must never be null
+P7-NUL-dim_department-declared,dim_department states a reason for every nullable key column,BLOCKING,PASS,coherent,coherent,a nullable key column needs a reason a reviewer would accept
+P7-KEY-dim_currency,dim_currency is unique on its declared key (currency_code),BLOCKING,PASS,0 duplicate rows,0,"4 rows, 4 distinct keys; owner Phase 3; authority config/anchors/anchor_fx_rates.csv"
+P7-NUL-dim_currency,dim_currency has no null in an unpermitted key column,BLOCKING,PASS,0,0,1 of 1 key columns must never be null
+P7-NUL-dim_currency-declared,dim_currency states a reason for every nullable key column,BLOCKING,PASS,coherent,coherent,a nullable key column needs a reason a reviewer would accept
+P7-KEY-dim_consolidation_layer,dim_consolidation_layer is unique on its declared key (layer_id),BLOCKING,PASS,0 duplicate rows,0,"5 rows, 5 distinct keys; owner Phase 3; authority config/consolidation_layers.yml"
+P7-NUL-dim_consolidation_layer,dim_consolidation_layer has no null in an unpermitted key column,BLOCKING,PASS,0,0,1 of 1 key columns must never be null
+P7-NUL-dim_consolidation_layer-declared,dim_consolidation_layer states a reason for every nullable key column,BLOCKING,PASS,coherent,coherent,a nullable key column needs a reason a reviewer would accept
+P7-KEY-dim_scenario,dim_scenario is unique on its declared key (scenario_code),BLOCKING,PASS,0 duplicate rows,0,"5 rows, 5 distinct keys; owner Phase 3; authority config/masters/scenarios.yml"
+P7-NUL-dim_scenario,dim_scenario has no null in an unpermitted key column,BLOCKING,PASS,0,0,1 of 1 key columns must never be null
+P7-NUL-dim_scenario-declared,dim_scenario states a reason for every nullable key column,BLOCKING,PASS,coherent,coherent,a nullable key column needs a reason a reviewer would accept
+P7-KEY-dim_version,dim_version is unique on its declared key (version_code),BLOCKING,PASS,0 duplicate rows,0,"8 rows, 8 distinct keys; owner Phase 3; authority config/masters/scenarios.yml"
+P7-NUL-dim_version,dim_version has no null in an unpermitted key column,BLOCKING,PASS,0,0,1 of 1 key columns must never be null
+P7-NUL-dim_version-declared,dim_version states a reason for every nullable key column,BLOCKING,PASS,coherent,coherent,a nullable key column needs a reason a reviewer would accept
+P7-KEY-dim_source_account,"dim_source_account is unique on its declared key (erp_system, source_account)",BLOCKING,PASS,0 duplicate rows,0,"392 rows, 392 distinct keys; owner Phase 3; authority config/mapping/"
+P7-NUL-dim_source_account,dim_source_account has no null in an unpermitted key column,BLOCKING,PASS,0,0,2 of 2 key columns must never be null
+P7-NUL-dim_source_account-declared,dim_source_account states a reason for every nullable key column,BLOCKING,PASS,coherent,coherent,a nullable key column needs a reason a reviewer would accept
+P7-KEY-dim_intercompany_partner,dim_intercompany_partner is unique on its declared key (partner_entity_code),BLOCKING,PASS,0 duplicate rows,0,"12 rows, 12 distinct keys; owner Phase 3; authority config/masters/entities.yml"
+P7-NUL-dim_intercompany_partner,dim_intercompany_partner has no null in an unpermitted key column,BLOCKING,PASS,0,0,1 of 1 key columns must never be null
+P7-NUL-dim_intercompany_partner-declared,dim_intercompany_partner states a reason for every nullable key column,BLOCKING,PASS,coherent,coherent,a nullable key column needs a reason a reviewer would accept
+P7-KEY-dim_ownership_period,"dim_ownership_period is unique on its declared key (period_key, entity_code)",BLOCKING,PASS,0 duplicate rows,0,"555 rows, 555 distinct keys; owner Phase 4; authority data/reference/ownership.csv"
+P7-NUL-dim_ownership_period,dim_ownership_period has no null in an unpermitted key column,BLOCKING,PASS,0,0,2 of 2 key columns must never be null
+P7-NUL-dim_ownership_period-declared,dim_ownership_period states a reason for every nullable key column,BLOCKING,PASS,coherent,coherent,a nullable key column needs a reason a reviewer would accept
+P7-KEY-dim_report_scenario,dim_report_scenario is unique on its declared key (version_code),BLOCKING,PASS,0 duplicate rows,0,"5 rows, 5 distinct keys; owner Phase 5; authority src/marts/config.py"
+P7-NUL-dim_report_scenario,dim_report_scenario has no null in an unpermitted key column,BLOCKING,PASS,0,0,1 of 1 key columns must never be null
+P7-NUL-dim_report_scenario-declared,dim_report_scenario states a reason for every nullable key column,BLOCKING,PASS,coherent,coherent,a nullable key column needs a reason a reviewer would accept
+P7-KEY-dim_report_measure,dim_report_measure is unique on its declared key (measure_code),BLOCKING,PASS,0 duplicate rows,0,"14 rows, 14 distinct keys; owner Phase 5; authority src/marts/config.py MEASURES"
+P7-NUL-dim_report_measure,dim_report_measure has no null in an unpermitted key column,BLOCKING,PASS,0,0,1 of 1 key columns must never be null
+P7-NUL-dim_report_measure-declared,dim_report_measure states a reason for every nullable key column,BLOCKING,PASS,coherent,coherent,a nullable key column needs a reason a reviewer would accept
+P7-KEY-dim_report_comparison,dim_report_comparison is unique on its declared key (comparison_code),BLOCKING,PASS,0 duplicate rows,0,"4 rows, 4 distinct keys; owner Phase 5; authority src/marts/config.py COMPARISONS"
+P7-NUL-dim_report_comparison,dim_report_comparison has no null in an unpermitted key column,BLOCKING,PASS,0,0,1 of 1 key columns must never be null
+P7-NUL-dim_report_comparison-declared,dim_report_comparison states a reason for every nullable key column,BLOCKING,PASS,coherent,coherent,a nullable key column needs a reason a reviewer would accept
+P7-KEY-dim_report_ratio,dim_report_ratio is unique on its declared key (ratio_code),BLOCKING,PASS,0 duplicate rows,0,"3 rows, 3 distinct keys; owner Phase 5; authority src/marts/config.py RATIOS"
+P7-NUL-dim_report_ratio,dim_report_ratio has no null in an unpermitted key column,BLOCKING,PASS,0,0,1 of 1 key columns must never be null
+P7-NUL-dim_report_ratio-declared,dim_report_ratio states a reason for every nullable key column,BLOCKING,PASS,coherent,coherent,a nullable key column needs a reason a reviewer would accept
+P7-KEY-fact_capex_project,fact_capex_project is unique on its declared key (project_id),BLOCKING,PASS,0 duplicate rows,0,"1,846 rows, 1,846 distinct keys; owner Phase 2; authority data/reference/capex_projects.csv"
+P7-NUL-fact_capex_project,fact_capex_project has no null in an unpermitted key column,BLOCKING,PASS,0,0,1 of 1 key columns must never be null
+P7-NUL-fact_capex_project-declared,fact_capex_project states a reason for every nullable key column,BLOCKING,PASS,coherent,coherent,a nullable key column needs a reason a reviewer would accept
+P7-KEY-ref_fixed_asset,ref_fixed_asset is unique on its declared key (asset_id),BLOCKING,PASS,0 duplicate rows,0,"1,846 rows, 1,846 distinct keys; owner Phase 2; authority data/reference/fixed_assets.csv"
+P7-NUL-ref_fixed_asset,ref_fixed_asset has no null in an unpermitted key column,BLOCKING,PASS,0,0,1 of 1 key columns must never be null
+P7-NUL-ref_fixed_asset-declared,ref_fixed_asset states a reason for every nullable key column,BLOCKING,PASS,coherent,coherent,a nullable key column needs a reason a reviewer would accept
+P7-KEY-fact_headcount,"fact_headcount is unique on its declared key (entity_code, cost_center_code, job_family_code, period_key)",BLOCKING,PASS,0 duplicate rows,0,"22,215 rows, 22,215 distinct keys; owner Phase 2; authority data/reference/headcount_fact.parquet"
+P7-NUL-fact_headcount,fact_headcount has no null in an unpermitted key column,BLOCKING,PASS,0,0,4 of 4 key columns must never be null
+P7-NUL-fact_headcount-declared,fact_headcount states a reason for every nullable key column,BLOCKING,PASS,coherent,coherent,a nullable key column needs a reason a reviewer would accept
+P7-KEY-fact_plan,"fact_plan is unique on its declared key (version_code, entity_code, period_key, group_account, cost_center_code)",BLOCKING,PASS,0 duplicate rows,0,"26,124 rows, 26,124 distinct keys; owner Phase 2; authority data/reference/plan_fact.parquet"
+P7-NUL-fact_plan,fact_plan has no null in an unpermitted key column,BLOCKING,PASS,0,0,5 of 5 key columns must never be null
+P7-NUL-fact_plan-declared,fact_plan states a reason for every nullable key column,BLOCKING,PASS,coherent,coherent,a nullable key column needs a reason a reviewer would accept
+P7-KEY-fact_revenue_detail,"fact_revenue_detail is unique on its declared key (entity_code, period_key, customer_code, product_code, group_account)",BLOCKING,PASS,0 duplicate rows,0,"50,045 rows, 50,045 distinct keys; owner Phase 2; authority data/reference/revenue_detail.parquet"
+P7-NUL-fact_revenue_detail,fact_revenue_detail has no null in an unpermitted key column,BLOCKING,PASS,0,0,5 of 5 key columns must never be null
+P7-NUL-fact_revenue_detail-declared,fact_revenue_detail states a reason for every nullable key column,BLOCKING,PASS,coherent,coherent,a nullable key column needs a reason a reviewer would accept
+P7-KEY-ref_debt_schedule,"ref_debt_schedule is unique on its declared key (instrument_id, period_key)",BLOCKING,PASS,0 duplicate rows,0,"595 rows, 595 distinct keys; owner Phase 2; authority data/reference/debt_schedule.csv"
+P7-NUL-ref_debt_schedule,ref_debt_schedule has no null in an unpermitted key column,BLOCKING,PASS,0,0,2 of 2 key columns must never be null
+P7-NUL-ref_debt_schedule-declared,ref_debt_schedule states a reason for every nullable key column,BLOCKING,PASS,coherent,coherent,a nullable key column needs a reason a reviewer would accept
+P7-KEY-ref_revolver_utilisation,"ref_revolver_utilisation is unique on its declared key (instrument_id, period_key)",BLOCKING,PASS,0 duplicate rows,0,"44 rows, 44 distinct keys; owner Phase 2; authority data/reference/revolver_utilisation.csv"
+P7-NUL-ref_revolver_utilisation,ref_revolver_utilisation has no null in an unpermitted key column,BLOCKING,PASS,0,0,2 of 2 key columns must never be null
+P7-NUL-ref_revolver_utilisation-declared,ref_revolver_utilisation states a reason for every nullable key column,BLOCKING,PASS,coherent,coherent,a nullable key column needs a reason a reviewer would accept
+P7-KEY-ref_fx_rate,"ref_fx_rate is unique on its declared key (currency_code, period_key, rate_set, rate_type)",BLOCKING,PASS,0 duplicate rows,0,"544 rows, 544 distinct keys; owner Phase 2; authority data/reference/fx_rates_monthly.csv"
+P7-NUL-ref_fx_rate,ref_fx_rate has no null in an unpermitted key column,BLOCKING,PASS,0,0,4 of 4 key columns must never be null
+P7-NUL-ref_fx_rate-declared,ref_fx_rate states a reason for every nullable key column,BLOCKING,PASS,coherent,coherent,a nullable key column needs a reason a reviewer would accept
+P7-KEY-ref_fx_rate_historical,"ref_fx_rate_historical is unique on its declared key (entity_code, group_account, event_type, event_date)",BLOCKING,PASS,0 duplicate rows,0,"36 rows, 36 distinct keys; owner Phase 2; authority data/reference/fx_rates_historical.csv"
+P7-NUL-ref_fx_rate_historical,ref_fx_rate_historical has no null in an unpermitted key column,BLOCKING,PASS,0,0,4 of 4 key columns must never be null
+P7-NUL-ref_fx_rate_historical-declared,ref_fx_rate_historical states a reason for every nullable key column,BLOCKING,PASS,coherent,coherent,a nullable key column needs a reason a reviewer would accept
+P7-KEY-ref_cta_expectation,"ref_cta_expectation is unique on its declared key (entity_code, period_key)",BLOCKING,PASS,0 duplicate rows,0,"243 rows, 243 distinct keys; owner Phase 2; authority data/reference/cta_expectation.csv"
+P7-NUL-ref_cta_expectation,ref_cta_expectation has no null in an unpermitted key column,BLOCKING,PASS,0,0,2 of 2 key columns must never be null
+P7-NUL-ref_cta_expectation-declared,ref_cta_expectation states a reason for every nullable key column,BLOCKING,PASS,coherent,coherent,a nullable key column needs a reason a reviewer would accept
+P7-KEY-ref_ic_inventory_holding,"ref_ic_inventory_holding is unique on its declared key (holding_period, transaction_period, seller_entity, buyer_entity, inventory_category)",BLOCKING,PASS,0 duplicate rows,0,"470 rows, 470 distinct keys; owner Phase 2; authority data/reference/ic_inventory_holdings.csv"
+P7-NUL-ref_ic_inventory_holding,ref_ic_inventory_holding has no null in an unpermitted key column,BLOCKING,PASS,0,0,5 of 5 key columns must never be null
+P7-NUL-ref_ic_inventory_holding-declared,ref_ic_inventory_holding states a reason for every nullable key column,BLOCKING,PASS,coherent,coherent,a nullable key column needs a reason a reviewer would accept
+P7-KEY-ref_ic_inventory_transaction,ref_ic_inventory_transaction is unique on its declared key (ic_transaction_id),BLOCKING,PASS,0 duplicate rows,0,"173 rows, 173 distinct keys; owner Phase 2; authority data/reference/ic_inventory_transactions.csv"
+P7-NUL-ref_ic_inventory_transaction,ref_ic_inventory_transaction has no null in an unpermitted key column,BLOCKING,PASS,0,0,1 of 1 key columns must never be null
+P7-NUL-ref_ic_inventory_transaction-declared,ref_ic_inventory_transaction states a reason for every nullable key column,BLOCKING,PASS,coherent,coherent,a nullable key column needs a reason a reviewer would accept
+P7-KEY-ref_customer,ref_customer is unique on its declared key (customer_code),BLOCKING,PASS,0 duplicate rows,0,"998 rows, 998 distinct keys; owner Phase 2; authority data/reference/customers.csv"
+P7-NUL-ref_customer,ref_customer has no null in an unpermitted key column,BLOCKING,PASS,0,0,1 of 1 key columns must never be null
+P7-NUL-ref_customer-declared,ref_customer states a reason for every nullable key column,BLOCKING,PASS,coherent,coherent,a nullable key column needs a reason a reviewer would accept
+P7-KEY-ref_product,ref_product is unique on its declared key (product_code),BLOCKING,PASS,0 duplicate rows,0,"226 rows, 226 distinct keys; owner Phase 2; authority data/reference/products.csv"
+P7-NUL-ref_product,ref_product has no null in an unpermitted key column,BLOCKING,PASS,0,0,1 of 1 key columns must never be null
+P7-NUL-ref_product-declared,ref_product states a reason for every nullable key column,BLOCKING,PASS,coherent,coherent,a nullable key column needs a reason a reviewer would accept
+P7-KEY-ref_investment_register,ref_investment_register is unique on its declared key (investment_id),BLOCKING,PASS,0 duplicate rows,0,"11 rows, 11 distinct keys; owner Phase 2; authority data/reference/investment_register.csv"
+P7-NUL-ref_investment_register,ref_investment_register has no null in an unpermitted key column,BLOCKING,PASS,0,0,1 of 1 key columns must never be null
+P7-NUL-ref_investment_register-declared,ref_investment_register states a reason for every nullable key column,BLOCKING,PASS,coherent,coherent,a nullable key column needs a reason a reviewer would accept
+P7-KEY-ref_investment_rollforward,"ref_investment_rollforward is unique on its declared key (parent_entity, subsidiary_entity, period_key)",BLOCKING,PASS,0 duplicate rows,0,"463 rows, 463 distinct keys; owner Phase 2; authority data/reference/investment_rollforward.csv"
+P7-NUL-ref_investment_rollforward,ref_investment_rollforward has no null in an unpermitted key column,BLOCKING,PASS,0,0,3 of 3 key columns must never be null
+P7-NUL-ref_investment_rollforward-declared,ref_investment_rollforward states a reason for every nullable key column,BLOCKING,PASS,coherent,coherent,a nullable key column needs a reason a reviewer would accept
+P7-KEY-ref_ownership,"ref_ownership is unique on its declared key (entity_code, effective_from)",BLOCKING,PASS,0 duplicate rows,0,"11 rows, 11 distinct keys; owner Phase 2; authority data/reference/ownership.csv"
+P7-NUL-ref_ownership,ref_ownership has no null in an unpermitted key column,BLOCKING,PASS,0,0,2 of 2 key columns must never be null
+P7-NUL-ref_ownership-declared,ref_ownership states a reason for every nullable key column,BLOCKING,PASS,coherent,coherent,a nullable key column needs a reason a reviewer would accept
+P7-KEY-ref_acquisition,ref_acquisition is unique on its declared key (acquisition_id),BLOCKING,PASS,0 duplicate rows,0,"11 rows, 11 distinct keys; owner Phase 4; authority config/acquisitions.yml"
+P7-NUL-ref_acquisition,ref_acquisition has no null in an unpermitted key column,BLOCKING,PASS,0,0,1 of 1 key columns must never be null
+P7-NUL-ref_acquisition-declared,ref_acquisition states a reason for every nullable key column,BLOCKING,PASS,coherent,coherent,a nullable key column needs a reason a reviewer would accept
+P7-KEY-ref_ppa_intangible,ref_ppa_intangible is unique on its declared key (ppa_id),BLOCKING,PASS,0 duplicate rows,0,"18 rows, 18 distinct keys; owner Phase 4; authority config/acquisitions.yml"
+P7-NUL-ref_ppa_intangible,ref_ppa_intangible has no null in an unpermitted key column,BLOCKING,PASS,0,0,1 of 1 key columns must never be null
+P7-NUL-ref_ppa_intangible-declared,ref_ppa_intangible states a reason for every nullable key column,BLOCKING,PASS,coherent,coherent,a nullable key column needs a reason a reviewer would accept
+P7-KEY-ref_management_adjustment,ref_management_adjustment is unique on its declared key (adjustment_id),BLOCKING,PASS,0 duplicate rows,0,"2 rows, 2 distinct keys; owner Phase 4; authority config/management_adjustments.yml"
+P7-NUL-ref_management_adjustment,ref_management_adjustment has no null in an unpermitted key column,BLOCKING,PASS,0,0,1 of 1 key columns must never be null
+P7-NUL-ref_management_adjustment-declared,ref_management_adjustment states a reason for every nullable key column,BLOCKING,PASS,coherent,coherent,a nullable key column needs a reason a reviewer would accept
+P7-KEY-ref_covenant_term,ref_covenant_term is unique on its declared key (term_id),BLOCKING,PASS,0 duplicate rows,0,"35 rows, 35 distinct keys; owner Phase 4; authority config/credit_agreement.yml"
+P7-NUL-ref_covenant_term,ref_covenant_term has no null in an unpermitted key column,BLOCKING,PASS,0,0,1 of 1 key columns must never be null
+P7-NUL-ref_covenant_term-declared,ref_covenant_term states a reason for every nullable key column,BLOCKING,PASS,coherent,coherent,a nullable key column needs a reason a reviewer would accept
+P7-KEY-ref_ic_side,ref_ic_side is unique on its declared key (group_account),BLOCKING,PASS,0 duplicate rows,0,"17 rows, 17 distinct keys; owner Phase 4; authority config/masters/group_chart_of_accounts.csv"
+P7-NUL-ref_ic_side,ref_ic_side has no null in an unpermitted key column,BLOCKING,PASS,0,0,1 of 1 key columns must never be null
+P7-NUL-ref_ic_side-declared,ref_ic_side states a reason for every nullable key column,BLOCKING,PASS,coherent,coherent,a nullable key column needs a reason a reviewer would accept
+P7-KEY-ref_report_line,ref_report_line is unique on its declared key (group_account),BLOCKING,PASS,0 duplicate rows,0,"97 rows, 97 distinct keys; owner Phase 5; authority src/marts/build.py"
+P7-NUL-ref_report_line,ref_report_line has no null in an unpermitted key column,BLOCKING,PASS,0,0,1 of 1 key columns must never be null
+P7-NUL-ref_report_line-declared,ref_report_line states a reason for every nullable key column,BLOCKING,PASS,coherent,coherent,a nullable key column needs a reason a reviewer would accept
+P7-KEY-ref_default_version,ref_default_version is unique on its declared key (scenario_code),BLOCKING,PASS,0 duplicate rows,0,"4 rows, 4 distinct keys; owner Phase 3; authority config/masters/scenarios.yml"
+P7-NUL-ref_default_version,ref_default_version has no null in an unpermitted key column,BLOCKING,PASS,0,0,1 of 1 key columns must never be null
+P7-NUL-ref_default_version-declared,ref_default_version states a reason for every nullable key column,BLOCKING,PASS,coherent,coherent,a nullable key column needs a reason a reviewer would accept
+P7-KEY-fact_journal_line,"fact_journal_line is unique on its declared key (journal_id, line_number)",BLOCKING,PASS,0 duplicate rows,0,"1,094,997 rows, 1,094,997 distinct keys; owner Phase 3; authority data/raw/ (three ERP extracts)"
+P7-NUL-fact_journal_line,fact_journal_line has no null in an unpermitted key column,BLOCKING,PASS,0,0,2 of 2 key columns must never be null
+P7-NUL-fact_journal_line-declared,fact_journal_line states a reason for every nullable key column,BLOCKING,PASS,coherent,coherent,a nullable key column needs a reason a reviewer would accept
+P7-KEY-fact_trial_balance,"fact_trial_balance is unique on its declared key (layer_id, version_code, entity_code, cost_center_code, group_account, partner_entity_code, period_key, special_period_type)",BLOCKING,PASS,0 duplicate rows,0,"43,603 rows, 43,603 distinct keys; owner Phase 3; authority src/pipeline/conform.py"
+P7-NUL-fact_trial_balance,fact_trial_balance has no null in an unpermitted key column,BLOCKING,PASS,0,0,"6 of 8 key columns must never be null; null permitted in partner_entity_code, special_period_type -- A line with no intercompany counterparty has no partner, and an ordinary posting has no special period type. Both are absences, not unknowns."
+P7-NUL-fact_trial_balance-declared,fact_trial_balance states a reason for every nullable key column,BLOCKING,PASS,coherent,coherent,a nullable key column needs a reason a reviewer would accept
+P7-KEY-fact_layer1_usd,"fact_layer1_usd is unique on its declared key (entity_code, cost_center_code, group_account, partner_entity_code, period_key, translation_basis)",BLOCKING,PASS,0 duplicate rows,0,"44,584 rows, 44,584 distinct keys; owner Phase 4; authority src/consol/translate.py"
+P7-NUL-fact_layer1_usd,fact_layer1_usd has no null in an unpermitted key column,BLOCKING,PASS,0,0,5 of 6 key columns must never be null; null permitted in partner_entity_code -- A line with no intercompany counterparty has no partner.
+P7-NUL-fact_layer1_usd-declared,fact_layer1_usd states a reason for every nullable key column,BLOCKING,PASS,coherent,coherent,a nullable key column needs a reason a reviewer would accept
+P7-KEY-fact_consol_journal,"fact_consol_journal is unique on its declared key (consol_journal_id, line_number)",BLOCKING,PASS,0 duplicate rows,0,"6,532 rows, 6,532 distinct keys; owner Phase 4; authority src/consol/"
+P7-NUL-fact_consol_journal,fact_consol_journal has no null in an unpermitted key column,BLOCKING,PASS,0,0,2 of 2 key columns must never be null
+P7-NUL-fact_consol_journal-declared,fact_consol_journal states a reason for every nullable key column,BLOCKING,PASS,coherent,coherent,a nullable key column needs a reason a reviewer would accept
+P7-KEY-fact_financials,"fact_financials is unique on its declared key (layer_id, version_code, entity_code, cost_center_code, group_account, partner_entity_code, period_key, process, journal_character)",BLOCKING,PASS,0 duplicate rows,0,"48,202 rows, 48,202 distinct keys; owner Phase 4; authority src/consol/"
+P7-NUL-fact_financials,fact_financials has no null in an unpermitted key column,BLOCKING,PASS,0,0,"6 of 9 key columns must never be null; null permitted in process, cost_center_code, partner_entity_code -- Layer 1 is the translated ledger rather than the output of a consolidation process, so it carries no process. A consolidation entry is posted at entity level and has no cost centre. A line with no counterparty has no partner."
+P7-NUL-fact_financials-declared,fact_financials states a reason for every nullable key column,BLOCKING,PASS,coherent,coherent,a nullable key column needs a reason a reviewer would accept
+P7-KEY-mart_financial_monthly,"mart_financial_monthly is unique on its declared key (basis, version_code, entity_code, bu_code, cost_center_code, group_account, period_key)",BLOCKING,PASS,0 duplicate rows,0,"133,558 rows, 133,558 distinct keys; owner Phase 5; authority src/marts/build.py"
+P7-NUL-mart_financial_monthly,mart_financial_monthly has no null in an unpermitted key column,BLOCKING,PASS,0,0,"6 of 7 key columns must never be null; null permitted in cost_center_code -- Consolidation entries reach the mart without a cost centre, because they were posted at entity level and inventing one would attribute them to a manager."
+P7-NUL-mart_financial_monthly-declared,mart_financial_monthly states a reason for every nullable key column,BLOCKING,PASS,coherent,coherent,a nullable key column needs a reason a reviewer would accept
+P7-KEY-mart_financial_ytd,"mart_financial_ytd is unique on its declared key (basis, version_code, entity_code, bu_code, measure_code, period_key)",BLOCKING,PASS,0 duplicate rows,0,"44,184 rows, 44,184 distinct keys; owner Phase 5; authority src/marts/build.py"
+P7-NUL-mart_financial_ytd,mart_financial_ytd has no null in an unpermitted key column,BLOCKING,PASS,0,0,6 of 6 key columns must never be null
+P7-NUL-mart_financial_ytd-declared,mart_financial_ytd states a reason for every nullable key column,BLOCKING,PASS,coherent,coherent,a nullable key column needs a reason a reviewer would accept
+P7-KEY-mart_variance,"mart_variance is unique on its declared key (comparison_code, basis, entity_code, bu_code, measure_code, period_key)",BLOCKING,PASS,0 duplicate rows,0,"50,652 rows, 50,652 distinct keys; owner Phase 5; authority src/marts/build.py"
+P7-NUL-mart_variance,mart_variance has no null in an unpermitted key column,BLOCKING,PASS,0,0,6 of 6 key columns must never be null
+P7-NUL-mart_variance-declared,mart_variance states a reason for every nullable key column,BLOCKING,PASS,coherent,coherent,a nullable key column needs a reason a reviewer would accept
+P7-KEY-mart_business_unit,"mart_business_unit is unique on its declared key (basis, version_code, bu_code, measure_code, period_key)",BLOCKING,PASS,0 duplicate rows,0,"18,032 rows, 18,032 distinct keys; owner Phase 5; authority src/marts/build.py"
+P7-NUL-mart_business_unit,mart_business_unit has no null in an unpermitted key column,BLOCKING,PASS,0,0,5 of 5 key columns must never be null
+P7-NUL-mart_business_unit-declared,mart_business_unit states a reason for every nullable key column,BLOCKING,PASS,coherent,coherent,a nullable key column needs a reason a reviewer would accept
+P7-KEY-mart_entity_performance,"mart_entity_performance is unique on its declared key (basis, version_code, entity_code, measure_code, period_key)",BLOCKING,PASS,0 duplicate rows,0,"41,832 rows, 41,832 distinct keys; owner Phase 5; authority src/marts/build.py"
+P7-NUL-mart_entity_performance,mart_entity_performance has no null in an unpermitted key column,BLOCKING,PASS,0,0,5 of 5 key columns must never be null
+P7-NUL-mart_entity_performance-declared,mart_entity_performance states a reason for every nullable key column,BLOCKING,PASS,coherent,coherent,a nullable key column needs a reason a reviewer would accept
+P7-KEY-mart_balance_sheet,"mart_balance_sheet is unique on its declared key (period_key, account_class, caption)",BLOCKING,PASS,0 duplicate rows,0,"1,296 rows, 1,296 distinct keys; owner Phase 5; authority src/marts/build.py"
+P7-NUL-mart_balance_sheet,mart_balance_sheet has no null in an unpermitted key column,BLOCKING,PASS,0,0,3 of 3 key columns must never be null
+P7-NUL-mart_balance_sheet-declared,mart_balance_sheet states a reason for every nullable key column,BLOCKING,PASS,coherent,coherent,a nullable key column needs a reason a reviewer would accept
+P7-KEY-mart_cash_flow,mart_cash_flow is unique on its declared key (period_key),BLOCKING,PASS,0 duplicate rows,0,"48 rows, 48 distinct keys; owner Phase 5; authority src/marts/build.py"
+P7-NUL-mart_cash_flow,mart_cash_flow has no null in an unpermitted key column,BLOCKING,PASS,0,0,1 of 1 key columns must never be null
+P7-NUL-mart_cash_flow-declared,mart_cash_flow states a reason for every nullable key column,BLOCKING,PASS,coherent,coherent,a nullable key column needs a reason a reviewer would accept
+P7-KEY-mart_working_capital,mart_working_capital is unique on its declared key (period_key),BLOCKING,PASS,0 duplicate rows,0,"48 rows, 48 distinct keys; owner Phase 5; authority src/marts/build.py"
+P7-NUL-mart_working_capital,mart_working_capital has no null in an unpermitted key column,BLOCKING,PASS,0,0,1 of 1 key columns must never be null
+P7-NUL-mart_working_capital-declared,mart_working_capital states a reason for every nullable key column,BLOCKING,PASS,coherent,coherent,a nullable key column needs a reason a reviewer would accept
+P7-KEY-mart_covenants,mart_covenants is unique on its declared key (period_key),BLOCKING,PASS,0 duplicate rows,0,"33 rows, 33 distinct keys; owner Phase 5; authority src/marts/build.py"
+P7-NUL-mart_covenants,mart_covenants has no null in an unpermitted key column,BLOCKING,PASS,0,0,1 of 1 key columns must never be null
+P7-NUL-mart_covenants-declared,mart_covenants states a reason for every nullable key column,BLOCKING,PASS,coherent,coherent,a nullable key column needs a reason a reviewer would accept
+P7-KEY-mart_debt,"mart_debt is unique on its declared key (period_key, instrument_id)",BLOCKING,PASS,0 duplicate rows,0,"595 rows, 595 distinct keys; owner Phase 5; authority src/marts/build.py"
+P7-NUL-mart_debt,mart_debt has no null in an unpermitted key column,BLOCKING,PASS,0,0,2 of 2 key columns must never be null
+P7-NUL-mart_debt-declared,mart_debt states a reason for every nullable key column,BLOCKING,PASS,coherent,coherent,a nullable key column needs a reason a reviewer would accept
+P7-KEY-mart_headcount,"mart_headcount is unique on its declared key (period_key, entity_code, department_code, job_family_code)",BLOCKING,PASS,0 duplicate rows,0,"22,215 rows, 22,215 distinct keys; owner Phase 5; authority src/marts/build.py"
+P7-NUL-mart_headcount,mart_headcount has no null in an unpermitted key column,BLOCKING,PASS,0,0,4 of 4 key columns must never be null
+P7-NUL-mart_headcount-declared,mart_headcount states a reason for every nullable key column,BLOCKING,PASS,coherent,coherent,a nullable key column needs a reason a reviewer would accept
+P7-KEY-mart_capex,"mart_capex is unique on its declared key (period_key, project_id)",BLOCKING,PASS,0 duplicate rows,0,"1,846 rows, 1,846 distinct keys; owner Phase 5; authority src/marts/build.py"
+P7-NUL-mart_capex,mart_capex has no null in an unpermitted key column,BLOCKING,PASS,0,0,2 of 2 key columns must never be null
+P7-NUL-mart_capex-declared,mart_capex states a reason for every nullable key column,BLOCKING,PASS,coherent,coherent,a nullable key column needs a reason a reviewer would accept
+P7-KEY-mart_fx,"mart_fx is unique on its declared key (period_key, currency_code)",BLOCKING,PASS,0 duplicate rows,0,"176 rows, 176 distinct keys; owner Phase 5; authority src/marts/build.py"
+P7-NUL-mart_fx,mart_fx has no null in an unpermitted key column,BLOCKING,PASS,0,0,2 of 2 key columns must never be null
+P7-NUL-mart_fx-declared,mart_fx states a reason for every nullable key column,BLOCKING,PASS,coherent,coherent,a nullable key column needs a reason a reviewer would accept
+P7-KEY-mart_management_adjustments,mart_management_adjustments is unique on its declared key (adjustment_id),BLOCKING,PASS,0 duplicate rows,0,"2 rows, 2 distinct keys; owner Phase 5; authority src/marts/build.py"
+P7-NUL-mart_management_adjustments,mart_management_adjustments has no null in an unpermitted key column,BLOCKING,PASS,0,0,1 of 1 key columns must never be null
+P7-NUL-mart_management_adjustments-declared,mart_management_adjustments states a reason for every nullable key column,BLOCKING,PASS,coherent,coherent,a nullable key column needs a reason a reviewer would accept
+P7-KEY-mart_consolidation_bridge,"mart_consolidation_bridge is unique on its declared key (fiscal_year, layer_id)",BLOCKING,PASS,0 duplicate rows,0,"20 rows, 20 distinct keys; owner Phase 5; authority src/marts/build.py"
+P7-NUL-mart_consolidation_bridge,mart_consolidation_bridge has no null in an unpermitted key column,BLOCKING,PASS,0,0,2 of 2 key columns must never be null
+P7-NUL-mart_consolidation_bridge-declared,mart_consolidation_bridge states a reason for every nullable key column,BLOCKING,PASS,coherent,coherent,a nullable key column needs a reason a reviewer would accept
+P7-REF-ref_fixed_asset->fact_capex_project,ref_fixed_asset.(project_id) resolves in fact_capex_project,BLOCKING,PASS,0,0,owner Phase 2; Every capitalised asset resolves to exactly one capital project.
+P7-REF-mart_capex->fact_capex_project,mart_capex.(project_id) resolves in fact_capex_project,BLOCKING,PASS,0,0,owner Phase 5
+P7-REF-fact_capex_project->dim_entity,fact_capex_project.(entity_code) resolves in dim_entity,BLOCKING,PASS,0,0,owner Phase 2
+P7-REF-fact_capex_project->dim_date,fact_capex_project.(period_key) resolves in dim_date,BLOCKING,PASS,0,0,owner Phase 2
+P7-REF-fact_capex_project->dim_business_unit,fact_capex_project.(bu_code) resolves in dim_business_unit,BLOCKING,PASS,0,0,owner Phase 2
+P7-REF-ref_fixed_asset->dim_entity,ref_fixed_asset.(entity_code) resolves in dim_entity,BLOCKING,PASS,0,0,owner Phase 2
+P7-REF-ref_fixed_asset->dim_account,ref_fixed_asset.(group_account) resolves in dim_account,BLOCKING,PASS,0,0,owner Phase 2
+P7-REF-fact_headcount->dim_entity,fact_headcount.(entity_code) resolves in dim_entity,BLOCKING,PASS,0,0,owner Phase 2
+P7-REF-fact_headcount->dim_date,fact_headcount.(period_key) resolves in dim_date,BLOCKING,PASS,0,0,owner Phase 2
+P7-REF-fact_plan->dim_version,fact_plan.(version_code) resolves in dim_version,BLOCKING,PASS,0,0,owner Phase 2
+P7-REF-fact_plan->dim_account,fact_plan.(group_account) resolves in dim_account,BLOCKING,PASS,0,0,owner Phase 2
+P7-REF-fact_revenue_detail->ref_customer,fact_revenue_detail.(customer_code) resolves in ref_customer,BLOCKING,PASS,0,0,owner Phase 2
+P7-REF-fact_revenue_detail->ref_product,fact_revenue_detail.(product_code) resolves in ref_product,BLOCKING,PASS,0,0,owner Phase 2
+P7-REF-ref_debt_schedule->dim_entity,ref_debt_schedule.(borrower_entity) resolves in dim_entity,BLOCKING,PASS,0,0,owner Phase 2
+P7-REF-fact_consol_journal->dim_entity,fact_consol_journal.(entity_code) resolves in dim_entity,BLOCKING,PASS,0,0,owner Phase 4
+P7-REF-fact_consol_journal->dim_account,fact_consol_journal.(group_account) resolves in dim_account,BLOCKING,PASS,0,0,owner Phase 4
+P7-REF-fact_consol_journal->dim_consolidation_layer,fact_consol_journal.(layer_id) resolves in dim_consolidation_layer,BLOCKING,PASS,0,0,owner Phase 4
+P7-REF-fact_financials->dim_entity,fact_financials.(entity_code) resolves in dim_entity,BLOCKING,PASS,0,0,owner Phase 4
+P7-REF-fact_financials->dim_account,fact_financials.(group_account) resolves in dim_account,BLOCKING,PASS,0,0,owner Phase 4
+P7-REF-fact_financials->dim_consolidation_layer,fact_financials.(layer_id) resolves in dim_consolidation_layer,BLOCKING,PASS,0,0,owner Phase 4
+P7-REF-fact_trial_balance->dim_account,fact_trial_balance.(group_account) resolves in dim_account,BLOCKING,PASS,0,0,owner Phase 3
+P7-REF-fact_layer1_usd->dim_account,fact_layer1_usd.(group_account) resolves in dim_account,BLOCKING,PASS,0,0,owner Phase 4
+P7-REF-mart_financial_ytd->dim_report_measure,mart_financial_ytd.(measure_code) resolves in dim_report_measure,BLOCKING,PASS,0,0,owner Phase 5
+P7-REF-mart_financial_ytd->dim_report_scenario,mart_financial_ytd.(version_code) resolves in dim_report_scenario,BLOCKING,SOURCE_FINDING,12516,12516 accepted (P7-D-01),"owner Phase 5; PY_DERIVED has no row in the version master.. Open finding P7-D-01, unchanged at 12516 rows."
+P7-REF-mart_financial_ytd->dim_entity,mart_financial_ytd.(entity_code) resolves in dim_entity,BLOCKING,PASS,0,0,owner Phase 5
+P7-REF-mart_financial_monthly->dim_account,mart_financial_monthly.(group_account) resolves in dim_account,BLOCKING,PASS,0,0,owner Phase 5
+P7-REF-mart_variance->dim_report_comparison,mart_variance.(comparison_code) resolves in dim_report_comparison,BLOCKING,PASS,0,0,owner Phase 5
+P7-REF-mart_variance->dim_report_measure,mart_variance.(measure_code) resolves in dim_report_measure,BLOCKING,PASS,0,0,owner Phase 5
+P7-REF-mart_debt->ref_debt_schedule,mart_debt.(instrument_id) resolves in ref_debt_schedule,BLOCKING,PASS,0,0,owner Phase 5
+P7-REF-mart_capex->dim_entity,mart_capex.(entity_code) resolves in dim_entity,BLOCKING,PASS,0,0,owner Phase 5
+P7-REF-mart_headcount->dim_entity,mart_headcount.(entity_code) resolves in dim_entity,BLOCKING,PASS,0,0,owner Phase 5
+P7-REF-mart_fx->dim_currency,mart_fx.(currency_code) resolves in dim_currency,BLOCKING,PASS,0,0,owner Phase 5
+P7-REF-mart_consolidation_bridge->dim_consolidation_layer,mart_consolidation_bridge.(layer_id) resolves in dim_consolidation_layer,BLOCKING,PASS,0,0,owner Phase 5
+P7-CPX-01,Every capital project row carries its own project identifier,BLOCKING,PASS,"1,846 rows / 1,846 ids",equal,"the P6-D-01 condition, stated as an identity rather than a naming convention"
+P7-CPX-02,Every fixed asset resolves to a capital project,BLOCKING,PASS,0,0,
+P7-CPX-03,No project identifier resolves to two different project definitions,BLOCKING,PASS,0,0,"the exact P6-D-01 symptom: one id, five names, five asset classes"
+P7-CPX-04,A fixed asset agrees with its project on asset class,BLOCKING,PASS,0,0,policy: an asset created by a project belongs to that project's class
+P7-CPX-05,A fixed asset agrees with its project on owning entity,BLOCKING,PASS,0,0,
+P7-CPX-06,A fixed asset is acquired in its project's period,BLOCKING,PASS,0,0,an asset capitalised outside the month its project spent the money would break the capex-to-depreciation reconciliation
+P7-CPX-07,"Fixed asset cost reconciles to project spend, project by project",BLOCKING,PASS,0.00,0.00,identifier integrity is only worth having if the amounts follow the identifier
+P7-CPX-08,Every capital project created at least one asset,BLOCKING,PASS,0,0,
+P7-CPX-09,The CapEx mart carries the corrected key through to reporting,BLOCKING,PASS,"1,846 rows / 1,846 ids",equal,this is the grain the Power BI CapEx fact and Capital Project dimension declare

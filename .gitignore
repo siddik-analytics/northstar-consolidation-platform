@@ -28,6 +28,11 @@ data/10_staging/*
 data/20_warehouse/*
 data/30_marts/*
 data/90_exports/*
+# semantic dimensions published for Power BI (Phase 6A)
+data/35_semantic/*
+# pre/post snapshots for a rebaseline's invariance proof. Bulk, and reproducible from the
+# committed tool -- what is committed is the proof's result, in the phase report.
+data/95_invariance/*
 # The workbook IS the Phase 5 deliverable and its QA step needs Windows and Excel, so a
 # reviewer on another platform can rebuild the marts and not the file. It is committed.
 !data/90_exports/Northstar_Consolidation_Management_Reporting.xlsx

@@ -39,7 +39,12 @@ fault sweep is more than half — it runs ten complete pipelines.
 | 6 | `python -m src.pipeline.faults` | ten pipelines over fault trees — **10/10** | 110 s |
 | 7 | `python -m src.consol.run` | the consolidation and its controls — **61/61** | 1.2 s |
 | 8 | `python -m src.consol.faults` | nineteen consolidations over fault inputs — **19/19** | 45 s |
-| 9 | `python -m pytest tests -q` | **421** automated tests | 45 s |
+| 9 | `python -m src.marts.run` | the governed reporting marts and their controls — **36/36** | 4 s |
+| 10 | `python -m src.excel.build` | the Excel management reporting workbook | 8 s |
+| 11 | `python -m src.excel.qa` | Excel calculation, reconciliation and render — **17/17** | 32 s |
+| 12 | `python -m src.integrity.controls` | every declared key and grain — **228/229**, 1 open finding | 2 s |
+| 13 | `python -m src.integrity.faults` | nine deliberate key breakages — **9/9 detected** | 3 s |
+| 14 | `python -m pytest tests -q` | **469** automated tests | 119 s |
 
 A `Makefile` wraps steps 1, 2, 3, 4, 5, 6, 7, 8 and 9 as `anchors`, `build`, `validate`,
 `faults`, `pipeline`, `pipeline-faults`, `consolidate`, `consol-faults` and `test`.
@@ -56,9 +61,24 @@ Three digests, each a property of inputs rather than of a run.
 
 | Digest | Covers | Current value |
 |---|---|---|
-| Source dataset | every generated extract and reference file | `fd7afb8fd7dc80580d4ca64016ae9ca51a96209c546555dfff01813d1a525836` |
-| Phase 3 build id | the source digest and the pipeline's configuration | `4e860643143938e8` |
-| Phase 4 build id | the source digest, the Phase 3 manifest, and the five consolidation configuration files | `78e406e139662392` |
+| Source dataset | every generated extract and reference file | `8013298c3fee35ef25b790104df6c0fd4f6d8bbacb017f709f17fb82ce2644c7` |
+| Phase 3 build id | the source digest and the pipeline's configuration | `6e0c519360d3669b` |
+| Phase 4 build id | the source digest, the Phase 3 manifest, and the five consolidation configuration files | `a99d9fba5694ad7d` |
+| Phase 5 mart build id | the Phase 4 manifest and the reporting configuration | `24b65b7f05f7697d` |
+| Workbook build digest | the mart build id and the workbook's own source | `0defa62662371119` |
+
+**These moved at the Phase 5.1 rebaseline.** The source generator was corrected so that
+`project_id` is a unique capital-project identifier
+([ADR-0026](adr/0026-a-declared-key-is-a-contract.md)), which regenerated the source layer and
+re-anchored every downstream id. The previous values were `fd7afb8f…`, `4e860643143938e8`,
+`78e406e139662392`, `2caac83888d04d3f` and `ee8bf988…`.
+
+Every one of those digests moving is the mechanism working, not evidence of drift. A digest
+moves when a build id moves, so it can neither prove nor disprove that a number changed. What
+settles that question is `tools/financial_invariance.py`, which compares values at sixteen
+grains joined on the business key and required — and got — a maximum absolute difference of
+`0.00` over 297,296 rows, together with `tools/workbook_diff.py`, which found **zero** numeric
+differences across 615,262 valued workbook cells.
 
 `data/phase04_manifest.json` also carries a SHA-256 for each of the 15 published consolidation
 artefacts. Three consecutive rebuilds produce the same build id and **15 of 15 byte-identical
@@ -72,7 +92,10 @@ Determinism is engineered, not hoped for:
 * no aggregate returns an arbitrary row. `any_value()` returns whichever row it saw first, so
   it is banned and `tests/test_phase04a_proof_gate.py` fails if one reappears;
 * every identifier is derived from the business keys it represents, never from a counter or a
-  clock;
+  clock — **and carries the full grain that makes its subject distinct**, which is the part
+  `project_id` got wrong for four phases (ADR-0026);
+* every declared key is proved unique over its whole population on every build, by
+  `src/integrity/controls.py`;
 * random draws come from a single declared master seed.
 
 ## 4. The clean-tree expectation

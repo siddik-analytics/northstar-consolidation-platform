@@ -363,6 +363,31 @@ headroom. See [`phase-05-report.md`](phase-05-report.md).
 
 ---
 
+## Phase 5.1 — Upstream dimensional-integrity correction ✅
+
+**Complete, awaiting rebaseline review.** Phase 6A's semantic model needed a unique key for the
+`Capital Project` dimension and `project_id` was not one: 1,846 capital projects carried 395
+identifiers, because the sequence restarted inside each asset class. Escalated as **P6-D-01**
+rather than worked around in DAX; the owner approved correcting the generator.
+
+The identifier now carries the grain that makes a project distinct
+(`CP-{entity}-{period}-{asset_class}-{sequence}`), the source layer was regenerated and Phases
+2 to 5 rebuilt. **No money moved:** 297,296 rows compared across sixteen grains at a required
+difference of `0.00`, and zero numeric differences across 615,262 workbook cells.
+
+The larger fix is the framework. All **61** keyed objects in the platform are now declared in
+`src/integrity/registry.py` and proved by one generic engine — **229 controls, 9 fault
+fixtures** — with `P7-REG-01` failing whenever a keyed table exists that the registry has never
+heard of. It found a second gap on its first run (**P7-D-01**, `PY_DERIVED` used as a version
+code with no row in the version master), reported and quarantined rather than fixed.
+
+Phase 6A remains **not resumed**; its WIP is preserved on `wip/phase-06a-semantic-model` and
+must be rebased onto this baseline. See
+[`phase-05-1-key-integrity.md`](phase-05-1-key-integrity.md) and
+[ADR-0026](../adr/0026-a-declared-key-is-a-contract.md).
+
+---
+
 ## Phase 5 — Reporting marts & automated control suite
 
 **Deliverables**

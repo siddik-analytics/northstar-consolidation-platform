@@ -16,7 +16,7 @@
     "10_staging/05_consolidated/rpt_pup_provision.parquet": "d7e474c24c04e134d7ff8ab8f2decb1ade9e9b6efe197c5eb8c32e55b915632a",
     "phase04_control_results.csv": "b16ca9f2a68fb7447258d7f5a20ec534a260074688ed2972c63081e9ebeb59a6"
   },
-  "build_id": "78e406e139662392",
+  "build_id": "a99d9fba5694ad7d",
   "phase": 4,
   "row_counts": {
     "L2:IC_ELIM:entries": 2203,
@@ -67,5 +67,5 @@
     "stg_nci_result": 48,
     "stg_pup_layer": 470
   },
-  "source_layer_digest": "fd7afb8fd7dc80580d4ca64016ae9ca51a96209c546555dfff01813d1a525836"
+  "source_layer_digest": "8013298c3fee35ef25b790104df6c0fd4f6d8bbacb017f709f17fb82ce2644c7"
 }

@@ -1,12 +1,15 @@
 # Architecture lessons
 
-Eleven defects found across Phases 2 to 4 that a balancing control could not have caught, and
+Twelve defects found across Phases 2 to 6 that a balancing control could not have caught, and
 the design change each one produced.
 
 They share a shape. Every one of them **balanced**. The trial balance closed, the journal
 summed to zero, the statement footed, and the number was wrong. That is the failure mode this
 platform is built against, because it is the failure mode that survives a review: a reviewer
 checks that it balances, it does, and the review ends.
+
+The twelfth did not even need the number to be wrong. It balanced, footed, tied and
+reconciled — and still could not say which project bought which asset.
 
 Each entry: **symptom → root cause → why ordinary controls miss it → permanent fix**.
 
@@ -232,6 +235,45 @@ defects here.
 
 ---
 
+## 12. A business key that was never a key
+
+**Symptom.** `project_id` identified 1,846 capital projects with 395 values. Five different
+capital programmes in the same entity-month — buildings, plant, vehicles, IT, leasehold — all
+answered to `CP-200-202505-01`. A fixed asset could not name the project that bought it.
+
+**Root cause.** The generator took the sequence number from the inner loop that splits one
+asset class into parts, while the outer loop walked the asset classes, so the sequence
+restarted at `-01` for every class.
+
+**Why controls miss it.** This is the sharpest example in the list, because the mechanism is
+different from all the others. It is not that the defect *balanced*. It is that **every join
+still worked**. `ref_fixed_asset` joined `fact_capex_project` and returned rows — five times
+too many — and no control compared the row count before the join with the row count after it.
+The only checks in range were a `NOT NULL` test, which a colliding key passes comfortably, and
+two grain controls pointed at the two financial marts. Four phases, 250 controls and 42 fault
+fixtures passed over it. No amount was ever wrong, so no reconciliation could see it.
+
+It was found by Power BI, which needed a unique key for a dimension and asked the only question
+nobody had thought to ask: *is this actually unique?*
+
+**Permanent fix.** [ADR-0026](adr/0026-a-declared-key-is-a-contract.md), and a third design
+rule:
+
+> **A declared key is a contract, not a naming convention. Its uniqueness must be proved over
+> its authoritative population.**
+
+The identifier now carries the grain that makes a project distinct
+(`CP-{entity}-{period}-{asset_class}-{sequence}`), and — the part that generalises — all 61
+keyed objects in the platform are declared in `src/integrity/registry.py` and proved by one
+generic engine: 229 controls, 9 fault fixtures, and `P7-REG-01` failing whenever a keyed table
+exists that the registry has never heard of. Six of those 61 keys turned out to need a column
+the obvious guess omitted, which is the same mistake in miniature, six more times.
+
+The framework found a further gap on its first run (`PY_DERIVED` used as a version code with no
+row in the version master), which is the usual sign that a control family was worth building.
+
+---
+
 ## What these have in common
 
 **A plug makes controls pass.** Items 1 and 4 both had a residual absorbing the defect, and in
@@ -255,3 +297,8 @@ only way to find it is to break something deliberately and see whether anything 
 **Determinism is an accounting property.** Item 10 has no accounting consequence at all, and it
 would still have made every artefact unusable as evidence. If a rebuild can differ, nothing
 built on it can be relied upon.
+
+**A join that returns rows is not a join that is right.** Item 12 is the one defect here that
+never made a number wrong. Every control that could have seen it was measuring amounts, and the
+amounts were correct — the identity was not. Structure needs its own controls, because a
+platform that only checks its arithmetic will believe anything its keys tell it.

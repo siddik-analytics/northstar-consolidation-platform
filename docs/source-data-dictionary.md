@@ -169,7 +169,19 @@ Measures: `revenue_local`, `cost_of_sales_local`, `quantity`, `order_count`,
 
 Capital projects generate the fixed asset register: every asset carries the `project_id`
 that funded it, its `asset_class`, `in_service_date`, `useful_life_years` and
-`depreciation_method`. Total asset cost equals total project spend (`P2-REC-03`).
+`depreciation_method`. Total asset cost equals total project spend (`P2-REC-03`), and it
+reconciles project by project as well as in total (`P7-CPX-07`).
+
+`project_id` is the business key of a capital project and carries the grain that makes one
+distinct:
+
+    CP-{entity}-{period}-{asset_class}-{sequence}     e.g. CP-200-202505-PLANT-01
+
+The asset class is in the identifier because the sequence restarts inside each class. Without
+it, every class in an entity-month reissued `-01` and 1,846 projects shared 395 identifiers —
+defect **P6-D-01**, corrected under [ADR-0026](adr/0026-a-declared-key-is-a-contract.md). The
+uniqueness is now proved on every build rather than assumed from the format
+([the key and grain framework](key-and-grain-framework.md)).
 
 Asset classes and lives: buildings 30 years, plant 10, vehicles 6, IT 4, leasehold
 improvements 8, finance lease right-of-use 6.
