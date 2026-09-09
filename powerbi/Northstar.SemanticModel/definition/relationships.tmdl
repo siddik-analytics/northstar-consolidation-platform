@@ -94,10 +94,6 @@ relationship a399b6e9-dcf9-5242-b8ba-90298783b228
 	fromColumn: 'Headcount'.entity_code
 	toColumn: 'Entity'.entity_code
 
-relationship e093cd49-66d9-5adb-b4ee-55d806da0203
-	fromColumn: 'Headcount'.cost_centre_key
-	toColumn: 'Cost Centre'.cost_centre_key
-
 relationship 8f28e55b-619d-5866-9126-34cf11e173d2
 	fromColumn: 'CapEx'.period_key
 	toColumn: 'Date'.period_key
@@ -109,6 +105,10 @@ relationship 0f84f64a-7daf-543d-b41c-b2696b311d0c
 relationship 8bf294ca-58d6-5aa0-9db1-e25b85ff9f79
 	fromColumn: 'CapEx'.project_id
 	toColumn: 'Capital Project'.project_id
+
+relationship 8ccbe50b-81b0-5d3f-bb8b-4a113e25b630
+	fromColumn: 'Headcount'.job_family_code
+	toColumn: 'Job Family'.job_family_code
 
 relationship 3df3c6b1-7335-58b9-a27d-e345095f2540
 	fromColumn: 'FX'.period_key
@@ -130,25 +130,33 @@ relationship cdb507ce-c8a3-5bda-b321-2844996288a0
 	fromColumn: 'Financials'.bu_code
 	toColumn: 'Business Unit'.bu_code
 
-/// Same shape as Financials.
+/// Variance carries bu_code for its own grain, but reaches Business Unit through Entity like
+/// every other fact. Activating this would give a segment variance two filter paths and no way
+/// to tell which one a visual used.
 relationship b4603d77-582d-554d-8be8-d45dcc01468d
 	isActive: false
 	fromColumn: 'Variance'.bu_code
 	toColumn: 'Business Unit'.bu_code
 
-/// Same shape as Financials.
+/// The account-grain fact reaches Business Unit through Entity. A direct path here would also
+/// make the drill-through from a measure to its accounts ambiguous, because the two facts would
+/// aggregate segments by different routes.
 relationship 8987f342-2a91-5835-b741-e25aa6a398d2
 	isActive: false
 	fromColumn: 'Financial Detail'.bu_code
 	toColumn: 'Business Unit'.bu_code
 
-/// Same shape as Financials.
+/// Headcount reaches Business Unit through Entity. Kept inactive rather than deleted because
+/// the column is genuinely on the mart and a future report may want USERELATIONSHIP for a
+/// workforce-only segment view.
 relationship 81d5109a-5f0e-52e7-9480-28205ad6c6a2
 	isActive: false
 	fromColumn: 'Headcount'.bu_code
 	toColumn: 'Business Unit'.bu_code
 
-/// Same shape as Financials.
+/// Capital spend reaches Business Unit through Entity, so that capex by segment and revenue by
+/// segment are built the same way and can sit on one page without disagreeing about what a
+/// segment is.
 relationship 699dc126-38ea-5ddf-b94f-3c031aae9bee
 	isActive: false
 	fromColumn: 'CapEx'.bu_code

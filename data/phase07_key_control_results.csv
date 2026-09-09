@@ -1,6 +1,6 @@
 control_id,control_name,severity,status,measured,threshold,detail
-P7-REG-01,Every keyed object in the warehouse is declared in the registry,BLOCKING,PASS,0,0,"61 objects in scope, all declared"
-P7-REG-02,Every registry entry names an object that exists,BLOCKING,PASS,0,0,"61 declarations, all resolve"
+P7-REG-01,Every keyed object in the warehouse is declared in the registry,BLOCKING,PASS,0,0,"73 objects in scope, all declared"
+P7-REG-02,Every registry entry names an object that exists,BLOCKING,PASS,0,0,"73 declarations, all resolve"
 P7-REG-03,Every declared key column exists on its object,BLOCKING,PASS,0,0,
 P7-REG-04,Every keyless waiver carries a reason,BLOCKING,PASS,0,0,no waivers in force
 P7-KEY-dim_date,"dim_date is unique on its declared key (period_key, accounting_period)",BLOCKING,PASS,0 duplicate rows,0,"60 rows, 60 distinct keys; owner Phase 3; authority config/calendar.yml"
@@ -42,6 +42,42 @@ P7-NUL-dim_intercompany_partner-declared,dim_intercompany_partner states a reaso
 P7-KEY-dim_ownership_period,"dim_ownership_period is unique on its declared key (period_key, entity_code)",BLOCKING,PASS,0 duplicate rows,0,"555 rows, 555 distinct keys; owner Phase 4; authority data/reference/ownership.csv"
 P7-NUL-dim_ownership_period,dim_ownership_period has no null in an unpermitted key column,BLOCKING,PASS,0,0,2 of 2 key columns must never be null
 P7-NUL-dim_ownership_period-declared,dim_ownership_period states a reason for every nullable key column,BLOCKING,PASS,coherent,coherent,a nullable key column needs a reason a reviewer would accept
+P7-KEY-dim_semantic_date,dim_semantic_date is unique on its declared key (period_key),BLOCKING,PASS,0 duplicate rows,0,"48 rows, 48 distinct keys; owner Phase 6A; authority src/powerbi/config.py SEMANTIC_DIMENSIONS"
+P7-NUL-dim_semantic_date,dim_semantic_date has no null in an unpermitted key column,BLOCKING,PASS,0,0,1 of 1 key columns must never be null
+P7-NUL-dim_semantic_date-declared,dim_semantic_date states a reason for every nullable key column,BLOCKING,PASS,coherent,coherent,a nullable key column needs a reason a reviewer would accept
+P7-KEY-dim_semantic_entity,dim_semantic_entity is unique on its declared key (entity_code),BLOCKING,PASS,0 duplicate rows,0,"15 rows, 15 distinct keys; owner Phase 6A; authority src/powerbi/config.py SEMANTIC_DIMENSIONS"
+P7-NUL-dim_semantic_entity,dim_semantic_entity has no null in an unpermitted key column,BLOCKING,PASS,0,0,1 of 1 key columns must never be null
+P7-NUL-dim_semantic_entity-declared,dim_semantic_entity states a reason for every nullable key column,BLOCKING,PASS,coherent,coherent,a nullable key column needs a reason a reviewer would accept
+P7-KEY-dim_semantic_business_unit,dim_semantic_business_unit is unique on its declared key (bu_code),BLOCKING,PASS,0 duplicate rows,0,"5 rows, 5 distinct keys; owner Phase 6A; authority src/powerbi/config.py SEMANTIC_DIMENSIONS"
+P7-NUL-dim_semantic_business_unit,dim_semantic_business_unit has no null in an unpermitted key column,BLOCKING,PASS,0,0,1 of 1 key columns must never be null
+P7-NUL-dim_semantic_business_unit-declared,dim_semantic_business_unit states a reason for every nullable key column,BLOCKING,PASS,coherent,coherent,a nullable key column needs a reason a reviewer would accept
+P7-KEY-dim_semantic_account,dim_semantic_account is unique on its declared key (group_account),BLOCKING,PASS,0 duplicate rows,0,"175 rows, 175 distinct keys; owner Phase 6A; authority src/powerbi/config.py SEMANTIC_DIMENSIONS"
+P7-NUL-dim_semantic_account,dim_semantic_account has no null in an unpermitted key column,BLOCKING,PASS,0,0,1 of 1 key columns must never be null
+P7-NUL-dim_semantic_account-declared,dim_semantic_account states a reason for every nullable key column,BLOCKING,PASS,coherent,coherent,a nullable key column needs a reason a reviewer would accept
+P7-KEY-dim_semantic_cost_centre,dim_semantic_cost_centre is unique on its declared key (cost_centre_key),BLOCKING,PASS,0 duplicate rows,0,"162 rows, 162 distinct keys; owner Phase 6A; authority src/powerbi/config.py SEMANTIC_DIMENSIONS"
+P7-NUL-dim_semantic_cost_centre,dim_semantic_cost_centre has no null in an unpermitted key column,BLOCKING,PASS,0,0,1 of 1 key columns must never be null
+P7-NUL-dim_semantic_cost_centre-declared,dim_semantic_cost_centre states a reason for every nullable key column,BLOCKING,PASS,coherent,coherent,a nullable key column needs a reason a reviewer would accept
+P7-KEY-dim_semantic_layer,dim_semantic_layer is unique on its declared key (layer_id),BLOCKING,PASS,0 duplicate rows,0,"5 rows, 5 distinct keys; owner Phase 6A; authority src/powerbi/config.py SEMANTIC_DIMENSIONS"
+P7-NUL-dim_semantic_layer,dim_semantic_layer has no null in an unpermitted key column,BLOCKING,PASS,0,0,1 of 1 key columns must never be null
+P7-NUL-dim_semantic_layer-declared,dim_semantic_layer states a reason for every nullable key column,BLOCKING,PASS,coherent,coherent,a nullable key column needs a reason a reviewer would accept
+P7-KEY-dim_semantic_basis,dim_semantic_basis is unique on its declared key (basis),BLOCKING,PASS,0 duplicate rows,0,"2 rows, 2 distinct keys; owner Phase 6A; authority src/powerbi/config.py SEMANTIC_DIMENSIONS"
+P7-NUL-dim_semantic_basis,dim_semantic_basis has no null in an unpermitted key column,BLOCKING,PASS,0,0,1 of 1 key columns must never be null
+P7-NUL-dim_semantic_basis-declared,dim_semantic_basis states a reason for every nullable key column,BLOCKING,PASS,coherent,coherent,a nullable key column needs a reason a reviewer would accept
+P7-KEY-dim_semantic_currency,dim_semantic_currency is unique on its declared key (currency_code),BLOCKING,PASS,0 duplicate rows,0,"4 rows, 4 distinct keys; owner Phase 6A; authority src/powerbi/config.py SEMANTIC_DIMENSIONS"
+P7-NUL-dim_semantic_currency,dim_semantic_currency has no null in an unpermitted key column,BLOCKING,PASS,0,0,1 of 1 key columns must never be null
+P7-NUL-dim_semantic_currency-declared,dim_semantic_currency states a reason for every nullable key column,BLOCKING,PASS,coherent,coherent,a nullable key column needs a reason a reviewer would accept
+P7-KEY-dim_semantic_instrument,dim_semantic_instrument is unique on its declared key (instrument_id),BLOCKING,PASS,0 duplicate rows,0,"14 rows, 14 distinct keys; owner Phase 6A; authority src/powerbi/config.py SEMANTIC_DIMENSIONS"
+P7-NUL-dim_semantic_instrument,dim_semantic_instrument has no null in an unpermitted key column,BLOCKING,PASS,0,0,1 of 1 key columns must never be null
+P7-NUL-dim_semantic_instrument-declared,dim_semantic_instrument states a reason for every nullable key column,BLOCKING,PASS,coherent,coherent,a nullable key column needs a reason a reviewer would accept
+P7-KEY-dim_semantic_project,dim_semantic_project is unique on its declared key (project_id),BLOCKING,PASS,0 duplicate rows,0,"1,846 rows, 1,846 distinct keys; owner Phase 6A; authority src/powerbi/config.py SEMANTIC_DIMENSIONS"
+P7-NUL-dim_semantic_project,dim_semantic_project has no null in an unpermitted key column,BLOCKING,PASS,0,0,1 of 1 key columns must never be null
+P7-NUL-dim_semantic_project-declared,dim_semantic_project states a reason for every nullable key column,BLOCKING,PASS,coherent,coherent,a nullable key column needs a reason a reviewer would accept
+P7-KEY-dim_semantic_job_family,dim_semantic_job_family is unique on its declared key (job_family_code),BLOCKING,PASS,0 duplicate rows,0,"12 rows, 12 distinct keys; owner Phase 6A; authority src/powerbi/config.py SEMANTIC_DIMENSIONS"
+P7-NUL-dim_semantic_job_family,dim_semantic_job_family has no null in an unpermitted key column,BLOCKING,PASS,0,0,1 of 1 key columns must never be null
+P7-NUL-dim_semantic_job_family-declared,dim_semantic_job_family states a reason for every nullable key column,BLOCKING,PASS,coherent,coherent,a nullable key column needs a reason a reviewer would accept
+P7-KEY-dim_semantic_period_basis,dim_semantic_period_basis is unique on its declared key (basis_code),BLOCKING,PASS,0 duplicate rows,0,"3 rows, 3 distinct keys; owner Phase 6A; authority src/powerbi/measures.py PERIOD_BASIS_ROWS"
+P7-NUL-dim_semantic_period_basis,dim_semantic_period_basis has no null in an unpermitted key column,BLOCKING,PASS,0,0,1 of 1 key columns must never be null
+P7-NUL-dim_semantic_period_basis-declared,dim_semantic_period_basis states a reason for every nullable key column,BLOCKING,PASS,coherent,coherent,a nullable key column needs a reason a reviewer would accept
 P7-KEY-dim_report_scenario,dim_report_scenario is unique on its declared key (version_code),BLOCKING,PASS,0 duplicate rows,0,"6 rows, 6 distinct keys; owner Phase 5; authority src/marts/config.py"
 P7-NUL-dim_report_scenario,dim_report_scenario has no null in an unpermitted key column,BLOCKING,PASS,0,0,1 of 1 key columns must never be null
 P7-NUL-dim_report_scenario-declared,dim_report_scenario states a reason for every nullable key column,BLOCKING,PASS,coherent,coherent,a nullable key column needs a reason a reviewer would accept
@@ -224,6 +260,11 @@ P7-REF-mart_debt->ref_debt_schedule,mart_debt.(instrument_id) resolves in ref_de
 P7-REF-mart_capex->dim_entity,mart_capex.(entity_code) resolves in dim_entity,BLOCKING,PASS,0,0,owner Phase 5
 P7-REF-mart_headcount->dim_entity,mart_headcount.(entity_code) resolves in dim_entity,BLOCKING,PASS,0,0,owner Phase 5
 P7-REF-mart_fx->dim_currency,mart_fx.(currency_code) resolves in dim_currency,BLOCKING,PASS,0,0,owner Phase 5
+P7-REF-dim_semantic_entity->dim_entity,dim_semantic_entity.(entity_code) resolves in dim_entity,BLOCKING,PASS,0,0,owner Phase 6A
+P7-REF-dim_semantic_account->dim_account,dim_semantic_account.(group_account) resolves in dim_account,BLOCKING,PASS,0,0,owner Phase 6A
+P7-REF-dim_semantic_project->fact_capex_project,dim_semantic_project.(project_id) resolves in fact_capex_project,BLOCKING,PASS,0,0,owner Phase 6A; The Capital Project dimension resolves to the corrected source key.
+P7-REF-dim_semantic_instrument->ref_debt_schedule,dim_semantic_instrument.(instrument_id) resolves in ref_debt_schedule,BLOCKING,PASS,0,0,owner Phase 6A
+P7-REF-mart_capex->dim_semantic_project,mart_capex.(project_id) resolves in dim_semantic_project,BLOCKING,PASS,0,0,"owner Phase 6A; The CapEx fact resolves in the semantic dimension it is related to, so no row falls to a blank member."
 P7-REF-mart_consolidation_bridge->dim_consolidation_layer,mart_consolidation_bridge.(layer_id) resolves in dim_consolidation_layer,BLOCKING,PASS,0,0,owner Phase 5
 P7-CPX-01,Every capital project row carries its own project identifier,BLOCKING,PASS,"1,846 rows / 1,846 ids",equal,"the P6-D-01 condition, stated as an identity rather than a naming convention"
 P7-CPX-02,Every fixed asset resolves to a capital project,BLOCKING,PASS,0,0,

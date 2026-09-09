@@ -1,5 +1,9 @@
 /// Account grain, for drill-down from any measure to the accounts behind it. The measure layer
-/// reads Financials, not this.
+/// reads Financials, not this. Carries the model's ONLY calculated column. A cost centre is
+/// identified by entity and code together -- codes are reused across entities -- and Power BI
+/// relates on a single column, so the composite has to be formed somewhere. It is formed here
+/// rather than added to the frozen Phase 5 mart, and it is mechanical concatenation of two
+/// governed keys with no business logic in it.
 table 'Financial Detail'
 	lineageTag: 03b215ab-5204-5305-a97f-b39821c97822
 
@@ -134,6 +138,12 @@ table 'Financial Detail'
 		sourceColumn: amount_usd
 
 		annotation SummarizationSetBy = Automatic
+
+	column cost_centre_key = 'Financial Detail'[entity_code] & "|" & 'Financial Detail'[cost_center_code]
+		dataType: string
+		isHidden
+		lineageTag: 6dd9638b-6756-5f37-9a99-ea320d58b71c
+		summarizeBy: none
 
 	partition 'Financial Detail' = m
 		mode: import

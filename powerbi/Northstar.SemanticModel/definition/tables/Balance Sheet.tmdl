@@ -1,4 +1,6 @@
-/// The consolidated balance sheet by caption and account class.
+/// The consolidated balance sheet by caption and account class, in the approved presentation
+/// order. The caption sorts by sort_order, never alphabetically: a balance sheet in
+/// alphabetical order is not a balance sheet.
 table 'Balance Sheet'
 	lineageTag: ca79ebbc-65af-5abb-a561-26d5904c6cbf
 
@@ -25,6 +27,7 @@ table 'Balance Sheet'
 		lineageTag: e9fc0fb9-5495-5e45-b628-c841e4f0d4df
 		summarizeBy: none
 		sourceColumn: caption
+		sortByColumn: sort_order
 
 		annotation SummarizationSetBy = Automatic
 
@@ -92,6 +95,17 @@ table 'Balance Sheet'
 		sourceColumn: yoy_movement_usd
 
 		annotation SummarizationSetBy = Automatic
+
+	hierarchy 'Balance sheet'
+		lineageTag: b700f580-3180-51fa-9716-f12ed026a86b
+
+		level 'Account class'
+			lineageTag: eb397618-f8ad-5d97-a0bc-5cbbb5e52e94
+			column: account_class
+
+		level 'Caption'
+			lineageTag: c3252917-5100-5a9a-add3-7e77d009888d
+			column: caption
 
 	partition 'Balance Sheet' = m
 		mode: import

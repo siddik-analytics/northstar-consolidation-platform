@@ -30,8 +30,9 @@ figure back to the source journal that produced it.
 | **4C — Reporting integrity & cross-artefact gate** | ✅ **Complete** | [Report](docs/phases/phase-04c-reporting-integrity.md) |
 | **5 — Reporting marts & Excel management model** | ✅ **Complete** | [Report](docs/phases/phase-05-report.md) |
 | **5.1 — Upstream dimensional-integrity correction** | ✅ **Complete** | [Report](docs/phases/phase-05-1-key-integrity.md) · [Scenario dimension](docs/phases/phase-05-1-scenario-integrity.md) |
-| 6 — Excel FP&A models | ⏸ | |
-| 7 — Power BI semantic model & reports | ⏸ | |
+| **6A — Power BI semantic model** | ✅ **Complete** | [Report](docs/phases/phase-06a-report.md) |
+| 6B — Power BI report design | ⏸ | |
+| 7 — Board pack & commentary framework | ⏸ | |
 | 8 — Board pack & commentary framework | ⏸ | |
 | 9 — QA & performance hardening | ⏸ | |
 | 10 — Documentation & portfolio packaging | ⏸ | |
@@ -92,6 +93,8 @@ python -m src.excel.build              # build the Excel management reporting mo
 python -m src.excel.qa                 # calculate, inspect and render the workbook in Excel
 python -m src.integrity.controls       # prove every declared key and grain, source to mart
 python -m src.integrity.faults         # break each one on purpose and prove it is caught
+python -m src.powerbi.run              # generate the semantic model, deploy it, control it
+python -m src.powerbi.faults           # break the model ten ways and prove each is caught
 python -m pytest tests -q              # validate every accounting identity, seed and dataset
 ```
 
@@ -155,6 +158,7 @@ src/
   marts/         Governed reporting marts and their controls (Phase 5)
   excel/         The Excel management reporting model, built as code (Phase 5)
   integrity/     Declared-key and declared-grain registry, controls and fixtures
+  powerbi/       The governed semantic model, built as code (Phase 6A)
 tools/           Maintenance utilities (anchor derivation, source and workbook diffs,
                  the financial invariance harness)
 tests/           Automated validation
@@ -185,7 +189,11 @@ tests/           Automated validation
 | [**Phase 5 report**](docs/phases/phase-05-report.md) | the governed reporting marts and the Excel management model |
 | [Phase 5.1 key integrity](docs/phases/phase-05-1-key-integrity.md) | a business key that was never a key, corrected at the generator, and the framework that now proves every one of them |
 | [Phase 5.1 scenario integrity](docs/phases/phase-05-1-scenario-integrity.md) | the second defect that framework found: a version code in use that resolved to nothing |
-| [Key and grain framework](docs/key-and-grain-framework.md) | 61 declared keys, 249 controls, 18 fixtures, and the two defects that made them necessary |
+| [**Phase 6A report**](docs/phases/phase-06a-report.md) | the governed Power BI semantic model, and the two upstream defects that interrupted it |
+| [Key and grain framework](docs/key-and-grain-framework.md) | 73 declared keys, 290 controls, 18 fixtures, and the two defects that made them necessary |
+| [Power BI semantic model](docs/powerbi-semantic-model.md) | the star schema, the measure layer, and why it is validated by running it |
+| [Power BI measures](docs/powerbi-measures.md) | *Generated.* All 89 measures, their DAX and their descriptions |
+| [Power BI controls](docs/powerbi-controls.md) | 49 semantic controls, 10 fixtures, and what executing the model found |
 | [Defect register](docs/defect-register.md) | every defect found, what closed it, and the control that now stops it recurring |
 | [**Architecture lessons**](docs/architecture-lessons.md) | ten defects that balanced perfectly while being wrong, and the design change each produced |
 

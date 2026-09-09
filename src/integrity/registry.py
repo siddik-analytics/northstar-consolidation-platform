@@ -120,6 +120,45 @@ REGISTRY: tuple[Declared, ...] = (
              note="Ownership is a time series: one row per entity per month, which is what "
                   "makes a mid-year acquisition expressible."),
 
+    # ============================================================ Phase 6A semantic dimensions
+    # Conformed selections the Power BI model loads. They restate dimensions the warehouse
+    # already holds, but a restatement is still an object with a key, and Power BI will fan a
+    # fact out just as readily against a duplicated semantic key as against a duplicated
+    # warehouse one. `P7-REG-01` flagged all twelve the moment they appeared, which is what it
+    # is for.
+    Declared("dim_semantic_date", "DIMENSION", ("period_key",), FORBIDDEN,
+             "src/powerbi/config.py SEMANTIC_DIMENSIONS", "Phase 6A",
+             note="Regular months only -- the adjustment periods that make dim_date's key "
+                  "composite are filtered out here, so period_key alone identifies a row."),
+    Declared("dim_semantic_entity", "DIMENSION", ("entity_code",), FORBIDDEN,
+             "src/powerbi/config.py SEMANTIC_DIMENSIONS", "Phase 6A"),
+    Declared("dim_semantic_business_unit", "DIMENSION", ("bu_code",), FORBIDDEN,
+             "src/powerbi/config.py SEMANTIC_DIMENSIONS", "Phase 6A"),
+    Declared("dim_semantic_account", "DIMENSION", ("group_account",), FORBIDDEN,
+             "src/powerbi/config.py SEMANTIC_DIMENSIONS", "Phase 6A"),
+    Declared("dim_semantic_cost_centre", "DIMENSION", ("cost_centre_key",), FORBIDDEN,
+             "src/powerbi/config.py SEMANTIC_DIMENSIONS", "Phase 6A",
+             note="The composite entity|code, formed here because Power BI relates on a "
+                  "single column and a cost centre code is only unique within its entity."),
+    Declared("dim_semantic_layer", "DIMENSION", ("layer_id",), FORBIDDEN,
+             "src/powerbi/config.py SEMANTIC_DIMENSIONS", "Phase 6A"),
+    Declared("dim_semantic_basis", "DIMENSION", ("basis",), FORBIDDEN,
+             "src/powerbi/config.py SEMANTIC_DIMENSIONS", "Phase 6A"),
+    Declared("dim_semantic_currency", "DIMENSION", ("currency_code",), FORBIDDEN,
+             "src/powerbi/config.py SEMANTIC_DIMENSIONS", "Phase 6A"),
+    Declared("dim_semantic_instrument", "DIMENSION", ("instrument_id",), FORBIDDEN,
+             "src/powerbi/config.py SEMANTIC_DIMENSIONS", "Phase 6A"),
+    Declared("dim_semantic_project", "DIMENSION", ("project_id",), FORBIDDEN,
+             "src/powerbi/config.py SEMANTIC_DIMENSIONS", "Phase 6A",
+             note="The Capital Project dimension. 1,846 projects, 1,846 identifiers -- a "
+                  "dimension that could not exist before ADR-0026 corrected the key."),
+    Declared("dim_semantic_job_family", "DIMENSION", ("job_family_code",), FORBIDDEN,
+             "src/powerbi/config.py SEMANTIC_DIMENSIONS", "Phase 6A"),
+    Declared("dim_semantic_period_basis", "DIMENSION", ("basis_code",), FORBIDDEN,
+             "src/powerbi/measures.py PERIOD_BASIS_ROWS", "Phase 6A",
+             note="Disconnected on purpose: read by the statement measures to choose which "
+                  "governed column to aggregate, and it filters no fact."),
+
     # ============================================================ Phase 5 reporting dimensions
     Declared("dim_report_scenario", "DIMENSION", ("version_code",), FORBIDDEN,
              "src/marts/config.py", "Phase 5"),
@@ -375,6 +414,21 @@ REFERENCES: tuple[Reference, ...] = (
     Reference("mart_capex", ("entity_code",), "dim_entity", ("entity_code",), "Phase 5"),
     Reference("mart_headcount", ("entity_code",), "dim_entity", ("entity_code",), "Phase 5"),
     Reference("mart_fx", ("currency_code",), "dim_currency", ("currency_code",), "Phase 5"),
+
+    # ------------------------------------------- the semantic layer back to the warehouse
+    Reference("dim_semantic_entity", ("entity_code",), "dim_entity", ("entity_code",),
+              "Phase 6A"),
+    Reference("dim_semantic_account", ("group_account",), "dim_account", ("group_account",),
+              "Phase 6A"),
+    Reference("dim_semantic_project", ("project_id",), "fact_capex_project", ("project_id",),
+              "Phase 6A",
+              note="The Capital Project dimension resolves to the corrected source key."),
+    Reference("dim_semantic_instrument", ("instrument_id",), "ref_debt_schedule",
+              ("instrument_id",), "Phase 6A"),
+    Reference("mart_capex", ("project_id",), "dim_semantic_project", ("project_id",),
+              "Phase 6A",
+              note="The CapEx fact resolves in the semantic dimension it is related to, so "
+                   "no row falls to a blank member."),
     Reference("mart_consolidation_bridge", ("layer_id",), "dim_consolidation_layer",
               ("layer_id",), "Phase 5"),
 )

@@ -1,4 +1,7 @@
-/// Capital projects and their asset class.
+/// One row per capital project: 1,846 projects, 1,846 identifiers. The key is the corrected
+/// business key CP-{entity}-{period}-{asset_class}-{seq} (ADR-0026) and no surrogate is
+/// introduced to stand in for it -- a surrogate here would hide the very thing the correction
+/// fixed. Asset class is an attribute, not a separate dimension.
 table 'Capital Project'
 	lineageTag: d600e6d8-a781-5140-b961-483335a08667
 
@@ -42,6 +45,38 @@ table 'Capital Project'
 		sourceColumn: bu_code
 
 		annotation SummarizationSetBy = Automatic
+
+	column approved_period
+		dataType: int64
+		isHidden
+		lineageTag: 37644218-3136-530f-879b-cafeb3229e89
+		summarizeBy: none
+		sourceColumn: approved_period
+
+		annotation SummarizationSetBy = Automatic
+
+	column approved_fiscal_year
+		dataType: int64
+		lineageTag: 3f69f807-ed00-50a0-b82d-00118d2a626a
+		summarizeBy: none
+		sourceColumn: approved_fiscal_year
+
+		annotation SummarizationSetBy = Automatic
+
+	hierarchy 'Project by class'
+		lineageTag: 9a258d6e-285a-5982-96f3-de3a5968d2ee
+
+		level 'Asset class'
+			lineageTag: 0d91d145-3e42-5b12-a531-89ef1d53e004
+			column: asset_class
+
+		level 'Project name'
+			lineageTag: 5b6d3930-95fb-52a0-8673-27b21e563e4a
+			column: project_name
+
+		level 'Project id'
+			lineageTag: 3ad29478-0dca-5158-83da-ee66e4726935
+			column: project_id
 
 	partition 'Capital Project' = m
 		mode: import

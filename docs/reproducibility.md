@@ -44,7 +44,9 @@ fault sweep is more than half — it runs ten complete pipelines.
 | 11 | `python -m src.excel.qa` | Excel calculation, reconciliation and render — **17/17** | 32 s |
 | 12 | `python -m src.integrity.controls` | every declared key, grain and version — **249/249** | 2 s |
 | 13 | `python -m src.integrity.faults` | eighteen deliberate breakages — **18/18 detected** | 6 s |
-| 14 | `python -m pytest tests -q` | **469** automated tests | 119 s |
+| 14 | `python -m src.powerbi.run` | the semantic model, deployed and controlled — **49/49** | 8 s |
+| 15 | `python -m src.powerbi.faults` | ten semantic breakages — **10/10 detected** | 70 s |
+| 16 | `python -m pytest tests -q` | **510** automated tests | 130 s |
 
 A `Makefile` wraps steps 1, 2, 3, 4, 5, 6, 7, 8 and 9 as `anchors`, `build`, `validate`,
 `faults`, `pipeline`, `pipeline-faults`, `consolidate`, `consol-faults` and `test`.
@@ -97,6 +99,19 @@ Determinism is engineered, not hoped for:
 * every declared key is proved unique over its whole population on every build, and
   every version code is proved to resolve, by `src/integrity/controls.py`;
 * random draws come from a single declared master seed.
+
+### A known weakness: line endings
+
+`build_id()` hashes the **raw bytes** of its declared inputs, so it is sensitive to line
+endings — which git rewrites on checkout. The same commit, cloned twice on different platforms,
+can produce different build ids while every byte of content, and every financial value, is
+identical.
+
+This is recorded as open defect **P6-D-02**. It was found when the Phase 6A branch was rebased
+and the recomputed ids moved without any content changing. Until it is fixed, treat a build id
+mismatch after a fresh clone as a line-ending artefact rather than as evidence of drift, and
+settle the question with `tools/financial_invariance.py`, which compares values rather than
+bytes.
 
 ## 4. The clean-tree expectation
 

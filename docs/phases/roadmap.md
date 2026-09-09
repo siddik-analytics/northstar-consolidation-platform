@@ -418,6 +418,27 @@ scenario/version assumptions. See
 
 ---
 
+## Phase 6A — Power BI semantic model ✅
+
+**Complete, awaiting review.** A governed star schema over the Phase 5 marts: 28 tables, 89
+measures, 31 active and 5 deliberately inactive relationships, generated from two declarations
+into both a PBIP/TMDL project and a TMSL deployment.
+
+Validated by **running it**. Power BI Desktop will not open a PBIP from the command line here,
+but the Analysis Services instance it runs accepts TMSL over XMLA, so the model is deployed
+there and its own DAX executed. That found three classes of defect no amount of reading TMDL
+would have: a relationship on a column that does not exist, every statement measure summing
+both reporting bases and reporting twice the truth, and four measures that do not parse.
+
+**49/49 semantic controls, 10/10 fault fixtures**, 19 reconciliations to the marts and 8 to the
+Excel workbook, all on real DAX. Reproducible: two clean generations, identical project digest.
+
+This phase was interrupted twice by upstream defects -- P6-D-01 and P7-D-01 -- and resumed only
+after both contracts were corrected and rebaselined. See
+[`phase-06a-report.md`](phase-06a-report.md).
+
+---
+
 ## Phase 6 — Excel FP&A and management reporting models
 
 **Deliverables**

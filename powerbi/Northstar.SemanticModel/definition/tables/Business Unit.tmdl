@@ -1,4 +1,6 @@
-/// The five reportable segments.
+/// The five reportable segments. Facts reach it through Entity rather than directly -- an
+/// entity belongs to exactly one unit, so the segment view is the entity view rolled up, and a
+/// second path would make every segment total ambiguous.
 table 'Business Unit'
 	lineageTag: 95a8f32a-53d4-509b-a96d-20e7def295cc
 

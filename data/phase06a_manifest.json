@@ -1,0 +1,45 @@
+{
+  "artefacts": {
+    "35_semantic/dim_semantic_account.parquet": "011aca5e426c8f323d79bb4ec6f0c4fcfd74ea96776b0a07dd5ac7abd40f588e",
+    "35_semantic/dim_semantic_basis.parquet": "9b8f4356487e28ba1674766e6b57543cc56ad8a34cf3b871d9a7811636ad8ddb",
+    "35_semantic/dim_semantic_business_unit.parquet": "0b65b79060b16e21c9bab14454f82ff8d004540696722a5fafa9043b5bfa4204",
+    "35_semantic/dim_semantic_cost_centre.parquet": "820157642821f131d38b0b0014e38e119e744ff6f90595cdc7778303f2665c41",
+    "35_semantic/dim_semantic_currency.parquet": "ef31698fd4f5f15adec780937ecc46f739ce39aadc9cc35b7e32256521ad0722",
+    "35_semantic/dim_semantic_date.parquet": "ba657ad59cca29877f297008369ee2118bef75b6e2c898749853d9fcf6a23afd",
+    "35_semantic/dim_semantic_entity.parquet": "67060d97c902962351a30216d29aef66298c29c56aec5f389aa21e2e49d15a1a",
+    "35_semantic/dim_semantic_instrument.parquet": "c12f30096991b14854abd7f19c11c38914a69d451b3d8a73b23844545c02ce11",
+    "35_semantic/dim_semantic_job_family.parquet": "6638a86d580888548963e71f95c9c5fc9189e511ab8a02bb6ae1acaf3e2af3d2",
+    "35_semantic/dim_semantic_layer.parquet": "717316ad408514a3bf86adf0ee41a26751174919975b869030aa48760e107b42",
+    "35_semantic/dim_semantic_period_basis.parquet": "4d34e34692c770819a80d54b1e792210f682c9b0550906112fc61d469e64b843",
+    "35_semantic/dim_semantic_project.parquet": "4c27014b05d2e5ec82c8a404b682dfa2ba7fb344c28c8e7151d970690f77346f"
+  },
+  "build_id": "458ca84c1903b9f0",
+  "controls": {
+    "failed": 0,
+    "not_executed": 0,
+    "passed": 49,
+    "total": 49
+  },
+  "deployed": true,
+  "inactive_relationships": 5,
+  "measures": 89,
+  "phase": "6A",
+  "project_digest": "c04c498f4469329c",
+  "relationships": 31,
+  "reporting_mart_build_id": "50d85b385b7a2a41",
+  "semantic_dimension_rows": {
+    "dim_semantic_account": 175,
+    "dim_semantic_basis": 2,
+    "dim_semantic_business_unit": 5,
+    "dim_semantic_cost_centre": 162,
+    "dim_semantic_currency": 4,
+    "dim_semantic_date": 48,
+    "dim_semantic_entity": 15,
+    "dim_semantic_instrument": 14,
+    "dim_semantic_job_family": 12,
+    "dim_semantic_layer": 5,
+    "dim_semantic_period_basis": 3,
+    "dim_semantic_project": 1846
+  },
+  "tables": 28
+}

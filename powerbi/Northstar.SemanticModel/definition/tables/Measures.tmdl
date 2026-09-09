@@ -14,11 +14,12 @@ table Measures
 	/// The reporting close as a label, for a report header. Reads the Date dimension, so it cannot
 	/// disagree with the calendar.
 	measure 'Reporting Period' =
-			CALCULATE (
-			    MAX ( 'Date'[month_label_long] ),
-			    ALL ( 'Date' ),
-			    'Date'[period_key] = [Reporting Period Key]
-			)
+			VAR _Key = [Reporting Period Key]
+			RETURN
+			    CALCULATE (
+			        SELECTEDVALUE ( 'Date'[month_label_long] ),
+			        FILTER ( ALL ( 'Date' ), 'Date'[period_key] = _Key )
+			    )
 		lineageTag: f364ae76-482f-5f9a-b970-1418cffb7a05
 		displayFolder: 00 Model context
 
@@ -53,6 +54,12 @@ table Measures
 	/// upstream on both sides of every comparison, so a plan variance is like for like.
 	measure 'Revenue' =
 			VAR _Basis = SELECTEDVALUE ( 'Period Basis'[basis_code], "YTD" )
+			VAR _Reporting = SELECTEDVALUE ( 'Reporting Basis'[basis], "STATUTORY" )
+			VAR _Scenarios = VALUES ( 'Scenario'[scenario_code] )
+			VAR _ActualOnly =
+			    COUNTROWS ( _Scenarios ) = 1 && MAXX ( _Scenarios, 'Scenario'[scenario_code] ) = "ACT"
+			VAR _Latest = MAX ( 'Date'[period_key] )
+			VAR _PastClose = _ActualOnly && _Latest > [Reporting Period Key]
 			VAR _Value =
 			    CALCULATE (
 			        SWITCH (
@@ -61,9 +68,10 @@ table Measures
 			            "FY", SUM ( 'Financials'[fy_usd] ),
 			            SUM ( 'Financials'[ytd_usd] )
 			        ),
-			        KEEPFILTERS ( 'Measure Line'[measure_code] = "REVENUE" )
+			        KEEPFILTERS ( 'Measure Line'[measure_code] = "REVENUE" ),
+			        KEEPFILTERS ( 'Financials'[basis] = _Reporting )
 			    )
-			RETURN _Value
+			RETURN IF ( _PastClose, BLANK (), _Value )
 		formatString: #,0.0,,;(#,0.0,,);"–"
 		lineageTag: ab1c1b25-f87b-5749-8268-c7a4c7976350
 		displayFolder: 01 Income statement
@@ -71,6 +79,12 @@ table Measures
 	/// Cost of sales, positive on the management sign convention.
 	measure 'Cost of Sales' =
 			VAR _Basis = SELECTEDVALUE ( 'Period Basis'[basis_code], "YTD" )
+			VAR _Reporting = SELECTEDVALUE ( 'Reporting Basis'[basis], "STATUTORY" )
+			VAR _Scenarios = VALUES ( 'Scenario'[scenario_code] )
+			VAR _ActualOnly =
+			    COUNTROWS ( _Scenarios ) = 1 && MAXX ( _Scenarios, 'Scenario'[scenario_code] ) = "ACT"
+			VAR _Latest = MAX ( 'Date'[period_key] )
+			VAR _PastClose = _ActualOnly && _Latest > [Reporting Period Key]
 			VAR _Value =
 			    CALCULATE (
 			        SWITCH (
@@ -79,9 +93,10 @@ table Measures
 			            "FY", SUM ( 'Financials'[fy_usd] ),
 			            SUM ( 'Financials'[ytd_usd] )
 			        ),
-			        KEEPFILTERS ( 'Measure Line'[measure_code] = "COST_OF_SALES" )
+			        KEEPFILTERS ( 'Measure Line'[measure_code] = "COST_OF_SALES" ),
+			        KEEPFILTERS ( 'Financials'[basis] = _Reporting )
 			    )
-			RETURN _Value
+			RETURN IF ( _PastClose, BLANK (), _Value )
 		formatString: #,0.0,,;(#,0.0,,);"–"
 		lineageTag: 2870624b-313c-54be-8408-1a481be642c6
 		displayFolder: 01 Income statement
@@ -90,6 +105,12 @@ table Measures
 	/// computed in a reporting tool is a definition living in a reporting tool.
 	measure 'Gross Profit' =
 			VAR _Basis = SELECTEDVALUE ( 'Period Basis'[basis_code], "YTD" )
+			VAR _Reporting = SELECTEDVALUE ( 'Reporting Basis'[basis], "STATUTORY" )
+			VAR _Scenarios = VALUES ( 'Scenario'[scenario_code] )
+			VAR _ActualOnly =
+			    COUNTROWS ( _Scenarios ) = 1 && MAXX ( _Scenarios, 'Scenario'[scenario_code] ) = "ACT"
+			VAR _Latest = MAX ( 'Date'[period_key] )
+			VAR _PastClose = _ActualOnly && _Latest > [Reporting Period Key]
 			VAR _Value =
 			    CALCULATE (
 			        SWITCH (
@@ -98,9 +119,10 @@ table Measures
 			            "FY", SUM ( 'Financials'[fy_usd] ),
 			            SUM ( 'Financials'[ytd_usd] )
 			        ),
-			        KEEPFILTERS ( 'Measure Line'[measure_code] = "GROSS_PROFIT" )
+			        KEEPFILTERS ( 'Measure Line'[measure_code] = "GROSS_PROFIT" ),
+			        KEEPFILTERS ( 'Financials'[basis] = _Reporting )
 			    )
-			RETURN _Value
+			RETURN IF ( _PastClose, BLANK (), _Value )
 		formatString: #,0.0,,;(#,0.0,,);"–"
 		lineageTag: ed4680a3-5c50-5668-ad9b-d9359c908a9b
 		displayFolder: 01 Income statement
@@ -117,6 +139,12 @@ table Measures
 	/// removes, because they sit inside operating expenses at layer 1 (ADR-0013).
 	measure 'Operating Expenses' =
 			VAR _Basis = SELECTEDVALUE ( 'Period Basis'[basis_code], "YTD" )
+			VAR _Reporting = SELECTEDVALUE ( 'Reporting Basis'[basis], "STATUTORY" )
+			VAR _Scenarios = VALUES ( 'Scenario'[scenario_code] )
+			VAR _ActualOnly =
+			    COUNTROWS ( _Scenarios ) = 1 && MAXX ( _Scenarios, 'Scenario'[scenario_code] ) = "ACT"
+			VAR _Latest = MAX ( 'Date'[period_key] )
+			VAR _PastClose = _ActualOnly && _Latest > [Reporting Period Key]
 			VAR _Value =
 			    CALCULATE (
 			        SWITCH (
@@ -125,9 +153,10 @@ table Measures
 			            "FY", SUM ( 'Financials'[fy_usd] ),
 			            SUM ( 'Financials'[ytd_usd] )
 			        ),
-			        KEEPFILTERS ( 'Measure Line'[measure_code] = "OPEX" )
+			        KEEPFILTERS ( 'Measure Line'[measure_code] = "OPEX" ),
+			        KEEPFILTERS ( 'Financials'[basis] = _Reporting )
 			    )
-			RETURN _Value
+			RETURN IF ( _PastClose, BLANK (), _Value )
 		formatString: #,0.0,,;(#,0.0,,);"–"
 		lineageTag: 4e54a200-d327-55a8-a60b-08fbfd82664b
 		displayFolder: 01 Income statement
@@ -137,6 +166,12 @@ table Measures
 	/// EBITDA and from Covenant EBITDA**, each of which has its own lineage.
 	measure 'Statutory EBITDA' =
 			VAR _Basis = SELECTEDVALUE ( 'Period Basis'[basis_code], "YTD" )
+			VAR _Reporting = "STATUTORY"
+			VAR _Scenarios = VALUES ( 'Scenario'[scenario_code] )
+			VAR _ActualOnly =
+			    COUNTROWS ( _Scenarios ) = 1 && MAXX ( _Scenarios, 'Scenario'[scenario_code] ) = "ACT"
+			VAR _Latest = MAX ( 'Date'[period_key] )
+			VAR _PastClose = _ActualOnly && _Latest > [Reporting Period Key]
 			VAR _Value =
 			    CALCULATE (
 			        SWITCH (
@@ -145,9 +180,10 @@ table Measures
 			            "FY", SUM ( 'Financials'[fy_usd] ),
 			            SUM ( 'Financials'[ytd_usd] )
 			        ),
-			        KEEPFILTERS ( 'Measure Line'[measure_code] = "EBITDA" )
+			        KEEPFILTERS ( 'Measure Line'[measure_code] = "EBITDA" ),
+			        KEEPFILTERS ( 'Financials'[basis] = _Reporting )
 			    )
-			RETURN _Value
+			RETURN IF ( _PastClose, BLANK (), _Value )
 		formatString: #,0.0,,;(#,0.0,,);"–"
 		lineageTag: 892dddc4-515d-51f7-8fb5-88b7597ff732
 		displayFolder: 01 Income statement
@@ -158,6 +194,12 @@ table Measures
 	/// a blank into Adjusted EBITDA.
 	measure 'Approved Add-backs' =
 			VAR _Basis = SELECTEDVALUE ( 'Period Basis'[basis_code], "YTD" )
+			VAR _Reporting = "MANAGEMENT"
+			VAR _Scenarios = VALUES ( 'Scenario'[scenario_code] )
+			VAR _ActualOnly =
+			    COUNTROWS ( _Scenarios ) = 1 && MAXX ( _Scenarios, 'Scenario'[scenario_code] ) = "ACT"
+			VAR _Latest = MAX ( 'Date'[period_key] )
+			VAR _PastClose = _ActualOnly && _Latest > [Reporting Period Key]
 			VAR _Value =
 			    CALCULATE (
 			        SWITCH (
@@ -166,19 +208,33 @@ table Measures
 			            "FY", SUM ( 'Financials'[fy_usd] ),
 			            SUM ( 'Financials'[ytd_usd] )
 			        ),
-			        KEEPFILTERS ( 'Measure Line'[measure_code] = "ADDBACKS" )
+			        KEEPFILTERS ( 'Measure Line'[measure_code] = "ADDBACKS" ),
+			        KEEPFILTERS ( 'Financials'[basis] = _Reporting )
 			    )
-			RETURN _Value + 0
+			RETURN IF ( _PastClose, BLANK (), _Value + 0 )
 		formatString: #,0.0,,;(#,0.0,,);"–"
 		lineageTag: 4ed7c178-267f-5df7-92a7-1719d2503bde
 		displayFolder: 01 Income statement
 
-	/// Statutory EBITDA plus the approved add-backs plus any layer-4 management adjustment. **This
-	/// is not Covenant EBITDA.** The two are equal in the current baseline because the sponsor fee
-	/// runs below its cap and the covenant foreign exchange add-back has no population — an
-	/// outcome, not a definition.
+	/// **Definition** statutory EBITDA plus the approved add-backs plus any layer-4 management
+	/// adjustment -- the management view of trading performance. The add-back policy is settled
+	/// upstream (ADR-0013) and arrives as a governed measure line; this measure selects it and
+	/// decides nothing about what may be added back. **This is not Covenant EBITDA.** The two are
+	/// equal in the current baseline because the sponsor fee runs below its cap and the covenant
+	/// foreign exchange add-back has no population -- an outcome, not a definition. **Source**
+	/// `mart_financial_ytd`, measure line ADJ_EBITDA. **Basis** pinned to MANAGEMENT and
+	/// deliberately does not follow the Reporting Basis slicer: a definition that changes when
+	/// someone moves a slicer is not a definition. **Scenario** follows the selection -- Actual,
+	/// Budget, Forecast or Prior Year. **Blank policy** blank for an Actual month after the
+	/// reporting close; a nil add-back category contributes zero.
 	measure 'Management Adjusted EBITDA' =
 			VAR _Basis = SELECTEDVALUE ( 'Period Basis'[basis_code], "YTD" )
+			VAR _Reporting = "MANAGEMENT"
+			VAR _Scenarios = VALUES ( 'Scenario'[scenario_code] )
+			VAR _ActualOnly =
+			    COUNTROWS ( _Scenarios ) = 1 && MAXX ( _Scenarios, 'Scenario'[scenario_code] ) = "ACT"
+			VAR _Latest = MAX ( 'Date'[period_key] )
+			VAR _PastClose = _ActualOnly && _Latest > [Reporting Period Key]
 			VAR _Value =
 			    CALCULATE (
 			        SWITCH (
@@ -187,9 +243,10 @@ table Measures
 			            "FY", SUM ( 'Financials'[fy_usd] ),
 			            SUM ( 'Financials'[ytd_usd] )
 			        ),
-			        KEEPFILTERS ( 'Measure Line'[measure_code] = "ADJ_EBITDA" )
+			        KEEPFILTERS ( 'Measure Line'[measure_code] = "ADJ_EBITDA" ),
+			        KEEPFILTERS ( 'Financials'[basis] = _Reporting )
 			    )
-			RETURN _Value
+			RETURN IF ( _PastClose, BLANK (), _Value )
 		formatString: #,0.0,,;(#,0.0,,);"–"
 		lineageTag: c1440af7-5951-5f36-a5db-3f5db39bf27f
 		displayFolder: 01 Income statement
@@ -211,6 +268,12 @@ table Measures
 	/// Depreciation and the amortisation of acquired intangibles, positive.
 	measure 'Depreciation and Amortisation' =
 			VAR _Basis = SELECTEDVALUE ( 'Period Basis'[basis_code], "YTD" )
+			VAR _Reporting = SELECTEDVALUE ( 'Reporting Basis'[basis], "STATUTORY" )
+			VAR _Scenarios = VALUES ( 'Scenario'[scenario_code] )
+			VAR _ActualOnly =
+			    COUNTROWS ( _Scenarios ) = 1 && MAXX ( _Scenarios, 'Scenario'[scenario_code] ) = "ACT"
+			VAR _Latest = MAX ( 'Date'[period_key] )
+			VAR _PastClose = _ActualOnly && _Latest > [Reporting Period Key]
 			VAR _Value =
 			    CALCULATE (
 			        SWITCH (
@@ -219,9 +282,10 @@ table Measures
 			            "FY", SUM ( 'Financials'[fy_usd] ),
 			            SUM ( 'Financials'[ytd_usd] )
 			        ),
-			        KEEPFILTERS ( 'Measure Line'[measure_code] = "DA" )
+			        KEEPFILTERS ( 'Measure Line'[measure_code] = "DA" ),
+			        KEEPFILTERS ( 'Financials'[basis] = _Reporting )
 			    )
-			RETURN _Value
+			RETURN IF ( _PastClose, BLANK (), _Value )
 		formatString: #,0.0,,;(#,0.0,,);"–"
 		lineageTag: 7a416717-1d81-5743-9749-a5f06f12864a
 		displayFolder: 01 Income statement
@@ -229,6 +293,12 @@ table Measures
 	/// Statutory EBITDA less depreciation and amortisation. Stored upstream.
 	measure 'EBIT' =
 			VAR _Basis = SELECTEDVALUE ( 'Period Basis'[basis_code], "YTD" )
+			VAR _Reporting = SELECTEDVALUE ( 'Reporting Basis'[basis], "STATUTORY" )
+			VAR _Scenarios = VALUES ( 'Scenario'[scenario_code] )
+			VAR _ActualOnly =
+			    COUNTROWS ( _Scenarios ) = 1 && MAXX ( _Scenarios, 'Scenario'[scenario_code] ) = "ACT"
+			VAR _Latest = MAX ( 'Date'[period_key] )
+			VAR _PastClose = _ActualOnly && _Latest > [Reporting Period Key]
 			VAR _Value =
 			    CALCULATE (
 			        SWITCH (
@@ -237,9 +307,10 @@ table Measures
 			            "FY", SUM ( 'Financials'[fy_usd] ),
 			            SUM ( 'Financials'[ytd_usd] )
 			        ),
-			        KEEPFILTERS ( 'Measure Line'[measure_code] = "EBIT" )
+			        KEEPFILTERS ( 'Measure Line'[measure_code] = "EBIT" ),
+			        KEEPFILTERS ( 'Financials'[basis] = _Reporting )
 			    )
-			RETURN _Value
+			RETURN IF ( _PastClose, BLANK (), _Value )
 		formatString: #,0.0,,;(#,0.0,,);"–"
 		lineageTag: f11cb447-faa1-5f0b-89e1-b0e5029c838a
 		displayFolder: 01 Income statement
@@ -248,6 +319,12 @@ table Measures
 	/// positive as a cost.
 	measure 'Net Finance Costs' =
 			VAR _Basis = SELECTEDVALUE ( 'Period Basis'[basis_code], "YTD" )
+			VAR _Reporting = SELECTEDVALUE ( 'Reporting Basis'[basis], "STATUTORY" )
+			VAR _Scenarios = VALUES ( 'Scenario'[scenario_code] )
+			VAR _ActualOnly =
+			    COUNTROWS ( _Scenarios ) = 1 && MAXX ( _Scenarios, 'Scenario'[scenario_code] ) = "ACT"
+			VAR _Latest = MAX ( 'Date'[period_key] )
+			VAR _PastClose = _ActualOnly && _Latest > [Reporting Period Key]
 			VAR _Value =
 			    CALCULATE (
 			        SWITCH (
@@ -256,9 +333,10 @@ table Measures
 			            "FY", SUM ( 'Financials'[fy_usd] ),
 			            SUM ( 'Financials'[ytd_usd] )
 			        ),
-			        KEEPFILTERS ( 'Measure Line'[measure_code] = "NET_FINANCE" )
+			        KEEPFILTERS ( 'Measure Line'[measure_code] = "NET_FINANCE" ),
+			        KEEPFILTERS ( 'Financials'[basis] = _Reporting )
 			    )
-			RETURN _Value
+			RETURN IF ( _PastClose, BLANK (), _Value )
 		formatString: #,0.0,,;(#,0.0,,);"–"
 		lineageTag: f6513199-abe8-55c7-be73-2710c0b1b9a4
 		displayFolder: 01 Income statement
@@ -266,6 +344,12 @@ table Measures
 	/// Current and deferred tax, positive as a charge.
 	measure 'Income Tax' =
 			VAR _Basis = SELECTEDVALUE ( 'Period Basis'[basis_code], "YTD" )
+			VAR _Reporting = SELECTEDVALUE ( 'Reporting Basis'[basis], "STATUTORY" )
+			VAR _Scenarios = VALUES ( 'Scenario'[scenario_code] )
+			VAR _ActualOnly =
+			    COUNTROWS ( _Scenarios ) = 1 && MAXX ( _Scenarios, 'Scenario'[scenario_code] ) = "ACT"
+			VAR _Latest = MAX ( 'Date'[period_key] )
+			VAR _PastClose = _ActualOnly && _Latest > [Reporting Period Key]
 			VAR _Value =
 			    CALCULATE (
 			        SWITCH (
@@ -274,9 +358,10 @@ table Measures
 			            "FY", SUM ( 'Financials'[fy_usd] ),
 			            SUM ( 'Financials'[ytd_usd] )
 			        ),
-			        KEEPFILTERS ( 'Measure Line'[measure_code] = "TAX" )
+			        KEEPFILTERS ( 'Measure Line'[measure_code] = "TAX" ),
+			        KEEPFILTERS ( 'Financials'[basis] = _Reporting )
 			    )
-			RETURN _Value
+			RETURN IF ( _PastClose, BLANK (), _Value )
 		formatString: #,0.0,,;(#,0.0,,);"–"
 		lineageTag: 99711611-72e5-5a76-89e0-dfbb0ee3e46c
 		displayFolder: 01 Income statement
@@ -284,6 +369,12 @@ table Measures
 	/// Consolidated net income before the non-controlling attribution.
 	measure 'Net Income' =
 			VAR _Basis = SELECTEDVALUE ( 'Period Basis'[basis_code], "YTD" )
+			VAR _Reporting = SELECTEDVALUE ( 'Reporting Basis'[basis], "STATUTORY" )
+			VAR _Scenarios = VALUES ( 'Scenario'[scenario_code] )
+			VAR _ActualOnly =
+			    COUNTROWS ( _Scenarios ) = 1 && MAXX ( _Scenarios, 'Scenario'[scenario_code] ) = "ACT"
+			VAR _Latest = MAX ( 'Date'[period_key] )
+			VAR _PastClose = _ActualOnly && _Latest > [Reporting Period Key]
 			VAR _Value =
 			    CALCULATE (
 			        SWITCH (
@@ -292,9 +383,10 @@ table Measures
 			            "FY", SUM ( 'Financials'[fy_usd] ),
 			            SUM ( 'Financials'[ytd_usd] )
 			        ),
-			        KEEPFILTERS ( 'Measure Line'[measure_code] = "NET_INCOME" )
+			        KEEPFILTERS ( 'Measure Line'[measure_code] = "NET_INCOME" ),
+			        KEEPFILTERS ( 'Financials'[basis] = _Reporting )
 			    )
-			RETURN _Value
+			RETURN IF ( _PastClose, BLANK (), _Value )
 		formatString: #,0.0,,;(#,0.0,,);"–"
 		lineageTag: 27b3d14c-307b-5048-a604-1d9d6e2ce61a
 		displayFolder: 01 Income statement
@@ -303,6 +395,12 @@ table Measures
 	/// entities have no minority, and a blank must not void the parent attribution.
 	measure 'Non-controlling Interests' =
 			VAR _Basis = SELECTEDVALUE ( 'Period Basis'[basis_code], "YTD" )
+			VAR _Reporting = SELECTEDVALUE ( 'Reporting Basis'[basis], "STATUTORY" )
+			VAR _Scenarios = VALUES ( 'Scenario'[scenario_code] )
+			VAR _ActualOnly =
+			    COUNTROWS ( _Scenarios ) = 1 && MAXX ( _Scenarios, 'Scenario'[scenario_code] ) = "ACT"
+			VAR _Latest = MAX ( 'Date'[period_key] )
+			VAR _PastClose = _ActualOnly && _Latest > [Reporting Period Key]
 			VAR _Value =
 			    CALCULATE (
 			        SWITCH (
@@ -311,9 +409,10 @@ table Measures
 			            "FY", SUM ( 'Financials'[fy_usd] ),
 			            SUM ( 'Financials'[ytd_usd] )
 			        ),
-			        KEEPFILTERS ( 'Measure Line'[measure_code] = "NCI" )
+			        KEEPFILTERS ( 'Measure Line'[measure_code] = "NCI" ),
+			        KEEPFILTERS ( 'Financials'[basis] = _Reporting )
 			    )
-			RETURN _Value + 0
+			RETURN IF ( _PastClose, BLANK (), _Value + 0 )
 		formatString: #,0.0,,;(#,0.0,,);"–"
 		lineageTag: e3419450-3a8e-5917-b54d-45c9a4d603f4
 		displayFolder: 01 Income statement
@@ -321,6 +420,12 @@ table Measures
 	/// Net income less the non-controlling attribution. The bottom line of the group.
 	measure 'Net Income Attributable to Parent' =
 			VAR _Basis = SELECTEDVALUE ( 'Period Basis'[basis_code], "YTD" )
+			VAR _Reporting = SELECTEDVALUE ( 'Reporting Basis'[basis], "STATUTORY" )
+			VAR _Scenarios = VALUES ( 'Scenario'[scenario_code] )
+			VAR _ActualOnly =
+			    COUNTROWS ( _Scenarios ) = 1 && MAXX ( _Scenarios, 'Scenario'[scenario_code] ) = "ACT"
+			VAR _Latest = MAX ( 'Date'[period_key] )
+			VAR _PastClose = _ActualOnly && _Latest > [Reporting Period Key]
 			VAR _Value =
 			    CALCULATE (
 			        SWITCH (
@@ -329,35 +434,49 @@ table Measures
 			            "FY", SUM ( 'Financials'[fy_usd] ),
 			            SUM ( 'Financials'[ytd_usd] )
 			        ),
-			        KEEPFILTERS ( 'Measure Line'[measure_code] = "NI_PARENT" )
+			        KEEPFILTERS ( 'Measure Line'[measure_code] = "NI_PARENT" ),
+			        KEEPFILTERS ( 'Financials'[basis] = _Reporting )
 			    )
-			RETURN _Value
+			RETURN IF ( _PastClose, BLANK (), _Value )
 		formatString: #,0.0,,;(#,0.0,,);"–"
 		lineageTag: 38b8291a-f0f0-5fbd-8fb2-fefbc824f0a1
 		displayFolder: 01 Income statement
 
 	/// Revenue on the Actual scenario, **blank after the reporting close**. The consolidation
-	/// generates Actual rows for the whole fiscal year and the group has closed eight months of it;
-	/// returning zero for the rest draws a company falling off a cliff.
+	/// publishes Actual rows for the whole fiscal year and the group has closed eight months of it;
+	/// the remaining rows carry 0.00, so without the guard this reads as a company that stopped
+	/// trading in September. Blank policy: BLANK past the close, never zero.
 	measure 'Actual Revenue' =
+			VAR _Scenarios = VALUES ( 'Scenario'[scenario_code] )
+			VAR _ActualOnly =
+			    COUNTROWS ( _Scenarios ) = 1 && MAXX ( _Scenarios, 'Scenario'[scenario_code] ) = "ACT"
 			VAR _Latest = MAX ( 'Date'[period_key] )
-			RETURN IF ( _Latest > [Reporting Period Key], BLANK (), CALCULATE ( [Revenue], 'Scenario'[scenario_code] = "ACT" ) )
+			VAR _PastClose = _ActualOnly && _Latest > [Reporting Period Key]
+			RETURN IF ( _PastClose, BLANK (), CALCULATE ( [Revenue], 'Scenario'[scenario_code] = "ACT" ) )
 		formatString: #,0.0,,;(#,0.0,,);"–"
 		lineageTag: 92daad6e-ffc4-5d36-a40d-fc73f0d188be
 		displayFolder: 02 Scenario
 
 	/// Management Adjusted EBITDA on Actual, blank after the reporting close.
 	measure 'Actual Adjusted EBITDA' =
+			VAR _Scenarios = VALUES ( 'Scenario'[scenario_code] )
+			VAR _ActualOnly =
+			    COUNTROWS ( _Scenarios ) = 1 && MAXX ( _Scenarios, 'Scenario'[scenario_code] ) = "ACT"
 			VAR _Latest = MAX ( 'Date'[period_key] )
-			RETURN IF ( _Latest > [Reporting Period Key], BLANK (), CALCULATE ( [Management Adjusted EBITDA], 'Scenario'[scenario_code] = "ACT" ) )
+			VAR _PastClose = _ActualOnly && _Latest > [Reporting Period Key]
+			RETURN IF ( _PastClose, BLANK (), CALCULATE ( [Management Adjusted EBITDA], 'Scenario'[scenario_code] = "ACT" ) )
 		formatString: #,0.0,,;(#,0.0,,);"–"
 		lineageTag: 83d9d76a-d28a-52df-aa41-7d767b654970
 		displayFolder: 02 Scenario
 
 	/// EBIT on Actual, blank after the reporting close.
 	measure 'Actual EBIT' =
+			VAR _Scenarios = VALUES ( 'Scenario'[scenario_code] )
+			VAR _ActualOnly =
+			    COUNTROWS ( _Scenarios ) = 1 && MAXX ( _Scenarios, 'Scenario'[scenario_code] ) = "ACT"
 			VAR _Latest = MAX ( 'Date'[period_key] )
-			RETURN IF ( _Latest > [Reporting Period Key], BLANK (), CALCULATE ( [EBIT], 'Scenario'[scenario_code] = "ACT" ) )
+			VAR _PastClose = _ActualOnly && _Latest > [Reporting Period Key]
+			RETURN IF ( _PastClose, BLANK (), CALCULATE ( [EBIT], 'Scenario'[scenario_code] = "ACT" ) )
 		formatString: #,0.0,,;(#,0.0,,);"–"
 		lineageTag: 2957b6e4-0928-50c8-a414-f9d7f9ea800c
 		displayFolder: 02 Scenario
@@ -380,46 +499,134 @@ table Measures
 	/// Revenue on the **current** forecast, selected by the upstream default flag rather than by
 	/// name, so a superseded forecast can never be presented as the forecast.
 	measure 'Forecast Revenue' =
-			CALCULATE ( [Revenue], 'Scenario'[version_code] = [Current Forecast Version] )
+			VAR _Version = [Current Forecast Version]
+			RETURN
+			    CALCULATE (
+			        [Revenue],
+			        FILTER ( ALL ( 'Scenario' ), 'Scenario'[version_code] = _Version )
+			    )
 		formatString: #,0.0,,;(#,0.0,,);"–"
 		lineageTag: 90cfca9c-d986-521d-95fa-cb12c11c3eea
 		displayFolder: 02 Scenario
 
-	/// Revenue twelve months earlier. Derived upstream from Actual by a date offset and never
-	/// stored (ADR-0004), so it cannot drift from the actual it is a view of.
+	/// Management Adjusted EBITDA on the current forecast, selected by the default flag.
+	measure 'Forecast Adjusted EBITDA' =
+			VAR _Version = [Current Forecast Version]
+			RETURN
+			    CALCULATE (
+			        [Management Adjusted EBITDA],
+			        FILTER ( ALL ( 'Scenario' ), 'Scenario'[version_code] = _Version )
+			    )
+		formatString: #,0.0,,;(#,0.0,,);"–"
+		lineageTag: 473b64a3-c6ee-581b-94c4-5a96b48d56ae
+		displayFolder: 02 Scenario
+
+	/// Revenue twelve months earlier. Prior Year is derived upstream from Actual by a date offset
+	/// and stored nowhere (ADR-0004), under the governed version `PY_DERIVED` (ADR-0027). No cutoff
+	/// applies: prior year is complete by definition.
 	measure 'Prior Year Revenue' =
 			CALCULATE ( [Revenue], 'Scenario'[scenario_code] = "PY" )
 		formatString: #,0.0,,;(#,0.0,,);"–"
 		lineageTag: 3fc9e9fe-4101-59e8-877f-04cef73a5922
 		displayFolder: 02 Scenario
 
-	/// The measure being assessed, on the selected comparison. Reads the governed variance mart;
-	/// the model does not derive a comparison.
+	/// Management Adjusted EBITDA twelve months earlier, on the governed `PY_DERIVED` version.
+	measure 'Prior Year Adjusted EBITDA' =
+			CALCULATE ( [Management Adjusted EBITDA], 'Scenario'[scenario_code] = "PY" )
+		formatString: #,0.0,,;(#,0.0,,);"–"
+		lineageTag: 0508845e-5df1-5f25-95cc-826ff22db428
+		displayFolder: 02 Scenario
+
+	/// The governed version behind Prior Year, read from the dimension rather than written into
+	/// DAX. It reads `PY_DERIVED`. If this ever returns blank, the version master has lost the
+	/// member and `P6-XAR-VER-01` fails -- which is precisely the defect P7-D-01 was, seen from the
+	/// semantic layer.
+	measure 'Prior Year Version' =
+			CALCULATE (
+			    SELECTEDVALUE ( 'Scenario'[version_code] ),
+			    ALL ( 'Scenario' ),
+			    'Scenario'[scenario_code] = "PY"
+			)
+		lineageTag: 1b6d8771-7376-5683-9fb2-e1fbfd9463df
+		displayFolder: 02 Scenario
+
+	/// The measure being assessed, on the selected comparison and the selected period basis. Reads
+	/// the governed variance mart; the model does not derive a comparison.
 	measure 'Variance Base' =
-			SUM ( 'Variance'[base_ytd] )
+			VAR _Basis = SELECTEDVALUE ( 'Period Basis'[basis_code], "YTD" )
+			VAR _Reporting = SELECTEDVALUE ( 'Reporting Basis'[basis], "STATUTORY" )
+			RETURN
+			    CALCULATE (
+			        SWITCH (
+			            _Basis,
+			            "MTD", SUM ( 'Variance'[base_mtd] ),
+			            "FY", SUM ( 'Variance'[base_fy] ),
+			            SUM ( 'Variance'[base_ytd] )
+			        ),
+			        KEEPFILTERS ( 'Variance'[basis] = _Reporting )
+			    )
 		formatString: #,0.0,,;(#,0.0,,);"–"
 		lineageTag: d652815b-67fe-5eae-a3cf-036ce897376f
 		displayFolder: 03 Variance
 
-	/// What the base is assessed against, on the selected comparison.
+	/// What the base is assessed against, on the selected comparison and period basis.
 	measure 'Variance Comparator' =
-			SUM ( 'Variance'[comp_ytd] )
+			VAR _Basis = SELECTEDVALUE ( 'Period Basis'[basis_code], "YTD" )
+			VAR _Reporting = SELECTEDVALUE ( 'Reporting Basis'[basis], "STATUTORY" )
+			RETURN
+			    CALCULATE (
+			        SWITCH (
+			            _Basis,
+			            "MTD", SUM ( 'Variance'[comp_mtd] ),
+			            "FY", SUM ( 'Variance'[comp_fy] ),
+			            SUM ( 'Variance'[comp_ytd] )
+			        ),
+			        KEEPFILTERS ( 'Variance'[basis] = _Reporting )
+			    )
 		formatString: #,0.0,,;(#,0.0,,);"–"
 		lineageTag: 9b50478a-0282-5f61-864d-caa804814477
 		displayFolder: 03 Variance
 
-	/// Base less comparator in dollars, precomputed upstream so the sign convention cannot differ
-	/// between two reporting tools.
+	/// Base less comparator in dollars, on the selected period basis. Precomputed upstream so the
+	/// sign convention cannot differ between two reporting tools. Month, year to date and full year
+	/// are three governed columns, so switching basis changes which column is read and never how
+	/// the variance is computed.
 	measure 'Variance' =
-			SUM ( 'Variance'[var_ytd_usd] )
+			VAR _Basis = SELECTEDVALUE ( 'Period Basis'[basis_code], "YTD" )
+			VAR _Reporting = SELECTEDVALUE ( 'Reporting Basis'[basis], "STATUTORY" )
+			RETURN
+			    CALCULATE (
+			        SWITCH (
+			            _Basis,
+			            "MTD", SUM ( 'Variance'[var_mtd_usd] ),
+			            "FY", SUM ( 'Variance'[var_fy_usd] ),
+			            SUM ( 'Variance'[var_ytd_usd] )
+			        ),
+			        KEEPFILTERS ( 'Variance'[basis] = _Reporting )
+			    )
 		formatString: #,0.0,,;(#,0.0,,);"–"
 		lineageTag: 35579685-eb0d-5927-b70c-43674d30fe9e
 		displayFolder: 03 Variance
 
-	/// Variance over the absolute comparator, so a percentage against a negative base still reads
-	/// in the same direction as the dollars.
+	/// Variance as a percentage. On a single statement line it reads the **stored** percentage from
+	/// the mart, so Power BI and Excel cannot disagree about it. Across several lines a stored
+	/// percentage cannot be summed, so it recomputes over the absolute comparator -- absolute, so a
+	/// percentage against a negative base still reads in the same direction as the dollars.
 	measure 'Variance %' =
-			DIVIDE ( [Variance], ABS ( [Variance Comparator] ) )
+			VAR _Basis = SELECTEDVALUE ( 'Period Basis'[basis_code], "YTD" )
+			VAR _Stored =
+			    SWITCH (
+			        _Basis,
+			        "MTD", SUM ( 'Variance'[var_mtd_pct] ),
+			        "FY", SUM ( 'Variance'[var_fy_pct] ),
+			        SUM ( 'Variance'[var_ytd_pct] )
+			    )
+			RETURN
+			    IF (
+			        HASONEVALUE ( 'Measure Line'[measure_code] ),
+			        _Stored,
+			        DIVIDE ( [Variance], ABS ( [Variance Comparator] ) )
+			    )
 		formatString: 0.0%;(0.0%);"–"
 		lineageTag: bf883bd6-e224-5562-be6a-561892e4c1ea
 		displayFolder: 03 Variance
@@ -449,7 +656,11 @@ table Measures
 	/// level and carry no consolidation entries, so a plan comparison is comparable down to EBIT
 	/// and is not below it. The flag is set upstream.
 	measure 'Variance Is Comparable' =
-			IF ( MIN ( 'Variance'[is_comparable] ) = 1, "Yes", "Not comparable" )
+			IF (
+			    COUNTROWS ( FILTER ( 'Variance', NOT 'Variance'[is_comparable] ) ) = 0,
+			    "Yes",
+			    "Not comparable"
+			)
 		lineageTag: 2f7b307b-02b2-5e64-87ef-a3ff5b37d4df
 		displayFolder: 03 Variance
 
@@ -530,7 +741,8 @@ table Measures
 		lineageTag: 1aea23de-1ada-5dc1-9cd1-156c048e14cd
 		displayFolder: 04 Balance sheet
 
-	/// Trade payables, positive.
+	/// Trade and other payables at the latest period in context, from the governed balance sheet
+	/// caption and shown positive. Statutory basis, Actual only.
 	measure 'Accounts Payable' =
 			-CALCULATE (
 			    SUM ( 'Balance Sheet'[balance_usd] ),
@@ -553,7 +765,8 @@ table Measures
 		lineageTag: 8367f233-1523-5bf3-9f1b-83b8a18794b6
 		displayFolder: 04 Balance sheet
 
-	/// Owned fixed assets, net.
+	/// Owned property, plant and equipment at net book value -- cost less accumulated depreciation,
+	/// both settled upstream. Statutory basis, Actual only.
 	measure 'Property Plant and Equipment' =
 			CALCULATE (
 			    SUM ( 'Balance Sheet'[balance_usd] ),
@@ -602,9 +815,14 @@ table Measures
 		lineageTag: 7d57b0e9-5306-543f-b689-a2cf37f4edfd
 		displayFolder: 04 Balance sheet
 
-	/// The equity reserve arising because assets and liabilities translate at closing rates while
-	/// equity translates at historical rates. **Not the foreign exchange effect on cash**, which is
-	/// an operating item on the cash flow.
+	/// **Definition** the equity reserve arising because assets and liabilities translate at
+	/// closing rates while equity translates at historical rates. Derived upstream as a residual of
+	/// the translation itself and **never plugged** (ADR-0017). **Not the foreign exchange effect
+	/// on cash**, which is a cash-flow item with a different value and a different cause; the two
+	/// are separate measures here for that reason. **Source** `mart_balance_sheet`, caption
+	/// 'Cumulative translation adjustment', class EQUITY, at the latest period in context.
+	/// **Basis** statutory. **Scenario** Actual only. **Blank policy** blank when the caption has
+	/// no row.
 	measure 'Cumulative Translation Adjustment' =
 			-CALCULATE (
 			    SUM ( 'Balance Sheet'[balance_usd] ),
@@ -616,7 +834,15 @@ table Measures
 		lineageTag: 5a8ff180-f4fe-5875-980f-740809a3402a
 		displayFolder: 04 Balance sheet
 
-	/// The minority's share of net assets, a separate component of equity.
+	/// **Definition** the minority's share of consolidated net assets, a separate component of
+	/// equity, attributed by the Phase 4 NCI engine and never derived here. **Source**
+	/// `mart_balance_sheet`, caption 'Non-controlling interests', class EQUITY, at the latest
+	/// period in context; sign-flipped for presentation because equity is stored credit-negative.
+	/// **Basis** statutory and management are identical for NCI -- layer 4 carries no minority
+	/// attribution. **Scenario** balance sheet is published on Actual only; a plan selection
+	/// returns nothing rather than a plan balance sheet that was never built. **Blank policy**
+	/// blank when the caption has no row, never zero: a period with no balance sheet is not a
+	/// period with no minority interest.
 	measure 'Non-controlling Interest Equity' =
 			-CALCULATE (
 			    SUM ( 'Balance Sheet'[balance_usd] ),
@@ -635,14 +861,16 @@ table Measures
 		lineageTag: 623f32dc-5525-5055-8db4-e31d3bf78ea4
 		displayFolder: 05 Cash flow
 
-	/// Investing cash flow.
+	/// Cash used in investing for the period, principally capital expenditure. Classified upstream
+	/// by each account's cash flow category, never by a rule written here.
 	measure 'Investing Cash Flow' =
 			SUM ( 'Cash Flow'[investing_cash_flow_usd] )
 		formatString: #,0.0,,;(#,0.0,,);"–"
 		lineageTag: 98c87ee0-2dd2-5bb0-8c30-7c6900a46e7b
 		displayFolder: 05 Cash flow
 
-	/// Financing cash flow.
+	/// Cash from financing for the period: debt drawn and repaid, and interest paid. Classified
+	/// upstream by each account's cash flow category.
 	measure 'Financing Cash Flow' =
 			SUM ( 'Cash Flow'[financing_cash_flow_usd] )
 		formatString: #,0.0,,;(#,0.0,,);"–"
@@ -676,8 +904,13 @@ table Measures
 		lineageTag: 34bd7760-3e09-547d-a0c4-8073329463f6
 		displayFolder: 05 Cash flow
 
-	/// Cash at the end of the selected range. Ties to the balance sheet's cash caption at 0.00 in
-	/// every period.
+	/// **Definition** cash and equivalents at the end of the selected range. **Source**
+	/// `mart_cash_flow.closing_cash_usd` at the latest period in context -- taken from the cash
+	/// flow rather than re-derived, so the statement that explains the movement and the balance it
+	/// moves to cannot disagree. **Basis** statutory; the cash position is not a
+	/// management-adjusted figure. **Scenario** Actual only. **Blank policy** blank outside the
+	/// published range. `P6-XAR` reconciles it to the balance sheet cash caption and to the Excel
+	/// cash sheet, both to 0.00.
 	measure 'Closing Cash' =
 			CALCULATE (
 			    SUM ( 'Cash Flow'[closing_cash_usd] ),
@@ -726,7 +959,14 @@ table Measures
 		lineageTag: 57789a1f-30d6-5d18-ab63-4d10b8d67452
 		displayFolder: 06 Debt and covenants
 
-	/// Covenant debt less unrestricted cash (CA-019). There is no cash netting cap (CA-020).
+	/// **Definition** covenant debt less unrestricted cash, per credit agreement CA-019. There is
+	/// no cash-netting cap (CA-020), so the full cash balance nets. This is **not** the balance
+	/// sheet's net debt: covenant debt counts only the instruments the agreement counts, and
+	/// `Economic Leverage` is the measure that uses the wider definition. **Source**
+	/// `mart_covenants.net_debt_usd` at the latest period in context, computed upstream from the
+	/// debt schedule's covenant flag. **Basis** the covenant basis, which is neither statutory nor
+	/// management -- it is the agreement's. **Scenario** Actual only; the covenant is tested on
+	/// reported results. **Blank policy** blank before the first measurable period, never zero.
 	measure 'Covenant Net Debt' =
 			CALCULATE (
 			    SUM ( 'Covenants'[net_debt_usd] ),
@@ -736,11 +976,15 @@ table Measures
 		lineageTag: c94ba204-6210-58e3-b749-5b49f43085fb
 		displayFolder: 06 Debt and covenants
 
-	/// EBITDA on the **credit agreement's** definition, over a rolling twelve months: the permitted
-	/// add-backs (CA-021 to CA-025), the sponsor fee capped at USD 1.5m (CA-027) and unrealised
-	/// foreign exchange (CA-030). **Its own lineage, not Management Adjusted EBITDA** — the two are
-	/// equal in this baseline only because the cap does not bite and the foreign exchange add-back
-	/// has no population.
+	/// **Definition** EBITDA as the **credit agreement** defines it, on a rolling twelve months. A
+	/// third definition, not an alias of Adjusted EBITDA: the agreement caps the sponsor fee and
+	/// adds back an FX item management reporting does not, so the two differ by construction even
+	/// where they happen to sit close together. **Source** `mart_covenants.covenant_ebitda_usd`,
+	/// where the bridge from statutory EBITDA is built and evidenced. **Basis** the agreement's,
+	/// which is neither statutory nor management. **Scenario** Actual only -- a covenant is tested
+	/// on reported results. **Blank policy** blank before twelve months of history exist, because a
+	/// rolling twelve-month figure taken over eight months is not a smaller number, it is a
+	/// different measure.
 	measure 'Covenant EBITDA' =
 			CALCULATE (
 			    SUM ( 'Covenants'[covenant_ebitda_usd] ),
@@ -750,9 +994,14 @@ table Measures
 		lineageTag: aca0f552-412c-5fb6-8aaa-7b4e2181e5aa
 		displayFolder: 06 Debt and covenants
 
-	/// Covenant net debt over twelve months of covenant EBITDA. Using a fiscal-year EBITDA for a
-	/// year in progress divides a full net debt balance by a part-year result and reports a breach
-	/// that does not exist.
+	/// **Definition** covenant net debt over **rolling twelve-month** covenant EBITDA. The rolling
+	/// window is the whole point: dividing a full net debt balance by a part-year EBITDA reports a
+	/// breach that does not exist, which is exactly what the Phase 5 visual review caught at 7.38x
+	/// against a 4.50x limit. **Source** `[Covenant Net Debt]` over `[Covenant EBITDA]`, both from
+	/// `mart_covenants`, both computed upstream. **Basis** the agreement's. **Scenario** Actual
+	/// only. **Blank policy** blank when either input is blank -- a leverage ratio with no EBITDA
+	/// is not zero turns, it is unmeasurable. Read it with `[Covenant Status]`, which reports
+	/// **Indicative** on any date the agreement does not test.
 	measure 'Covenant Net Leverage' =
 			DIVIDE ( [Covenant Net Debt], [Covenant EBITDA] )
 		formatString: 0.00"x";(0.00"x");"–"
@@ -880,17 +1129,66 @@ table Measures
 	/// Capital spend, blank after the reporting close on the same rule as every other Actual
 	/// measure.
 	measure 'Actual CapEx' =
+			VAR _Scenarios = VALUES ( 'Scenario'[scenario_code] )
+			VAR _ActualOnly =
+			    COUNTROWS ( _Scenarios ) = 1 && MAXX ( _Scenarios, 'Scenario'[scenario_code] ) = "ACT"
 			VAR _Latest = MAX ( 'Date'[period_key] )
-			RETURN IF ( _Latest > [Reporting Period Key], BLANK (), SUM ( 'CapEx'[spend_usd] ) )
+			VAR _PastClose = _ActualOnly && _Latest > [Reporting Period Key]
+			RETURN IF ( _PastClose, BLANK (), SUM ( 'CapEx'[spend_usd] ) )
 		formatString: #,0.0,,;(#,0.0,,);"–"
 		lineageTag: 60225886-de21-5747-8c44-b7ba1ee31885
 		displayFolder: 08 Capital expenditure
 
-	/// The approved budget for the projects in scope.
+	/// The amount approved for the projects in scope. **This is the capital plan.** The capex
+	/// subledger carries no scenario dimension -- there is no separate budget or forecast version
+	/// of capital spend anywhere upstream -- so the approved amount on the project is the plan a
+	/// variance is measured against, and no Budget CapEx or Forecast CapEx measure is offered.
+	/// Inventing one would mean inventing the data behind it.
 	measure 'Approved CapEx' =
 			SUM ( 'CapEx'[approved_usd] )
 		formatString: #,0.0,,;(#,0.0,,);"–"
 		lineageTag: d47bfa42-ea39-52ed-88bd-f1851222e37a
+		displayFolder: 08 Capital expenditure
+
+	/// Spend less approved. **Positive is over-approval, and over-approval is unfavourable** —
+	/// capital spend follows the same account-aware favourability rule as operating expense, and
+	/// colouring a positive variance green here would say the opposite of what it means.
+	measure 'CapEx Variance' =
+			[Actual CapEx] - [Approved CapEx]
+		formatString: #,0.0,,;(#,0.0,,);"–"
+		lineageTag: 084afa35-9bb2-504e-a36d-d3d852c34ccf
+		displayFolder: 08 Capital expenditure
+
+	/// Spend against approval as a percentage of the approved amount.
+	measure 'CapEx Variance %' =
+			DIVIDE ( [CapEx Variance], ABS ( [Approved CapEx] ) )
+		formatString: 0.0%;(0.0%);"–"
+		lineageTag: afd581b2-909a-50bc-a2ea-ce1fc9d55d0b
+		displayFolder: 08 Capital expenditure
+
+	/// Favourable when spend is inside approval. Stated explicitly rather than inherited from the
+	/// statement favourability rule, because CapEx does not sit on the income statement and has no
+	/// Measure Line row to take a direction from.
+	measure 'CapEx Variance Favourability' =
+			VAR _Var = [CapEx Variance]
+			RETURN
+			    SWITCH (
+			        TRUE (),
+			        ISBLANK ( _Var ), BLANK (),
+			        _Var > 0, "Unfavourable",
+			        _Var < 0, "Favourable",
+			        "Neutral"
+			    )
+		lineageTag: 584bea7e-7e94-50e3-b455-500edf16fbc7
+		displayFolder: 08 Capital expenditure
+
+	/// How many capital projects are in scope. A distinct count on the **corrected** business key
+	/// (ADR-0026): before the correction this counted 395 against 1,846 real projects, because five
+	/// programmes in an entity-month shared one identifier.
+	measure 'Capital Projects' =
+			DISTINCTCOUNT ( 'CapEx'[project_id] )
+		formatString: #,0
+		lineageTag: 861ac219-3b46-549c-87d2-b34cd7e9578b
 		displayFolder: 08 Capital expenditure
 
 	/// Capital spend as a multiple of the depreciation charge — the usual test of whether an asset

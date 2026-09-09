@@ -1,4 +1,4 @@
-/// Headcount movement and personnel cost.
+/// Headcount movement and personnel cost, by entity, department and job family.
 table 'Headcount'
 	lineageTag: 2bf31ad8-5495-5201-b1f3-2c3604fd0d7f
 
@@ -92,6 +92,7 @@ table 'Headcount'
 
 	column job_family_code
 		dataType: string
+		isHidden
 		lineageTag: 9b93d88c-9f84-5b13-b1a5-f22ea3f69f47
 		summarizeBy: none
 		sourceColumn: job_family_code

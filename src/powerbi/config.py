@@ -97,9 +97,39 @@ SEMANTIC_DIMENSIONS: tuple[tuple[str, str], ...] = (
                CAST(maturity_date AS DATE) AS maturity_date,
                counts_toward_covenant_debt
         FROM mart_debt ORDER BY instrument_type, instrument_id"""),
+    # The corrected capital-project key (ADR-0026). 1,846 projects, 1,846 identifiers -- the
+    # dimension is only expressible at all because the key was fixed at the generator; before
+    # that these five columns yielded 1,846 rows for 395 identifiers and no unique key existed.
+    # Asset class stays an attribute here rather than becoming a dimension of its own: it is a
+    # property of the project, and a second table for it would be the same business concept
+    # twice.
     ("dim_semantic_project", """
-        SELECT DISTINCT project_id, project_name, asset_class, entity_code, bu_code
+        SELECT DISTINCT project_id, project_name, asset_class, entity_code, bu_code,
+               period_key AS approved_period, fiscal_year AS approved_fiscal_year
         FROM mart_capex ORDER BY project_id"""),
+    # The one workforce attribute with no other home. Department reaches Headcount through
+    # Cost Centre already, so a Department dimension would create a second path to the same
+    # concept; job family exists only on the headcount fact.
+    # The codes are abbreviations, so the names are stated rather than derived: a generic
+    # transform turns ENGR into "Engr", which is not a word anyone wants on a report.
+    ("dim_semantic_job_family", """
+        SELECT DISTINCT job_family_code,
+               CASE job_family_code
+                   WHEN 'ADMIN'  THEN 'Administration'
+                   WHEN 'ENGR'   THEN 'Engineering'
+                   WHEN 'EXEC'   THEN 'Executive'
+                   WHEN 'FIELD'  THEN 'Field service'
+                   WHEN 'FIN'    THEN 'Finance'
+                   WHEN 'HR'     THEN 'Human resources'
+                   WHEN 'IT'     THEN 'Information technology'
+                   WHEN 'PROD'   THEN 'Production'
+                   WHEN 'PROJ'   THEN 'Project management'
+                   WHEN 'QUAL'   THEN 'Quality'
+                   WHEN 'SALES'  THEN 'Sales'
+                   WHEN 'SUPPLY' THEN 'Supply chain'
+                   ELSE job_family_code
+               END AS job_family_name
+        FROM mart_headcount ORDER BY job_family_code"""),
 )
 
 #: Every table the model loads. `source` is the Parquet stem, `folder` says which published
@@ -121,7 +151,10 @@ TABLES: tuple[dict, ...] = (
     dict(name="Business Unit", source="dim_semantic_business_unit", folder="semantic",
          kind="dimension", key=("bu_code",), sort={"bu_name": "sort_order"},
          hide=("sort_order",),
-         description="The five reportable segments."),
+         description="The five reportable segments. Facts reach it through Entity rather than "
+                     "directly -- an entity belongs to exactly one unit, so the segment view "
+                     "is the entity view rolled up, and a second path would make every "
+                     "segment total ambiguous."),
     dict(name="Account", source="dim_semantic_account", folder="semantic", kind="dimension",
          key=("group_account",), sort={"fs_caption_l2": "sort_order"}, hide=("sort_order",),
          description="The group chart of accounts, with the statement, the caption and the "
@@ -144,9 +177,19 @@ TABLES: tuple[dict, ...] = (
          kind="dimension", key=("currency_code",), sort={}, hide=(),
          description="Transaction and functional currencies. The presentation currency is USD."),
     dict(name="Scenario", source="dim_report_scenario", folder="marts", kind="dimension",
-         key=("version_code",), sort={"version_name": "sort_order"}, hide=("sort_order",),
-         description="Scenario and version in one dimension, keyed by version. Reserved "
-                     "scenarios are absent by construction -- the mart never publishes them."),
+         key=("version_code",),
+         sort={"version_name": "sort_order", "scenario_name": "sort_order"},
+         hide=("sort_order", "derived_from_scenario_code"),
+         hierarchies={"Scenario and version": ("scenario_name", "version_name")},
+         description="Scenario and version in ONE dimension, keyed by version, with a "
+                     "Scenario -> Version hierarchy. A version belongs to exactly one "
+                     "scenario, so these are two levels of one thing rather than two "
+                     "dimensions; splitting them would snowflake the model and give a fact "
+                     "two paths to the same concept. Every version the master governs is "
+                     "here, including PY_DERIVED -- the derived version for Prior Year "
+                     "(ADR-0027). Reserved scenarios are absent by construction: the mart "
+                     "never publishes them, so Downside cannot be selected into an empty "
+                     "report that looks like a real one."),
     dict(name="Measure Line", source="dim_report_measure", folder="marts", kind="dimension",
          key=("measure_code",), sort={"measure_name": "sort_order"}, hide=("sort_order",),
          description="The income statement line hierarchy, in presentation order, with the "
@@ -155,13 +198,27 @@ TABLES: tuple[dict, ...] = (
     dict(name="Comparison", source="dim_report_comparison", folder="marts", kind="dimension",
          key=("comparison_code",), sort={"comparison_name": "sort_order"},
          hide=("sort_order",),
-         description="The four approved comparisons."),
+         description="The four approved comparisons: Actual vs Budget, Actual vs Forecast, "
+                     "Forecast vs Budget and Actual vs Prior Year. Each names its base and "
+                     "comparator versions upstream, so a report selects a comparison rather "
+                     "than assembling one."),
+    dict(name="Job Family", source="dim_semantic_job_family", folder="semantic",
+         kind="dimension", key=("job_family_code",), sort={}, hide=(),
+         description="The twelve job families. Department is deliberately NOT a dimension of "
+                     "its own: Headcount reaches it through Cost Centre, and a direct "
+                     "relationship as well would give one business concept two filter paths."),
     dict(name="Debt Instrument", source="dim_semantic_instrument", folder="semantic",
          kind="dimension", key=("instrument_id",), sort={}, hide=(),
          description="Debt instruments, with the covenant flag the net debt definition uses."),
     dict(name="Capital Project", source="dim_semantic_project", folder="semantic",
-         kind="dimension", key=("project_id",), sort={}, hide=(),
-         description="Capital projects and their asset class."),
+         kind="dimension", key=("project_id",), sort={},
+         hide=("approved_period",),
+         hierarchies={"Project by class": ("asset_class", "project_name", "project_id")},
+         description="One row per capital project: 1,846 projects, 1,846 identifiers. The key "
+                     "is the corrected business key CP-{entity}-{period}-{asset_class}-{seq} "
+                     "(ADR-0026) and no surrogate is introduced to stand in for it -- a "
+                     "surrogate here would hide the very thing the correction fixed. Asset "
+                     "class is an attribute, not a separate dimension."),
 
     # ---------------------------------------------------------------- facts
     dict(name="Financials", source="mart_financial_ytd", folder="marts", kind="fact",
@@ -183,8 +240,25 @@ TABLES: tuple[dict, ...] = (
          hide=("basis", "version_code", "scenario_code", "entity_code", "bu_code",
                "cost_center_code", "cost_centre_key", "group_account", "period_key",
                "fiscal_year", "accounting_period", "fiscal_quarter", "line"),
+         calculated={
+             "cost_centre_key":
+                 "'Financial Detail'[entity_code] & \"|\" & "
+                 "'Financial Detail'[cost_center_code]",
+         },
+         # The same composite in SQL, so a control can test that it resolves against the
+         # dimension. A calculated column exists only inside the model, and a control that
+         # cannot see it cannot prove the relationship built on it is sound.
+         calculated_sql={
+             "cost_centre_key": "entity_code || '|' || cost_center_code",
+         },
          description="Account grain, for drill-down from any measure to the accounts behind "
-                     "it. The measure layer reads Financials, not this."),
+                     "it. The measure layer reads Financials, not this.\n\n"
+                     "Carries the model's ONLY calculated column. A cost centre is identified "
+                     "by entity and code together -- codes are reused across entities -- and "
+                     "Power BI relates on a single column, so the composite has to be formed "
+                     "somewhere. It is formed here rather than added to the frozen Phase 5 "
+                     "mart, and it is mechanical concatenation of two governed keys with no "
+                     "business logic in it."),
     dict(name="Variance", source="mart_variance", folder="marts", kind="fact",
          key=("comparison_code", "basis", "entity_code", "bu_code", "measure_code",
               "period_key"),
@@ -198,9 +272,19 @@ TABLES: tuple[dict, ...] = (
                      "variance and favourability. The model reads these rather than deriving "
                      "a comparison in DAX."),
     dict(name="Balance Sheet", source="mart_balance_sheet", folder="marts", kind="fact",
-         key=("caption", "account_class", "period_key"), sort={},
+         key=("caption", "account_class", "period_key"),
+         sort={"caption": "sort_order"},
          hide=("period_key", "fiscal_year", "sort_order"),
-         description="The consolidated balance sheet by caption and account class."),
+         # The balance sheet's key is the caption and its class, and those are exactly what a
+         # reader slices by -- unlike a surrogate or a period key, they are the business
+         # meaning rather than the plumbing. Declared visible on purpose so `P6-SEM-12` can
+         # still fail a technical key left exposed anywhere else.
+         visible_key=("caption", "account_class"),
+         hierarchies={"Balance sheet": ("account_class", "caption")},
+         description="The consolidated balance sheet by caption and account class, in the "
+                     "approved presentation order. The caption sorts by sort_order, never "
+                     "alphabetically: a balance sheet in alphabetical order is not a balance "
+                     "sheet."),
     dict(name="Cash Flow", source="mart_cash_flow", folder="marts", kind="fact",
          key=("period_key",), sort={},
          hide=("period_key", "fiscal_year", "accounting_period"),
@@ -218,12 +302,16 @@ TABLES: tuple[dict, ...] = (
                "instrument_type", "borrower_entity", "currency_code", "rate_type",
                "is_hedged", "maturity_date", "interest_rate_basis",
                "counts_toward_covenant_debt", "covenant_reference"),
-         description="Debt by instrument and month."),
+         description="Debt by instrument and month: opening and closing principal, "
+                     "drawings, repayments, interest and commitment fees. Carries the "
+                     "agreement's covenant flag, which is what separates covenant debt from "
+                     "the balance sheet's wider borrowings."),
     dict(name="Headcount", source="mart_headcount", folder="marts", kind="fact",
          key=("entity_code", "department_code", "job_family_code", "period_key"), sort={},
          hide=("period_key", "fiscal_year", "entity_code", "entity_name", "bu_code",
-               "country_code", "functional_currency", "department_code", "cost_centre_key"),
-         description="Headcount movement and personnel cost."),
+               "country_code", "functional_currency", "department_code", "job_family_code"),
+         description="Headcount movement and personnel cost, by entity, department and job "
+                     "family."),
     dict(name="CapEx", source="mart_capex", folder="marts", kind="fact",
          key=("project_id", "period_key"), sort={},
          hide=("period_key", "fiscal_year", "project_id", "project_name", "asset_class",
@@ -272,10 +360,14 @@ RELATIONSHIPS: tuple[tuple[str, str, str, str], ...] = (
     ("Debt", "instrument_id", "Debt Instrument", "instrument_id"),
     ("Headcount", "period_key", "Date", "period_key"),
     ("Headcount", "entity_code", "Entity", "entity_code"),
-    ("Headcount", "cost_centre_key", "Cost Centre", "cost_centre_key"),
+    # No Headcount -> Cost Centre relationship. `mart_headcount` carries department but no
+    # cost centre at all, so the join the WIP declared could never have resolved; the real
+    # engine refused it on deployment. Workforce reaches its organisational context through
+    # Entity and Job Family, and department is an attribute on the headcount rows themselves.
     ("CapEx", "period_key", "Date", "period_key"),
     ("CapEx", "entity_code", "Entity", "entity_code"),
     ("CapEx", "project_id", "Capital Project", "project_id"),
+    ("Headcount", "job_family_code", "Job Family", "job_family_code"),
     ("FX", "period_key", "Date", "period_key"),
     ("FX", "currency_code", "Currency", "currency_code"),
     ("Layer Bridge", "layer_id", "Consolidation Layer", "layer_id"),
@@ -288,8 +380,20 @@ INACTIVE_RELATIONSHIPS: tuple[tuple[str, str, str, str, str], ...] = (
      "Financials reaches Business Unit through Entity, so a second direct path would make "
      "every business unit total ambiguous. Entity is the active path because an entity "
      "belongs to exactly one unit."),
-    ("Variance", "bu_code", "Business Unit", "bu_code", "Same shape as Financials."),
-    ("Financial Detail", "bu_code", "Business Unit", "bu_code", "Same shape as Financials."),
-    ("Headcount", "bu_code", "Business Unit", "bu_code", "Same shape as Financials."),
-    ("CapEx", "bu_code", "Business Unit", "bu_code", "Same shape as Financials."),
+    ("Variance", "bu_code", "Business Unit", "bu_code",
+     "Variance carries bu_code for its own grain, but reaches Business Unit through Entity "
+     "like every other fact. Activating this would give a segment variance two filter paths "
+     "and no way to tell which one a visual used."),
+    ("Financial Detail", "bu_code", "Business Unit", "bu_code",
+     "The account-grain fact reaches Business Unit through Entity. A direct path here would "
+     "also make the drill-through from a measure to its accounts ambiguous, because the two "
+     "facts would aggregate segments by different routes."),
+    ("Headcount", "bu_code", "Business Unit", "bu_code",
+     "Headcount reaches Business Unit through Entity. Kept inactive rather than deleted "
+     "because the column is genuinely on the mart and a future report may want USERELATIONSHIP "
+     "for a workforce-only segment view."),
+    ("CapEx", "bu_code", "Business Unit", "bu_code",
+     "Capital spend reaches Business Unit through Entity, so that capex by segment and "
+     "revenue by segment are built the same way and can sit on one page without disagreeing "
+     "about what a segment is."),
 )

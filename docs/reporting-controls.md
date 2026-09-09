@@ -9,6 +9,14 @@ workbook. Together they close the last gap in the chain: the consolidation is pr
 
 ---
 
+## Power BI
+
+Power BI is another reporting artefact and reconciles like one: 49 controls in
+`src/powerbi/controls.py`, of which 19 compare the model's **own DAX, evaluated by the real
+engine**, against SQL over the governed marts, and 8 against the Excel workbook's committed QA
+evidence. Ten fault fixtures prove the suite catches what it claims to. See
+[the Power BI controls](powerbi-controls.md).
+
 ## Scenario and version integrity
 
 The mart controls prove the reporting numbers. They do not prove that the *versions* those

@@ -68,6 +68,22 @@ to the cent and binary floating point cannot represent `0.01`. A tolerance of $1
 $465m balance sheet is a design choice about materiality; a tolerance forced by float
 representation error is a defect.
 
+## 2a. The semantic layer
+
+Power BI reads the governed marts and twelve conformed semantic dimensions
+(`data/35_semantic/`), and restates no accounting definition. Three contracts govern it:
+
+* **A dimension key is unique or the dimension does not exist.** `Capital Project` could not be
+  built at all until `project_id` was corrected (ADR-0026), and no surrogate was introduced to
+  work around it -- one would have hidden the defect.
+* **Every version code resolves.** A fact row that falls to a blank member is a row nobody can
+  see, which is what `PY_DERIVED` would have been before ADR-0027.
+* **Both reporting bases are published as rows, so every measure must state which one it
+  reads.** A measure that does not sums both and reports exactly twice the truth.
+
+All twelve semantic dimensions are declared in `src/integrity/registry.py` and proved on every
+build. See [the semantic model](powerbi-semantic-model.md).
+
 ## 3. Dimensions
 
 ### `dim_date`

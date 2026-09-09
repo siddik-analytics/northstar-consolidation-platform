@@ -1,5 +1,10 @@
-/// Scenario and version in one dimension, keyed by version. Reserved scenarios are absent by
-/// construction -- the mart never publishes them.
+/// Scenario and version in ONE dimension, keyed by version, with a Scenario -> Version
+/// hierarchy. A version belongs to exactly one scenario, so these are two levels of one thing
+/// rather than two dimensions; splitting them would snowflake the model and give a fact two
+/// paths to the same concept. Every version the master governs is here, including PY_DERIVED --
+/// the derived version for Prior Year (ADR-0027). Reserved scenarios are absent by
+/// construction: the mart never publishes them, so Downside cannot be selected into an empty
+/// report that looks like a real one.
 table 'Scenario'
 	lineageTag: bbe1d3b2-a616-57bc-b8b0-360f46c6127b
 
@@ -25,6 +30,7 @@ table 'Scenario'
 		lineageTag: 1c495c1e-471b-5815-b6c3-7f03d3cdae67
 		summarizeBy: none
 		sourceColumn: scenario_name
+		sortByColumn: sort_order
 
 		annotation SummarizationSetBy = Automatic
 
@@ -34,6 +40,23 @@ table 'Scenario'
 		summarizeBy: none
 		sourceColumn: version_name
 		sortByColumn: sort_order
+
+		annotation SummarizationSetBy = Automatic
+
+	column version_type
+		dataType: string
+		lineageTag: 187d99f8-3c6f-51dd-848e-581c8682c72e
+		summarizeBy: none
+		sourceColumn: version_type
+
+		annotation SummarizationSetBy = Automatic
+
+	column derived_from_scenario_code
+		dataType: string
+		isHidden
+		lineageTag: 9ba0cd61-69a5-5b07-b413-c410d8598755
+		summarizeBy: none
+		sourceColumn: derived_from_scenario_code
 
 		annotation SummarizationSetBy = Automatic
 
@@ -110,6 +133,17 @@ table 'Scenario'
 		sourceColumn: description
 
 		annotation SummarizationSetBy = Automatic
+
+	hierarchy 'Scenario and version'
+		lineageTag: 4f52b446-4571-5fe6-b471-c39a05d96b51
+
+		level 'Scenario name'
+			lineageTag: f9409a3b-deca-53d4-9561-76e7e0409575
+			column: scenario_name
+
+		level 'Version name'
+			lineageTag: 85a85056-151a-55c1-a6ea-0a5d5643c069
+			column: version_name
 
 	partition 'Scenario' = m
 		mode: import

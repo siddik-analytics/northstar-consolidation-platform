@@ -6,7 +6,7 @@ model Model
 		legacyRedirects
 		returnErrorValuesAsNull
 
-	annotation PBI_QueryOrder = ["Date", "Entity", "Business Unit", "Account", "Cost Centre", "Consolidation Layer", "Reporting Basis", "Currency", "Scenario", "Measure Line", "Comparison", "Debt Instrument", "Capital Project", "Financials", "Financial Detail", "Variance", "Balance Sheet", "Cash Flow", "Working Capital", "Covenants", "Debt", "Headcount", "CapEx", "FX", "Layer Bridge", "Period Basis", "Measures"]
+	annotation PBI_QueryOrder = ["Date", "Entity", "Business Unit", "Account", "Cost Centre", "Consolidation Layer", "Reporting Basis", "Currency", "Scenario", "Measure Line", "Comparison", "Job Family", "Debt Instrument", "Capital Project", "Financials", "Financial Detail", "Variance", "Balance Sheet", "Cash Flow", "Working Capital", "Covenants", "Debt", "Headcount", "CapEx", "FX", "Layer Bridge", "Period Basis", "Measures"]
 
 	annotation PBI_ProTooling = ["DevMode"]
 
@@ -22,6 +22,7 @@ ref table 'Currency'
 ref table 'Scenario'
 ref table 'Measure Line'
 ref table 'Comparison'
+ref table 'Job Family'
 ref table 'Debt Instrument'
 ref table 'Capital Project'
 ref table 'Financials'

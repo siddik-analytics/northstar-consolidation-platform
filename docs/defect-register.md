@@ -16,7 +16,41 @@ each one says about the design rather than for what happened.
 
 ## Open
 
-*None.*
+| id | found in | what it is | why it is still open |
+|---|---|---|---|
+| **P6-D-02** | Phase 6A | **The build ids are checkout-dependent.** `build_id()` hashes the raw bytes of its declared inputs, so a build id changes when git rewrites a line ending — the same commit, cloned twice, can report a rebuild as non-reproducible when nothing about it changed | the fix is one line per module (normalise line endings before hashing), but it **changes the Phase 3, 4 and 5 build ids** in committed manifests and on the workbook cover. That is a metadata change to approved baselines, and Phase 6A was told not to make one. Needs an owner decision |
+
+### P6-D-02 in detail
+
+Exposed by rebasing the Phase 6A branch, which re-checked-out several declared build inputs and
+changed their line endings. Content was byte-identical throughout; only the encoding moved, and
+the ids moved with it.
+
+The form that reproduces each committed id turns out to be a **per-file mixture** — some inputs
+CRLF, some LF — which is the clearest possible demonstration of the problem: the ids depend on
+the accident of which files were last authored on Windows rather than on what the inputs say.
+
+```
+phase03 reproduces with  build_digest.txt=CRLF, mapping_rules.csv=CRLF, group_coa.csv=CRLF,
+                         source_coa_aurora.csv=CRLF, source_coa_sable.csv=CRLF,
+                         source_coa_kestrel.csv=LF, entity_master.csv=LF
+phase04 reproduces with  build_digest.txt=CRLF, phase03_manifest.json=CRLF,
+                         investment_register.csv=CRLF, the rest LF
+```
+
+The working tree was restored to those forms so the approved baseline verifies and all 510
+tests pass. **That restoration is local.** A fresh clone on any platform will produce different
+line endings and the two reproducibility tests will fail, while every financial value stays
+identical — so the claim "the build is reproducible" is currently weaker than
+`docs/reproducibility.md` states.
+
+**Recommended fix**, when the owner is willing to move the ids: normalise line endings inside
+`build_id()` in `src/pipeline/run.py`, `src/consol/run.py`, `src/marts/run.py`,
+`src/excel/build.py` and `src/powerbi/run.py`, regenerate the manifests, and rebaseline. A build
+id identifies what went in, and a line ending is not part of what went in. Nothing financial
+moves; `tools/financial_invariance.py` can prove that as it did twice in Phase 5.1.
+
+---
 
 ---
 
@@ -38,6 +72,21 @@ each one says about the design rather than for what happened.
 | **P7-D-01** | Phase 5.1 | `PY_DERIVED` was the version code on 12,516 mart rows and every prior-year comparator, and existed in no version master. Found by the framework built for P6-D-01, on its first run | Phase 5.1, `PY_DERIVED` added as a governed derived version ([ADR-0027](adr/0027-a-derived-version-is-still-a-governed-version.md)) | `P7-VER-01…14`, fixtures `F7-VER-01…09` |
 
 ---
+
+## Found by Phase 6A, and fixed inside it
+
+Three defects were found in the **semantic model itself** by deploying it to a live engine.
+They are not in the table above because they never reached an approved baseline -- they were
+found and fixed within the phase -- but they are the clearest argument in this repository for
+validating a model by running it rather than by reading it.
+
+| what | how it was found |
+|---|---|
+| a relationship on `Financial Detail[cost_centre_key]`, a column that does not exist on the mart; and `Headcount -> Cost Centre`, a join to a dimension that fact has no key for | Analysis Services refused to load the model |
+| **every** statement measure summed both reporting bases and reported exactly twice the truth | `Revenue` came back at 557,961,779.56 against a mart holding 278,980,889.78 |
+| four measures did not parse: a measure reference used as a boolean table filter (three times), and `MIN` over a Boolean column | the engine returned calculation errors |
+
+All three were invisible in the TMDL, which is text, and text always parses.
 
 ## How a defect gets onto this list
 

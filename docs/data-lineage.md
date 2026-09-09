@@ -86,6 +86,17 @@ EBITDA, net income and the movements in total assets and total equity, by layer 
 the artefact that turns *"why is group EBITDA not the sum of the entities' EBITDA?"* from a
 week of work into a single row.
 
+## Into the semantic layer
+
+    marts ──► data/35_semantic/ ──► PBIP / TMDL ──► Analysis Services
+
+Power BI reads the governed marts and twelve conformed semantic dimensions, and nothing else.
+No accounting definition is restated there: the model aggregates governed columns and selects
+between them. The lineage is proved rather than asserted -- `P6-XAR` executes the model's own
+measures against a live engine and reconciles them to SQL over the marts, and `P6-XAR-19` goes
+one step further and recomputes revenue from `vw_statutory_fact` itself. See
+[the semantic model](powerbi-semantic-model.md).
+
 ## For the reporting phases
 
 Excel and Power BI consume `fact_financials` and the `rpt_*` artefacts. The lineage keys they

@@ -1,4 +1,6 @@
-/// The four approved comparisons.
+/// The four approved comparisons: Actual vs Budget, Actual vs Forecast, Forecast vs Budget and
+/// Actual vs Prior Year. Each names its base and comparator versions upstream, so a report
+/// selects a comparison rather than assembling one.
 table 'Comparison'
 	lineageTag: 6f5171ef-c436-5329-9d89-36bdd07b2b95
 

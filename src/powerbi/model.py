@@ -142,6 +142,28 @@ def _table_tmdl(con, spec: dict) -> str:
         lines.append("\t\tannotation SummarizationSetBy = Automatic")
         lines.append("")
 
+    # Hierarchies. A statement is read top to bottom in a fixed order; a hierarchy is how the
+    # model says so, and the sort-by columns above are what stop it coming out alphabetical.
+    for hier_name, levels in spec.get("hierarchies", {}).items():
+        lines.append(f"\thierarchy '{hier_name}'")
+        lines.append(f"\t\tlineageTag: {tag('hierarchy', name, hier_name)}")
+        lines.append("")
+        for level in levels:
+            label = level.replace("_", " ").capitalize()
+            lines.append(f"\t\tlevel '{label}'")
+            lines.append(f"\t\t\tlineageTag: {tag('level', name, hier_name, level)}")
+            lines.append(f"\t\t\tcolumn: {level}")
+            lines.append("")
+
+    # Calculated columns, kept to the minimum the engine forces. See the table description.
+    for column, expression in spec.get("calculated", {}).items():
+        lines.append(f"\tcolumn {column} = {expression}")
+        lines.append("\t\tdataType: string")
+        lines.append("\t\tisHidden")
+        lines.append(f"\t\tlineageTag: {tag('column', name, column)}")
+        lines.append("\t\tsummarizeBy: none")
+        lines.append("")
+
     lines.append(f"\tpartition '{name}' = m")
     lines.append("\t\tmode: import")
     lines.append("\t\tsource =")

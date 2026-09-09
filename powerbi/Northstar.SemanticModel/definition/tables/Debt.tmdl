@@ -1,4 +1,6 @@
-/// Debt by instrument and month.
+/// Debt by instrument and month: opening and closing principal, drawings, repayments, interest
+/// and commitment fees. Carries the agreement's covenant flag, which is what separates covenant
+/// debt from the balance sheet's wider borrowings.
 table 'Debt'
 	lineageTag: f754f8dc-6a6f-57b4-93df-73c5cefe81b2
 

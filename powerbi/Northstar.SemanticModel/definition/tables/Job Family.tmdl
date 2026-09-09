@@ -1,0 +1,32 @@
+/// The twelve job families. Department is deliberately NOT a dimension of its own: Headcount
+/// reaches it through Cost Centre, and a direct relationship as well would give one business
+/// concept two filter paths.
+table 'Job Family'
+	lineageTag: 8097ce19-29b8-51c4-9c46-96d431321023
+
+	column job_family_code
+		dataType: string
+		isKey
+		lineageTag: 60d303f4-d786-5f6a-a44e-6bb00fa60565
+		summarizeBy: none
+		sourceColumn: job_family_code
+
+		annotation SummarizationSetBy = Automatic
+
+	column job_family_name
+		dataType: string
+		lineageTag: c75c7dc8-6025-5d0b-9945-2e740fe711e6
+		summarizeBy: none
+		sourceColumn: job_family_name
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'Job Family' = m
+		mode: import
+		source =
+				let
+				    Source = Parquet.Document(File.Contents(DataFolder & "\35_semantic\dim_semantic_job_family.parquet"))
+				in
+				    Source
+
+	annotation PBI_ResultType = Table

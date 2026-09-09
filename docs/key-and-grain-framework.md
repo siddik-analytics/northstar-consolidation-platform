@@ -34,8 +34,8 @@ Declared("fact_capex_project", "FACT", ("project_id",), FORBIDDEN,
          note="THE P6-D-01 CONTRACT. project_id alone identifies a capital project...")
 ```
 
-**61 keyed objects** are declared — 17 dimensions, 20 references, 9 facts and 15 marts — with
-**39 foreign keys** between them. Every key was established against the real population rather
+**73 keyed objects** are declared — 29 dimensions, 20 references, 9 facts and 15 marts — with
+**44 foreign keys** between them. Every key was established against the real population rather
 than assumed from the column names, and several needed a column the obvious guess omitted,
 which is the same class of mistake P6-D-01 was:
 
@@ -68,13 +68,18 @@ semantics every join in the platform already relies on.
 | family | controls | asserts |
 |---|---|---|
 | `P7-REG` | 4 | the registry is complete, resolves, and its waivers carry reasons |
-| `P7-KEY` | 61 | every declared key is unique over its whole population |
-| `P7-NUL` | 122 | no null in an unpermitted key column, and every permission is declared |
-| `P7-REF` | 39 | every declared foreign key resolves |
+| `P7-KEY` | 73 | every declared key is unique over its whole population |
+| `P7-NUL` | 146 | no null in an unpermitted key column, and every permission is declared |
+| `P7-REF` | 44 | every declared foreign key resolves |
 | `P7-CPX` | 9 | the capital-project chain, end to end |
 | `P7-VER` | 14 | scenario and version governance, including the derived-version policy |
 
-**249 controls, 249 pass, nothing quarantined.**
+**290 controls, 290 pass, nothing quarantined.**
+
+The suite grew from 249 when Phase 6A published twelve conformed semantic dimensions for Power
+BI. `P7-REG-01` failed on all twelve the moment they appeared, which is exactly what it is for:
+a restatement of a dimension is still an object with a key, and Power BI will fan a fact out
+against a duplicated semantic key as readily as against a duplicated warehouse one.
 
 Control ids carry the object name rather than a sequence number — `P7-KEY-mart_capex`, not
 `P7-KEY-12` — so a failure says what broke without a lookup, and inserting a registry entry
