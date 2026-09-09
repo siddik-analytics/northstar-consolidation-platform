@@ -46,6 +46,9 @@ Two properties make the chain usable rather than merely present:
   the same source line.
 * **`consol_journal_id` is derived from business keys**, not from a counter — so a lineage
   reference printed in a report today still resolves after a rebuild tomorrow.
+* **A lineage id identifies content, not a checkout.** Build ids hash canonical text — line endings folded — so the same commit produces the same ids on any platform, while
+  published artefacts keep byte-for-byte digests because they answer a different
+  question ([ADR-0028](adr/0028-lineage-ids-hash-content-artefact-digests-hash-bytes.md)).
 * **Every identifier in the chain is proved unique over its own population**, on every
   build, by `src/integrity/controls.py`. An identifier nobody tests is a naming
   convention: `project_id` was in this table as a key while five capital programmes

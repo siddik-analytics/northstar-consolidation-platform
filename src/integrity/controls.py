@@ -16,6 +16,7 @@ Five families:
 ``P7-REF``  every declared foreign key resolves
 ``P7-CPX``  the capital project chain, end to end, at the grain the business reads
 ``P7-VER``  scenario and version governance, including the derived-version policy
+``P7-RPR``  lineage identifiers identify content, not a checkout
 
 The control ids carry the object name rather than a sequence number, so a failure says what
 broke without a lookup, and inserting a registry entry does not renumber the suite.
@@ -24,6 +25,8 @@ broke without a lookup, and inserting a registry entry does not renumber the sui
 from __future__ import annotations
 
 import csv
+import json
+import pathlib
 import sys
 from pathlib import Path
 
@@ -460,6 +463,112 @@ def _versions(con, r: Result) -> None:
          "an unnamed member becomes a blank in every downstream report")
 
 
+# --------------------------------------------------------------------------- P7-RPR
+def _reproducibility(r: Result) -> None:
+    """
+    Lineage identifiers must identify content, not a checkout.
+
+    P6-D-02: every phase hashed the raw bytes of its declared inputs, so a build id changed
+    when git rewrote a line ending. A rebase demonstrated it -- the ids moved while not one
+    byte of content did, and the form that reproduced each committed id turned out to be a
+    per-file mixture of CRLF and LF.
+
+    A unit test alone would not have caught the *next* phase quietly writing its own hasher,
+    so this runs with the rest of the control suite and iterates the phases rather than a list
+    somebody has to remember to extend.
+    """
+    import tempfile
+
+    from src import lineage
+    from src.lineage.digest import UnknownFileType
+
+    phases = []
+    try:
+        from src.consol.run import BUILD_INPUTS as P4, build_id as id4
+        from src.marts.run import BUILD_INPUTS as P5, build_id as id5
+        from src.pipeline.run import BUILD_INPUTS as P3, build_id as id3
+        from src.powerbi.run import BUILD_INPUTS as P6, build_id as id6
+        phases = [("phase03", P3, id3, "src/pipeline/run.py"),
+                  ("phase04", P4, id4, "src/consol/run.py"),
+                  ("phase05", P5, id5, "src/marts/run.py"),
+                  ("phase06a", P6, id6, "src/powerbi/run.py")]
+    except ImportError as exc:                                   # pragma: no cover
+        r.add("P7-RPR-01", "The phase build ids are importable", "BLOCKING", "FAIL",
+              str(exc), "importable")
+        return
+
+    # ---- equivalent text, three encodings, one id
+    sample = "code,name\n400100,Product revenue\n\n500100,Cost of sales  \n"
+    with tempfile.TemporaryDirectory() as tmp:
+        ids = set()
+        for label, newline in (("lf", "\n"), ("crlf", "\r\n"), ("cr", "\r")):
+            path = pathlib.Path(tmp) / label / "a.csv"
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_bytes(sample.replace("\n", newline).encode("utf-8"))
+            ids.add(lineage.build_id([path]))
+        # and a real content change must still move it
+        changed = pathlib.Path(tmp) / "lf" / "b.csv"
+        changed.write_bytes(sample.replace("400100", "400200").encode("utf-8"))
+        moved = lineage.build_id([changed]) != lineage.build_id(
+            [pathlib.Path(tmp) / "lf" / "a.csv"])
+    r.ok("P7-RPR-01", "LF, CRLF and CR text produce one canonical build id", "BLOCKING",
+         len(ids) == 1 and moved, f"{len(ids)} distinct ids, content change moves it: {moved}",
+         "1 distinct id, True",
+         "the P6-D-02 condition. The second half matters as much as the first: a hash that "
+         "stopped noticing real changes would be a worse defect than the one it replaced")
+
+    # ---- no phase writes its own hasher
+    bypassed = []
+    for name, _inputs, _fn, module in phases:
+        source = (ROOT / module).read_text(encoding="utf-8")
+        start = source.index("def build_id(")
+        end = source.index("\ndef ", start + 1)
+        body = source[start:end]
+        if "lineage.build_id" not in body or "read_bytes" in body:
+            bypassed.append(module)
+    r.ok("P7-RPR-02", "No phase computes a build id outside the shared canonical hasher",
+         "BLOCKING", not bypassed, "; ".join(bypassed) or 0, 0,
+         "four subtly different implementations was the shape of the original defect")
+
+    # ---- every declared input has a declared type
+    undeclared = []
+    for name, inputs, _fn, _module in phases:
+        for path in inputs:
+            try:
+                lineage.is_text(pathlib.Path(path))
+            except UnknownFileType:
+                undeclared.append(f"{name}:{pathlib.Path(path).name}")
+    r.ok("P7-RPR-03", "Every declared build input has a declared text or binary type",
+         "BLOCKING", not undeclared, "; ".join(undeclared) or 0, 0,
+         "guessing whether a file is text is how a build id becomes environment-dependent")
+
+    # ---- the committed manifests reproduce
+    drifted = []
+    for name, _inputs, fn, _module in phases:
+        manifest = ROOT / "data" / f"{name}_manifest.json"
+        if not manifest.exists():
+            continue
+        recorded = json.loads(manifest.read_text(encoding="utf-8")).get("build_id")
+        if recorded != fn():
+            drifted.append(f"{name}: {recorded} vs {fn()}")
+    r.ok("P7-RPR-04", "Every committed manifest reproduces its build id in this working tree",
+         "BLOCKING", not drifted, "; ".join(drifted) or 0, 0,
+         "recomputed from the declared inputs as they stand, so a checkout that changed them "
+         "fails here rather than at the next rebuild")
+
+    # ---- the byte digest is still a byte digest
+    with tempfile.TemporaryDirectory() as tmp:
+        lf = pathlib.Path(tmp) / "a.csv"
+        crlf = pathlib.Path(tmp) / "b.csv"
+        lf.write_bytes(b"x,y\n1,2\n")
+        crlf.write_bytes(b"x,y\r\n1,2\r\n")
+        distinct = lineage.exact_digest(lf) != lineage.exact_digest(crlf)
+    r.ok("P7-RPR-05", "The exact artefact digest still answers byte identity", "BLOCKING",
+         distinct, f"line endings distinguishable: {distinct}", "True",
+         "a build id and an artefact digest answer different questions, and redefining the "
+         "second as the first would destroy the ability to prove a rebuild is byte-identical")
+
+
 def run(con: duckdb.DuckDBPyConnection) -> Result:
     r = Result()
     _registry_completeness(con, r)
@@ -467,6 +576,7 @@ def run(con: duckdb.DuckDBPyConnection) -> Result:
     _references(con, r)
     _capital_projects(con, r)
     _versions(con, r)
+    _reproducibility(r)
     return r
 
 

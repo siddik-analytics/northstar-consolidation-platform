@@ -13,7 +13,7 @@
     "35_semantic/dim_semantic_period_basis.parquet": "4d34e34692c770819a80d54b1e792210f682c9b0550906112fc61d469e64b843",
     "35_semantic/dim_semantic_project.parquet": "4c27014b05d2e5ec82c8a404b682dfa2ba7fb344c28c8e7151d970690f77346f"
   },
-  "build_id": "458ca84c1903b9f0",
+  "build_id": "fc2823eb5a85b42c",
   "controls": {
     "failed": 0,
     "not_executed": 0,
@@ -24,9 +24,9 @@
   "inactive_relationships": 5,
   "measures": 89,
   "phase": "6A",
-  "project_digest": "c04c498f4469329c",
+  "project_digest": "47103ccc440668f4",
   "relationships": 31,
-  "reporting_mart_build_id": "50d85b385b7a2a41",
+  "reporting_mart_build_id": "00d3dd24020f900d",
   "semantic_dimension_rows": {
     "dim_semantic_account": 175,
     "dim_semantic_basis": 2,

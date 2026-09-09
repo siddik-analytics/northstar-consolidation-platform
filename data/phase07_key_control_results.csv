@@ -289,3 +289,8 @@ P7-VER-11,Every Actual month has its prior-year row a year later,BLOCKING,PASS,0
 P7-VER-12,No reserved scenario or version is reportable,BLOCKING,PASS,0,0,a placeholder in configuration must not become reportable by being configured; Downside stays reserved until it is approved and populated
 P7-VER-13,No reserved version carries reporting data,BLOCKING,PASS,0,0,"reserved means unpopulated, and an empty report that looks like a real one is worse than no report"
 P7-VER-14,Every reportable version and scenario is named,BLOCKING,PASS,0,0,an unnamed member becomes a blank in every downstream report
+P7-RPR-01,"LF, CRLF and CR text produce one canonical build id",BLOCKING,PASS,"1 distinct ids, content change moves it: True","1 distinct id, True",the P6-D-02 condition. The second half matters as much as the first: a hash that stopped noticing real changes would be a worse defect than the one it replaced
+P7-RPR-02,No phase computes a build id outside the shared canonical hasher,BLOCKING,PASS,0,0,four subtly different implementations was the shape of the original defect
+P7-RPR-03,Every declared build input has a declared text or binary type,BLOCKING,PASS,0,0,guessing whether a file is text is how a build id becomes environment-dependent
+P7-RPR-04,Every committed manifest reproduces its build id in this working tree,BLOCKING,PASS,0,0,"recomputed from the declared inputs as they stand, so a checkout that changed them fails here rather than at the next rebuild"
+P7-RPR-05,The exact artefact digest still answers byte identity,BLOCKING,PASS,line endings distinguishable: True,True,"a build id and an artefact digest answer different questions, and redefining the second as the first would destroy the ability to prove a rebuild is byte-identical"

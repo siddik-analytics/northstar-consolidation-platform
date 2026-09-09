@@ -1,6 +1,6 @@
 # Architecture lessons
 
-Thirteen defects found across Phases 2 to 6 that a balancing control could not have caught, and
+Fourteen defects found across Phases 2 to 6 that a balancing control could not have caught, and
 the design change each one produced.
 
 They share a shape. Every one of them **balanced**. The trial balance closed, the journal
@@ -311,6 +311,32 @@ again.
 
 ---
 
+## 14. A digest that answered the wrong question
+
+**Symptom.** Rebasing a branch moved every build id in the platform. Not one byte of file
+*content* had changed.
+
+**Root cause.** `build_id()` hashed raw bytes, and git rewrites line endings on checkout. The
+form that reproduced each committed id turned out to be a per-file mixture of CRLF and LF, so
+the ids were identifying which files had last been authored on Windows.
+
+**Why controls miss it.** Every control that could have seen it was measuring money, and no
+money was involved. The reproducibility tests *did* fail — eventually — but only because a
+rebase happened to change the working tree; on any machine where the files were never
+re-checked-out, they passed indefinitely while the claim they were making was false. A control
+that passes for the wrong reason is indistinguishable from one that works.
+
+**Permanent fix.** [ADR-0028](adr/0028-lineage-ids-hash-content-artefact-digests-hash-bytes.md),
+and a distinction the platform had never drawn:
+
+> **A lineage id answers "is this the same input" and hashes canonical content. An artefact
+> digest answers "is this the same file" and hashes bytes. They are not interchangeable.**
+
+One shared hasher, and `P7-RPR-02` reads the source of every phase's `build_id` to fail the
+next one that quietly writes its own.
+
+---
+
 ## What these have in common
 
 **A plug makes controls pass.** Items 1 and 4 both had a residual absorbing the defect, and in
@@ -348,3 +374,8 @@ a report of a defect rather than as an implementation detail.
 
 **A control family earns its keep by finding the next one.** The framework built for item 12
 found item 13 within a day of existing — different dimension, different cause, same shape.
+
+**Ask what a check is actually asserting.** Item 14 is the only defect here that involved no
+data at all. The digests were computed correctly, compared correctly and reported correctly;
+they were simply digests of the wrong thing. A measurement can be precise, repeatable and
+entirely beside the point.

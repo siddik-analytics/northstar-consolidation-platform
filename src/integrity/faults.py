@@ -20,6 +20,7 @@ Each fixture runs inside a transaction that is rolled back, so the warehouse is 
 from __future__ import annotations
 
 import csv
+import pathlib
 import sys
 from pathlib import Path
 
@@ -159,6 +160,35 @@ def _derived_version_no_source(con) -> None:
         WHERE scenario_code = 'PY'""")
 
 
+# --------------------------------------------------------------- lineage reproducibility
+#
+# These break a file rather than a table, so they carry their own restore. The transaction the
+# other fixtures roll back does not reach the filesystem.
+_FILE_BACKUPS: dict[pathlib.Path, bytes] = {}
+
+
+def _damage_file(path: pathlib.Path, mutate) -> None:
+    _FILE_BACKUPS[path] = path.read_bytes()
+    path.write_bytes(mutate(path.read_bytes()))
+
+
+def restore_files() -> None:
+    for path, original in _FILE_BACKUPS.items():
+        path.write_bytes(original)
+    _FILE_BACKUPS.clear()
+
+
+def _manifest_build_id_drifts(con) -> None:
+    """
+    A committed manifest whose build id no longer matches its declared inputs.
+
+    This is the shape P6-D-02 took in practice: the recorded lineage id and the inputs it
+    claims to identify stopped agreeing, while every financial value stayed identical.
+    """
+    path = ROOT / "data" / "phase05_manifest.json"
+    _damage_file(path, lambda b: b.replace(b'"build_id": "', b'"build_id": "ffff', 1))
+
+
 #: fixture id -> (description, injector, the control that must catch it)
 FIXTURES: tuple[tuple[str, str, object, str], ...] = (
     ("F7-KEY-01", "Two capital projects share one project identifier (P6-D-01 recreated)",
@@ -198,6 +228,9 @@ FIXTURES: tuple[tuple[str, str, object, str], ...] = (
      _derivation_drift, "P7-VER-10"),
     ("F7-VER-09", "A derived version does not say what it derives from",
      _derived_version_no_source, "P7-VER-09"),
+
+    ("F7-RPR-01", "A manifest's build id no longer matches its declared inputs",
+     _manifest_build_id_drifts, "P7-RPR-04"),
 )
 
 
@@ -211,6 +244,7 @@ def _run_one(db: Path, fixture) -> dict:
     finally:
         con.rollback()
         con.close()
+        restore_files()
 
     broken = [row["control_id"] for row in res
               if row["status"] in ("FAIL", "SOURCE_FINDING")]

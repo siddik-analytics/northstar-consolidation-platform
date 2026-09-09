@@ -46,7 +46,8 @@ fault sweep is more than half — it runs ten complete pipelines.
 | 13 | `python -m src.integrity.faults` | eighteen deliberate breakages — **18/18 detected** | 6 s |
 | 14 | `python -m src.powerbi.run` | the semantic model, deployed and controlled — **49/49** | 8 s |
 | 15 | `python -m src.powerbi.faults` | ten semantic breakages — **10/10 detected** | 70 s |
-| 16 | `python -m pytest tests -q` | **510** automated tests | 130 s |
+| 16 | `python tools/checkout_reproducibility.py` | LF vs CRLF checkout — all four build ids match | 1 s |
+| 17 | `python -m pytest tests -q` | **529** automated tests | 130 s |
 
 A `Makefile` wraps steps 1, 2, 3, 4, 5, 6, 7, 8 and 9 as `anchors`, `build`, `validate`,
 `faults`, `pipeline`, `pipeline-faults`, `consolidate`, `consol-faults` and `test`.
@@ -63,7 +64,7 @@ Three digests, each a property of inputs rather than of a run.
 
 | Digest | Covers | Current value |
 |---|---|---|
-| Source dataset | every generated extract and reference file | `8013298c3fee35ef25b790104df6c0fd4f6d8bbacb017f709f17fb82ce2644c7` |
+| Source dataset *(exact, byte-level)* | every generated extract and reference file | `8013298c3fee35ef25b790104df6c0fd4f6d8bbacb017f709f17fb82ce2644c7` |
 | Phase 3 build id | the source digest and the pipeline's configuration | `6e0c519360d3669b` |
 | Phase 4 build id | the source digest, the Phase 3 manifest, and the five consolidation configuration files | `a99d9fba5694ad7d` |
 | Phase 5 mart build id | the Phase 4 manifest and the reporting configuration | `24b65b7f05f7697d` |
@@ -100,18 +101,34 @@ Determinism is engineered, not hoped for:
   every version code is proved to resolve, by `src/integrity/controls.py`;
 * random draws come from a single declared master seed.
 
-### A known weakness: line endings
+### Two digests, two questions
 
-`build_id()` hashes the **raw bytes** of its declared inputs, so it is sensitive to line
-endings — which git rewrites on checkout. The same commit, cloned twice on different platforms,
-can produce different build ids while every byte of content, and every financial value, is
-identical.
+The platform computes two kinds of digest, and conflating them is what caused defect P6-D-02
+([ADR-0028](adr/0028-lineage-ids-hash-content-artefact-digests-hash-bytes.md)).
 
-This is recorded as open defect **P6-D-02**. It was found when the Phase 6A branch was rebased
-and the recomputed ids moved without any content changing. Until it is fixed, treat a build id
-mismatch after a fresh clone as a line-ending artefact rather than as evidence of drift, and
-settle the question with `tools/financial_invariance.py`, which compares values rather than
-bytes.
+| | question | method | examples |
+|---|---|---|---|
+| **Lineage / build id** | *is this the same input?* | canonical text hashing | the Phase 3, 4, 5 and 6A build ids, the PBIP project digest |
+| **Exact artefact digest** | *is this the same file, byte for byte?* | raw bytes | every published Parquet, the Excel workbook, the source dataset digest |
+
+A build id must survive a checkout, because git rewrites line endings and a line ending carries
+no meaning. `src/lineage/digest.py` is the one implementation every phase calls: it decodes
+UTF-8, drops a byte-order mark, folds `\r\n` and a bare `\r` to `\n`, and hashes each input's
+repository-relative name, its length and its canonical content.
+
+It does **not** trim trailing spaces, collapse whitespace, drop blank lines or strip
+indentation — those carry meaning, and a hash that stopped noticing them would be a worse
+defect than the one it replaced. Text and binary are declared explicitly; an undeclared suffix
+raises rather than being sniffed.
+
+An artefact digest is left alone. Those files are written by this platform moments before they
+are hashed and are never checked out in between, so byte identity is achievable and is the
+stronger claim.
+
+    python tools/checkout_reproducibility.py     # LF tree vs CRLF tree, all four build ids
+
+`P7-RPR-01` … `P7-RPR-05` hold this permanently, including one control that reads the source of
+every phase's `build_id` and fails if it hashes raw bytes.
 
 ## 4. The clean-tree expectation
 

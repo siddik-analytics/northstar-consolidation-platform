@@ -27,6 +27,8 @@ from pathlib import Path
 
 import duckdb
 
+from .. import lineage
+
 from . import config as C
 from . import controls, dax, deploy, model
 from .measures import MEASURES
@@ -42,18 +44,19 @@ APPX = ("shell:AppsFolder\\Microsoft.MicrosoftPowerBIDesktop_8wekyb3d8bbwe"
 
 
 def build_id() -> str:
-    h = hashlib.sha256()
-    for path in BUILD_INPUTS:
-        h.update(path.read_bytes())
-    return h.hexdigest()[:16]
+    """
+    A lineage id for this phase's declared inputs, from the shared canonical hasher.
+
+    Canonical, not byte-for-byte: line endings are folded so the id survives a checkout. See
+    `src/lineage/digest.py` and defect P6-D-02. The published artefacts below keep their
+    byte-for-byte digests, because those answer a different question.
+    """
+    return lineage.build_id(BUILD_INPUTS)
 
 
 def _sha256(path: Path) -> str:
-    h = hashlib.sha256()
-    with open(path, "rb") as f:
-        for chunk in iter(lambda: f.read(1 << 20), b""):
-            h.update(chunk)
-    return h.hexdigest()
+    """A published artefact's exact byte digest. Deliberately NOT canonicalised."""
+    return lineage.exact_digest(path)
 
 
 def launch_desktop(wait: int = 120) -> bool:
@@ -72,13 +75,16 @@ def launch_desktop(wait: int = 120) -> bool:
 
 
 def project_digest() -> str:
-    """A digest of the generated project text -- what a reviewer would diff."""
-    h = hashlib.sha256()
-    for path in sorted(C.PBIP_DIR.rglob("*")):
-        if path.is_file() and path.suffix in (".tmdl", ".pbip", ".pbism", ".pbir", ".json"):
-            h.update(path.relative_to(C.PBIP_DIR).as_posix().encode())
-            h.update(path.read_bytes())
-    return h.hexdigest()[:16]
+    """
+    A digest of the generated project text -- what a reviewer would diff.
+
+    Canonical, for the same reason the build ids are: the PBIP project is text under version
+    control, and a checkout that changes its line endings has not changed the model.
+    """
+    files = sorted(p for p in C.PBIP_DIR.rglob("*")
+                   if p.is_file() and p.suffix in (".tmdl", ".pbip", ".pbism", ".pbir",
+                                                   ".json"))
+    return lineage.build_id(files)
 
 
 def run(deploy_model: bool = True, launch: bool = False) -> dict:

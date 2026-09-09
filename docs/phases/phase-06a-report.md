@@ -274,7 +274,12 @@ appeared.
    data behind it.
 4. **No report pages.** Phase 6A is the semantic layer; the technical validation page is empty
    by design.
-5. **`P6-D-02` — the build ids are checkout-dependent, and it is open.** Rebasing this branch
+5. **`P6-D-02` — CLOSED in Phase 6A.1.** It was open when this report was first written; the
+   paragraph below is left as it was, because it is the evidence the correction was made
+   against. See [ADR-0028](../adr/0028-lineage-ids-hash-content-artefact-digests-hash-bytes.md)
+   and the build ids in `data/phase06a_manifest.json`, which have since rebaselined.
+
+   *(as written when open)* **The build ids are checkout-dependent.** Rebasing this branch
    re-checked-out several declared build inputs and changed their line endings, which changed
    the recomputed build ids even though every byte of content was identical. The form that
    reproduces each committed id is a per-file mixture of CRLF and LF, which is the problem

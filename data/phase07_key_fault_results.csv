@@ -17,3 +17,4 @@ F7-VER-06,A default version exists outside the governed master,P7-VER-05,DETECTE
 F7-VER-07,A reserved scenario becomes reportable because it is configured,P7-VER-12,DETECTED,P7-VER-12
 F7-VER-08,Prior Year drifts from the Actual it is a view of,P7-VER-10,DETECTED,P7-VER-10
 F7-VER-09,A derived version does not say what it derives from,P7-VER-09,DETECTED,P7-VER-09
+F7-RPR-01,A manifest's build id no longer matches its declared inputs,P7-RPR-04,DETECTED,P7-RPR-04

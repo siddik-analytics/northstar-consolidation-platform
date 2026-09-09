@@ -16,11 +16,15 @@ each one says about the design rather than for what happened.
 
 ## Open
 
-| id | found in | what it is | why it is still open |
-|---|---|---|---|
-| **P6-D-02** | Phase 6A | **The build ids are checkout-dependent.** `build_id()` hashes the raw bytes of its declared inputs, so a build id changes when git rewrites a line ending — the same commit, cloned twice, can report a rebuild as non-reproducible when nothing about it changed | the fix is one line per module (normalise line endings before hashing), but it **changes the Phase 3, 4 and 5 build ids** in committed manifests and on the workbook cover. That is a metadata change to approved baselines, and Phase 6A was told not to make one. Needs an owner decision |
+*None.*
 
-### P6-D-02 in detail
+## Closed in Phase 6A.1
+
+| id | found in | what it was | closed by | permanent control |
+|---|---|---|---|---|
+| **P6-D-02** | Phase 6A | **The build ids were checkout-dependent.** `build_id()` hashed the raw bytes of its declared inputs, so a build id changed when git rewrote a line ending. The form that reproduced each committed id was a per-file mixture of CRLF and LF — the ids identified which files had last been authored on Windows, not what the inputs said | one shared canonical hasher, `src/lineage/digest.py` ([ADR-0028](adr/0028-lineage-ids-hash-content-artefact-digests-hash-bytes.md)). Lineage ids hash canonical text; artefact digests still hash bytes | `P7-RPR-01` … `P7-RPR-05`, fixture `F7-RPR-01`, and `tools/checkout_reproducibility.py` |
+
+### P6-D-02 in detail — as it was found
 
 Exposed by rebasing the Phase 6A branch, which re-checked-out several declared build inputs and
 changed their line endings. Content was byte-identical throughout; only the encoding moved, and
@@ -38,17 +42,24 @@ phase04 reproduces with  build_digest.txt=CRLF, phase03_manifest.json=CRLF,
                          investment_register.csv=CRLF, the rest LF
 ```
 
-The working tree was restored to those forms so the approved baseline verifies and all 510
-tests pass. **That restoration is local.** A fresh clone on any platform will produce different
-line endings and the two reproducibility tests will fail, while every financial value stays
-identical — so the claim "the build is reproducible" is currently weaker than
-`docs/reproducibility.md` states.
+At the time the working tree was restored to those forms so the baseline would verify, which
+was a local patch, not a fix: a fresh clone would still have produced different ids.
 
-**Recommended fix**, when the owner is willing to move the ids: normalise line endings inside
-`build_id()` in `src/pipeline/run.py`, `src/consol/run.py`, `src/marts/run.py`,
-`src/excel/build.py` and `src/powerbi/run.py`, regenerate the manifests, and rebaseline. A build
-id identifies what went in, and a line ending is not part of what went in. Nothing financial
-moves; `tools/financial_invariance.py` can prove that as it did twice in Phase 5.1.
+**Closed in Phase 6A.1.** `src/lineage/digest.py` is now the single canonical hasher every
+phase calls. A lineage id hashes canonical text — UTF-8, BOM dropped, `
+` and bare ``
+folded to `
+` — together with each input's repository-relative name and length. Whitespace is
+deliberately **not** normalised, because a trailing space in a CSV field is data and
+indentation in Python is syntax. Artefact digests still hash raw bytes, because "is this the
+same file" is a different question from "is this the same input"
+([ADR-0028](adr/0028-lineage-ids-hash-content-artefact-digests-hash-bytes.md)).
+
+The ids rebaselined and cascaded: Phase 3 `6e0c519360d3669b` → `468dbf847805d6c9`, Phase 4
+`fcfa135a222f58ba` → `cc89cf0317801b36`, Phase 5 `50d85b385b7a2a41` → `00d3dd24020f900d`,
+workbook `0a26d3980bd463e5` → `e8b97d9e780a13a7`, Phase 6A `458ca84c1903b9f0` →
+`fc2823eb5a85b42c`. The source layer digest did not move. Metadata only: 325,352 rows compared
+at `0.00`, zero numeric change across 615,270 workbook cells, and an identical semantic model.
 
 ---
 

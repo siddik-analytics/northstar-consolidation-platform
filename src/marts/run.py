@@ -19,6 +19,8 @@ from pathlib import Path
 
 import duckdb
 
+from .. import lineage
+
 from . import build, controls
 from .config import (CONTROL_RESULTS, DATA, DUCKDB_PATH, MANIFEST, MARTS_DIR, ensure_dirs,
                      writing_artefacts)
@@ -41,18 +43,19 @@ BUILD_INPUTS = (
 
 
 def build_id() -> str:
-    h = hashlib.sha256()
-    for path in BUILD_INPUTS:
-        h.update(path.read_bytes())
-    return h.hexdigest()[:16]
+    """
+    A lineage id for this phase's declared inputs, from the shared canonical hasher.
+
+    Canonical, not byte-for-byte: line endings are folded so the id survives a checkout. See
+    `src/lineage/digest.py` and defect P6-D-02. The published artefacts below keep their
+    byte-for-byte digests, because those answer a different question.
+    """
+    return lineage.build_id(BUILD_INPUTS)
 
 
 def _sha256(path: Path) -> str:
-    h = hashlib.sha256()
-    with open(path, "rb") as f:
-        for chunk in iter(lambda: f.read(1 << 20), b""):
-            h.update(chunk)
-    return h.hexdigest()
+    """A published artefact's exact byte digest. Deliberately NOT canonicalised."""
+    return lineage.exact_digest(path)
 
 
 def run(con: duckdb.DuckDBPyConnection | None = None, with_controls: bool = True) -> dict:

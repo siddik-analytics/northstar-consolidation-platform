@@ -33,6 +33,14 @@ MANIFEST = DATA / "build_manifest.json"
 
 
 def _sha256(path: Path) -> str:
+    """
+    The exact byte digest of a generated file.
+
+    Deliberately NOT the canonical text hash the build ids use (P6-D-02, ADR-0028). These
+    files are written by the generator moments before they are hashed and are never checked
+    out in between, so byte identity is both achievable and the stronger claim: it proves two
+    runs produced the same bytes, not merely the same content.
+    """
     h = hashlib.sha256()
     with open(path, "rb") as f:
         for chunk in iter(lambda: f.read(1 << 20), b""):
