@@ -1,6 +1,7 @@
 # Phase 6A — Power BI semantic model
 
-**Status:** complete, awaiting semantic model review
+**Status:** approved; resealed as Phase 6A.2 after two native-project defects (see
+[`phase-06a-2-native-pbip.md`](phase-06a-2-native-pbip.md))
 **Baseline:** `192b1a5` (Phase 5.1, approved)
 **WIP recovered from:** `ca72922` on `wip/phase-06a-semantic-model`
 **Docs:** [semantic model](../powerbi-semantic-model.md) · [measures](../powerbi-measures.md) ·
@@ -166,6 +167,10 @@ Recorded as a limitation, not escalated.
 
 ## 10. Controls and fixtures
 
+> Phase 6A.2 added a fifth family, `P6-PBIP` (4 controls), and two fixtures; the totals below
+> are as they stood when this report was written. See
+> [`phase-06a-2-native-pbip.md`](phase-06a-2-native-pbip.md).
+
 | family | n | result |
 |---|---|---|
 | `P6-SEM` structure | 15 | 15 pass |
@@ -263,9 +268,14 @@ appeared.
 
 ## 15. Limitations
 
-1. **The PBIP was not opened in the Desktop UI.** Validation was via TMSL deployment to
-   Desktop's own Analysis Services instance. Real engine, real model, real DAX — but not the
-   Desktop file-open path, and no visual was rendered.
+1. **The PBIP was not opened in the Desktop UI — CLOSED in Phase 6A.2.** Validation here was
+   via TMSL deployment to Desktop's own Analysis Services instance: real engine, real model,
+   real DAX — but not the Desktop file-open path. When Phase 6B found that path (Desktop's own
+   Open dialog, driven by UI Automation), the project did not open: P6B-D-01 and P6B-D-02,
+   both invisible to the engine. See
+   [`phase-06a-2-native-pbip.md`](phase-06a-2-native-pbip.md). The paragraph is left as
+   written because it was accurate, and because "not tested" and "cannot be tested" turned out
+   to be different things.
 2. **Statutory and management are indistinguishable in this data** (§9), so the basis
    separation is proved on the definition rather than on the values.
 3. **CapEx has no Budget or Forecast scenario upstream.** The subledger carries an approved

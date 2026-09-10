@@ -30,8 +30,8 @@ import duckdb
 from .. import lineage
 
 from . import config as C
-from . import controls, dax, deploy, model
-from .measures import MEASURES
+from . import controls, dax, deploy, desktop, model
+from .measures import MEASURES, PERIOD_BASIS_ROWS
 
 BUILD_INPUTS = (
     Path(__file__).with_name("config.py"),
@@ -74,6 +74,30 @@ def launch_desktop(wait: int = 120) -> bool:
     return False
 
 
+def definition_digest() -> str:
+    """
+    A digest of the model's **definitions** only: every measure (name, DAX, format, folder,
+    description), every table specification, every relationship and its rationale, the
+    period-basis rows and the reporting close.
+
+    It deliberately excludes container and display metadata -- the name of the table the
+    measures live on, lineage tags, annotations, file layout -- so that a change like Phase
+    6A.2's (rename the measures host, move relationship rationale into an annotation) leaves
+    it untouched while `project_digest()` moves. Metadata drift and definition drift are
+    different claims and get different digests.
+    """
+    payload = {
+        "measures": [list(m) for m in MEASURES],
+        "tables": [dict(t) for t in C.TABLES],
+        "relationships": [list(r) for r in C.RELATIONSHIPS],
+        "inactive_relationships": [list(r) for r in C.INACTIVE_RELATIONSHIPS],
+        "period_basis": [list(r) for r in PERIOD_BASIS_ROWS],
+        "report_period": C.REPORT_PERIOD,
+    }
+    text = json.dumps(payload, sort_keys=True, ensure_ascii=False, default=str)
+    return hashlib.sha256(text.encode("utf-8")).hexdigest()[:16]
+
+
 def project_digest() -> str:
     """
     A digest of the generated project text -- what a reviewer would diff.
@@ -106,6 +130,7 @@ def run(deploy_model: bool = True, launch: bool = False) -> dict:
     print(f"deploy: {deployed} -- {message}")
 
     t2 = time.time()
+    controls.DESKTOP_OPEN = deploy_model and "--no-desktop" not in sys.argv
     res = controls.run(con)
     controls.write(res)
     controls.report(res)
@@ -113,9 +138,12 @@ def run(deploy_model: bool = True, launch: bool = False) -> dict:
 
     if C.SEMANTIC_DIR.exists():
         manifest = {
-            "phase": "6A",
+            "phase": "6A.2",
             "build_id": build_id(),
             "project_digest": project_digest(),
+            "definition_digest": definition_digest(),
+            "measures_table": C.MEASURES_TABLE,
+            "desktop": desktop.version(),
             "reporting_mart_build_id": json.loads(
                 (C.DATA / "phase05_manifest.json").read_text(encoding="utf-8"))["build_id"],
             "tables": summary["tables"],

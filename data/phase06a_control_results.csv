@@ -1,5 +1,5 @@
 control_id,control_name,severity,status,measured,threshold,detail
-P6-SEM-00,The semantic model is available for execution,INFO,PASS,live,live,connected to Desktop on port 52197
+P6-SEM-00,The semantic model is available for execution,INFO,PASS,live,live,connected to Desktop on port 57800
 P6-SEM-01,Every dimension key is unique over its published population,BLOCKING,PASS,0,0,a dimension with a duplicate key silently fans out every fact that joins to it
 P6-SEM-02,"Every relationship resolves: no orphan key, so no blank member",BLOCKING,PASS,0,0,an unresolved key becomes a blank member in every visual that uses the dimension
 P6-SEM-03,Every declared many-to-one relationship is many-to-one in the data,BLOCKING,PASS,0,0,declaring a cardinality does not make the data have it; Power BI silently promotes a broken one to many-to-many and the totals stop meaning anything
@@ -48,3 +48,7 @@ P6-POL-04,Prior Year resolves to the governed derived version,BLOCKING,PASS,"'PY
 P6-POL-05,No fact row falls to a blank Scenario member,BLOCKING,PASS,0,0,"measured on the published data the model loads, so it is the model's own exposure"
 P6-POL-06,Statutory and management measures pin the basis they are named for,BLOCKING,PASS,0,0,"read from the deployed model rather than from the source that generated it. Checked on the definition because in this baseline layer 4 is unpopulated and the two bases hold identical values, so a measure reading the wrong one would agree with everything"
 P6-POL-07,The current forecast version is the one the master marks as default,BLOCKING,PASS,model 'FC_FY26_08',governed 'FC_FY26_08',three forecasts are retained and only one is current; a superseded forecast presented as the forecast is an error nobody would notice from the number alone
+P6-PBIP-01,Doc comments only on objects that carry a Description,BLOCKING,PASS,0,0,a `///` above a relationship is a Description property the parser rejects (P6B-D-01); rationale travels as an annotation instead
+P6-PBIP-02,No table name Power BI Desktop reserves,BLOCKING,PASS,0,0,"28 tables declared; reserved list ['measures'] confirmed against Desktop, not assumed (P6B-D-02)"
+P6-PBIP-03,Power BI Desktop opens the generated project and loads it,BLOCKING,PASS,opened,opened,opened in 26.5s as 'Northstar'; native refresh loaded every partition
+P6-PBIP-04,"Native project, deployed engine and Desktop session agree on structure",BLOCKING,PASS,"{'engine': {'tables': 28, 'measures': 89, 'relationships': 36, 'active_relationships': 31}, 'desktop': {'tables': 28, 'measures': 89, 'relationships': 36, 'active_relationships': 31}}","{'tables': 28, 'measures': 89, 'relationships': 36, 'active_relationships': 31}","tables, measures, relationships and active relationships counted in each form"

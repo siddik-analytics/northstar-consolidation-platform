@@ -31,7 +31,7 @@ figure back to the source journal that produced it.
 | **5 — Reporting marts & Excel management model** | ✅ **Complete** | [Report](docs/phases/phase-05-report.md) |
 | **5.1 — Upstream dimensional-integrity correction** | ✅ **Complete** | [Report](docs/phases/phase-05-1-key-integrity.md) · [Scenario dimension](docs/phases/phase-05-1-scenario-integrity.md) |
 | **5.2 — Excel executive design and visual polish** | ✅ **Approved · frozen** | [Report](docs/phases/phase-05-2-visual-polish.md) · [5.2A copper system](docs/phases/phase-05-2a-copper-correction.md) |
-| **6A — Power BI semantic model** | ✅ **Complete** | [Report](docs/phases/phase-06a-report.md) |
+| **6A — Power BI semantic model** | ✅ **Complete · resealed 6A.2** | [Report](docs/phases/phase-06a-report.md) · [6A.2 native PBIP](docs/phases/phase-06a-2-native-pbip.md) |
 | 6B — Power BI report design | ⏸ | |
 | 7 — Board pack & commentary framework | ⏸ | |
 | 8 — Board pack & commentary framework | ⏸ | |
@@ -195,7 +195,7 @@ tests/           Automated validation
 | [Key and grain framework](docs/key-and-grain-framework.md) | 73 declared keys, 290 controls, 18 fixtures, and the two defects that made them necessary |
 | [Power BI semantic model](docs/powerbi-semantic-model.md) | the star schema, the measure layer, and why it is validated by running it |
 | [Power BI measures](docs/powerbi-measures.md) | *Generated.* All 89 measures, their DAX and their descriptions |
-| [Power BI controls](docs/powerbi-controls.md) | 49 semantic controls, 10 fixtures, and what executing the model found |
+| [Power BI controls](docs/powerbi-controls.md) | 53 semantic and native-project controls, 12 fixtures, and what executing — and opening — the model found |
 | [Defect register](docs/defect-register.md) | every defect found, what closed it, and the control that now stops it recurring |
 | [**Architecture lessons**](docs/architecture-lessons.md) | ten defects that balanced perfectly while being wrong, and the design change each produced |
 

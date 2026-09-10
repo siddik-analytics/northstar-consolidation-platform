@@ -183,7 +183,7 @@ def test_high_risk_measures_document_definition_source_and_basis():
 
 # ===================================================================== live engine
 def test_the_model_loads_with_every_declared_table(live):
-    declared = {t["name"] for t in C.TABLES} | {"Period Basis", "Measures"}
+    declared = {t["name"] for t in C.TABLES} | {"Period Basis", C.MEASURES_TABLE}
     assert declared <= set(dax.table_names())
 
 
@@ -234,7 +234,88 @@ def test_power_bi_reconciles_to_the_workbook(con, live):
 def test_the_whole_semantic_suite_is_clean(con, live):
     res = pbi_controls.run(con)
     assert not res.failed, [r["control_id"] for r in res.failed]
-    assert not res.not_executed, [r["control_id"] for r in res.not_executed]
+    # P6-PBIP-03 drives Desktop's UI and is run by the phase run, not by every test session;
+    # its result is held by the committed control register and asserted below.
+    skipped = [r["control_id"] for r in res.not_executed if r["control_id"] != "P6-PBIP-03"]
+    assert not skipped, skipped
+
+
+# ===================================================================== native project (6A.2)
+def _tmdl(name: str) -> str:
+    return (C.MODEL_DIR / "definition" / name).read_text(encoding="utf-8")
+
+
+def test_doc_comments_only_on_objects_that_carry_a_description():
+    """P6B-D-01: a /// above a relationship is a property the parser rejects."""
+    bad = [t for t in pbi_controls._doc_comment_targets() if t[2] not in pbi_controls.DOCUMENTABLE]
+    assert not bad, bad
+
+
+def test_no_table_name_desktop_reserves():
+    """P6B-D-02: `Measures` is reserved by Desktop and refused at open."""
+    names = pbi_controls._declared_tables()
+    assert len(names) == 28
+    assert not [n for n in names if n.lower() in C.RESERVED_TABLE_NAMES]
+    assert C.MEASURES_TABLE == "Northstar Measures"
+    assert C.MEASURES_TABLE in names
+
+
+def test_the_measures_host_kept_every_measure_folder_and_format():
+    text = _tmdl(f"tables/{C.MEASURES_TABLE}.tmdl")
+    assert text.count("\tmeasure '") == len(MEASURES) == 89
+    for name, expression, fmt, folder, description in MEASURES:
+        assert f"\tmeasure '{name}' =" in text
+        assert f"displayFolder: {folder}" in text
+        if fmt:
+            assert f"formatString: {fmt}" in text
+    assert "lineageTag" in text
+
+
+def test_relationship_rationale_survives_as_an_annotation():
+    """The rationale moved, it did not disappear: one annotation per inactive relationship."""
+    text = _tmdl("relationships.tmdl")
+    assert "///" not in text
+    for *_, why in C.INACTIVE_RELATIONSHIPS:
+        assert " ".join(why.split()) in text
+    assert text.count("annotation Northstar_Rationale") == len(C.INACTIVE_RELATIONSHIPS) == 5
+
+
+def test_auto_date_time_is_declared_off():
+    """Otherwise Desktop adds a hidden date table per date column that no declaration owns."""
+    assert "annotation __PBI_TimeIntelligenceEnabled = 0" in _tmdl("model.tmdl")
+
+
+def test_the_definition_digest_ignores_container_naming():
+    """Renaming the measures host is metadata drift, and the definition digest must not move."""
+    from src.powerbi import run as pbi_run
+    before = pbi_run.definition_digest()
+    original = C.MEASURES_TABLE
+    C.MEASURES_TABLE = "Measures"
+    try:
+        assert pbi_run.definition_digest() == before
+    finally:
+        C.MEASURES_TABLE = original
+
+
+def _control_results() -> dict[str, dict]:
+    path = C.CONTROL_RESULTS
+    if not path.exists():
+        pytest.skip("the semantic controls have not been run")
+    with open(path, newline="", encoding="utf-8") as f:
+        return {r["control_id"]: r for r in csv.DictReader(f)}
+
+
+def test_the_phase_run_opened_the_project_in_desktop():
+    """
+    The decisive Phase 6A.2 test, read from the phase run's register: Desktop itself parsed
+    and loaded the generated project, and the three forms of the model agree on structure.
+    """
+    res = _control_results()
+    for cid in ("P6-PBIP-01", "P6-PBIP-02", "P6-PBIP-03", "P6-PBIP-04"):
+        assert res[cid]["status"] == "PASS", (cid, res[cid]["detail"])
+    assert "opened" in res["P6-PBIP-03"]["detail"]
+    assert "native refresh loaded every partition" in res["P6-PBIP-03"]["detail"]
+    assert "desktop" in res["P6-PBIP-04"]["measured"]
 
 
 # ===================================================================== fixtures
@@ -246,9 +327,24 @@ def _fault_results() -> list[dict]:
         return list(csv.DictReader(f))
 
 
-def test_ten_semantic_fixtures_are_declared():
-    assert len(FIXTURES) == 10
-    assert {f[0] for f in FIXTURES} == {f"F6-XAR-{i:02d}" for i in range(1, 11)}
+def test_twelve_semantic_fixtures_are_declared():
+    assert len(FIXTURES) == 12
+    assert {f[0] for f in FIXTURES} == ({f"F6-XAR-{i:02d}" for i in range(1, 11)}
+                                        | {"F6-PBIP-01", "F6-PBIP-02"})
+
+
+def test_the_pbip_fixtures_were_accepted_by_the_engine_and_caught_by_the_project_controls():
+    """Engine-valid, project-invalid -- the lesson of Phase 6A.2, held as a fixture."""
+    rows = {r["fixture_id"]: r for r in _fault_results()}
+    for fid, cid in (("F6-PBIP-01", "P6-PBIP-01"), ("F6-PBIP-02", "P6-PBIP-02")):
+        assert rows[fid]["status"] == "DETECTED", rows[fid]
+        assert cid in rows[fid]["controls_triggered"]
+    # TMSL carries no comment, so the engine can never object to F6-PBIP-01.
+    assert "engine accepted" in rows["F6-PBIP-01"]["controls_triggered"], rows["F6-PBIP-01"]
+    # The engine's answer to the reserved name depends on its state: a fresh instance accepts
+    # it (as Phase 6A recorded), one that Desktop has loaded a project into refuses it. Either
+    # way the project control is what catches it, which is the point.
+    assert "engine" in rows["F6-PBIP-02"]["controls_triggered"], rows["F6-PBIP-02"]
 
 
 def test_every_semantic_fixture_is_caught_by_its_intended_control():

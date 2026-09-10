@@ -186,9 +186,11 @@ def _measures_tmdl() -> str:
     a reader looking for `Covenant Headroom` should not have to know which fact it came from,
     and moving a measure between tables changes nothing about it except where people look.
     """
+    # The lineage tags are still seeded from "Measures": the table was renamed in Phase 6A.2
+    # (P6B-D-02) and a lineage tag is the identity that says "the same object, renamed".
     lines = ["/// Every measure in the model. Measures are grouped by display folder, not by",
              "/// the table they read, so a report author finds them by what they mean.",
-             "table Measures",
+             f"table '{C.MEASURES_TABLE}'",
              f"\tlineageTag: {tag('table', 'Measures')}",
              ""]
     for name, expression, fmt, folder, description in MEASURES:
@@ -212,7 +214,7 @@ def _measures_tmdl() -> str:
               "",
               "\t\tannotation SummarizationSetBy = Automatic",
               "",
-              "\tpartition Measures = m",
+              f"\tpartition '{C.MEASURES_TABLE}' = m",
               "\t\tmode: import",
               "\t\tsource =",
               "\t\t\t\tlet",
@@ -225,6 +227,19 @@ def _measures_tmdl() -> str:
     return "\n".join(lines)
 
 
+#: The annotation that carries a relationship's design rationale. A relationship has no
+#: Description in the tabular object model, so a `///` doc comment above one -- which is how
+#: the rationale was written until Phase 6A.2 -- is a property the parser does not know, and
+#: Desktop refuses the whole project (P6B-D-01). An annotation is the metadata a relationship
+#: does support; it survives a round trip through Desktop and stays readable in a diff.
+RATIONALE_ANNOTATION = "Northstar_Rationale"
+
+
+def _one_line(text: str) -> str:
+    """An annotation value is one line; the rationale is prose and may have been wrapped."""
+    return " ".join(text.split())
+
+
 def _relationships_tmdl() -> str:
     lines: list[str] = []
     for from_table, from_col, to_table, to_col in C.RELATIONSHIPS:
@@ -235,17 +250,18 @@ def _relationships_tmdl() -> str:
         lines.append("")
     for from_table, from_col, to_table, to_col, why in C.INACTIVE_RELATIONSHIPS:
         rid = tag("rel", from_table, from_col, to_table, to_col)
-        lines += _description_lines(why, "")
         lines.append(f"relationship {rid}")
         lines.append("\tisActive: false")
         lines.append(f"\tfromColumn: '{from_table}'.{from_col}")
         lines.append(f"\ttoColumn: '{to_table}'.{to_col}")
         lines.append("")
+        lines.append(f"\tannotation {RATIONALE_ANNOTATION} = {_one_line(why)}")
+        lines.append("")
     return "\n".join(lines)
 
 
 def _model_tmdl() -> str:
-    order = json.dumps([t["name"] for t in C.TABLES] + ["Period Basis", "Measures"])
+    order = json.dumps([t["name"] for t in C.TABLES] + ["Period Basis", C.MEASURES_TABLE])
     return "\n".join([
         "model Model",
         "\tculture: en-GB",
@@ -259,9 +275,15 @@ def _model_tmdl() -> str:
         "",
         "\tannotation PBI_ProTooling = [\"DevMode\"]",
         "",
+        # Desktop's auto date/time would add a hidden LocalDateTable_* per date column -- five
+        # tables and five relationships that exist in no declaration. The model has its own
+        # governed Date dimension, so the feature is declared off and the model Desktop loads
+        # is the model the project declares (P6-PBIP-04 counts both).
+        "\tannotation __PBI_TimeIntelligenceEnabled = 0",
+        "",
         "ref table 'Period Basis'",
         *[f"ref table '{t['name']}'" for t in C.TABLES],
-        "ref table Measures",
+        f"ref table '{C.MEASURES_TABLE}'",
         "",
         "ref cultureInfo en-GB",
         "",
@@ -357,7 +379,8 @@ def generate(con: duckdb.DuckDBPyConnection) -> dict:
         tables += 1
     (definition / "tables" / "Period Basis.tmdl").write_text(
         _period_basis_tmdl(con), encoding="utf-8")
-    (definition / "tables" / "Measures.tmdl").write_text(_measures_tmdl(), encoding="utf-8")
+    (definition / "tables" / f"{C.MEASURES_TABLE}.tmdl").write_text(_measures_tmdl(),
+                                                                     encoding="utf-8")
     tables += 2
 
     return {

@@ -9,3 +9,5 @@ F6-XAR-07,A superseded forecast is presented as the current forecast,P6-POL-07,D
 F6-XAR-08,A required financial statement caption is missing,P6-XAR-07,DETECTED,P6-XAR-07;P6-XAR-08
 F6-XAR-09,PY_DERIVED removed from the semantic version dimension,P6-POL-04,DETECTED,P6-SEM-02;P6-POL-04
 F6-XAR-10,Capital Project reverts to the colliding pre-ADR-0026 key,P6-SEM-01,DETECTED,P6-SEM-01;P6-SEM-02;P6-SEM-03;P6-POL-04 (and the engine refused to load the model)
+F6-PBIP-01,Relationship rationale emitted as a /// doc comment (P6B-D-01),P6-PBIP-01,DETECTED,P6-PBIP-01;P6-PBIP-03 (engine accepted the model over TMSL)
+F6-PBIP-02,Measures host table named the reserved `Measures` (P6B-D-02),P6-PBIP-02,DETECTED,P6-SEM-13;P6-PBIP-02;P6-PBIP-03 (and the engine refused to load the model)

@@ -122,42 +122,37 @@ relationship d804bd1e-9a50-596a-bfc3-88b0d2acb527
 	fromColumn: 'Layer Bridge'.layer_id
 	toColumn: 'Consolidation Layer'.layer_id
 
-/// Financials reaches Business Unit through Entity, so a second direct path would make every
-/// business unit total ambiguous. Entity is the active path because an entity belongs to
-/// exactly one unit.
 relationship cdb507ce-c8a3-5bda-b321-2844996288a0
 	isActive: false
 	fromColumn: 'Financials'.bu_code
 	toColumn: 'Business Unit'.bu_code
 
-/// Variance carries bu_code for its own grain, but reaches Business Unit through Entity like
-/// every other fact. Activating this would give a segment variance two filter paths and no way
-/// to tell which one a visual used.
+	annotation Northstar_Rationale = Financials reaches Business Unit through Entity, so a second direct path would make every business unit total ambiguous. Entity is the active path because an entity belongs to exactly one unit.
+
 relationship b4603d77-582d-554d-8be8-d45dcc01468d
 	isActive: false
 	fromColumn: 'Variance'.bu_code
 	toColumn: 'Business Unit'.bu_code
 
-/// The account-grain fact reaches Business Unit through Entity. A direct path here would also
-/// make the drill-through from a measure to its accounts ambiguous, because the two facts would
-/// aggregate segments by different routes.
+	annotation Northstar_Rationale = Variance carries bu_code for its own grain, but reaches Business Unit through Entity like every other fact. Activating this would give a segment variance two filter paths and no way to tell which one a visual used.
+
 relationship 8987f342-2a91-5835-b741-e25aa6a398d2
 	isActive: false
 	fromColumn: 'Financial Detail'.bu_code
 	toColumn: 'Business Unit'.bu_code
 
-/// Headcount reaches Business Unit through Entity. Kept inactive rather than deleted because
-/// the column is genuinely on the mart and a future report may want USERELATIONSHIP for a
-/// workforce-only segment view.
+	annotation Northstar_Rationale = The account-grain fact reaches Business Unit through Entity. A direct path here would also make the drill-through from a measure to its accounts ambiguous, because the two facts would aggregate segments by different routes.
+
 relationship 81d5109a-5f0e-52e7-9480-28205ad6c6a2
 	isActive: false
 	fromColumn: 'Headcount'.bu_code
 	toColumn: 'Business Unit'.bu_code
 
-/// Capital spend reaches Business Unit through Entity, so that capex by segment and revenue by
-/// segment are built the same way and can sit on one page without disagreeing about what a
-/// segment is.
+	annotation Northstar_Rationale = Headcount reaches Business Unit through Entity. Kept inactive rather than deleted because the column is genuinely on the mart and a future report may want USERELATIONSHIP for a workforce-only segment view.
+
 relationship 699dc126-38ea-5ddf-b94f-3c031aae9bee
 	isActive: false
 	fromColumn: 'CapEx'.bu_code
 	toColumn: 'Business Unit'.bu_code
+
+	annotation Northstar_Rationale = Capital spend reaches Business Unit through Entity, so that capex by segment and revenue by segment are built the same way and can sit on one page without disagreeing about what a segment is.

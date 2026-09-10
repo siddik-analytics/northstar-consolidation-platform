@@ -6,9 +6,11 @@ model Model
 		legacyRedirects
 		returnErrorValuesAsNull
 
-	annotation PBI_QueryOrder = ["Date", "Entity", "Business Unit", "Account", "Cost Centre", "Consolidation Layer", "Reporting Basis", "Currency", "Scenario", "Measure Line", "Comparison", "Job Family", "Debt Instrument", "Capital Project", "Financials", "Financial Detail", "Variance", "Balance Sheet", "Cash Flow", "Working Capital", "Covenants", "Debt", "Headcount", "CapEx", "FX", "Layer Bridge", "Period Basis", "Measures"]
+	annotation PBI_QueryOrder = ["Date", "Entity", "Business Unit", "Account", "Cost Centre", "Consolidation Layer", "Reporting Basis", "Currency", "Scenario", "Measure Line", "Comparison", "Job Family", "Debt Instrument", "Capital Project", "Financials", "Financial Detail", "Variance", "Balance Sheet", "Cash Flow", "Working Capital", "Covenants", "Debt", "Headcount", "CapEx", "FX", "Layer Bridge", "Period Basis", "Northstar Measures"]
 
 	annotation PBI_ProTooling = ["DevMode"]
+
+	annotation __PBI_TimeIntelligenceEnabled = 0
 
 ref table 'Period Basis'
 ref table 'Date'
@@ -37,6 +39,6 @@ ref table 'Headcount'
 ref table 'CapEx'
 ref table 'FX'
 ref table 'Layer Bridge'
-ref table Measures
+ref table 'Northstar Measures'
 
 ref cultureInfo en-GB

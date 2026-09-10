@@ -16,16 +16,38 @@ each one says about the design rather than for what happened.
 
 ## Open
 
-| id | found in | what it is | status |
-|---|---|---|---|
-| **P6B-D-01** | Phase 6B, first native open of the PBIP in Power BI Desktop | **The semantic-model project does not open in Desktop.** `relationships.tmdl` carries a `///` doc comment above each of its 15 relationships; TMDL maps `///` to the object's `Description`, and a relationship has no such property. Desktop rejects the whole definition: *"Property 'description' is unknown and is not expected in the situation it appears."* | **OPEN — awaiting owner decision.** Not a finance definition; the emitter in `src/powerbi/model.py` writes a comment where TMDL does not allow one. Proposed fix: emit relationship rationale as an `annotation` (or a plain `//` comment) instead of `///` |
-| **P6B-D-02** | Phase 6B, same open, after P6B-D-01 was stripped on a scratch copy | **The measures-host table is named `Measures`.** Power BI Desktop reserves that name: *"Unsupported Table name "Measures" has been found in data model schema."* The table holds all 89 measures | **OPEN — awaiting owner decision.** Renaming the table changes the sealed Phase 6A model's TMDL/TMSL and the project digest, though no DAX (measure references are `[Measure]`, never `'Measures'[Measure]`). Proposed name: `'Northstar Measures'` |
+*None.*
 
-Both were invisible to Phase 6A's validation, which deployed the model to Desktop's Analysis
-Services engine over TMSL — the engine has no reserved table names and TMSL carries no `///`
-comments. They exist only in the **PBIP text form**, and the first thing that parsed that form
-was Desktop itself, driven through its own Open dialog by UI automation on 2026-09-09.
-Evidence: `docs/assets/phase-06b/desktop_P6B-D-02_unsupported_table_name.png`.
+## Closed in Phase 6A.2
+
+| id | found in | what it was | closed by | permanent control |
+|---|---|---|---|---|
+| **P6B-D-01** | Phase 6B, the first native open of the PBIP in Power BI Desktop | **Engine-valid, PBIP-invalid relationship metadata.** The emitter wrote each inactive relationship's rationale as a `///` doc comment. TMDL maps `///` to `Description`; a relationship has no such property; Desktop rejected the whole project: *"Property 'description' is unknown and is not expected in the situation it appears."* The TMSL deployment carried no comment, so the engine never saw it | Phase 6A.2: the emitter writes the rationale as the `Northstar_Rationale` **annotation** on the relationship, in both the TMDL and the TMSL. The prose is unchanged and round-trips through Desktop | `P6-PBIP-01`, fixture `F6-PBIP-01` |
+| **P6B-D-02** | Phase 6B, the same open, once D-01 was stripped on a scratch copy | **Engine-valid, Desktop-reserved measures-host name.** The table every measure lives on was named `Measures`, which Desktop reserves: *"Unsupported Table name "Measures" has been found in data model schema."* Analysis Services has no reserved names, so the TMSL deployment loaded it without comment | Phase 6A.2: renamed **`Northstar Measures`** at the emitter, in both forms. Measures are referenced as `[Measure]`, never table-qualified, so no DAX changed; the lineage tag is kept, so it is the same object renamed | `P6-PBIP-02`, fixture `F6-PBIP-02` |
+
+### P6B-D-01 and P6B-D-02 in detail — as they were found
+
+Phase 6A validated the semantic model by deploying it over TMSL to the Analysis Services
+engine behind Desktop and executing its DAX there. Every one of 49 controls passed. Phase 6A's
+report also recorded, honestly, that the `.pbip` had not been opened in Desktop's UI: `.pbip`
+has no file association here and the Store build ignores a command-line argument.
+
+Phase 6B needed pages rendered, so the first thing it did was find a native route: Desktop's own
+File > Open dialog, driven through UI Automation. Desktop parsed the project and refused it.
+Stripping the relationship comments on a scratch copy — never the repository — got past the
+parser and into the schema check, which refused the table name. Both defects were registered
+and Phase 6B **stopped**, because the Phase 6B brief said a semantic-model defect is a stop, not
+a workaround.
+
+The lesson, now held permanently by the `P6-PBIP` family and stated in
+[architecture-lessons.md §15](architecture-lessons.md):
+
+> **Native file-format validation and semantic-engine validation are separate control
+> surfaces. Passing one does not prove the other.**
+
+The engine has no reserved table names and TMSL carries no doc comments; the TMDL parser does
+not evaluate DAX. A model can be valid in one and invalid in the other in either direction,
+and a suite pointed at only one of them has a blind spot exactly the shape of the other.
 
 ## Closed in Phase 6A.1
 

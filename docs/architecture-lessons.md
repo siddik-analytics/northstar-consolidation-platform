@@ -337,6 +337,36 @@ next one that quietly writes its own.
 
 ---
 
+## 15. A model the engine ran and Desktop would not open
+
+**Symptom.** The Phase 6A semantic model passed 49 controls on real DAX against the real
+engine, 19 reconciliations to the marts and 8 to Excel, and 10 fault fixtures. Power BI Desktop
+refused to open the project it described: first *"Property 'description' is unknown"*, then
+*"Unsupported Table name "Measures""*.
+
+**Root cause.** Two things the engine does not check. TMDL maps a `///` comment to a
+`Description` property, and a relationship has none — but TMSL carries no comments, so the
+deployment never had one. Desktop reserves the table name `Measures` — but Analysis Services
+reserves nothing, so the deployment loaded it. The emitter produced two forms from one
+declaration and they could not disagree about a definition; they were never asked whether they
+agreed about *validity*.
+
+**Why controls miss it.** Every control was pointed at the engine, and the engine was right.
+The report said, accurately, that the Desktop file-open path had not been exercised — and
+recorded it as a limitation of the environment rather than as a missing control surface. A
+limitation is something you cannot test. This was something nobody had tested.
+
+**Permanent fix.** `src/powerbi/desktop.py` opens the generated `.pbip` in Desktop through
+Desktop's own Open dialog, reads back the loaded title or the refusal, refreshes natively, and
+counts what Desktop loaded. `P6-PBIP-01` … `P6-PBIP-04` hold it; `F6-PBIP-01` and
+`F6-PBIP-02` re-emit each defect and record that the engine still accepts it while the
+project controls and Desktop refuse it.
+
+> **Native file-format validation and semantic-engine validation are separate control
+> surfaces. Passing one does not prove the other.**
+
+---
+
 ## What these have in common
 
 **A plug makes controls pass.** Items 1 and 4 both had a residual absorbing the defect, and in

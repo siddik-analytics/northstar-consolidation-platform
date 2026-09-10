@@ -1,6 +1,6 @@
 /// Every measure in the model. Measures are grouped by display folder, not by
 /// the table they read, so a report author finds them by what they mean.
-table Measures
+table 'Northstar Measures'
 	lineageTag: 4d29837c-7652-57c3-bf06-9ac22de91ce7
 
 	/// The period key of the reporting close, August 2026. Held as one measure so the cutoff is
@@ -1232,7 +1232,7 @@ table Measures
 
 		annotation SummarizationSetBy = Automatic
 
-	partition Measures = m
+	partition 'Northstar Measures' = m
 		mode: import
 		source =
 				let

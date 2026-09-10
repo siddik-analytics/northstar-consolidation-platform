@@ -38,7 +38,14 @@ import duckdb
 
 from . import config as C
 from . import dax
+from . import desktop
 from .measures import MEASURES
+
+#: Whether `P6-PBIP-03` should open the generated project in Power BI Desktop. Off by default
+#: because the fault suite runs the controls a dozen times and a Desktop open is a ten-second
+#: UI round trip; `run.py` turns it on for the phase run, and the PBIP fixtures turn it on
+#: for themselves.
+DESKTOP_OPEN = False
 
 REPORT_PERIOD = C.REPORT_PERIOD
 ACT = "'Scenario'[version_code] = \"ACTUAL\""
@@ -361,7 +368,7 @@ def _semantic(r: Result, con, live: bool, why: str) -> None:
         return
 
     live_tables = set(dax.table_names())
-    declared = {t["name"] for t in C.TABLES} | {"Period Basis", "Measures"}
+    declared = {t["name"] for t in C.TABLES} | {"Period Basis", C.MEASURES_TABLE}
     r.ok("P6-SEM-13", "The model loads in Analysis Services with every declared table",
          "BLOCKING", declared <= live_tables,
          len(live_tables), len(declared),
@@ -481,6 +488,153 @@ def _policy(r: Result, con, live: bool, why: str) -> None:
          "presented as the forecast is an error nobody would notice from the number alone")
 
 
+
+
+# ---------------------------------------------------------------------------- P6-PBIP
+#: TMDL objects that carry a Description in the tabular object model, and so may take a `///`
+#: doc comment. A `///` above anything else is a property the parser does not know, and
+#: Desktop rejects the whole project for it (P6B-D-01: relationships).
+DOCUMENTABLE = frozenset({
+    "model", "table", "column", "measure", "hierarchy", "level", "partition", "expression",
+    "role", "perspective", "calculationGroup", "calculationItem", "dataSource",
+})
+
+
+def _tmdl_files() -> list:
+    definition = C.MODEL_DIR / "definition"
+    return sorted(definition.rglob("*.tmdl")) if definition.exists() else []
+
+
+def _doc_comment_targets() -> list[tuple[str, int, str]]:
+    """Every `///` block in the generated project and the object keyword that follows it."""
+    out = []
+    for path in _tmdl_files():
+        lines = path.read_text(encoding="utf-8").splitlines()
+        i = 0
+        while i < len(lines):
+            if lines[i].strip().startswith("///"):
+                start = i
+                while i < len(lines) and lines[i].strip().startswith("///"):
+                    i += 1
+                keyword = lines[i].strip().split(" ")[0] if i < len(lines) else "EOF"
+                out.append((path.name, start + 1, keyword))
+            else:
+                i += 1
+    return out
+
+
+def _declared_tables() -> list[str]:
+    """Table names as the generated TMDL declares them (`table X` / `table 'X Y'`)."""
+    names = []
+    for path in _tmdl_files():
+        for line in path.read_text(encoding="utf-8").splitlines():
+            if line.startswith("table "):
+                names.append(line[6:].strip().strip("'"))
+    return names
+
+
+def _project_counts() -> dict:
+    """Object counts read from the generated TMDL text -- the native project's own claim."""
+    measures = relationships = active = 0
+    for path in _tmdl_files():
+        for line in path.read_text(encoding="utf-8").splitlines():
+            if line.startswith("\tmeasure "):
+                measures += 1
+            elif line.startswith("relationship "):
+                relationships += 1
+                active += 1
+            elif line.strip() == "isActive: false":
+                active -= 1
+    return dict(tables=len(_declared_tables()), measures=measures,
+                relationships=relationships, active_relationships=active)
+
+
+def _engine_counts() -> dict | None:
+    try:
+        return dict(
+            tables=len(dax.table_names()),
+            measures=int(dax.query('EVALUATE ROW ( "n", COUNTROWS ( INFO.MEASURES () ) )')[0][0]),
+            relationships=int(dax.query(
+                'EVALUATE ROW ( "n", COUNTROWS ( INFO.RELATIONSHIPS () ) )')[0][0]),
+            active_relationships=int(dax.query(
+                'EVALUATE ROW ( "n", COUNTROWS ( FILTER ( INFO.RELATIONSHIPS (), [IsActive] ) ) )'
+            )[0][0]))
+    except Exception:
+        return None
+
+
+def _pbip(r: Result, con, live: bool, why: str) -> None:
+    """
+    Native project compatibility.
+
+    A model can be valid in the engine and invalid as a project on disk: the engine has no
+    reserved table names and TMSL carries no doc comments, so the TMSL deployment that
+    validates the DAX proves nothing about whether Desktop will open the `.pbip`. Phase 6A
+    passed every engine control and the project did not open (P6B-D-01, P6B-D-02). These
+    controls read the generated text the way the parser does, and `P6-PBIP-03` hands the
+    project to Desktop itself.
+    """
+    bad = [(f, n, k) for f, n, k in _doc_comment_targets() if k not in DOCUMENTABLE]
+    r.ok("P6-PBIP-01", "Doc comments only on objects that carry a Description", "BLOCKING",
+         not bad, "; ".join(f"{f}:{n} -> {k}" for f, n, k in bad[:5]) or 0, 0,
+         "a `///` above a relationship is a Description property the parser rejects "
+         "(P6B-D-01); rationale travels as an annotation instead")
+
+    tables = _declared_tables()
+    reserved = [t for t in tables if t.lower() in C.RESERVED_TABLE_NAMES]
+    r.ok("P6-PBIP-02", "No table name Power BI Desktop reserves", "BLOCKING",
+         not reserved and bool(tables), reserved or 0, 0,
+         f"{len(tables)} tables declared; reserved list {sorted(C.RESERVED_TABLE_NAMES)} "
+         f"confirmed against Desktop, not assumed (P6B-D-02)")
+
+    native = None
+    if not DESKTOP_OPEN:
+        r.add("P6-PBIP-03", "Power BI Desktop opens the generated project", "BLOCKING",
+              "NOT_EXECUTED", "-", "-",
+              "Desktop open not requested for this run (run.py requests it)")
+    else:
+        pbip = C.PBIP_DIR / f"{C.PROJECT}.pbip"
+        result = desktop.open_project(pbip)
+        if result["why"] and not result["refusal"] and not result["opened"]:
+            r.add("P6-PBIP-03", "Power BI Desktop opens the generated project", "BLOCKING",
+                  "NOT_EXECUTED", "-", "-", result["why"])
+        else:
+            detail = (f"opened in {result['seconds']}s as {result['title']!r}"
+                      if result["opened"] else f"refused: {result['refusal'][:300]}")
+            loaded = None
+            if result["opened"]:
+                refreshed = desktop.refresh(result["pid"])
+                native = desktop.session_counts(result["pid"])
+                loaded = refreshed["done"]
+                detail += ("; native refresh loaded every partition" if loaded
+                           else f"; native refresh incomplete: {refreshed['why']} "
+                                f"{refreshed['dialogs']}")
+                desktop.screenshot(C.DATA / "90_exports" / "powerbi_desktop_open.png",
+                                   result["pid"])
+            r.ok("P6-PBIP-03", "Power BI Desktop opens the generated project and loads it",
+                 "BLOCKING", bool(result["opened"] and loaded),
+                 "opened" if result["opened"] else "refused", "opened", detail)
+            spawned = result["pid"] and result["pid"] != (desktop._pids() or [None])[0]
+            if spawned:
+                desktop.close_instance(result["pid"])
+
+    project = _project_counts()
+    engine = _engine_counts() if live else None
+    if engine is None:
+        r.add("P6-PBIP-04", "Native project and deployed engine agree on structure", "BLOCKING",
+              "NOT_EXECUTED", str(project), "-", why)
+    else:
+        forms = {"project": project, "engine": engine}
+        if native:
+            forms["desktop"] = {k: (len(v) if isinstance(v, list) else v)
+                                for k, v in native.items() if k != "catalog"}
+        agree = all(forms[f][k] == project[k] for f in forms for k in project)
+        r.ok("P6-PBIP-04", "Native project, deployed engine"
+             + (" and Desktop session" if native else "") + " agree on structure",
+             "BLOCKING", agree, {k: v for k, v in forms.items() if k != "project"}, project,
+             "tables, measures, relationships and active relationships counted in each form")
+
+
 def run(con: duckdb.DuckDBPyConnection) -> Result:
     r = Result()
     live, why = dax.available()
@@ -492,6 +646,7 @@ def run(con: duckdb.DuckDBPyConnection) -> Result:
     _semantic(r, con, live, why)
     _reconcile(r, con, live, why)
     _policy(r, con, live, why)
+    _pbip(r, con, live, why)
     return r
 
 

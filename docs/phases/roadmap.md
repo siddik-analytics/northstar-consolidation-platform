@@ -460,6 +460,13 @@ This phase was interrupted twice by upstream defects -- P6-D-01 and P7-D-01 -- a
 after both contracts were corrected and rebaselined. See
 [`phase-06a-report.md`](phase-06a-report.md).
 
+**Phase 6A.2** resealed it after Phase 6B's first native open found two defects the engine
+could not see: a `///` on a relationship (P6B-D-01) and the reserved table name `Measures`
+(P6B-D-02). Both fixed at the emitter; the project now opens and refreshes in Power BI Desktop
+itself, held by a fifth control family (`P6-PBIP`) and two fixtures. 53/53 controls, 12/12
+fixtures, definition digest unchanged. See
+[`phase-06a-2-native-pbip.md`](phase-06a-2-native-pbip.md).
+
 ---
 
 ## Phase 6 — Excel FP&A and management reporting models

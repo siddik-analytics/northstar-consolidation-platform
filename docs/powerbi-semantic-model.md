@@ -22,10 +22,13 @@ upstream and arrives on the mart row.
 | `src/powerbi/model.py` | emits the **PBIP / TMDL** project — what a person opens, what git reviews |
 | `src/powerbi/deploy.py` | emits **TMSL** and deploys to a live engine — what proves it works |
 | `src/powerbi/dax.py` | executes DAX against that engine |
-| `src/powerbi/controls.py` | 49 semantic and reconciliation controls |
-| `src/powerbi/faults.py` | 10 fixtures, each caught by a named control |
+| `src/powerbi/desktop.py` | opens the **PBIP in Power BI Desktop itself**, through its own Open dialog — what proves the project on disk is one Desktop accepts |
+| `src/powerbi/controls.py` | 53 semantic, reconciliation and native-project controls |
+| `src/powerbi/faults.py` | 12 fixtures, each caught by a named control |
 
-Both output forms come from one declaration, which is why they cannot disagree.
+Both output forms come from one declaration, which is why they cannot disagree about a
+definition. They can still disagree about **validity**, because the engine and the project
+parser accept different things — see *Validation* below.
 
 ### Why generate two forms
 
@@ -99,6 +102,24 @@ active path would make every segment total ambiguous with no way to tell which r
 used. They are kept rather than deleted because the columns are genuinely on the marts and a
 future report may want `USERELATIONSHIP`. Each carries its own written reason; `P6-SEM-05`
 fails a reason shorter than a sentence.
+
+Where that reason lives changed in Phase 6A.2. It was emitted as a `///` doc comment above the
+relationship, which TMDL maps to a `Description` property — and a relationship has none, so
+Power BI Desktop refused the whole project (**P6B-D-01**). It is now an **annotation** on the
+relationship, `Northstar_Rationale`, in both the TMDL and the TMSL: the metadata a
+relationship does support, round-tripped through Desktop (`TMSCHEMA_ANNOTATIONS` shows all
+five after a native open) and still readable in a diff. The prose is unchanged; only its
+container moved.
+
+### The measures host
+
+Every measure lives on one table, **`Northstar Measures`**, grouped by display folder rather
+than by the fact it reads. Until Phase 6A.2 the table was called `Measures`. Desktop reserves
+that name and refuses to open a project that uses it — *"Unsupported Table name "Measures" has
+been found in data model schema"* (**P6B-D-02**) — while the engine loads it over TMSL without
+comment. Measures are referenced as `[Measure]`, never table-qualified, so the rename touched
+no DAX; the table keeps its lineage tag, which is the identity that says "the same object,
+renamed"; `P6-PBIP-02` refuses to emit a reserved name again.
 
 ---
 
@@ -205,15 +226,37 @@ does not exist — 7.38x against a 4.50x limit, which is what the Phase 5 visual
 
 ## Validation
 
-Power BI Desktop 2.157.1354.0 will not open a PBIP project from the command line on this
-machine — `.pbip` has no file association and the Store build does not forward the argument. The
-Analysis Services instance Desktop runs behind itself **does** accept TMSL over XMLA, which is
-how external tabular tools have always driven it, so the model is deployed there and queried
-there.
+Two surfaces, validated separately, because passing one proves nothing about the other.
 
-That is real native validation: the real engine, the real model, the real DAX. All 89 measures
-parse and evaluate; 19 reconciliations against the marts and 8 against the Excel workbook pass;
-10 fault fixtures are each caught by the control named for them in advance.
+### The engine
+
+The Analysis Services instance Desktop runs behind itself accepts TMSL over XMLA, so the model
+is deployed there and queried there. That is the real engine, the real model, the real DAX:
+all 89 measures parse and evaluate; 19 reconciliations against the marts and 8 against the
+Excel workbook pass; 12 fault fixtures are each caught by the control named for them.
+
+### The project
+
+Phase 6A recorded that Desktop would not open a PBIP from the command line here — `.pbip` has
+no file association and the Store build ignores the argument — and stopped at the engine. That
+was the gap. In Phase 6B the project was handed to Desktop through **its own File > Open
+dialog, driven by UI Automation**, and Desktop refused it twice: a `///` on a relationship
+(P6B-D-01), then the reserved table name (P6B-D-02). The engine had accepted both.
+
+**Native file-format validation and semantic-engine validation are separate control
+surfaces. Passing one does not prove the other.** The engine has no reserved table names and
+TMSL carries no doc comments; the parser does not evaluate DAX. So `src/powerbi/desktop.py`
+is a permanent part of the run: it opens the generated `.pbip` in Desktop 2.157.1354.0, waits
+for either the loaded project's title or the text of the refusal, triggers Desktop's own
+refresh so the partitions load through Desktop's Power Query, and counts tables, measures and
+relationships in the session database Desktop itself created. `P6-PBIP-01` … `P6-PBIP-04`
+hold this; `F6-PBIP-01` and `F6-PBIP-02` re-emit each defect and prove the engine still
+accepts it while the project controls and Desktop refuse it.
+
+Auto date/time is declared off at model level (`__PBI_TimeIntelligenceEnabled = 0`): with it
+on, Desktop adds a hidden `LocalDateTable_*` per date column, and the model Desktop loads is
+then not the model the project declares. The Date dimension is governed; nothing hidden
+supplements it.
 
 See [`powerbi-controls.md`](powerbi-controls.md) for the suite and
 [`powerbi-measures.md`](powerbi-measures.md) for the measures.

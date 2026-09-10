@@ -18,13 +18,16 @@ leave nothing behind.
 from __future__ import annotations
 
 import csv
+import shutil
 import sys
+import tempfile
 from contextlib import contextmanager
+from pathlib import Path
 
 import duckdb
 
 from . import config as C
-from . import controls, dax, deploy
+from . import controls, dax, deploy, model
 from . import measures as M
 
 
@@ -164,6 +167,77 @@ def f10_capital_project_old_key():
     return _patched_tables(mutate)
 
 
+# ---------------------------------------------------------------------------- PBIP fixtures
+@contextmanager
+def _scratch_project():
+    """
+    Generate the project somewhere disposable, and point the controls at it.
+
+    The PBIP fixtures break the **project on disk**, not the engine, so the generator has to
+    run -- and it must not run over the committed project. The controls read `C.MODEL_DIR`,
+    and `P6-PBIP-03` hands `C.PBIP_DIR` to Desktop, so both follow the patch.
+    """
+    original = (C.PBIP_DIR, C.MODEL_DIR, C.REPORT_DIR)
+    tmp = Path(tempfile.mkdtemp(prefix="northstar-pbip-fixture-"))
+    C.PBIP_DIR = tmp
+    C.MODEL_DIR = tmp / f"{C.PROJECT}.SemanticModel"
+    C.REPORT_DIR = tmp / f"{C.PROJECT}.Report"
+    was = controls.DESKTOP_OPEN
+    controls.DESKTOP_OPEN = True
+    try:
+        yield tmp
+    finally:
+        C.PBIP_DIR, C.MODEL_DIR, C.REPORT_DIR = original
+        controls.DESKTOP_OPEN = was
+        shutil.rmtree(tmp, ignore_errors=True)
+
+
+def _legacy_relationships_tmdl() -> str:
+    """The Phase 6A emitter: rationale as a `///` doc comment above the relationship."""
+    lines: list[str] = []
+    for from_table, from_col, to_table, to_col in C.RELATIONSHIPS:
+        rid = model.tag("rel", from_table, from_col, to_table, to_col)
+        lines += [f"relationship {rid}", f"\tfromColumn: '{from_table}'.{from_col}",
+                  f"\ttoColumn: '{to_table}'.{to_col}", ""]
+    for from_table, from_col, to_table, to_col, why in C.INACTIVE_RELATIONSHIPS:
+        rid = model.tag("rel", from_table, from_col, to_table, to_col)
+        lines += model._description_lines(why, "")
+        lines += [f"relationship {rid}", "\tisActive: false",
+                  f"\tfromColumn: '{from_table}'.{from_col}",
+                  f"\ttoColumn: '{to_table}'.{to_col}", ""]
+    return "\n".join(lines)
+
+
+@contextmanager
+def f11_relationship_doc_comments():
+    """P6B-D-01 again: the rationale emitted as a Description the relationship cannot carry."""
+    original = model._relationships_tmdl
+    model._relationships_tmdl = _legacy_relationships_tmdl
+    try:
+        with _scratch_project():
+            model.generate(ACTIVE_CON)
+            yield
+    finally:
+        model._relationships_tmdl = original
+
+
+@contextmanager
+def f12_reserved_measures_table():
+    """P6B-D-02 again: the measures host named `Measures`, which Desktop reserves."""
+    original = C.MEASURES_TABLE
+    C.MEASURES_TABLE = "Measures"
+    try:
+        with _scratch_project():
+            model.generate(ACTIVE_CON)
+            yield
+    finally:
+        C.MEASURES_TABLE = original
+
+
+#: The suite's warehouse connection, for the fixtures that regenerate the project. DuckDB
+#: refuses a second connection to the same file in a different mode, so they share this one.
+ACTIVE_CON = None
+
 #: fixture id -> (description, factory, the control that must catch it)
 FIXTURES: tuple[tuple[str, str, object, str], ...] = (
     ("F6-XAR-01", "Revenue omits a valid account family",
@@ -186,6 +260,12 @@ FIXTURES: tuple[tuple[str, str, object, str], ...] = (
      f09_py_derived_removed, "P6-POL-04"),
     ("F6-XAR-10", "Capital Project reverts to the colliding pre-ADR-0026 key",
      f10_capital_project_old_key, "P6-SEM-01"),
+    # Engine-valid, project-invalid. Both deploy over TMSL without complaint -- which is the
+    # point -- and are caught by reading the generated project, then confirmed by Desktop.
+    ("F6-PBIP-01", "Relationship rationale emitted as a /// doc comment (P6B-D-01)",
+     f11_relationship_doc_comments, "P6-PBIP-01"),
+    ("F6-PBIP-02", "Measures host table named the reserved `Measures` (P6B-D-02)",
+     f12_reserved_measures_table, "P6-PBIP-02"),
 )
 
 
@@ -249,6 +329,8 @@ def run(con) -> list[dict]:
                      status="NOT_EXECUTED", controls_triggered=why)
                 for fid, desc, _factory, expected in FIXTURES]
 
+    global ACTIVE_CON
+    ACTIVE_CON = con
     _damaged_sources(con)
     rows = []
     try:
@@ -264,6 +346,10 @@ def run(con) -> list[dict]:
             # dimension a duplicate key, and Analysis Services rejects the relationship built
             # on it outright rather than quietly promoting it to many-to-many.
             triggered = ";".join(broken) or "none"
+            if expected.startswith("P6-PBIP") and deployed:
+                # The engine took the damaged model. That is not a miss: it is the reason
+                # this control family exists, and it is recorded so the report can say so.
+                triggered += " (engine accepted the model over TMSL)"
             if expected in broken:
                 status = "DETECTED"
                 if not deployed:

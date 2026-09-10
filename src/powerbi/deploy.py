@@ -24,6 +24,7 @@ import json
 
 from . import config as C
 from . import dax
+from . import model
 from .measures import MEASURES, PERIOD_BASIS_ROWS
 
 DATABASE = "NorthstarSemanticValidation"
@@ -108,13 +109,13 @@ def _table(con, spec: dict) -> dict:
 
 def _measures_table() -> dict:
     return {
-        "name": "Measures",
+        "name": C.MEASURES_TABLE,
         "description": "Every measure in the model, grouped by what it means rather than by "
                        "the table it reads.",
         "columns": [{"name": "_placeholder", "dataType": "int64", "isHidden": True,
                      "sourceColumn": "_placeholder", "summarizeBy": "none"}],
         "partitions": [{
-            "name": "Measures", "mode": "import",
+            "name": C.MEASURES_TABLE, "mode": "import",
             "source": {"type": "m", "expression": [
                 "let",
                 "    Source = #table(type table [_placeholder = Int64.Type], {})",
@@ -174,13 +175,17 @@ def _relationships() -> list[dict]:
             "toTable": to_table, "toColumn": to_col,
             "crossFilteringBehavior": "oneDirection",
         })
-    for from_table, from_col, to_table, to_col, _why in C.INACTIVE_RELATIONSHIPS:
+    for from_table, from_col, to_table, to_col, why in C.INACTIVE_RELATIONSHIPS:
         out.append({
             "name": f"{from_table}_{from_col}_to_{to_table}_{to_col}_inactive",
             "fromTable": from_table, "fromColumn": from_col,
             "toTable": to_table, "toColumn": to_col,
             "crossFilteringBehavior": "oneDirection",
             "isActive": False,
+            # The same annotation the TMDL carries, so the two forms of the model hold the
+            # same metadata and P6-PBIP-04 can compare them.
+            "annotations": [{"name": model.RATIONALE_ANNOTATION,
+                             "value": model._one_line(why)}],
         })
     return out
 
@@ -198,6 +203,7 @@ def build_tmsl(con) -> dict:
                 "model": {
                     "culture": "en-GB",
                     "defaultPowerBIDataSourceVersion": "powerBI_V3",
+                    "annotations": [{"name": "__PBI_TimeIntelligenceEnabled", "value": "0"}],
                     "tables": tables,
                     "relationships": _relationships(),
                 },

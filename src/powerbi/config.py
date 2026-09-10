@@ -26,6 +26,17 @@ PROJECT = "Northstar"
 MODEL_DIR = PBIP_DIR / f"{PROJECT}.SemanticModel"
 REPORT_DIR = PBIP_DIR / f"{PROJECT}.Report"
 
+#: The table every measure lives on. It was `Measures` until Phase 6A.2: Power BI Desktop
+#: reserves that name and refuses to open a project that uses it ("Unsupported Table name
+#: "Measures" has been found in data model schema", defect P6B-D-02). The engine accepted it
+#: over TMSL, which is why Phase 6A never saw the refusal. Measures are referenced as
+#: `[Measure]`, never table-qualified, so the name is metadata and nothing in DAX reads it.
+MEASURES_TABLE = "Northstar Measures"
+
+#: Table names Power BI Desktop will not load, confirmed against Desktop 2.157 rather than
+#: assumed. `P6-PBIP-02` refuses to emit any of them, case-insensitively.
+RESERVED_TABLE_NAMES = frozenset({"measures"})
+
 #: The reporting close. Actual stops here; everything after it is forecast, and an Actual
 #: measure must return BLANK rather than zero beyond it (Phase 5, carried forward as a rule).
 REPORT_PERIOD = 202608

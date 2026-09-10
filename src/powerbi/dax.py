@@ -54,10 +54,23 @@ def _powershell(script: str) -> str:
         return ""
 
 
-def find_port() -> int | None:
-    """The port Desktop's own Analysis Services instance is listening on."""
+def find_port(desktop_pid: int | None = None) -> int | None:
+    """
+    The port Desktop's own Analysis Services instance is listening on.
+
+    Each Desktop process runs its own `msmdsrv`. With no `desktop_pid` the oldest instance is
+    used -- the one the TMSL deployment targets -- so that a second Desktop opened by the
+    native-project controls (`desktop.py`) cannot silently redirect the engine controls.
+    """
+    if desktop_pid is None:
+        select = ("Get-Process msmdsrv -ErrorAction SilentlyContinue | Sort-Object StartTime "
+                  "| Select-Object -First 1")
+    else:
+        select = (f"Get-CimInstance Win32_Process -Filter \"Name = 'msmdsrv.exe' AND "
+                  f"ParentProcessId = {int(desktop_pid)}\" | Select-Object -First 1 "
+                  "| ForEach-Object { Get-Process -Id $_.ProcessId }")
     raw = _powershell(
-        "$p = Get-Process msmdsrv -ErrorAction SilentlyContinue; "
+        f"$p = {select}; "
         "if ($p) { Get-NetTCPConnection -State Listen -OwningProcess $p.Id "
         "-ErrorAction SilentlyContinue | Select-Object -First 1 -ExpandProperty LocalPort }")
     digits = "".join(c for c in raw.splitlines()[0] if c.isdigit()) if raw else ""

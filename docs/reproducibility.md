@@ -44,8 +44,8 @@ fault sweep is more than half — it runs ten complete pipelines.
 | 11 | `python -m src.excel.qa` | Excel calculation, reconciliation and render — **17/17** | 32 s |
 | 12 | `python -m src.integrity.controls` | every declared key, grain and version — **249/249** | 2 s |
 | 13 | `python -m src.integrity.faults` | eighteen deliberate breakages — **18/18 detected** | 6 s |
-| 14 | `python -m src.powerbi.run` | the semantic model, deployed and controlled — **49/49** | 8 s |
-| 15 | `python -m src.powerbi.faults` | ten semantic breakages — **10/10 detected** | 70 s |
+| 14 | `python -m src.powerbi.run` | the semantic model generated, **opened in Power BI Desktop**, deployed and controlled — **53/53** | 65 s (needs Desktop and an idle machine; `--no-desktop` skips the native open and reports it `NOT_EXECUTED`) |
+| 15 | `python -m src.powerbi.faults` | twelve semantic and native-project breakages — **12/12 detected** | 13 min |
 | 16 | `python tools/checkout_reproducibility.py` | LF vs CRLF checkout — all four build ids match | 1 s |
 | 17 | `python -m pytest tests -q` | **529** automated tests | 130 s |
 
@@ -110,6 +110,18 @@ The platform computes two kinds of digest, and conflating them is what caused de
 |---|---|---|---|
 | **Lineage / build id** | *is this the same input?* | canonical text hashing | the Phase 3, 4, 5 and 6A build ids, the PBIP project digest |
 | **Exact artefact digest** | *is this the same file, byte for byte?* | raw bytes | every published Parquet, the Excel workbook, the source dataset digest |
+| **Definition digest** | *are these the same finance definitions?* | canonical JSON of the declarations only | the semantic model's `definition_digest` (Phase 6A.2) |
+
+The third was added in Phase 6A.2, when the semantic project had to change without its
+definitions changing. `project_digest` hashes the generated project text, so renaming the
+measures host and moving a comment into an annotation moves it — as it should, a reviewer
+diffing the project sees a difference. `definition_digest` hashes every measure (name, DAX,
+format, folder, description), every table specification, every relationship and its rationale,
+the period-basis rows and the reporting close, and **nothing about containers, lineage tags,
+annotations or file layout**. Across Phase 6A.2 it did not move: `c7f74db69a967dd9` before and
+after, while `project_digest` went from `47103ccc440668f4` to the value in
+`data/phase06a_manifest.json`. Metadata drift and definition drift are different claims, and
+now they have different digests.
 
 A build id must survive a checkout, because git rewrites line endings and a line ending carries
 no meaning. `src/lineage/digest.py` is the one implementation every phase calls: it decodes
