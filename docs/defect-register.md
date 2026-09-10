@@ -16,7 +16,16 @@ each one says about the design rather than for what happened.
 
 ## Open
 
-*None.*
+| id | found in | what it is | status |
+|---|---|---|---|
+| **P6B-D-01** | Phase 6B, first native open of the PBIP in Power BI Desktop | **The semantic-model project does not open in Desktop.** `relationships.tmdl` carries a `///` doc comment above each of its 15 relationships; TMDL maps `///` to the object's `Description`, and a relationship has no such property. Desktop rejects the whole definition: *"Property 'description' is unknown and is not expected in the situation it appears."* | **OPEN — awaiting owner decision.** Not a finance definition; the emitter in `src/powerbi/model.py` writes a comment where TMDL does not allow one. Proposed fix: emit relationship rationale as an `annotation` (or a plain `//` comment) instead of `///` |
+| **P6B-D-02** | Phase 6B, same open, after P6B-D-01 was stripped on a scratch copy | **The measures-host table is named `Measures`.** Power BI Desktop reserves that name: *"Unsupported Table name "Measures" has been found in data model schema."* The table holds all 89 measures | **OPEN — awaiting owner decision.** Renaming the table changes the sealed Phase 6A model's TMDL/TMSL and the project digest, though no DAX (measure references are `[Measure]`, never `'Measures'[Measure]`). Proposed name: `'Northstar Measures'` |
+
+Both were invisible to Phase 6A's validation, which deployed the model to Desktop's Analysis
+Services engine over TMSL — the engine has no reserved table names and TMSL carries no `///`
+comments. They exist only in the **PBIP text form**, and the first thing that parsed that form
+was Desktop itself, driven through its own Open dialog by UI automation on 2026-09-09.
+Evidence: `docs/assets/phase-06b/desktop_P6B-D-02_unsupported_table_name.png`.
 
 ## Closed in Phase 6A.1
 
@@ -47,7 +56,9 @@ was a local patch, not a fix: a fresh clone would still have produced different 
 
 **Closed in Phase 6A.1.** `src/lineage/digest.py` is now the single canonical hasher every
 phase calls. A lineage id hashes canonical text — UTF-8, BOM dropped, `
-` and bare ``
+
+` and bare `
+`
 folded to `
 ` — together with each input's repository-relative name and length. Whitespace is
 deliberately **not** normalised, because a trailing space in a CSV field is data and
