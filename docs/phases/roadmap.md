@@ -420,7 +420,7 @@ scenario/version assumptions. See
 
 ## Phase 5.2 — Excel executive design and visual polish ✅
 
-**Complete, awaiting visual review.** A design pass over the approved workbook: no finance logic,
+**Owner-approved and frozen.** A design pass over the approved workbook: no finance logic,
 no reporting definitions, presentation only.
 
 Rendering all sixteen sheets through Excel's own PDF writer and looking at them found that **all
@@ -434,6 +434,10 @@ negative-number conventions on the flagship sheet, and an empty half-page on the
 
 **No reported financial value changed**; 17/17 reconciliations still pass. See
 [`phase-05-2-visual-polish.md`](phase-05-2-visual-polish.md).
+
+**Phase 5.2A** added the secondary colour: navy plus muted industrial copper, as a system with
+five distinct jobs rather than a single accent. Owner-approved; the workbook is frozen from
+here. See [`phase-05-2a-copper-correction.md`](phase-05-2a-copper-correction.md).
 
 ---
 

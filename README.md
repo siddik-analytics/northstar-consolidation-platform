@@ -30,7 +30,7 @@ figure back to the source journal that produced it.
 | **4C — Reporting integrity & cross-artefact gate** | ✅ **Complete** | [Report](docs/phases/phase-04c-reporting-integrity.md) |
 | **5 — Reporting marts & Excel management model** | ✅ **Complete** | [Report](docs/phases/phase-05-report.md) |
 | **5.1 — Upstream dimensional-integrity correction** | ✅ **Complete** | [Report](docs/phases/phase-05-1-key-integrity.md) · [Scenario dimension](docs/phases/phase-05-1-scenario-integrity.md) |
-| **5.2 — Excel executive design and visual polish** | ✅ **Complete** | [Report](docs/phases/phase-05-2-visual-polish.md) |
+| **5.2 — Excel executive design and visual polish** | ✅ **Approved · frozen** | [Report](docs/phases/phase-05-2-visual-polish.md) · [5.2A copper system](docs/phases/phase-05-2a-copper-correction.md) |
 | **6A — Power BI semantic model** | ✅ **Complete** | [Report](docs/phases/phase-06a-report.md) |
 | 6B — Power BI report design | ⏸ | |
 | 7 — Board pack & commentary framework | ⏸ | |

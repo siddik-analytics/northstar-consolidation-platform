@@ -1,6 +1,6 @@
 # Phase 5.2 — Excel executive design and visual polish
 
-**Status:** complete, awaiting owner visual review
+**Status:** owner-approved (with the Phase 5.2A copper system); the workbook is frozen
 **Baseline:** `65b7b48` (Phase 6A.1, approved and frozen)
 **Scope:** visual, UX and presentation only. No finance logic, no reporting definitions.
 

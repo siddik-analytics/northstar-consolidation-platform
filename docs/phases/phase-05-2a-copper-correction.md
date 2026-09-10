@@ -1,6 +1,6 @@
 # Phase 5.2A correction — the copper design system, implemented
 
-**Status:** complete, awaiting owner visual review
+**Status:** owner-approved 2026-09-09. The workbook is **frozen**: it is not altered during Phase 6B except for a genuine upstream or reporting defect, and cosmetic differences between Excel and Power BI are not grounds to reopen it.
 **Baseline:** `4ed6048` (Phase 5.2A first pass, owner-rejected)
 **Scope:** formatting only. Zero numeric, zero text and zero added/removed cells against the
 baseline workbook; 18 charts with identical source ranges; 17/17 reconciliations; 529 tests.
