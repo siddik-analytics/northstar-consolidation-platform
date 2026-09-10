@@ -1,20 +1,20 @@
 fixture_id,description,expected_control,status,controls_triggered
-F7-KEY-01,Two capital projects share one project identifier (P6-D-01 recreated),P7-CPX-01,DETECTED,P7-REG-02;P7-KEY-fact_capex_project;P7-REF-ref_fixed_asset->fact_capex_project;P7-REF-mart_capex->fact_capex_project;P7-CPX-01;P7-CPX-02;P7-CPX-03;P7-CPX-04;P7-CPX-07
-F7-KEY-02,A dimension holds two rows for one member,P7-KEY-dim_entity,DETECTED,P7-REG-02;P7-KEY-dim_entity
-F7-KEY-03,A reporting mart duplicates a row at its declared grain,P7-KEY-mart_capex,DETECTED,P7-REG-02;P7-KEY-mart_capex;P7-CPX-09
-F7-NUL-01,A declared key column is null,P7-NUL-fact_capex_project,DETECTED,P7-REG-02;P7-NUL-fact_capex_project;P7-REF-ref_fixed_asset->fact_capex_project;P7-REF-mart_capex->fact_capex_project;P7-CPX-01;P7-CPX-02;P7-CPX-08
-F7-REF-01,A fixed asset references a project that does not exist,P7-CPX-02,DETECTED,P7-REG-02;P7-REF-ref_fixed_asset->fact_capex_project;P7-CPX-02;P7-CPX-08
-F7-REG-01,A keyed table exists that the registry does not declare,P7-REG-01,DETECTED,P7-REG-01;P7-REG-02
-F7-CPX-01,A fixed asset contradicts its project on asset class,P7-CPX-04,DETECTED,P7-REG-02;P7-CPX-04
-F7-CPX-02,A fixed asset contradicts its project on owning entity,P7-CPX-05,DETECTED,P7-REG-02;P7-REF-ref_fixed_asset->dim_entity;P7-CPX-05
-F7-CPX-03,Asset cost no longer reconciles to the project spend,P7-CPX-07,DETECTED,P7-REG-02;P7-CPX-07
-F7-VER-01,A version code in use is removed from the master (P7-D-01 recreated),P7-VER-01,DETECTED,P7-REG-02;P7-REF-mart_financial_ytd->dim_version;P7-REF-mart_financial_monthly->dim_version;P7-REF-mart_variance->dim_version;P7-REF-ref_default_version->dim_version;P7-VER-01;P7-VER-05;P7-VER-06
-F7-VER-02,A derived version is filed under the wrong scenario,P7-VER-02,DETECTED,P7-REG-02;P7-VER-02;P7-VER-03;P7-VER-04;P7-VER-05;P7-VER-09
-F7-VER-03,Two forecast versions are both marked as the current default,P7-VER-04,DETECTED,P7-REG-02;P7-VER-04
-F7-VER-04,"A derived version is unlocked, so a derived figure becomes editable",P7-VER-08,DETECTED,P7-REG-02;P7-VER-08
-F7-VER-05,A derived version is source-loaded as stored data,P7-VER-07,DETECTED,P7-REG-02;P7-VER-07
-F7-VER-06,A default version exists outside the governed master,P7-VER-05,DETECTED,P7-REG-02;P7-KEY-ref_default_version;P7-VER-05
-F7-VER-07,A reserved scenario becomes reportable because it is configured,P7-VER-12,DETECTED,P7-REG-02;P7-VER-12
-F7-VER-08,Prior Year drifts from the Actual it is a view of,P7-VER-10,DETECTED,P7-REG-02;P7-VER-10
-F7-VER-09,A derived version does not say what it derives from,P7-VER-09,DETECTED,P7-REG-02;P7-VER-09
-F7-RPR-01,A manifest's build id no longer matches its declared inputs,P7-RPR-04,DETECTED,P7-REG-02;P7-RPR-04
+F7-KEY-01,Two capital projects share one project identifier (P6-D-01 recreated),P7-CPX-01,DETECTED,P7-KEY-fact_capex_project;P7-REF-ref_fixed_asset->fact_capex_project;P7-REF-mart_capex->fact_capex_project;P7-REF-dim_semantic_project->fact_capex_project;P7-CPX-01;P7-CPX-02;P7-CPX-03;P7-CPX-04;P7-CPX-07
+F7-KEY-02,A dimension holds two rows for one member,P7-KEY-dim_entity,DETECTED,P7-KEY-dim_entity
+F7-KEY-03,A reporting mart duplicates a row at its declared grain,P7-KEY-mart_capex,DETECTED,P7-KEY-mart_capex;P7-CPX-09
+F7-NUL-01,A declared key column is null,P7-NUL-fact_capex_project,DETECTED,P7-NUL-fact_capex_project;P7-REF-ref_fixed_asset->fact_capex_project;P7-REF-mart_capex->fact_capex_project;P7-REF-dim_semantic_project->fact_capex_project;P7-CPX-01;P7-CPX-02;P7-CPX-08
+F7-REF-01,A fixed asset references a project that does not exist,P7-CPX-02,DETECTED,P7-REF-ref_fixed_asset->fact_capex_project;P7-CPX-02;P7-CPX-08
+F7-REG-01,A keyed table exists that the registry does not declare,P7-REG-01,DETECTED,P7-REG-01
+F7-CPX-01,A fixed asset contradicts its project on asset class,P7-CPX-04,DETECTED,P7-CPX-04
+F7-CPX-02,A fixed asset contradicts its project on owning entity,P7-CPX-05,DETECTED,P7-REF-ref_fixed_asset->dim_entity;P7-CPX-05
+F7-CPX-03,Asset cost no longer reconciles to the project spend,P7-CPX-07,DETECTED,P7-CPX-07
+F7-VER-01,A version code in use is removed from the master (P7-D-01 recreated),P7-VER-01,DETECTED,P7-REF-mart_financial_ytd->dim_version;P7-REF-mart_financial_monthly->dim_version;P7-REF-mart_variance->dim_version;P7-REF-ref_default_version->dim_version;P7-VER-01;P7-VER-05;P7-VER-06
+F7-VER-02,A derived version is filed under the wrong scenario,P7-VER-02,DETECTED,P7-VER-02;P7-VER-03;P7-VER-04;P7-VER-05;P7-VER-09
+F7-VER-03,Two forecast versions are both marked as the current default,P7-VER-04,DETECTED,P7-VER-04
+F7-VER-04,"A derived version is unlocked, so a derived figure becomes editable",P7-VER-08,DETECTED,P7-VER-08
+F7-VER-05,A derived version is source-loaded as stored data,P7-VER-07,DETECTED,P7-VER-07
+F7-VER-06,A default version exists outside the governed master,P7-VER-05,DETECTED,P7-KEY-ref_default_version;P7-VER-05
+F7-VER-07,A reserved scenario becomes reportable because it is configured,P7-VER-12,DETECTED,P7-VER-12
+F7-VER-08,Prior Year drifts from the Actual it is a view of,P7-VER-10,DETECTED,P7-VER-10
+F7-VER-09,A derived version does not say what it derives from,P7-VER-09,DETECTED,P7-VER-09
+F7-RPR-01,A manifest's build id no longer matches its declared inputs,P7-RPR-04,DETECTED,P7-RPR-04
