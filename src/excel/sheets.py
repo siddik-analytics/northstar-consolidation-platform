@@ -71,7 +71,19 @@ def title(ws, text, subtitle, width_cols=14):
         ws.cell(row=row, column=1).style = "ns_title_rule"
 
 
-def section(ws, row, text, last_col=14, right_text=None):
+def section(ws, row, text, last_col=14, right_text=None, rule=True):
+    """
+    A navy section bar closed by a copper hairline.
+
+    The rule is a **border on the bar**, not a row beneath it. Written as its own row it
+    consumed the row the sheets use for their column headers, and half of "Actual YTD /
+    Budget YTD / Var $" disappeared behind a copper strip on every table in the pack.
+
+    This is the workbook's signature and the one copper treatment that repeats, because a
+    section system is meant to be consistent. Everything else copper does -- the column-group
+    washes, the KPI band, the chart series, the covenant threshold, the layer markers -- is
+    specific to the page it appears on.
+    """
     for i in range(2, last_col + 1):
         ws.cell(row=row, column=i).style = "ns_section"
     put(ws, f"B{row}", text, "ns_section")
@@ -80,6 +92,26 @@ def section(ws, row, text, last_col=14, right_text=None):
         c.value = right_text
         c.style = "ns_section_r"
     ws.row_dimensions[row].height = 20
+
+
+def column_group(ws, row, first_col, last_col, label=None):
+    """
+    A light copper wash behind a group of analytical columns.
+
+    Used where a reader crosses from reported figures into analysis -- the variance block, the
+    full-year outlook, the movement columns on the balance sheet. It marks the boundary with a
+    tint rather than another rule, because the sheets already carry enough lines.
+    """
+    for i in range(first_col, last_col + 1):
+        ws.cell(row=row, column=i).style = "ns_colhead_x"
+    if label:
+        ws.cell(row=row - 1, column=first_col).value = label
+        ws.cell(row=row - 1, column=first_col).style = "ns_label_copper"
+
+
+def marker(ws, cell_ref, kind="copper"):
+    """A small solid key square, for a category legend beside a label."""
+    ws[cell_ref].style = f"ns_marker_{kind}"
 
 
 def note(ws, row, text, last_col=14):
@@ -212,6 +244,9 @@ def line_chart(ws, anchor, title_text, cats_ref, series, width=17.5, height=7.2,
     ch.dispBlanksAs = "gap"
     _style_axis(ch.y_axis, number_format, gridlines=True)
     _style_axis(ch.x_axis)
+    # Month labels at the foot of the plot, not on the zero line -- the translation movement
+    # crosses zero every other month and was drawn straight through its own labels.
+    ch.x_axis.tickLblPos = "low"
     if y_min is not None:
         ch.y_axis.scaling.min = y_min
     if y_max is not None:
@@ -280,7 +315,10 @@ def bar_chart(ws, anchor, title_text, cats_ref, series, width=17.5, height=7.2,
                                                                           ch.x_axis)
     _style_axis(value_axis, number_format, gridlines=True)
     _style_axis(category_axis)
-    for ref, name, colour in series:
+    # Category labels sit at the bottom of the plot, not on the zero line: on a chart with
+    # negative bars Excel otherwise draws "Operating" and "Investing" inside the bars.
+    category_axis.tickLblPos = "low"
+    for series_idx, (ref, name, colour) in enumerate(series):
         s = Series(ref, title=name)
         s.graphicalProperties.solidFill = colour
         s.graphicalProperties.line.noFill = True
@@ -290,10 +328,15 @@ def bar_chart(ws, anchor, title_text, cats_ref, series, width=17.5, height=7.2,
         s.invertIfNegative = False
         # Individual bars may carry their own colour. Used for the EBITDA bridge, where the
         # two definitions either side and the adjustment between them are different kinds of
-        # thing and should not look identical.
-        if point_colours:
+        # thing and should not look identical. Point colours belong to the first series
+        # only: on a two-series comparison the highlight marks the unit's Actual bar, and the
+        # Budget bar beside it keeps its own colour so the pair still reads as a comparison.
+        if point_colours and series_idx == 0:
             s.data_points = [
-                DataPoint(idx=idx,
+                # invertIfNegative defaults ON at the point level too, and a negative bar
+                # with an inverted copper fill renders as a hollow outline -- which is how
+                # the investing bar came to look like missing data.
+                DataPoint(idx=idx, invertIfNegative=False,
                           spPr=GraphicalProperties(
                               solidFill=colour_at,
                               ln=LineProperties(noFill=True)))
@@ -344,22 +387,26 @@ def chart_slots(ws, last_col: int, count: int = 2, gap_cm: float = 0.4):
     Charts were previously given a fixed 16.5 cm and anchored at fixed columns, and on every
     sheet narrower than 33 cm the right-hand one ran off the page. Deriving both from the
     sheet's own column widths means a chart cannot be wider than the report it sits under.
+
+    An anchor can only sit on a column edge, so each chart is anchored at the edge nearest
+    its ideal position, and the shared width is trimmed only as far as is needed for the
+    charts not to overlap each other or run past the last printed column.
     """
     total = sheet_width_cm(ws, last_col)
     width = (total - gap_cm * (count - 1)) / count
-    slots = []
-    cumulative = 0.0
-    target = 0.0
-    column = 2
-    for _ in range(count):
-        while column <= last_col and cumulative < target - 0.01:
-            cumulative += (ws.column_dimensions[col(column)].width or 8.43) * CM_PER_CHAR
-            column += 1
-        slots.append(col(column))
-        target += width + gap_cm
-        while column <= last_col and cumulative < target - 0.01:
-            cumulative += (ws.column_dimensions[col(column)].width or 8.43) * CM_PER_CHAR
-            column += 1
+    # left edge of every column from B to one past the last, in cm from the left of B
+    edges = [0.0]
+    for column in range(2, last_col + 1):
+        edges.append(edges[-1] + (ws.column_dimensions[col(column)].width or 8.43) * CM_PER_CHAR)
+    anchors = []
+    for k in range(count):
+        target = k * (width + gap_cm)
+        nearest = min(range(len(edges) - 1), key=lambda n: abs(edges[n] - target))
+        anchors.append(nearest)
+    slots = [col(2 + n) for n in anchors]
+    for k in range(count - 1):
+        width = min(width, edges[anchors[k + 1]] - edges[anchors[k]] - gap_cm)
+    width = min(width, total - edges[anchors[-1]])
     return slots, round(width, 2)
 
 
@@ -441,7 +488,15 @@ def cover(wb, meta):
         ws.merge_cells(start_row=r, start_column=3, end_row=r, end_column=5)
         put(ws, f"C{r}", purpose, "ns_text_mut")
         ws[f"B{r}"].hyperlink = f"#'{name}'!A1"
-        ws[f"B{r}"].font = ws[f"B{r}"].font.copy(color=S.HEADER_BG, underline="single")
+        link_colour = S.HEADER_BG
+        if name == "01 Executive Summary":
+            # The page to open first, for a reader who has just opened the file: a copper
+            # key in the gutter and the link itself in copper. Every other entry stays navy,
+            # and every description stays as written -- the pointer is colour, not words.
+            marker(ws, f"A{r}", "copper")
+            link_colour = S.COPPER
+        ws[f"B{r}"].font = ws[f"B{r}"].font.copy(color=link_colour, underline="single",
+                                                 bold=(link_colour == S.COPPER))
         r += 1
 
     ws.print_area = f"A1:E{r}"
@@ -474,7 +529,7 @@ EXEC_COLS = 16
 def executive(wb, meta):
     ws = wb.create_sheet("01 Executive Summary")
     S.sheet_setup(ws, freeze="C7", zoom=100)
-    std_widths(ws, label_width=32, data_width=12.4, n_data=EXEC_COLS - 2)
+    std_widths(ws, label_width=34, data_width=13.2, n_data=EXEC_COLS - 2)
 
     title(ws, "Executive summary", f"Group performance to {meta['report_label']} · "
                                    f"USD millions unless stated · statutory basis",
@@ -494,18 +549,35 @@ def executive(wb, meta):
             name, code, vstyle, fmt, sub = KPI[k]
             c1 = FIRST_DATA_COL - 1 + i * 2 if False else 2 + i * 2
             a, b = col(c1), col(c1 + 1)
-            put(ws, f"{a}{r}", name, "ns_kpi_label")
-            ws.cell(row=r, column=c1 + 1).style = "ns_kpi_label"
+            # Band one -- the trading performance -- sits on the cool neutral panel. Band two --
+            # cash, leverage and capacity -- sits on the light copper wash with a copper top
+            # edge, so the two groups read as two different kinds of question and not as ten
+            # cards. The headline figures stay navy on both; only the ground changes.
+            tinted = block == 1
+            label_style = "ns_kpi_label_x" if tinted else "ns_kpi_label"
+            sub_style = "ns_kpi_sub_x" if tinted else "ns_kpi_sub"
+            value_style = vstyle
+            if tinted:
+                value_style = {"ns_kpi_value": "ns_kpi_value_x",
+                               "ns_kpi_value_r": "ns_kpi_value_rx",
+                               "ns_kpi_value_n": "ns_kpi_value_nx",
+                               "ns_kpi_value_p": "ns_kpi_value_x"}.get(vstyle, vstyle)
+            put(ws, f"{a}{r}", name, label_style)
+            ws.cell(row=r, column=c1 + 1).style = label_style
             ws.merge_cells(start_row=r + 1, start_column=c1, end_row=r + 1, end_column=c1 + 1)
-            cell = put(ws, f"{a}{r+1}", meta["kpi"][code]["value"], vstyle)
+            cell = put(ws, f"{a}{r+1}", meta["kpi"][code]["value"], value_style)
             cell.number_format = fmt
             ws.merge_cells(start_row=r + 2, start_column=c1, end_row=r + 2, end_column=c1 + 1)
+            fav = meta["kpi"][code]["fav"]
             put(ws, f"{a}{r+2}", meta["kpi"][code]["delta"],
-                "ns_kpi_sub_fav" if meta["kpi"][code]["fav"] == "FAVOURABLE"
-                else "ns_kpi_sub_unf" if meta["kpi"][code]["fav"] == "UNFAVOURABLE"
-                else "ns_kpi_sub")
+                "ns_kpi_sub_fav" if fav == "FAVOURABLE"
+                else "ns_kpi_sub_unf" if fav == "UNFAVOURABLE"
+                else sub_style)
+            if tinted and fav in ("FAVOURABLE", "UNFAVOURABLE"):
+                # keep the status colour, but on the band's own ground
+                ws[f"{a}{r+2}"].fill = ws[f"{a}{r}"].fill.copy()
             ws.merge_cells(start_row=r + 3, start_column=c1, end_row=r + 3, end_column=c1 + 1)
-            put(ws, f"{a}{r+3}", sub, "ns_kpi_sub")
+            put(ws, f"{a}{r+3}", sub, sub_style)
         ws.row_dimensions[r].height = 15
         ws.row_dimensions[r + 1].height = 26
         ws.row_dimensions[r + 2].height = 13
@@ -515,8 +587,13 @@ def executive(wb, meta):
     # ---------------- performance summary
     section(ws, r, "Group performance", last_col=EXEC_COLS, right_text="USD m")
     r += 1
+    header_row = r
     headers(ws, r, ["Actual YTD", "Budget YTD", "Var $", "Var %", "Prior year YTD",
                     "Var $", "FY outlook", "FY budget", "Var $"], label_text="")
+    # The last three columns look forward. A light copper wash on their headers marks where
+    # the reported year to date ends and the outlook begins, which is the one boundary on this
+    # table a reader must not cross without noticing.
+    column_group(ws, r, FIRST_DATA_COL + 6, FIRST_DATA_COL + 8)
     hdr = r
     r += 1
     body_start = r
@@ -596,8 +673,11 @@ def executive(wb, meta):
     headers(ws, r, ["Measure", "Amount", "Comment"], label_text="Item")
     r += 1
     for item, measure, amount, comment in meta["attention"]:
+        # A copper flag in the gutter. The amounts keep their status colour; the flag says
+        # only "this needs a manager's eye", which is neither favourable nor unfavourable.
+        marker(ws, f"A{r}", "copper")
         put(ws, f"B{r}", item, "ns_label")
-        put(ws, f"C{r}", measure, "ns_text_mut")
+        put(ws, f"C{r}", measure, "ns_label_copper")
         c = put(ws, f"D{r}", amount, "ns_m1")
         ws.merge_cells(start_row=r, start_column=5, end_row=r, end_column=EXEC_COLS)
         put(ws, f"E{r}", comment, "ns_text_mut")
@@ -623,6 +703,11 @@ def profit_and_loss(wb, meta):
     section(ws, 5, "Monthly", last_col=15, right_text=f"FY{REPORT_FY}")
     labels = [meta["period_labels"][p] for p in MONTHS] + ["FY outlook"]
     headers(ws, 7, labels)
+    # Where Actual stops and Forecast begins. The subtitle says "actual to Aug 2026, forecast
+    # thereafter"; the wash says it in the place a reader is actually looking, across the four
+    # forecast months and the outlook they roll into. Copper is the forecast colour on the
+    # charts as well, so the two agree.
+    column_group(ws, 7, FIRST_DATA_COL + len(ACTUAL_MONTHS), FIRST_DATA_COL + len(MONTHS))
     r = 8
     for code, name, indent, sub, total in meta["pl_rows"]:
         put(ws, f"B{r}", name, label_style(sub, total, indent))
@@ -661,8 +746,14 @@ def profit_and_loss(wb, meta):
     section(ws, r, "Year to date and full year", last_col=15,
             right_text=f"to {meta['report_label']}")
     r += 1
+    ytd_hdr = r
     headers(ws, r, ["Actual", "Budget", "Var $", "Var %", "Prior year", "Var $", "Var %",
                     "FY outlook", "FY budget", "Var $", "Var %"], label_text="")
+    # Two analytical groups on this table: the year-to-date variance (Var $, Var %) and
+    # the full-year outlook. Both are washed so a reader crossing from a reported figure
+    # into an analysis of it sees the boundary without a rule.
+    column_group(ws, ytd_hdr, FIRST_DATA_COL + 2, FIRST_DATA_COL + 3)
+    column_group(ws, ytd_hdr, FIRST_DATA_COL + 7, FIRST_DATA_COL + 10)
     r += 1
     start = r
     for code, name, indent, sub, total in meta["pl_rows"]:
@@ -703,14 +794,17 @@ def profit_and_loss(wb, meta):
     # decoration. What the tables cannot show at a glance is the shape of the margin over the
     # year, so that is the chart that stays -- and it gets the full width rather than half.
     section(ws, r, "Margin trend", last_col=EXEC_COLS)
-    _, chart_w = chart_slots(ws, EXEC_COLS, count=2)
-    line_chart(ws, f"C{r + 2}", "Gross and EBITDA margin — FY2026 by month",
+    # One chart, the full width of the sheet, anchored at the first printed column. Anchored at
+    # C with a two-slot width it began 36 characters in and ran off the right of the page,
+    # which is how the last three months of the year came to be missing from the trend.
+    (slot,), chart_w = chart_slots(ws, EXEC_COLS, count=1)
+    line_chart(ws, f"{slot}{r + 2}", "Gross and EBITDA margin — FY2026 by month",
                Reference(wb["_chart"], min_col=2, min_row=2, max_row=13),
                [(Reference(wb["_chart"], min_col=6, min_row=2, max_row=13), "Gross margin",
                  S.ACTUAL, None),
                 (Reference(wb["_chart"], min_col=46, min_row=2, max_row=13), "EBITDA margin",
                  S.FORECAST, None)],
-               width=chart_w * 2, height=7.6, number_format=S.PCT1)
+               width=chart_w, height=7.6, number_format=S.PCT1, page_break=True)
     ws.print_area = f"A1:O{r + 18}"
     return ws
 

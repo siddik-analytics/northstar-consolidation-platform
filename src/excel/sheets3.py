@@ -12,7 +12,7 @@ from openpyxl.worksheet.datavalidation import DataValidation
 
 from . import style as S
 from .data import ACT_VERSION, BUD_VERSION, FC_VERSION, PY_VERSION, REPORT_FY, REPORT_PERIOD
-from .sheets import (ACTUAL_MONTHS, FIRST_DATA_COL, MONTHS, _colour_variance, bar_chart,
+from .sheets import (column_group, marker, ACTUAL_MONTHS, FIRST_DATA_COL, MONTHS, _colour_variance, bar_chart,
                      chart_slots, col, headers, line_chart, note, put, section,
                      std_widths, title)
 
@@ -29,7 +29,12 @@ def headcount(wb, meta):
           f"FY{REPORT_FY} to {meta['report_label']} · full-time equivalents", width_cols=11)
 
     section(ws, 5, "Group movement", last_col=11, right_text="FTE")
+    hc_hdr = 7
     headers(ws, 7, [meta["period_labels"][p] for p in ACTUAL_MONTHS])
+    # The reporting month is the column the KPI on the Executive Summary reads from; it is
+    # washed so the eye lands on it first in a twelve-column grid of similar numbers.
+    column_group(ws, hc_hdr, FIRST_DATA_COL + len(ACTUAL_MONTHS) - 1,
+                 FIRST_DATA_COL + len(ACTUAL_MONTHS) - 1)
     r = 8
     for field, name, sub, fmt in (("fte_opening", "Opening FTE", False, "ns_fte1"),
                                   ("hires", "Hires", False, "ns_fte1"),
@@ -69,6 +74,10 @@ def headcount(wb, meta):
     r += 1
     headers(ws, r, [f["name"] for f in meta["functions"]] + ["Total FTE", "Personnel cost"],
             label_text="Business unit")
+    # The functions are the breakdown; the two columns after them are the roll-up and its
+    # cost. Washed together so the table reads as "parts, then whole".
+    column_group(ws, r, FIRST_DATA_COL + len(meta["functions"]),
+                 FIRST_DATA_COL + len(meta["functions"]) + 1)
     r += 1
     first = r
     for bu, bu_name in meta["bus"]:
@@ -97,7 +106,8 @@ def headcount(wb, meta):
     line_chart(ws, f"{slots[0]}{r + 2}", "Closing headcount and personnel cost — FY2026",
                Reference(wb["_chart"], min_col=2, min_row=2, max_row=13),
                [(Reference(wb["_chart"], min_col=35, min_row=2, max_row=13), "Closing FTE",
-                 S.ACTUAL, None)], width=chart_w, height=7.4, number_format=S.FTE)
+                 S.ACTUAL, None)], width=chart_w, height=7.4, number_format=S.FTE,
+               page_break=True)
     bar_chart(ws, f"{slots[1]}{r + 2}", f"Closing FTE by business unit at {meta['report_label']}",
               Reference(wb["_chart"], min_col=8, min_row=2, max_row=6),
               [(Reference(wb["_chart"], min_col=36, min_row=2, max_row=6), "FTE",
@@ -125,8 +135,11 @@ def capex(wb, meta):
           f"FY{REPORT_FY} to {meta['report_label']} · USD millions", width_cols=11)
 
     section(ws, 5, "By business unit", last_col=11, right_text="Year-to-date spend")
+    cx_hdr = 7
     headers(ws, 7, [meta["period_labels"][p] for p in ACTUAL_MONTHS] + ["YTD"],
             label_text="Business unit")
+    column_group(ws, cx_hdr, FIRST_DATA_COL + len(ACTUAL_MONTHS),
+                 FIRST_DATA_COL + len(ACTUAL_MONTHS))
     r = 8
     first = r
     for bu, bu_name in meta["bus"]:
@@ -165,6 +178,7 @@ def capex(wb, meta):
     section(ws, r, "By asset class", last_col=11, right_text="Year to date")
     r += 1
     headers(ws, r, ["YTD spend", "% of total"], label_text="Asset class")
+    column_group(ws, r, FIRST_DATA_COL + 1, FIRST_DATA_COL + 1)
     r += 1
     ac_first = r
     for cls in meta["asset_classes"]:
@@ -184,6 +198,8 @@ def capex(wb, meta):
     r += 1
     headers(ws, r, ["Business unit", "Asset class", "Approved", "YTD spend", "% spent"],
             label_text="Project")
+    # Percent spent is the one derived column: approved and spent are the facts it is made of.
+    column_group(ws, r, FIRST_DATA_COL + 4, FIRST_DATA_COL + 4)
     r += 1
     for pid, pname, bu_name, cls, approved, spend in meta["top_projects"]:
         put(ws, f"B{r}", pname, "ns_label")
@@ -201,7 +217,7 @@ def capex(wb, meta):
     bar_chart(ws, f"{slots[0]}{r + 2}", "Capital expenditure by month — FY2026",
               Reference(wb["_chart"], min_col=2, min_row=2, max_row=13),
               [(Reference(wb["_chart"], min_col=38, min_row=2, max_row=13), "CapEx",
-                S.ACTUAL)], width=chart_w, height=7.4)
+                S.ACTUAL)], width=chart_w, height=7.4, page_break=True)
     line_chart(ws, f"{slots[1]}{r + 2}", "Capital expenditure against depreciation",
                Reference(wb["_chart"], min_col=2, min_row=2, max_row=13),
                [(Reference(wb["_chart"], min_col=38, min_row=2, max_row=13), "CapEx",
@@ -226,6 +242,9 @@ def fx(wb, meta):
             right_text="Revenue by functional currency, year to date")
     headers(ws, 7, ["Revenue YTD", "% of group", "Avg rate", "PY rate",
                     "Rate move", "Constant ccy", "FX effect"], label_text="Currency")
+    # The restatement and the effect it isolates are the analysis; the five columns before
+    # them are what was reported and the rates it was reported at.
+    column_group(ws, 7, FIRST_DATA_COL + 5, FIRST_DATA_COL + 6)
     r = 8
     first = r
     for ccy in meta["currencies"]:
@@ -289,7 +308,8 @@ def fx(wb, meta):
                 (Reference(wb["_chart"], min_col=42, min_row=2, max_row=13), "GBP",
                  S.FORECAST, None),
                 (Reference(wb["_chart"], min_col=43, min_row=2, max_row=13), "CAD",
-                 S.BUDGET, None)], width=chart_w, height=7.4, number_format=S.RATE)
+                 S.BUDGET, None)], width=chart_w, height=7.4, number_format=S.RATE,
+               page_break=True)
     line_chart(ws, f"{slots[1]}{r + 2}", "Cumulative translation adjustment — monthly movement",
                Reference(wb["_chart"], min_col=2, min_row=2, max_row=13),
                [(Reference(wb["_chart"], min_col=44, min_row=2, max_row=13),
@@ -313,8 +333,19 @@ def consolidation(wb, meta):
             right_text="Net income contribution, USD m")
     headers(ws, 7, [f"FY{y}" for y in meta["fy_list"]] + ["Entries", "Legs", "In statutory",
                                                           "In management"], label_text="Layer")
+    # The reporting year, washed as on the bridges, so the same column catches the eye on
+    # every multi-year table in the pack.
+    column_group(ws, 7, FIRST_DATA_COL + len(meta["fy_list"]) - 1,
+                 FIRST_DATA_COL + len(meta["fy_list"]) - 1)
     r = 8
+    # A key square in the gutter beside each layer. Reported is navy -- it is the ledger.
+    # Consolidation adjustments are copper -- they are the work the consolidation does.
+    # Management adjustments are the light tint -- the same family, one step further from
+    # the ledger. Eliminations and translation are the neutral rule colour. The squares are
+    # the page's architecture diagram, one cell wide.
+    layer_key = {1: "navy", 2: "rule", 3: "copper", 4: "tint", 5: "rule"}
     for layer_id, layer_code, layer_name, in_stat, in_mgmt in meta["layers"]:
+        marker(ws, f"A{r}", layer_key.get(layer_id, "rule"))
         put(ws, f"B{r}", f"{layer_id}  {layer_name}", "ns_label")
         for i, y in enumerate(meta["fy_list"]):
             c = col(FIRST_DATA_COL + i)
@@ -375,6 +406,9 @@ def consolidation(wb, meta):
     section(ws, r, "Reconciliations exposed in this workbook", last_col=11)
     r += 1
     headers(ws, r, ["Result", "Threshold", "Status"], label_text="Check")
+    # The threshold is the tolerance each check is held to -- a term, like the covenant
+    # limit. The status beside it keeps its own colour.
+    column_group(ws, r, FIRST_DATA_COL + 1, FIRST_DATA_COL + 1)
     r += 1
     for name, result, threshold, ok in meta["workbook_checks"]:
         put(ws, f"B{r}", name, "ns_label")
@@ -433,8 +467,10 @@ def variance_detail(wb, meta):
 
     section(ws, 9, "Group and business unit", last_col=10,
             right_text="Variance on the selected basis")
+    vd_hdr = 10
     headers(ws, 10, ["Base", "Comparator", "Variance $", "Variance %", "Comparable"],
             label_text="Measure")
+    column_group(ws, vd_hdr, FIRST_DATA_COL + 2, FIRST_DATA_COL + 3)
     r = 11
     first = r
     for code, name, indent, sub, total in meta["pl_rows"]:
@@ -467,6 +503,7 @@ def variance_detail(wb, meta):
     r += 1
     headers(ws, r, ["Entity", "Actual YTD", "Budget YTD", "Variance $", "Variance %"],
             label_text="Account")
+    column_group(ws, r, FIRST_DATA_COL + 3, FIRST_DATA_COL + 4)
     r += 1
     for account, name, entity, act, bud, line in meta["account_detail"]:
         put(ws, f"B{r}", f"{account}  {name}", "ns_label")

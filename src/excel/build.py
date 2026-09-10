@@ -620,6 +620,7 @@ def _meta(con, tables):
         WHERE a.version_code = '{ACT_VERSION}' AND a.basis = 'STATUTORY'
           AND a.measure_code = 'ADJ_EBITDA' AND a.period_key = {REPORT_PERIOD}
         GROUP BY 1 ORDER BY v LIMIT 1""").fetchall()
+    flagged_bu = bu_worst[0][0] if bu_worst else None
     for name, value in bu_worst:
         attention.append((f"{name}", "Adjusted EBITDA vs budget", round(float(value), 3),
                           "Business unit with the largest adjusted EBITDA shortfall against "
@@ -724,6 +725,9 @@ def _meta(con, tables):
         "consol_items": consol_items,
         "control_summary": control_summary,
         "attention": attention,
+        # The unit the attention list names. The Business Units chart highlights the same one,
+        # so the two pages point at the same thing for the same reason.
+        "flagged_bu": flagged_bu,
         "account_detail": account_detail,
         "default_comparison": "Actual vs Budget",
         "comparison_names": [r[0] for r in con.execute(

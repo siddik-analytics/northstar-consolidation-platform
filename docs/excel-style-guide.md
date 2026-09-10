@@ -26,7 +26,7 @@ the reader knows it matters.
 | Muted ink | `5B6B7B` | secondary text, notes, units |
 | Header | `1B4965` | section bands, titles, totals — **and Actual** |
 | Budget | `8C9BAB` | the Budget scenario, everywhere |
-| Forecast | `C9772E` | the Forecast scenario, everywhere |
+| Forecast | `B07A45` | the Forecast scenario, everywhere — and the secondary copper (see *The palette*) |
 | Prior year | `B7BFC7` | the prior-year comparison |
 | Favourable | `1E7A46` | a variance that is good news |
 | Unfavourable | `B3261E` | a variance that is not |
@@ -34,8 +34,11 @@ the reader knows it matters.
 Scenario colours are identical on every chart and in every table. A reader should not have to
 re-learn the legend on each sheet.
 
-Backgrounds are two: `EEF3F7` for KPI panels, `FFF6E5` for anything a user may change. Nothing
-else is filled, because a filled cell is a claim that the cell is special.
+Backgrounds are three: `EEF3F7` for the first KPI band, `E8D8C8` — the light copper — for the
+second KPI band and for the column-group washes, and `FFF6E5` for anything a user may change.
+Nothing else is filled, because a filled cell is a claim that the cell is special; the copper
+wash makes exactly that claim, and only of a column that is analysis rather than a reported
+figure.
 
 ### Colour carries meaning, not sign
 
@@ -187,24 +190,49 @@ The value is meant to come from the finance architecture, the reconciliations an
 Navy is the workbook. Copper is the accent. Everything else is neutral, and the financial
 status colours mean what they have always meant.
 
-Target balance: **navy 70–80%, copper 10–15%, neutral the rest.** Copper is at the lower end of
-that range on purpose — it appears as a gutter mark beside each page title, as the warm scenario
-line, and on the two adjustment bars of the EBITDA bridge. Nowhere else.
+Measured balance over the coloured cells of the sixteen visible sheets: **navy 76%, solid
+copper 8%, light copper 11%, other 5%.** Copper is the second colour of the system, not a
+decoration on it, and it appears on every report tab — differently on each, because the
+treatment is chosen to fit what the page is saying.
 
 ### Structure
 
 | purpose | hex | RGB | where |
 |---|---|---|---|
-| Primary navy | `1B4965` | 27, 73, 101 | section headers, page titles, Actual series, primary bars |
-| **Secondary copper** | `B07A45` | 176, 122, 69 | gutter mark beside the page title, warm chart series, bridge adjustment bars |
-| Light copper tint | `E8D8C8` | 232, 216, 200 | defined for a light wash; **currently unused** — nothing needed it, and a colour used because it exists is decoration |
+| Primary navy | `1B4965` | 27, 73, 101 | section bars, page titles, Actual series, primary bars, the ledger layer |
+| **Secondary copper** | `B07A45` | 176, 122, 69 | the copper edge under every section bar, the title gutter mark, key squares, the flagged unit, terms and thresholds, the warm chart series |
+| Light copper tint | `E8D8C8` | 232, 216, 200 | column-group wash behind analytical columns, the ground of the second KPI band, the management-adjustment layer key |
 | Body text | `1F2A37` | 31, 42, 55 | all body and table text |
 | Muted text | `5B6B7B` | 91, 107, 123 | units, notes, footnotes, chart axes and legends |
 | Hairline | `D5DBE1` | 213, 219, 225 | table rules, chart axis lines, gridlines |
-| Strong rule | `9AA7B4` | 154, 167, 180 | subtotal and total rules |
+| Strong rule | `9AA7B4` | 154, 167, 180 | subtotal and total rules, the elimination and translation layer keys |
 | Zebra band | `F5F8FA` | 245, 248, 250 | very light row banding |
-| Panel | `EEF3F7` | 238, 243, 247 | KPI card backgrounds |
+| Panel | `EEF3F7` | 238, 243, 247 | the ground of the first KPI band |
 | Input | `FFF6E5` | 255, 246, 229 | anything a user may change |
+
+### The copper vocabulary
+
+Copper has five jobs. Each is a different visual device, and each means one thing.
+
+| device | what it is | what it means | where it appears |
+|---|---|---|---|
+| **Section edge** | a medium copper border on the bottom of every navy section bar | the signature of the pack; the one treatment that repeats, because a section system is meant to be consistent | every sheet |
+| **Title mark** | a solid copper cell in the gutter beside the page title | the page's own mark | every sheet |
+| **Column wash** | light copper behind the header of a column group | *this is analysis, not a reported figure*: variance pairs, full-year outlook, the forecast months, movement columns, ratios and shares, the year-to-date roll-up, the reporting month or year, a column that is not a test date | P&L, Business Units, Entities, Balance Sheet, Cash Flow, EBITDA Bridge, Debt & Covenants, Headcount, CapEx, FX, Consolidation, Variance Detail |
+| **Key square** | a solid cell in the gutter beside a row | a pointer or a category key — *the one management is looking at*, *the adjustment layers*, *the derived measure that is charted*, *the identity being checked* | Executive Summary (attention items), Entities (the flagged unit's entities), Balance Sheet (the check), Working Capital (the cycle), EBITDA Bridge (adjustment rows), Consolidation (layer key), Cover (start here) |
+| **Copper figure or label** | bold copper text, short | *a term, not a result*: the covenant limit, the minimum cash policy, the measure named in an attention item | Executive Summary, Cash Flow, Debt & Covenants |
+
+On charts, copper is the second series or the highlighted element: the flagged unit's Actual
+bar on the Business Units chart, the investing bar on the cash-flow categories, the
+adjustment bar on the EBITDA bridge, the covenant limit as a dashed reference line, total
+liquidity, the cash conversion cycle, EBITDA margin, depreciation, GBP. Navy remains the
+Actual and the primary series everywhere.
+
+The second KPI band on the Executive Summary — cash, leverage and capacity — sits on the light
+copper ground with a copper top edge, so the two bands read as two kinds of question rather
+than ten cards. The ground is the band's; the status colour of each card's delta line stays
+green, red or neutral on top of it, and the tint is applied to favourable, unfavourable and
+neutral cards alike. It encodes the band, not the verdict.
 
 ### Scenario colours — semantic, not decorative
 
@@ -237,9 +265,11 @@ like. Actual is navy everywhere.
 | Control pass | `1E7A46` | 30, 122, 70 |
 
 **Copper never carries a financial meaning.** It is not favourable, not unfavourable, not a
-warning, not a breach, and not a control state. On the EBITDA bridge it means *management
-adjustment* — a category, not a judgement. On the covenant page it appears only as the gutter
-mark, because a warm colour anywhere near a compliance status would be read as an alert.
+warning, not a breach, and not a control state. Where copper sits next to a status — the
+covenant limit beside the Compliant row, the threshold beside a PASS, the flagged unit beside
+its red shortfall — the status keeps its own colour and copper says only *this is the term*
+or *this is the one to look at*. A covenant limit in red read as an alarm on a page where
+nothing was wrong; in copper it reads as the reference line it is.
 
 ### Contrast
 

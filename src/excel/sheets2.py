@@ -11,7 +11,7 @@ from openpyxl.styles import Font
 
 from . import style as S
 from .data import ACT_VERSION, BUD_VERSION, FC_VERSION, PY_VERSION, REPORT_FY, REPORT_PERIOD
-from .sheets import (ACTUAL_MONTHS, FIRST_DATA_COL, MONTHS, _colour_variance, bar_chart,
+from .sheets import (column_group, marker, ACTUAL_MONTHS, FIRST_DATA_COL, MONTHS, _colour_variance, bar_chart,
                      chart_slots, col, headers, label_style, line_chart, measure_style,
                      note, put, section, std_widths, title)
 
@@ -27,8 +27,15 @@ def business_units(wb, meta):
           width_cols=11)
 
     section(ws, 5, "Year to date", last_col=11, right_text="Actual vs budget and prior year")
+    bu_hdr = 7
     headers(ws, 7, ["Actual", "Budget", "Var $", "Var %", "Prior year", "Var $",
                     "Share / margin", "Budget", "Movement"], label_text="Business unit")
+    # Three analytical columns on a table of reported ones: the budget variance pair, the
+    # prior-year variance, and the movement in share. Washed individually, because each sits
+    # beside the figure it is derived from.
+    column_group(ws, bu_hdr, FIRST_DATA_COL + 2, FIRST_DATA_COL + 3)
+    column_group(ws, bu_hdr, FIRST_DATA_COL + 5, FIRST_DATA_COL + 5)
+    column_group(ws, bu_hdr, FIRST_DATA_COL + 8, FIRST_DATA_COL + 8)
     r = 8
     for measure, mname in (("REVENUE", "Revenue"), ("ADJ_EBITDA", "Adjusted EBITDA")):
         put(ws, f"B{r}", mname, "ns_label_sub")
@@ -86,12 +93,20 @@ def business_units(wb, meta):
 
     section(ws, r, "Trend", last_col=11)
     slots, chart_w = chart_slots(ws, 11)
+    # The unit the Executive Summary flags is the one highlighted here, in copper, on its
+    # Actual bar. Copper means "the one management is looking at" -- a pointer, not a verdict:
+    # the shortfall itself is stated in the table above, in the status colour it deserves.
+    bu_names = [r[0] for r in wb["_chart"].iter_rows(min_row=2, max_row=6, min_col=8,
+                                                     max_col=8, values_only=True)]
+    highlight = ({bu_names.index(meta["flagged_bu"]): S.COPPER}
+                 if meta.get("flagged_bu") in bu_names else None)
     bar_chart(ws, f"{slots[0]}{r + 2}", "Revenue by business unit — YTD actual against budget",
               Reference(wb["_chart"], min_col=8, min_row=2, max_row=6),
               [(Reference(wb["_chart"], min_col=12, min_row=2, max_row=6), "Actual YTD",
                 S.ACTUAL),
                (Reference(wb["_chart"], min_col=13, min_row=2, max_row=6), "Budget YTD",
-                S.BUDGET)], width=chart_w, height=7.4)
+                S.BUDGET)], width=chart_w, height=7.4, page_break=True,
+              point_colours=highlight)
     line_chart(ws, f"{slots[1]}{r + 2}", "Group gross margin — FY2026 by month",
                Reference(wb["_chart"], min_col=2, min_row=2, max_row=13),
                [(Reference(wb["_chart"], min_col=6, min_row=2, max_row=13), "Gross margin",
@@ -112,11 +127,21 @@ def entities(wb, meta):
           width_cols=13)
 
     section(ws, 5, "By legal entity", last_col=13, right_text="Actual, year to date")
+    ent_hdr = 7
     headers(ws, 7, ["BU", "Ccy", "ERP", "Revenue", "Gross profit", "EBITDA", "Net income",
                     "Margin", "Cash", "FTE", "Working capital"], label_text="Entity")
+    # Every column on this table is an amount except Margin, which is a ratio derived from
+    # two of them. The wash marks the one column a reader should not add down.
+    column_group(ws, ent_hdr, FIRST_DATA_COL + 7, FIRST_DATA_COL + 7)
     r = 8
     first = r
+    # The entities that belong to the unit the Executive Summary flags carry the same copper
+    # pointer in the gutter that the unit's bar carries on the Business Units chart: one
+    # subject, followed from the group page down to the legal entities that make it up.
+    flagged_code = next((c for c, n in meta["bus"] if n == meta.get("flagged_bu")), None)
     for code, name, bu, ccy, erp in meta["entities"]:
+        if bu == flagged_code:
+            marker(ws, f"A{r}", "copper")
         put(ws, f"B{r}", f"{code}   {name}", "ns_label")
         put(ws, f"C{r}", bu, "ns_text_c")
         put(ws, f"D{r}", ccy, "ns_text_c")
@@ -168,8 +193,11 @@ def balance_sheet(wb, meta):
           f"At {meta['report_label']} · USD millions · statutory basis", width_cols=8)
 
     section(ws, 5, "Financial position", last_col=8, right_text="Assets = liabilities + equity")
+    bs_hdr = 7
     headers(ws, 7, ["Current", "Prior month", "Movement", "Prior year", "Movement",
                     "% of assets"], label_text="")
+    column_group(ws, bs_hdr, FIRST_DATA_COL + 2, FIRST_DATA_COL + 2)
+    column_group(ws, bs_hdr, FIRST_DATA_COL + 4, FIRST_DATA_COL + 4)
     r = 8
     open_section: list[int] = []
     subtotal_row: dict[str, int] = {}
@@ -224,10 +252,14 @@ def balance_sheet(wb, meta):
         r += 1
 
     r += 1
+    # The accounting identity, stated as a reference: a copper key beside the check and the
+    # condition it must meet in copper. The figure itself stays ink -- whether it IS nil is a
+    # fact the reader takes from the number, not from a colour.
+    marker(ws, f"A{r}", "copper")
     put(ws, f"B{r}", "Check — total assets less liabilities and equity", "ns_label")
     ws[f"C{r}"] = (f'=C{meta["bs_total_assets_row"]}-C{meta["bs_total_le_row"]}')
     ws[f"C{r}"].style = "ns_m2"
-    put(ws, f"D{r}", "must be nil", "ns_text_mut")
+    put(ws, f"D{r}", "must be nil", "ns_note_copper")
     r += 2
 
     note(ws, r, "Goodwill and acquired intangibles arise on consolidation and exist in no "
@@ -251,6 +283,8 @@ def cash_flow(wb, meta):
 
     section(ws, 5, "Cash flow", last_col=11, right_text="Actual")
     headers(ws, 7, [meta["period_labels"][p] for p in ACTUAL_MONTHS] + ["Year to date"])
+    # The year-to-date column is the sum of the eight beside it: washed as the roll-up.
+    column_group(ws, 7, FIRST_DATA_COL + len(ACTUAL_MONTHS), FIRST_DATA_COL + len(ACTUAL_MONTHS))
     r = 8
     ytd_col = col(FIRST_DATA_COL + len(ACTUAL_MONTHS))
     for field, name, sub in meta["cf_rows"]:
@@ -292,11 +326,13 @@ def cash_flow(wb, meta):
             ws[f"{c}{r}"] = f"=SUMIFS(cf_{field},cf_period,{p})"
             ws[f"{c}{r}"].style = "ns_m1_sub" if sub else "ns_m1"
         r += 1
-    put(ws, f"B{r}", "Minimum cash policy", "ns_label_i")
+    # The policy floor is a term, not a result -- the same copper the covenant limit carries
+    # on sheet 09, for the same reason. Whether cash is above it is read from the row above.
+    put(ws, f"B{r}", "Minimum cash policy", "ns_label_copper_i")
     for i in range(len(ACTUAL_MONTHS)):
         c = col(FIRST_DATA_COL + i)
         ws[f"{c}{r}"] = meta["min_cash_policy"]
-        ws[f"{c}{r}"].style = "ns_m1_i"
+        ws[f"{c}{r}"].style = "ns_m1_copper"
     r += 2
 
     section(ws, r, "Trend", last_col=11)
@@ -308,10 +344,13 @@ def cash_flow(wb, meta):
                 (Reference(wb["_chart"], min_col=17, min_row=2, max_row=13),
                  "Total liquidity", S.FORECAST, None)], width=chart_w, height=7.4,
                page_break=True)
+    # Investing is the bar a portfolio owner reads first -- it is the capital going into the
+    # business -- so it carries the copper. Operating and financing stay navy. Copper here
+    # is a category, not a judgement: an investing outflow is neither good nor bad.
     bar_chart(ws, f"{slots[1]}{r + 2}", "Year-to-date cash flow by category",
               Reference(wb["_chart"], min_col=19, min_row=2, max_row=5),
               [(Reference(wb["_chart"], min_col=20, min_row=2, max_row=5), "USD m",
-                S.ACTUAL)], width=chart_w, height=7.4)
+                S.ACTUAL)], width=chart_w, height=7.4, point_colours={1: S.COPPER})
     note(ws, r + 18, "The statement is derived from balance sheet movements, so it ties by "
                      "construction — the check row above is nil in every month. The effect of "
                      "exchange rates on cash is the retranslation of foreign-currency cash "
@@ -355,6 +394,10 @@ def working_capital(wb, meta):
                              ("dio_days", "Days inventory outstanding", False),
                              ("dpo_days", "Days payable outstanding", False),
                              ("ccc_days", "Cash conversion cycle", True)):
+        if field == "ccc_days":
+            # The cycle is the one derived measure on this page and the one drawn in copper
+            # below; the key square ties the row to its chart.
+            marker(ws, f"A{r}", "copper")
         put(ws, f"B{r}", name, "ns_label_sub" if sub else "ns_label")
         for i, p in enumerate(ACTUAL_MONTHS):
             c = col(FIRST_DATA_COL + i)
@@ -375,11 +418,12 @@ def working_capital(wb, meta):
     line_chart(ws, f"{slots[0]}{r + 2}", "Net working capital — FY2026",
                Reference(wb["_chart"], min_col=2, min_row=2, max_row=13),
                [(Reference(wb["_chart"], min_col=22, min_row=2, max_row=13),
-                 "Net working capital", S.ACTUAL, None)], width=chart_w, height=7.4)
+                 "Net working capital", S.ACTUAL, None)], width=chart_w, height=7.4,
+               page_break=True)
     line_chart(ws, f"{slots[1]}{r + 2}", "Cash conversion cycle — days",
                Reference(wb["_chart"], min_col=2, min_row=2, max_row=13),
                [(Reference(wb["_chart"], min_col=23, min_row=2, max_row=13),
-                 "Cash conversion cycle", S.FORECAST, None)], width=chart_w, height=7.4,
+                 "Cash conversion cycle", S.COPPER, None)], width=chart_w, height=7.4,
                number_format=S.DAYS)
     ws.print_area = f"A1:L{r + 18}"
     return ws
@@ -399,11 +443,21 @@ def ebitda_bridge(wb, meta):
     section(ws, 5, "Statutory EBITDA to Management Adjusted EBITDA", last_col=8,
             right_text="Approved add-back policy — ADR-0013")
     headers(ws, 7, [f"FY{y}" for y in meta["fy_list"]], label_text="")
+    # The reporting year is the column the rest of the pack is about; the three prior years
+    # are context. Washed on each of the three bridges so the eye lands on the same column
+    # every time.
+    current_fy = FIRST_DATA_COL + len(meta["fy_list"]) - 1
+    column_group(ws, 7, current_fy, current_fy)
     r = 8
+    # On a bridge the two ends are the ledger and the definition; the rows between them are
+    # the adjustments -- the same copper the bridge chart gives its middle bar, and the same
+    # copper sheet 13 gives the adjustment layers.
     for field, name, sub in (("statutory_m", "Statutory EBITDA", True),
                              ("addbacks_m", "Approved add-backs", False),
                              ("layer4_m", "Management adjustments (layer 4)", False),
                              ("adjusted_m", "Management Adjusted EBITDA", True)):
+        if not sub:
+            marker(ws, f"A{r}", "copper")
         put(ws, f"B{r}", name, "ns_label_sub" if sub else "ns_label")
         for i, y in enumerate(meta["fy_list"]):
             c = col(FIRST_DATA_COL + i)
@@ -417,6 +471,7 @@ def ebitda_bridge(wb, meta):
     r += 1
     headers(ws, r, [f"FY{y}" for y in meta["fy_list"]] + ["Covenant"],
             label_text="Account")
+    column_group(ws, r, current_fy, current_fy)
     r += 1
     first = r
     for account, name in meta["addback_accounts"]:
@@ -439,12 +494,15 @@ def ebitda_bridge(wb, meta):
             right_text="Credit agreement CA-021 to CA-030")
     r += 1
     headers(ws, r, [f"FY{y}" for y in meta["fy_list"]], label_text="")
+    column_group(ws, r, current_fy, current_fy)
     r += 1
     for field, name, sub in (("statutory_m", "Statutory EBITDA", True),
                              ("addbacks_m", "Permitted add-backs", False),
                              ("cap_effect_m", "Sponsor fee cap effect (CA-027)", False),
                              ("fx_addback_m", "Unrealised foreign exchange (CA-030)", False),
                              ("covenant_m", "Covenant EBITDA", True)):
+        if not sub:
+            marker(ws, f"A{r}", "copper")
         put(ws, f"B{r}", name, "ns_label_sub" if sub else "ns_label")
         for i, y in enumerate(meta["fy_list"]):
             c = col(FIRST_DATA_COL + i)
@@ -508,6 +566,9 @@ def debt_covenants(wb, meta):
     section(ws, 5, "Debt by instrument", last_col=11, right_text="At the reporting date")
     headers(ws, 7, ["Type", "Currency", "Drawn", "Undrawn", "Rate", "Fixed / floating",
                     "Hedged", "Maturity", "In covenant debt"], label_text="Instrument")
+    # The last column is the agreement's definition applied to each instrument -- a term,
+    # like the limit below, and washed as one.
+    column_group(ws, 7, FIRST_DATA_COL + 8, FIRST_DATA_COL + 8)
     r = 8
     first = r
     for kind, key, iname, itype, ccy, rate, rtype, hedged, maturity, in_cov in \
@@ -540,6 +601,10 @@ def debt_covenants(wb, meta):
             right_text="Tested at each fiscal year end")
     r += 1
     headers(ws, r, [meta["period_labels"][p] for p in meta["cov_periods"]], label_text="")
+    # Three test dates and one that is not: the current month is shown for management
+    # information, and the wash separates it from the columns the agreement is tested on.
+    column_group(ws, r, FIRST_DATA_COL + len(meta["cov_periods"]) - 1,
+                 FIRST_DATA_COL + len(meta["cov_periods"]) - 1)
     r += 1
     for field, name, sub, fmt in (
             ("covenant_debt_m", "Covenant debt", False, "ns_m1"),
@@ -547,7 +612,7 @@ def debt_covenants(wb, meta):
             ("net_debt_m", "Net debt", True, "ns_m1_sub"),
             ("covenant_ebitda_m", "Covenant EBITDA, last twelve months", False, "ns_m1"),
             ("net_leverage", "Net leverage", True, "ns_ratio_sub"),
-            ("max_net_leverage", "Covenant limit", False, "ns_ratio"),
+            ("max_net_leverage", "Covenant limit", False, "ns_ratio_copper"),
             ("headroom_turns", "Headroom", True, "ns_ratio_sub"),
             ("headroom_m", "Headroom in EBITDA terms", False, "ns_m1"),
             ("economic_leverage", "Economic leverage, with operating leases",
@@ -595,11 +660,16 @@ def debt_covenants(wb, meta):
                Reference(wb["_chart"], min_col=2, min_row=2, max_row=13),
                [(Reference(wb["_chart"], min_col=28, min_row=2, max_row=13), "Net leverage",
                  S.ACTUAL, None),
+                # The limit is a term of the agreement, not a warning. In red it read as an
+                # alarm on a chart where nothing was wrong; in copper it reads as the
+                # reference line it is. Breach, where it happens, is still red -- in the
+                # Status row, where a status belongs.
                 (Reference(wb["_chart"], min_col=29, min_row=2, max_row=13), "Covenant limit",
-                 S.UNFAVOURABLE, "dash"),
+                 S.COPPER, "dash"),
                 (Reference(wb["_chart"], min_col=30, min_row=2, max_row=13),
                  "Economic leverage", S.BUDGET, None)],
-               width=chart_w, height=7.4, number_format=S.RATIO, y_min=3.0, y_max=5.0)
+               width=chart_w, height=7.4, number_format=S.RATIO, y_min=3.0, y_max=5.0,
+               page_break=True)
     bar_chart(ws, f"{slots[1]}{r + 2}", "Drawn debt by instrument type",
               Reference(wb["_chart"], min_col=32, min_row=2, max_row=5),
               [(Reference(wb["_chart"], min_col=33, min_row=2, max_row=5), "USD m",

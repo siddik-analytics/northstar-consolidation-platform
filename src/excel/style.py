@@ -119,9 +119,51 @@ STYLES = [
     # A hairline of copper under the page title. It is the only mark on most sheets that is
     # not navy or grey, which is exactly how much identity a management pack needs.
     _style("ns_title_rule", size=1, fill=COPPER),
+    # ---- the copper vocabulary
+    # A hairline of copper directly beneath a navy section bar. This is the workbook's
+    # signature: navy states the section, copper closes it. It is the one treatment that IS
+    # repeated, because a section header system is meant to be consistent -- the variety comes
+    # from the accents on the pages themselves.
+    _style("ns_section_rule", size=1, fill=COPPER),
+    # A light copper wash behind a group of analytical columns -- variance, outlook, movement.
+    # It tells a reader where the reported figures stop and the analysis begins without a
+    # single extra word or line.
+    _style("ns_colhead_x", size=10, bold=True, colour=INK, fill=COPPER_TINT, align="right"),
+    _style("ns_group_tint", size=10, colour=INK, fill=COPPER_TINT, align="right"),
+    _style("ns_group_tint_l", size=10, colour=INK, fill=COPPER_TINT, align="left", indent=1),
+    # KPI band two: a copper edge above it and a light wash behind its labels, so the two
+    # bands read as two groups rather than ten cards.
+    _style("ns_kpi_band_rule", size=1, fill=COPPER),
+    _style("ns_kpi_label_x", size=10, colour=INK_MUTED, fill=COPPER_TINT, align="left",
+           indent=1, top=Side(style="medium", color=COPPER)),
+    _style("ns_kpi_value_x", size=18, bold=True, colour=HEADER_BG, fill=COPPER_TINT,
+           align="left", indent=1),
+    _style("ns_kpi_value_rx", size=18, bold=True, colour=HEADER_BG, fill=COPPER_TINT,
+           align="left", indent=1, fmt=RATIO),
+    _style("ns_kpi_value_nx", size=18, bold=True, colour=HEADER_BG, fill=COPPER_TINT,
+           align="left", indent=1, fmt=FTE),
+    _style("ns_kpi_sub_x", size=8, colour=INK_MUTED, fill=COPPER_TINT, align="left", indent=1),
+    # A copper marker cell: a solid square used as a category key beside a layer or a label.
+    _style("ns_marker_copper", size=1, fill=COPPER),
+    _style("ns_marker_tint", size=1, fill=COPPER_TINT),
+    _style("ns_marker_navy", size=1, fill=HEADER_BG),
+    _style("ns_marker_rule", size=1, fill=RULE_STRONG),
+    # Copper text, reserved for a short bold label -- never body text. Contrast on white is
+    # 3.7:1, which is enough for this and not enough for a paragraph.
+    _style("ns_label_copper", size=10, bold=True, colour=COPPER, align="left"),
+    _style("ns_label_copper_i", size=10, bold=True, colour=COPPER, align="left", indent=1),
+    # The covenant limit as a figure: copper, because it is the agreement's term and not a
+    # status. The reader's eye finds the threshold on the table the way it finds the dashed
+    # line on the chart -- same colour, same meaning.
+    _style("ns_ratio_copper", size=10, bold=True, colour=COPPER, fmt=RATIO),
+    # The same idea for an amount: a policy floor or a contractual figure, in copper because
+    # it is a term the business has set itself and not a result it has reported.
+    _style("ns_m1_copper", size=10, bold=True, colour=COPPER, fmt=USD_M1),
+    _style("ns_note_copper", size=9, italic=True, colour=COPPER, align="left", indent=1),
     _style("ns_section", size=12, bold=True, colour=HEADER_TX, fill=HEADER_BG, align="left",
-           indent=1),
+           indent=1, bottom=Side(style="medium", color=COPPER)),
     _style("ns_section_r", size=12, bold=True, colour=HEADER_TX, fill=HEADER_BG,
+           bottom=Side(style="medium", color=COPPER),
            align="right"),
     _style("ns_colhead", size=10, bold=True, colour=INK, align="right", bottom=medium),
     _style("ns_colhead_l", size=10, bold=True, colour=INK, align="left", bottom=medium),
