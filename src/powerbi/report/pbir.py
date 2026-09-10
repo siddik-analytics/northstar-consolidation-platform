@@ -400,7 +400,7 @@ def series_colours(kind_table: str, kind_col: str, mapping: dict[str, str]) -> l
 
 def line_chart(category: dict, values: list[tuple[str, str | None]], title_text: str,
                series: dict | None = None, colours: dict[str, str] | None = None,
-               series_table_col: tuple[str, str] | None = None, units: float = 1_000_000.0,
+               series_table_col: tuple[str, str] | None = None, units: float = 1.0,
                precision: int = 1, legend: bool = True, y_start: float | None = None,
                y_end: float | None = None, sort_field: dict | None = None,
                subtitle_text: str | None = None, markers: bool = False) -> dict:
@@ -430,7 +430,7 @@ def line_chart(category: dict, values: list[tuple[str, str | None]], title_text:
 def column_chart(category: dict, values: list[tuple[str, str | None]], title_text: str,
                  series: dict | None = None, colours: dict[str, str] | None = None,
                  series_table_col: tuple[str, str] | None = None,
-                 units: float = 1_000_000.0, precision: int = 1, horizontal: bool = False,
+                 units: float = 1.0, precision: int = 1, horizontal: bool = False,
                  sort_field: dict | None = None, sort_ascending: bool = True,
                  labels: bool = False, subtitle_text: str | None = None,
                  category_colours: dict[str, str] | None = None,
@@ -471,7 +471,7 @@ def column_chart(category: dict, values: list[tuple[str, str | None]], title_tex
 
 def combo_chart(category: dict, columns: list[tuple[str, str | None]],
                 lines: list[tuple[str, str | None]], title_text: str,
-                colours: dict[str, str] | None = None, units: float = 1_000_000.0,
+                colours: dict[str, str] | None = None, units: float = 1.0,
                 precision: int = 1, line_units: float | None = None,
                 line_precision: int | None = None, subtitle_text: str | None = None) -> dict:
     roles = {"Category": [projection(category, active=True)],
@@ -500,7 +500,7 @@ def combo_chart(category: dict, columns: list[tuple[str, str | None]],
 
 
 def waterfall(category: dict, value: str, title_text: str, increase: str = T.COPPER,
-              decrease: str = T.COPPER, total: str = T.NAVY, units: float = 1_000_000.0,
+              decrease: str = T.COPPER, total: str = T.NAVY, units: float = 1.0,
               precision: int = 1, labels: bool = True, subtitle_text: str | None = None,
               sort_field: dict | None = None) -> dict:
     """

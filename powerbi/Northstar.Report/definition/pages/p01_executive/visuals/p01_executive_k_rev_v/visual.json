@@ -28,8 +28,7 @@
               },
               "queryRef": "Northstar Measures.Revenue",
               "nativeQueryRef": "Revenue",
-              "displayName": "Revenue",
-              "format": "#,0,,.0;(#,0,,.0);\"–\""
+              "displayName": "Revenue"
             }
           ]
         }

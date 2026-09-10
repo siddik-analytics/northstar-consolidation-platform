@@ -28,8 +28,7 @@
               },
               "queryRef": "Northstar Measures.Net Change in Cash",
               "nativeQueryRef": "Net Change in Cash",
-              "displayName": "Net Change in Cash",
-              "format": "#,0,,.0;(#,0,,.0);\"–\""
+              "displayName": "Net Change in Cash"
             }
           ]
         }

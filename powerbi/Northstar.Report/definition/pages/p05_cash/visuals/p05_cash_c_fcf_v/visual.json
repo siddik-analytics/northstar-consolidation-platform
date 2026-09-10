@@ -28,8 +28,7 @@
               },
               "queryRef": "Northstar Measures.Financing Cash Flow",
               "nativeQueryRef": "Financing Cash Flow",
-              "displayName": "Financing Cash Flow",
-              "format": "#,0,,.0;(#,0,,.0);\"–\""
+              "displayName": "Financing Cash Flow"
             }
           ]
         }

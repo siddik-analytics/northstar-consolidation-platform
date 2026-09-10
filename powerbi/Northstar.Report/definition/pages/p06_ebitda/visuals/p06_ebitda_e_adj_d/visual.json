@@ -28,8 +28,7 @@
               },
               "queryRef": "Northstar Measures.Variance",
               "nativeQueryRef": "Variance",
-              "displayName": "Variance",
-              "format": "+#,0,,.0;(#,0,,.0);\"–\""
+              "displayName": "Variance"
             }
           ]
         }

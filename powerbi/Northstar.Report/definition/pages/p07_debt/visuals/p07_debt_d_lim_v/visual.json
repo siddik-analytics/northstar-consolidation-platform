@@ -28,8 +28,7 @@
               },
               "queryRef": "Northstar Measures.Covenant Limit",
               "nativeQueryRef": "Covenant Limit",
-              "displayName": "Covenant Limit",
-              "format": "0.00\"x\";(0.00\"x\");\"–\""
+              "displayName": "Covenant Limit"
             }
           ]
         }

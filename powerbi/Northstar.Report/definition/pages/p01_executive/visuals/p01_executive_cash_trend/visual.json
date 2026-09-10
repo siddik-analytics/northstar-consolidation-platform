@@ -47,8 +47,7 @@
               },
               "queryRef": "Northstar Measures.Closing Cash",
               "nativeQueryRef": "Closing Cash",
-              "displayName": "Cash",
-              "format": "#,0.0"
+              "displayName": "Cash"
             },
             {
               "field": {
@@ -63,8 +62,7 @@
               },
               "queryRef": "Northstar Measures.Total Liquidity",
               "nativeQueryRef": "Total Liquidity",
-              "displayName": "Total liquidity",
-              "format": "#,0.0"
+              "displayName": "Total liquidity"
             }
           ]
         }
@@ -197,7 +195,7 @@
             "labelDisplayUnits": {
               "expr": {
                 "Literal": {
-                  "Value": "1000000.0D"
+                  "Value": "1.0D"
                 }
               }
             },

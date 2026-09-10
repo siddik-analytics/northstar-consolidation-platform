@@ -47,8 +47,7 @@
               },
               "queryRef": "Northstar Measures.Management Adjusted EBITDA",
               "nativeQueryRef": "Management Adjusted EBITDA",
-              "displayName": "Adjusted EBITDA",
-              "format": "#,0.0"
+              "displayName": "Adjusted EBITDA"
             }
           ]
         }
@@ -181,7 +180,7 @@
             "labelDisplayUnits": {
               "expr": {
                 "Literal": {
-                  "Value": "1000000.0D"
+                  "Value": "1.0D"
                 }
               }
             },
@@ -271,7 +270,7 @@
             "labelDisplayUnits": {
               "expr": {
                 "Literal": {
-                  "Value": "1000000.0D"
+                  "Value": "1.0D"
                 }
               }
             },

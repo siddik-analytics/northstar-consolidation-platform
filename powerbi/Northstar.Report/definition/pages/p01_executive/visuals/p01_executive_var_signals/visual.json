@@ -48,8 +48,7 @@
               },
               "queryRef": "Northstar Measures.Variance",
               "nativeQueryRef": "Variance",
-              "displayName": "Var $",
-              "format": "+#,0,,.0;(#,0,,.0);\"–\""
+              "displayName": "Var $"
             },
             {
               "field": {
@@ -64,8 +63,7 @@
               },
               "queryRef": "Northstar Measures.Variance %",
               "nativeQueryRef": "Variance %",
-              "displayName": "Var %",
-              "format": "0.0%;(0.0%);\"–\""
+              "displayName": "Var %"
             },
             {
               "field": {

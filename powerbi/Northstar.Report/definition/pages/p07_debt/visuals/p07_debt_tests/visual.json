@@ -43,8 +43,7 @@
               },
               "queryRef": "Northstar Measures.Covenant Net Leverage",
               "nativeQueryRef": "Covenant Net Leverage",
-              "displayName": "Net leverage",
-              "format": "0.00\"x\";(0.00\"x\");\"–\""
+              "displayName": "Net leverage"
             },
             {
               "field": {
@@ -59,8 +58,7 @@
               },
               "queryRef": "Northstar Measures.Covenant Limit",
               "nativeQueryRef": "Covenant Limit",
-              "displayName": "Limit",
-              "format": "0.00\"x\";(0.00\"x\");\"–\""
+              "displayName": "Limit"
             },
             {
               "field": {
@@ -75,8 +73,7 @@
               },
               "queryRef": "Northstar Measures.Covenant Headroom",
               "nativeQueryRef": "Covenant Headroom",
-              "displayName": "Headroom",
-              "format": "0.00\"x\";(0.00\"x\");\"–\""
+              "displayName": "Headroom"
             },
             {
               "field": {

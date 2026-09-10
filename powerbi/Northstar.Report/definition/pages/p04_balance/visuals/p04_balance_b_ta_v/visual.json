@@ -28,8 +28,7 @@
               },
               "queryRef": "Northstar Measures.Total Assets",
               "nativeQueryRef": "Total Assets",
-              "displayName": "Total Assets",
-              "format": "#,0,,.0;(#,0,,.0);\"–\""
+              "displayName": "Total Assets"
             }
           ]
         }

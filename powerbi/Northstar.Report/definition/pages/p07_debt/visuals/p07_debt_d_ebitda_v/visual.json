@@ -28,8 +28,7 @@
               },
               "queryRef": "Northstar Measures.Covenant EBITDA",
               "nativeQueryRef": "Covenant EBITDA",
-              "displayName": "Covenant EBITDA",
-              "format": "#,0,,.0;(#,0,,.0);\"–\""
+              "displayName": "Covenant EBITDA"
             }
           ]
         }

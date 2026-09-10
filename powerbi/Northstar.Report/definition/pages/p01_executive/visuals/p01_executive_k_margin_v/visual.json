@@ -28,8 +28,7 @@
               },
               "queryRef": "Northstar Measures.EBITDA Margin %",
               "nativeQueryRef": "EBITDA Margin %",
-              "displayName": "EBITDA Margin %",
-              "format": "0.0%;(0.0%);\"–\""
+              "displayName": "EBITDA Margin %"
             }
           ]
         }

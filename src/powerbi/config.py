@@ -37,6 +37,44 @@ MEASURES_TABLE = "Northstar Measures"
 #: assumed. `P6-PBIP-02` refuses to emit any of them, case-insensitively.
 RESERVED_TABLE_NAMES = frozenset({"measures"})
 
+#: The financial concepts the Phase 6B report brief asks for, each mapped to the governed
+#: measure that carries it or deferred with the reason. `P6-COV-01` fails a concept that is
+#: neither: a visual may not invent a financial definition, and a brief item may not simply
+#: go missing. DSO / DIO / DPO / CCC are deferred by owner decision (Phase 6A.3 §10D): each
+#: needs a metric-policy choice -- ending or average balance, the denominator period, the
+#: day convention, COGS or purchases for DPO -- that nobody has made.
+REPORT_CONCEPTS: dict[str, str | None] = {
+    "Revenue": "Revenue", "Gross margin": "Gross Margin %", "Adjusted EBITDA":
+    "Management Adjusted EBITDA", "EBITDA margin": "EBITDA Margin %",
+    "Statutory EBITDA": "Statutory EBITDA", "Covenant EBITDA": "Covenant EBITDA",
+    "EBIT": "EBIT", "Net income": "Net Income", "Attributable to parent":
+    "Net Income Attributable to Parent", "Variance": "Variance", "Variance %": "Variance %",
+    "Favourability": "Variance Favourability", "Operating cash flow": "Operating Cash Flow",
+    "Investing cash flow": "Investing Cash Flow", "Financing cash flow": "Financing Cash Flow",
+    "FX effect on cash": "FX Effect on Cash", "Net change in cash": "Net Change in Cash",
+    "Closing cash": "Closing Cash", "Total liquidity": "Total Liquidity",
+    "Cash": "Cash", "Accounts receivable": "Accounts Receivable", "Inventory": "Inventory",
+    "Accounts payable": "Accounts Payable", "Net working capital": "Net Working Capital",
+    "PP&E": "Property Plant and Equipment", "Goodwill": "Goodwill",
+    "Intangibles": "Intangible Assets", "Total assets": "Total Assets",
+    "Total liabilities": "Total Liabilities", "Total equity": "Total Equity",
+    "CTA": "Cumulative Translation Adjustment", "NCI equity": "Non-controlling Interest Equity",
+    "Gross debt": "Gross Debt", "Covenant net debt": "Covenant Net Debt",
+    "Covenant net leverage": "Covenant Net Leverage", "Covenant limit": "Covenant Limit",
+    "Covenant headroom": "Covenant Headroom", "Economic leverage": "Economic Leverage",
+    "Covenant status": "Covenant Status", "Opening FTE": "Opening FTE", "Hires": "Hires",
+    "Exits": "Exits", "Closing FTE": "Closing FTE", "Average FTE": "Average FTE",
+    "Personnel cost": "Personnel Cost", "CapEx spend": "Actual CapEx",
+    "CapEx approved": "Approved CapEx", "CapEx variance": "CapEx Variance",
+    "Capital projects": "Capital Projects", "Account drill amount": "Account Amount",
+    "Layer EBITDA": "Layer EBITDA", "Layer net income": "Layer Net Income",
+    "Revenue share of Group": "Revenue Share of Group",
+    "Revenue share of unit": "Revenue Share of Unit",
+    # deferred, by owner decision, pending a metric-policy choice
+    "DSO": None, "DIO": None, "DPO": None, "Cash conversion cycle": None,
+    "Revolver drawn": None, "Revolver available": None, "Principal by instrument": None,
+}
+
 #: The reporting close. Actual stops here; everything after it is forecast, and an Actual
 #: measure must return BLANK rather than zero beyond it (Phase 5, carried forward as a rule).
 REPORT_PERIOD = 202608
@@ -343,7 +381,31 @@ TABLES: tuple[dict, ...] = (
 #: Active relationships. Every one is single-direction many-to-one from a fact to a dimension,
 #: which is the shape that has no ambiguity: filters flow one way and there is exactly one
 #: path between any two tables. Anything else is in `INACTIVE_RELATIONSHIPS`, with a reason.
+#:
+#: `EXPECTED_PATHS` is the reachability contract `P6-PATH` holds: each reportable dimension
+#: and the facts it must be able to filter along an active path. A dimension that exists but
+#: reaches nothing is exactly what P6B-D-05 was, and no earlier control asked the question.
+EXPECTED_PATHS: dict[str, tuple[str, ...]] = {
+    "Date": ("Financials", "Financial Detail", "Variance", "Balance Sheet", "Cash Flow",
+             "Working Capital", "Covenants", "Debt", "Headcount", "CapEx", "FX"),
+    "Entity": ("Financials", "Financial Detail", "Variance", "Headcount", "CapEx"),
+    "Business Unit": ("Financials", "Financial Detail", "Variance", "Headcount", "CapEx"),
+    "Account": ("Financial Detail",),
+    "Scenario": ("Financials", "Financial Detail"),
+    "Reporting Basis": ("Financials", "Financial Detail", "Variance"),
+    "Measure Line": ("Financials", "Variance"),
+    "Comparison": ("Variance",),
+    "Capital Project": ("CapEx",),
+    "Job Family": ("Headcount",),
+    "Debt Instrument": ("Debt",),
+    "Consolidation Layer": ("Layer Bridge",),
+}
 RELATIONSHIPS: tuple[tuple[str, str, str, str], ...] = (
+    # Business Unit reaches every fact through Entity: an entity belongs to exactly one unit.
+    # This is the path the five inactive direct relationships below defer to, and until
+    # Phase 6A.3 it did not exist -- Business Unit filtered nothing (P6B-D-05). Written
+    # many-to-one from Entity, so the filter flows Business Unit -> Entity -> fact.
+    ("Entity", "bu_code", "Business Unit", "bu_code"),
     ("Financials", "period_key", "Date", "period_key"),
     ("Financials", "entity_code", "Entity", "entity_code"),
     ("Financials", "measure_code", "Measure Line", "measure_code"),

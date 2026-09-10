@@ -28,8 +28,7 @@
               },
               "queryRef": "Northstar Measures.Personnel Cost",
               "nativeQueryRef": "Personnel Cost",
-              "displayName": "Personnel Cost",
-              "format": "#,0,,.0;(#,0,,.0);\"–\""
+              "displayName": "Personnel Cost"
             }
           ]
         }

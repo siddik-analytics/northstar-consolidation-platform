@@ -28,8 +28,7 @@
               },
               "queryRef": "Northstar Measures.Accounts Receivable",
               "nativeQueryRef": "Accounts Receivable",
-              "displayName": "Accounts Receivable",
-              "format": "#,0,,.0;(#,0,,.0);\"–\""
+              "displayName": "Accounts Receivable"
             }
           ]
         }

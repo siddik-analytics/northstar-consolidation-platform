@@ -13,22 +13,22 @@
     "35_semantic/dim_semantic_period_basis.parquet": "4d34e34692c770819a80d54b1e792210f682c9b0550906112fc61d469e64b843",
     "35_semantic/dim_semantic_project.parquet": "4c27014b05d2e5ec82c8a404b682dfa2ba7fb344c28c8e7151d970690f77346f"
   },
-  "build_id": "92d8040957b6a34f",
+  "build_id": "cfefefbaa93f16a1",
   "controls": {
     "failed": 0,
     "not_executed": 0,
-    "passed": 53,
-    "total": 53
+    "passed": 68,
+    "total": 68
   },
-  "definition_digest": "c7f74db69a967dd9",
+  "definition_digest": "af1c6264f61aeb66",
   "deployed": true,
   "desktop": "2.157.1354.0",
   "inactive_relationships": 5,
-  "measures": 89,
+  "measures": 95,
   "measures_table": "Northstar Measures",
-  "phase": "6A.2",
-  "project_digest": "9db029ca825664ae",
-  "relationships": 31,
+  "phase": "6A.3",
+  "project_digest": "0bcc32a8d49da325",
+  "relationships": 32,
   "reporting_mart_build_id": "00d3dd24020f900d",
   "semantic_dimension_rows": {
     "dim_semantic_account": 175,

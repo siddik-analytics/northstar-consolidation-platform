@@ -47,8 +47,7 @@
               },
               "queryRef": "Northstar Measures.Operating Cash Flow",
               "nativeQueryRef": "Operating Cash Flow",
-              "displayName": "Operating",
-              "format": "#,0.0"
+              "displayName": "Operating"
             },
             {
               "field": {
@@ -63,8 +62,7 @@
               },
               "queryRef": "Northstar Measures.Investing Cash Flow",
               "nativeQueryRef": "Investing Cash Flow",
-              "displayName": "Investing",
-              "format": "#,0.0"
+              "displayName": "Investing"
             },
             {
               "field": {
@@ -79,8 +77,7 @@
               },
               "queryRef": "Northstar Measures.Financing Cash Flow",
               "nativeQueryRef": "Financing Cash Flow",
-              "displayName": "Financing",
-              "format": "#,0.0"
+              "displayName": "Financing"
             }
           ]
         }
@@ -213,7 +210,7 @@
             "labelDisplayUnits": {
               "expr": {
                 "Literal": {
-                  "Value": "1000000.0D"
+                  "Value": "1.0D"
                 }
               }
             },
@@ -303,7 +300,7 @@
             "labelDisplayUnits": {
               "expr": {
                 "Literal": {
-                  "Value": "1000000.0D"
+                  "Value": "1.0D"
                 }
               }
             },

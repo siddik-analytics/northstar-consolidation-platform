@@ -47,8 +47,7 @@
               },
               "queryRef": "Northstar Measures.Covenant Net Leverage",
               "nativeQueryRef": "Covenant Net Leverage",
-              "displayName": "Net leverage",
-              "format": "0.00"
+              "displayName": "Net leverage"
             },
             {
               "field": {
@@ -63,8 +62,7 @@
               },
               "queryRef": "Northstar Measures.Covenant Limit",
               "nativeQueryRef": "Covenant Limit",
-              "displayName": "Covenant limit",
-              "format": "0.00"
+              "displayName": "Covenant limit"
             },
             {
               "field": {
@@ -79,8 +77,7 @@
               },
               "queryRef": "Northstar Measures.Economic Leverage",
               "nativeQueryRef": "Economic Leverage",
-              "displayName": "Economic leverage",
-              "format": "0.00"
+              "displayName": "Economic leverage"
             }
           ]
         }

@@ -28,8 +28,7 @@
               },
               "queryRef": "Northstar Measures.Actual CapEx",
               "nativeQueryRef": "Actual CapEx",
-              "displayName": "Actual CapEx",
-              "format": "#,0,,.0;(#,0,,.0);\"–\""
+              "displayName": "Actual CapEx"
             }
           ]
         }

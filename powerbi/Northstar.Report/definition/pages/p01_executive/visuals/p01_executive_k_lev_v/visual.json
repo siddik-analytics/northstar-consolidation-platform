@@ -28,8 +28,7 @@
               },
               "queryRef": "Northstar Measures.Covenant Net Leverage",
               "nativeQueryRef": "Covenant Net Leverage",
-              "displayName": "Covenant Net Leverage",
-              "format": "0.00\"x\";(0.00\"x\");\"–\""
+              "displayName": "Covenant Net Leverage"
             }
           ]
         }

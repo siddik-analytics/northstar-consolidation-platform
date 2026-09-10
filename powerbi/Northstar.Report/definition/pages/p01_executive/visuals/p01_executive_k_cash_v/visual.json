@@ -28,8 +28,7 @@
               },
               "queryRef": "Northstar Measures.Closing Cash",
               "nativeQueryRef": "Closing Cash",
-              "displayName": "Closing Cash",
-              "format": "#,0,,.0;(#,0,,.0);\"–\""
+              "displayName": "Closing Cash"
             }
           ]
         }

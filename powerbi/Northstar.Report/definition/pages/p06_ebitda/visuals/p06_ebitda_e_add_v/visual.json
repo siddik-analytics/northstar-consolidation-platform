@@ -28,8 +28,7 @@
               },
               "queryRef": "Northstar Measures.Approved Add-backs",
               "nativeQueryRef": "Approved Add-backs",
-              "displayName": "Approved Add-backs",
-              "format": "#,0,,.0;(#,0,,.0);\"–\""
+              "displayName": "Approved Add-backs"
             }
           ]
         }

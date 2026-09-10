@@ -28,8 +28,7 @@
               },
               "queryRef": "Northstar Measures.Gross Debt",
               "nativeQueryRef": "Gross Debt",
-              "displayName": "Gross Debt",
-              "format": "#,0,,.0;(#,0,,.0);\"–\""
+              "displayName": "Gross Debt"
             }
           ]
         }

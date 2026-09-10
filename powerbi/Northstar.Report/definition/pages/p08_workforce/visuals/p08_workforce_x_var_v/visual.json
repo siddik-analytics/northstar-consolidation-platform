@@ -28,8 +28,7 @@
               },
               "queryRef": "Northstar Measures.CapEx Variance",
               "nativeQueryRef": "CapEx Variance",
-              "displayName": "CapEx Variance",
-              "format": "+#,0,,.0;(#,0,,.0);\"–\""
+              "displayName": "CapEx Variance"
             }
           ]
         }

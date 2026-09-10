@@ -13,7 +13,7 @@ P6-SEM-10,Every numeric measure carries a format string,BLOCKING,PASS,0,0,an unf
 P6-SEM-11,"Statement captions sort by their governed order, not alphabetically",BLOCKING,PASS,12,>= 2,"a P&L in alphabetical order starts at Cost of sales, and a balance sheet in alphabetical order is not a balance sheet"
 P6-SEM-12,No fact key column is left visible to a report author,BLOCKING,PASS,0,0,a visible key invites someone to drag it onto a visual and summarise it
 P6-SEM-13,The model loads in Analysis Services with every declared table,BLOCKING,PASS,28,28,deployed and refreshed from the same declarations the TMDL is written from
-P6-SEM-14,Every measure parses and evaluates in the engine,BLOCKING,PASS,0,0,89 measures evaluated against the live model
+P6-SEM-14,Every measure parses and evaluates in the engine,BLOCKING,PASS,0,0,95 measures evaluated against the live model
 P6-XAR-01,Power BI [Revenue] reconciles to the marts,BLOCKING,PASS,0.000000,0.05,"Revenue, year to date: DAX 278,980,889.78 vs mart 278,980,889.78"
 P6-XAR-02,Power BI [Gross Profit] reconciles to the marts,BLOCKING,PASS,0.000000,0.05,"Gross profit, year to date: DAX 75,980,813.59 vs mart 75,980,813.59"
 P6-XAR-03,Power BI [Statutory EBITDA] reconciles to the marts,BLOCKING,PASS,0.000000,0.05,"Statutory EBITDA, pinned to the statutory basis: DAX 28,100,907.83 vs mart 28,100,907.83"
@@ -32,6 +32,7 @@ P6-XAR-15,Power BI [Covenant Net Leverage] reconciles to the marts,BLOCKING,PASS
 P6-XAR-16,Power BI [Closing FTE] reconciles to the marts,BLOCKING,PASS,0.000000,0.05,"Closing full-time equivalents: DAX 2,477.40 vs mart 2,477.40"
 P6-XAR-17,Power BI [Actual CapEx] reconciles to the marts,BLOCKING,PASS,0.000000,0.05,"Capital spend in the month: DAX 1,895,221.42 vs mart 1,895,221.42"
 P6-XAR-18,Power BI [Capital Projects] reconciles to the marts,BLOCKING,PASS,0.000000,0.05,How many capital projects -- the corrected key: DAX 50.00 vs mart 50.00
+P6-XAR-20,Power BI [Account Amount] reconciles to the marts,BLOCKING,PASS,0.170000,1.0,"Account-grain revenue (credit sign) against the statement line: DAX -278,980,889.95 vs mart -278,980,889.78"
 P6-XAR-19,Power BI [Revenue] reconciles to the marts,BLOCKING,PASS,0.000000,0.05,"Revenue recomputed from the consolidated fact, not the mart: DAX 278,980,889.78 vs mart 278,980,889.78"
 P6-XLS-01,Power BI [Revenue] reconciles to the workbook,BLOCKING,PASS,0.000110,0.0006,workbook 278.981 vs Power BI 278.981 (the workbook publishes millions to three decimals)
 P6-XLS-02,Power BI [Gross Profit] reconciles to the workbook,BLOCKING,PASS,0.000186,0.0006,workbook 75.981 vs Power BI 75.981 (the workbook publishes millions to three decimals)
@@ -50,5 +51,19 @@ P6-POL-06,Statutory and management measures pin the basis they are named for,BLO
 P6-POL-07,The current forecast version is the one the master marks as default,BLOCKING,PASS,model 'FC_FY26_08',governed 'FC_FY26_08',three forecasts are retained and only one is current; a superseded forecast presented as the forecast is an error nobody would notice from the number alone
 P6-PBIP-01,Doc comments only on objects that carry a Description,BLOCKING,PASS,0,0,a `///` above a relationship is a Description property the parser rejects (P6B-D-01); rationale travels as an annotation instead
 P6-PBIP-02,No table name Power BI Desktop reserves,BLOCKING,PASS,0,0,"28 tables declared; reserved list ['measures'] confirmed against Desktop, not assumed (P6B-D-02)"
-P6-PBIP-03,Power BI Desktop opens the generated project and loads it,BLOCKING,PASS,opened,opened,opened in 26.5s as 'Northstar'; native refresh loaded every partition
-P6-PBIP-04,"Native project, deployed engine and Desktop session agree on structure",BLOCKING,PASS,"{'engine': {'tables': 28, 'measures': 89, 'relationships': 36, 'active_relationships': 31}, 'desktop': {'tables': 28, 'measures': 89, 'relationships': 36, 'active_relationships': 31}}","{'tables': 28, 'measures': 89, 'relationships': 36, 'active_relationships': 31}","tables, measures, relationships and active relationships counted in each form"
+P6-PBIP-03,Power BI Desktop opens the generated project and loads it,BLOCKING,PASS,opened,opened,opened in 27.1s as 'Northstar'; native refresh loaded every partition
+P6-PBIP-04,"Native project, deployed engine and Desktop session agree on structure",BLOCKING,PASS,"{'engine': {'tables': 28, 'measures': 95, 'relationships': 37, 'active_relationships': 32}, 'desktop': {'tables': 28, 'measures': 95, 'relationships': 37, 'active_relationships': 32}}","{'tables': 28, 'measures': 95, 'relationships': 37, 'active_relationships': 32}","tables, measures, relationships and active relationships counted in each form"
+P6-PATH-01,Every declared dimension reaches every fact it filters on an active path,BLOCKING,PASS,0,0,34 dimension-fact pairs from the live engine's INFO.RELATIONSHIPS
+P6-PATH-02,No dimension reaches a fact by more than one active path,BLOCKING,PASS,0,0,two active paths make every total ambiguous; the direct unit paths stay inactive
+P6-PATH-03,No relationship filters in both directions,BLOCKING,PASS,0,0,a bidirectional path is a demonstrated requirement or it is a defect waiting
+P6-PATH-04,A filter on each dimension actually changes each fact it reaches,BLOCKING,PASS,0,0,"one member of each dimension's key, COUNTROWS of the fact with and without it"
+P6-PCT-01,Variance % equals variance over |comparator| at every grain,BLOCKING,PASS,1.11e-16,1e-9,60 grain x comparison x basis combinations against SQL over mart_variance
+P6-PCT-02,Variance % at leaf grain equals the stored mart percentage,BLOCKING,PASS,-0.037956182678050725,-0.037956,"entity NIG-200, EBIT, Actual vs Budget, year to date"
+P6-FMT-01,Every scaled money measure carries the governed format class,BLOCKING,PASS,64,">= 60 money measures, 0 off-class","the format is one constant, so a page cannot inherit a stray Excel-style string"
+P6-FMT-02,Every format string has balanced parentheses,BLOCKING,PASS,0,0,an unbalanced section renders a stray bracket on every negative
+P6-FMT-03,"Percent, ratio and headcount measures keep their own format classes",BLOCKING,PASS,0,0,"a percentage stays a percentage, leverage stays in turns, headcount is never money"
+P6-FMT-04,The governed money format renders representative values correctly,BLOCKING,PASS,5/5,5/5,"FORMAT() in the engine: 5.6, (5.6), –, 279.0, (0.9) -- millions, brackets, dash"
+P6-FMT-05,No report visual overrides a governed money format at the projection,BLOCKING,PASS,0,0,the Phase 6B interim override is gone; the model's own format is what renders
+P6-FMT-06,No report visual stacks a display unit on a scaled money format,BLOCKING,PASS,0,0,display units stay at None where the measure already scales to millions
+P6-COV-01,Every report concept maps to a governed measure or is explicitly deferred,BLOCKING,PASS,0,0,"54 mapped, 7 deferred by owner decision: DSO, DIO, DPO, Cash conversion cycle, Revolver drawn, Revolver available, Principal by instrument"
+P6-COV-02,The deferred concepts are the working-capital day counts and revolver detail,INFO,PASS,"['Cash conversion cycle', 'DIO', 'DPO', 'DSO', 'Principal by instrument', 'Revolver available', 'Revolver drawn']",the Phase 6A.3 §10D list,"a deferral is a decision on record, not a concept that quietly went missing"

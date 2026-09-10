@@ -28,8 +28,7 @@
               },
               "queryRef": "Northstar Measures.Total Liquidity",
               "nativeQueryRef": "Total Liquidity",
-              "displayName": "Total Liquidity",
-              "format": "#,0,,.0;(#,0,,.0);\"–\""
+              "displayName": "Total Liquidity"
             }
           ]
         }

@@ -1,7 +1,9 @@
 # Phase 6A — Power BI semantic model
 
 **Status:** approved; resealed as Phase 6A.2 after two native-project defects (see
-[`phase-06a-2-native-pbip.md`](phase-06a-2-native-pbip.md))
+[`phase-06a-2-native-pbip.md`](phase-06a-2-native-pbip.md)) and as Phase 6A.3 after three
+defects the first report found (see
+[`phase-06a-3-report-discovered-semantic-fixes.md`](phase-06a-3-report-discovered-semantic-fixes.md))
 **Baseline:** `192b1a5` (Phase 5.1, approved)
 **WIP recovered from:** `ca72922` on `wip/phase-06a-semantic-model`
 **Docs:** [semantic model](../powerbi-semantic-model.md) · [measures](../powerbi-measures.md) ·

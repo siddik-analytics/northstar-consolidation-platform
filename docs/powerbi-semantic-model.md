@@ -3,7 +3,7 @@
     python -m src.powerbi.run          generate the project, deploy it, run the controls
     python -m src.powerbi.faults       break it ten ways and prove each is caught
 
-A governed star schema over the Phase 5 reporting marts. **28 tables, 89 measures, 31 active
+A governed star schema over the Phase 5 reporting marts. **28 tables, 95 measures, 32 active
 relationships and 5 deliberately inactive ones**, generated from two Python declarations and
 validated by executing real DAX against a real Analysis Services engine.
 
@@ -23,8 +23,8 @@ upstream and arrives on the mart row.
 | `src/powerbi/deploy.py` | emits **TMSL** and deploys to a live engine — what proves it works |
 | `src/powerbi/dax.py` | executes DAX against that engine |
 | `src/powerbi/desktop.py` | opens the **PBIP in Power BI Desktop itself**, through its own Open dialog — what proves the project on disk is one Desktop accepts |
-| `src/powerbi/controls.py` | 53 semantic, reconciliation and native-project controls |
-| `src/powerbi/faults.py` | 12 fixtures, each caught by a named control |
+| `src/powerbi/controls.py` | 68 semantic, reconciliation, native-project, path, percentage, format and coverage controls |
+| `src/powerbi/faults.py` | 16 fixtures, each caught by a named control |
 
 Both output forms come from one declaration, which is why they cannot disagree about a
 definition. They can still disagree about **validity**, because the engine and the project
@@ -94,10 +94,17 @@ column and a cost centre is identified by entity and code together, so the compo
 formed somewhere. It is formed in the model rather than added to a frozen Phase 5 mart, and it
 is concatenation of two governed keys with no business logic in it.
 
-### The five inactive relationships
+### The five inactive relationships, and the one active path they defer to
 
 Every fact carries `bu_code` and every one of those paths is **inactive**, because a fact
-already reaches Business Unit through Entity and an entity belongs to exactly one unit. A second
+reaches Business Unit through Entity and an entity belongs to exactly one unit. That path
+is the active, single-direction relationship `Entity[bu_code] → Business Unit[bu_code]`,
+declared in Phase 6A.3 — until then it did not exist, the five inactive paths deferred to
+nothing, and selecting a unit changed no number in the model (**P6B-D-05**). `P6-PATH-01`
+now walks the active graph from every reportable dimension to every fact it is declared to
+filter, `P6-PATH-02` refuses a second path, `P6-PATH-03` refuses a bidirectional one, and
+`P6-PATH-04` proves it empirically: one member of each dimension, `COUNTROWS` of the fact
+with and without it. A second
 active path would make every segment total ambiguous with no way to tell which route a visual
 used. They are kept rather than deleted because the columns are genuinely on the marts and a
 future report may want `USERELATIONSHIP`. Each carries its own written reason; `P6-SEM-05`
@@ -164,6 +171,41 @@ proves the model's answer equals the master's, and `F6-XAR-07` pins a superseded
 prove it catches one.
 
 ---
+
+## Percentages are never added
+
+`[Variance %]` is `DIVIDE ( [Variance], ABS ( [Variance Comparator] ) )` at every grain —
+the governed additive variance over the absolute governed comparator, which is exactly the
+convention `mart_variance` stores per entity and line. Until Phase 6A.3 it read the stored
+percentage whenever one line was in context, and since the mart stores that percentage per
+entity, at group grain it **summed thirteen of them**: EBIT variance to budget read 2,713.9%
+where the workbook reads (32.8%) (**P6B-D-04**). `P6-PCT-01` compares the measure with SQL
+over the mart at five grains, four comparisons and three period bases — 60 combinations,
+exact to floating point — and `P6-PCT-02` holds the leaf value to the stored one.
+
+## Formats are proven by rendering
+
+Every money measure carries `#,0,,.0;(#,0,,.0);"–"`: Power BI's grammar puts the scaling
+commas before the decimal, and its engine renders 5,553,457.50 as `5.6`, −5,553,457.50 as
+`(5.6)`, zero as `–`. The Excel form `#,0.0,,` the measures carried until Phase 6A.3 scales
+nothing in Power BI and put `(5,553,457.5,)` on a page (**P6B-D-03**). Visuals keep display
+units at *None* so nothing scales twice. `P6-FMT-01…06` hold the class, the balance of
+brackets, the percent/ratio/headcount classes, the rendered result in the engine, and the
+report's freedom from projection overrides and stacked display units. One engine nuance is
+recorded: the zero section is chosen on the rounded value, so an amount under 50,000 prints
+`–` where the workbook prints `0.0`.
+
+## Reporting measures (Phase 6A.3)
+
+Six measures added by owner decision, none of them a new accounting policy:
+`Account Amount` (the monthly mart at account grain on the statement measures' basis,
+period basis and cutoff — for the line → account drill), `Layer EBITDA`, `Layer Net Income`
+and `Layer Entries` (the consolidation bridge by layer and fiscal year, as the Phase 5 mart
+holds it), and `Revenue Share of Group` / `Revenue Share of Unit` (explicit denominators,
+named). DSO, DIO, DPO and the cash conversion cycle are **deferred**: each needs a
+metric-policy decision (ending or average balance, the denominator period, the day
+convention, COGS or purchases for DPO), and `P6-COV-01` holds the deferral on record
+rather than letting a report invent one.
 
 ## The Actual cutoff
 

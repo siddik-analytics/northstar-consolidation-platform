@@ -28,8 +28,7 @@
               },
               "queryRef": "Northstar Measures.Covenant Debt",
               "nativeQueryRef": "Covenant Debt",
-              "displayName": "Covenant Debt",
-              "format": "#,0,,.0;(#,0,,.0);\"–\""
+              "displayName": "Covenant Debt"
             }
           ]
         }

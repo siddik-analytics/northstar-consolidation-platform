@@ -28,8 +28,7 @@
               },
               "queryRef": "Northstar Measures.Management Adjusted EBITDA",
               "nativeQueryRef": "Management Adjusted EBITDA",
-              "displayName": "Management Adjusted EBITDA",
-              "format": "#,0,,.0;(#,0,,.0);\"–\""
+              "displayName": "Management Adjusted EBITDA"
             }
           ]
         }

@@ -28,8 +28,7 @@
               },
               "queryRef": "Northstar Measures.Non-controlling Interests",
               "nativeQueryRef": "Non-controlling Interests",
-              "displayName": "Non-controlling Interests",
-              "format": "#,0,,.0;(#,0,,.0);\"–\""
+              "displayName": "Non-controlling Interests"
             }
           ]
         }

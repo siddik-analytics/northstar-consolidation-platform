@@ -28,8 +28,7 @@
               },
               "queryRef": "Northstar Measures.Investing Cash Flow",
               "nativeQueryRef": "Investing Cash Flow",
-              "displayName": "Investing Cash Flow",
-              "format": "#,0,,.0;(#,0,,.0);\"–\""
+              "displayName": "Investing Cash Flow"
             }
           ]
         }

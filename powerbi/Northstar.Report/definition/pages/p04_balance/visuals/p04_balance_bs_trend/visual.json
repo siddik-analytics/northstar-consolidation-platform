@@ -47,8 +47,7 @@
               },
               "queryRef": "Northstar Measures.Cash",
               "nativeQueryRef": "Cash",
-              "displayName": "Cash",
-              "format": "#,0.0"
+              "displayName": "Cash"
             },
             {
               "field": {
@@ -63,8 +62,7 @@
               },
               "queryRef": "Northstar Measures.Intangible Assets",
               "nativeQueryRef": "Intangible Assets",
-              "displayName": "Intangibles",
-              "format": "#,0.0"
+              "displayName": "Intangibles"
             },
             {
               "field": {
@@ -79,8 +77,7 @@
               },
               "queryRef": "Northstar Measures.Cumulative Translation Adjustment",
               "nativeQueryRef": "Cumulative Translation Adjustment",
-              "displayName": "CTA",
-              "format": "#,0.0"
+              "displayName": "CTA"
             },
             {
               "field": {
@@ -95,8 +92,7 @@
               },
               "queryRef": "Northstar Measures.Non-controlling Interest Equity",
               "nativeQueryRef": "Non-controlling Interest Equity",
-              "displayName": "NCI",
-              "format": "#,0.0"
+              "displayName": "NCI"
             }
           ]
         }
@@ -229,7 +225,7 @@
             "labelDisplayUnits": {
               "expr": {
                 "Literal": {
-                  "Value": "1000000.0D"
+                  "Value": "1.0D"
                 }
               }
             },

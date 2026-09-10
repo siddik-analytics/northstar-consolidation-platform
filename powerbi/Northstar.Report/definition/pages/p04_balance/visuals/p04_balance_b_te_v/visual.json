@@ -28,8 +28,7 @@
               },
               "queryRef": "Northstar Measures.Total Equity",
               "nativeQueryRef": "Total Equity",
-              "displayName": "Total Equity",
-              "format": "#,0,,.0;(#,0,,.0);\"–\""
+              "displayName": "Total Equity"
             }
           ]
         }

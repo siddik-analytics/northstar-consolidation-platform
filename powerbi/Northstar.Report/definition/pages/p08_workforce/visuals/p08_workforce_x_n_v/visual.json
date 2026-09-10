@@ -28,8 +28,7 @@
               },
               "queryRef": "Northstar Measures.Capital Projects",
               "nativeQueryRef": "Capital Projects",
-              "displayName": "Capital Projects",
-              "format": "#,0"
+              "displayName": "Capital Projects"
             }
           ]
         }

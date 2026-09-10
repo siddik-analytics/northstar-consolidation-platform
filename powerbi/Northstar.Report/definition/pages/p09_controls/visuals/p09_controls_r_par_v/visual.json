@@ -28,8 +28,7 @@
               },
               "queryRef": "Northstar Measures.Net Income Attributable to Parent",
               "nativeQueryRef": "Net Income Attributable to Parent",
-              "displayName": "Net Income Attributable to Parent",
-              "format": "#,0,,.0;(#,0,,.0);\"–\""
+              "displayName": "Net Income Attributable to Parent"
             }
           ]
         }

@@ -28,8 +28,7 @@
               },
               "queryRef": "Northstar Measures.Property Plant and Equipment",
               "nativeQueryRef": "Property Plant and Equipment",
-              "displayName": "Property Plant and Equipment",
-              "format": "#,0,,.0;(#,0,,.0);\"–\""
+              "displayName": "Property Plant and Equipment"
             }
           ]
         }

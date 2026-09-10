@@ -28,8 +28,7 @@
               },
               "queryRef": "Northstar Measures.Accounts Payable",
               "nativeQueryRef": "Accounts Payable",
-              "displayName": "Accounts Payable",
-              "format": "#,0,,.0;(#,0,,.0);\"–\""
+              "displayName": "Accounts Payable"
             }
           ]
         }

@@ -19,11 +19,12 @@
               {
                 "textRuns": [
                   {
-                    "value": "—",
+                    "value": "PASS",
                     "textStyle": {
                       "fontSize": "9pt",
-                      "color": "#1F2A37",
-                      "fontFamily": "Segoe UI"
+                      "color": "#1E7A46",
+                      "fontFamily": "Segoe UI Semibold",
+                      "fontWeight": "bold"
                     }
                   }
                 ],

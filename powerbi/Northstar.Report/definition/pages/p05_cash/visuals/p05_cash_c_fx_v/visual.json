@@ -28,8 +28,7 @@
               },
               "queryRef": "Northstar Measures.FX Effect on Cash",
               "nativeQueryRef": "FX Effect on Cash",
-              "displayName": "FX Effect on Cash",
-              "format": "#,0,,.0;(#,0,,.0);\"–\""
+              "displayName": "FX Effect on Cash"
             }
           ]
         }

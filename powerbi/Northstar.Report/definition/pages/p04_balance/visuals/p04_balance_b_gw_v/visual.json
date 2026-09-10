@@ -28,8 +28,7 @@
               },
               "queryRef": "Northstar Measures.Goodwill",
               "nativeQueryRef": "Goodwill",
-              "displayName": "Goodwill",
-              "format": "#,0,,.0;(#,0,,.0);\"–\""
+              "displayName": "Goodwill"
             }
           ]
         }

@@ -134,11 +134,16 @@ def run(deploy_model: bool = True, launch: bool = False) -> dict:
     res = controls.run(con)
     controls.write(res)
     controls.report(res)
+    # The report's Consolidation & Controls and Lineage pages display the registers. Write
+    # the report again now that this run's register exists, so the page says what the run
+    # found rather than what the previous one did.
+    from .report import build as report_build
+    report_build.generate(C.REPORT_DIR)
     summary["control_seconds"] = round(time.time() - t2, 2)
 
     if C.SEMANTIC_DIR.exists():
         manifest = {
-            "phase": "6A.2",
+            "phase": "6A.3",
             "build_id": build_id(),
             "project_digest": project_digest(),
             "definition_digest": definition_digest(),

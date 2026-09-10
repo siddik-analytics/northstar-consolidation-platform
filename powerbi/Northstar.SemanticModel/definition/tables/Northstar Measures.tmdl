@@ -72,7 +72,7 @@ table 'Northstar Measures'
 			        KEEPFILTERS ( 'Financials'[basis] = _Reporting )
 			    )
 			RETURN IF ( _PastClose, BLANK (), _Value )
-		formatString: #,0.0,,;(#,0.0,,);"–"
+		formatString: #,0,,.0;(#,0,,.0);"–"
 		lineageTag: ab1c1b25-f87b-5749-8268-c7a4c7976350
 		displayFolder: 01 Income statement
 
@@ -97,7 +97,7 @@ table 'Northstar Measures'
 			        KEEPFILTERS ( 'Financials'[basis] = _Reporting )
 			    )
 			RETURN IF ( _PastClose, BLANK (), _Value )
-		formatString: #,0.0,,;(#,0.0,,);"–"
+		formatString: #,0,,.0;(#,0,,.0);"–"
 		lineageTag: 2870624b-313c-54be-8408-1a481be642c6
 		displayFolder: 01 Income statement
 
@@ -123,7 +123,7 @@ table 'Northstar Measures'
 			        KEEPFILTERS ( 'Financials'[basis] = _Reporting )
 			    )
 			RETURN IF ( _PastClose, BLANK (), _Value )
-		formatString: #,0.0,,;(#,0.0,,);"–"
+		formatString: #,0,,.0;(#,0,,.0);"–"
 		lineageTag: ed4680a3-5c50-5668-ad9b-d9359c908a9b
 		displayFolder: 01 Income statement
 
@@ -157,7 +157,7 @@ table 'Northstar Measures'
 			        KEEPFILTERS ( 'Financials'[basis] = _Reporting )
 			    )
 			RETURN IF ( _PastClose, BLANK (), _Value )
-		formatString: #,0.0,,;(#,0.0,,);"–"
+		formatString: #,0,,.0;(#,0,,.0);"–"
 		lineageTag: 4e54a200-d327-55a8-a60b-08fbfd82664b
 		displayFolder: 01 Income statement
 
@@ -184,7 +184,7 @@ table 'Northstar Measures'
 			        KEEPFILTERS ( 'Financials'[basis] = _Reporting )
 			    )
 			RETURN IF ( _PastClose, BLANK (), _Value )
-		formatString: #,0.0,,;(#,0.0,,);"–"
+		formatString: #,0,,.0;(#,0,,.0);"–"
 		lineageTag: 892dddc4-515d-51f7-8fb5-88b7597ff732
 		displayFolder: 01 Income statement
 
@@ -212,7 +212,7 @@ table 'Northstar Measures'
 			        KEEPFILTERS ( 'Financials'[basis] = _Reporting )
 			    )
 			RETURN IF ( _PastClose, BLANK (), _Value + 0 )
-		formatString: #,0.0,,;(#,0.0,,);"–"
+		formatString: #,0,,.0;(#,0,,.0);"–"
 		lineageTag: 4ed7c178-267f-5df7-92a7-1719d2503bde
 		displayFolder: 01 Income statement
 
@@ -247,7 +247,7 @@ table 'Northstar Measures'
 			        KEEPFILTERS ( 'Financials'[basis] = _Reporting )
 			    )
 			RETURN IF ( _PastClose, BLANK (), _Value )
-		formatString: #,0.0,,;(#,0.0,,);"–"
+		formatString: #,0,,.0;(#,0,,.0);"–"
 		lineageTag: c1440af7-5951-5f36-a5db-3f5db39bf27f
 		displayFolder: 01 Income statement
 
@@ -286,7 +286,7 @@ table 'Northstar Measures'
 			        KEEPFILTERS ( 'Financials'[basis] = _Reporting )
 			    )
 			RETURN IF ( _PastClose, BLANK (), _Value )
-		formatString: #,0.0,,;(#,0.0,,);"–"
+		formatString: #,0,,.0;(#,0,,.0);"–"
 		lineageTag: 7a416717-1d81-5743-9749-a5f06f12864a
 		displayFolder: 01 Income statement
 
@@ -311,7 +311,7 @@ table 'Northstar Measures'
 			        KEEPFILTERS ( 'Financials'[basis] = _Reporting )
 			    )
 			RETURN IF ( _PastClose, BLANK (), _Value )
-		formatString: #,0.0,,;(#,0.0,,);"–"
+		formatString: #,0,,.0;(#,0,,.0);"–"
 		lineageTag: f11cb447-faa1-5f0b-89e1-b0e5029c838a
 		displayFolder: 01 Income statement
 
@@ -337,7 +337,7 @@ table 'Northstar Measures'
 			        KEEPFILTERS ( 'Financials'[basis] = _Reporting )
 			    )
 			RETURN IF ( _PastClose, BLANK (), _Value )
-		formatString: #,0.0,,;(#,0.0,,);"–"
+		formatString: #,0,,.0;(#,0,,.0);"–"
 		lineageTag: f6513199-abe8-55c7-be73-2710c0b1b9a4
 		displayFolder: 01 Income statement
 
@@ -362,7 +362,7 @@ table 'Northstar Measures'
 			        KEEPFILTERS ( 'Financials'[basis] = _Reporting )
 			    )
 			RETURN IF ( _PastClose, BLANK (), _Value )
-		formatString: #,0.0,,;(#,0.0,,);"–"
+		formatString: #,0,,.0;(#,0,,.0);"–"
 		lineageTag: 99711611-72e5-5a76-89e0-dfbb0ee3e46c
 		displayFolder: 01 Income statement
 
@@ -387,7 +387,7 @@ table 'Northstar Measures'
 			        KEEPFILTERS ( 'Financials'[basis] = _Reporting )
 			    )
 			RETURN IF ( _PastClose, BLANK (), _Value )
-		formatString: #,0.0,,;(#,0.0,,);"–"
+		formatString: #,0,,.0;(#,0,,.0);"–"
 		lineageTag: 27b3d14c-307b-5048-a604-1d9d6e2ce61a
 		displayFolder: 01 Income statement
 
@@ -413,7 +413,7 @@ table 'Northstar Measures'
 			        KEEPFILTERS ( 'Financials'[basis] = _Reporting )
 			    )
 			RETURN IF ( _PastClose, BLANK (), _Value + 0 )
-		formatString: #,0.0,,;(#,0.0,,);"–"
+		formatString: #,0,,.0;(#,0,,.0);"–"
 		lineageTag: e3419450-3a8e-5917-b54d-45c9a4d603f4
 		displayFolder: 01 Income statement
 
@@ -438,7 +438,7 @@ table 'Northstar Measures'
 			        KEEPFILTERS ( 'Financials'[basis] = _Reporting )
 			    )
 			RETURN IF ( _PastClose, BLANK (), _Value )
-		formatString: #,0.0,,;(#,0.0,,);"–"
+		formatString: #,0,,.0;(#,0,,.0);"–"
 		lineageTag: 38b8291a-f0f0-5fbd-8fb2-fefbc824f0a1
 		displayFolder: 01 Income statement
 
@@ -453,7 +453,7 @@ table 'Northstar Measures'
 			VAR _Latest = MAX ( 'Date'[period_key] )
 			VAR _PastClose = _ActualOnly && _Latest > [Reporting Period Key]
 			RETURN IF ( _PastClose, BLANK (), CALCULATE ( [Revenue], 'Scenario'[scenario_code] = "ACT" ) )
-		formatString: #,0.0,,;(#,0.0,,);"–"
+		formatString: #,0,,.0;(#,0,,.0);"–"
 		lineageTag: 92daad6e-ffc4-5d36-a40d-fc73f0d188be
 		displayFolder: 02 Scenario
 
@@ -465,7 +465,7 @@ table 'Northstar Measures'
 			VAR _Latest = MAX ( 'Date'[period_key] )
 			VAR _PastClose = _ActualOnly && _Latest > [Reporting Period Key]
 			RETURN IF ( _PastClose, BLANK (), CALCULATE ( [Management Adjusted EBITDA], 'Scenario'[scenario_code] = "ACT" ) )
-		formatString: #,0.0,,;(#,0.0,,);"–"
+		formatString: #,0,,.0;(#,0,,.0);"–"
 		lineageTag: 83d9d76a-d28a-52df-aa41-7d767b654970
 		displayFolder: 02 Scenario
 
@@ -477,7 +477,7 @@ table 'Northstar Measures'
 			VAR _Latest = MAX ( 'Date'[period_key] )
 			VAR _PastClose = _ActualOnly && _Latest > [Reporting Period Key]
 			RETURN IF ( _PastClose, BLANK (), CALCULATE ( [EBIT], 'Scenario'[scenario_code] = "ACT" ) )
-		formatString: #,0.0,,;(#,0.0,,);"–"
+		formatString: #,0,,.0;(#,0,,.0);"–"
 		lineageTag: 2957b6e4-0928-50c8-a414-f9d7f9ea800c
 		displayFolder: 02 Scenario
 
@@ -485,14 +485,14 @@ table 'Northstar Measures'
 	/// not subject to the actual cutoff.
 	measure 'Budget Revenue' =
 			CALCULATE ( [Revenue], 'Scenario'[scenario_code] = "BUD" )
-		formatString: #,0.0,,;(#,0.0,,);"–"
+		formatString: #,0,,.0;(#,0,,.0);"–"
 		lineageTag: 933fee17-445e-539c-87ae-d6716a54586c
 		displayFolder: 02 Scenario
 
 	/// Management Adjusted EBITDA on the approved budget.
 	measure 'Budget Adjusted EBITDA' =
 			CALCULATE ( [Management Adjusted EBITDA], 'Scenario'[scenario_code] = "BUD" )
-		formatString: #,0.0,,;(#,0.0,,);"–"
+		formatString: #,0,,.0;(#,0,,.0);"–"
 		lineageTag: 1923c739-dde9-5eb5-b318-83aa40aabd7c
 		displayFolder: 02 Scenario
 
@@ -505,7 +505,7 @@ table 'Northstar Measures'
 			        [Revenue],
 			        FILTER ( ALL ( 'Scenario' ), 'Scenario'[version_code] = _Version )
 			    )
-		formatString: #,0.0,,;(#,0.0,,);"–"
+		formatString: #,0,,.0;(#,0,,.0);"–"
 		lineageTag: 90cfca9c-d986-521d-95fa-cb12c11c3eea
 		displayFolder: 02 Scenario
 
@@ -517,7 +517,7 @@ table 'Northstar Measures'
 			        [Management Adjusted EBITDA],
 			        FILTER ( ALL ( 'Scenario' ), 'Scenario'[version_code] = _Version )
 			    )
-		formatString: #,0.0,,;(#,0.0,,);"–"
+		formatString: #,0,,.0;(#,0,,.0);"–"
 		lineageTag: 473b64a3-c6ee-581b-94c4-5a96b48d56ae
 		displayFolder: 02 Scenario
 
@@ -526,14 +526,14 @@ table 'Northstar Measures'
 	/// applies: prior year is complete by definition.
 	measure 'Prior Year Revenue' =
 			CALCULATE ( [Revenue], 'Scenario'[scenario_code] = "PY" )
-		formatString: #,0.0,,;(#,0.0,,);"–"
+		formatString: #,0,,.0;(#,0,,.0);"–"
 		lineageTag: 3fc9e9fe-4101-59e8-877f-04cef73a5922
 		displayFolder: 02 Scenario
 
 	/// Management Adjusted EBITDA twelve months earlier, on the governed `PY_DERIVED` version.
 	measure 'Prior Year Adjusted EBITDA' =
 			CALCULATE ( [Management Adjusted EBITDA], 'Scenario'[scenario_code] = "PY" )
-		formatString: #,0.0,,;(#,0.0,,);"–"
+		formatString: #,0,,.0;(#,0,,.0);"–"
 		lineageTag: 0508845e-5df1-5f25-95cc-826ff22db428
 		displayFolder: 02 Scenario
 
@@ -565,7 +565,7 @@ table 'Northstar Measures'
 			        ),
 			        KEEPFILTERS ( 'Variance'[basis] = _Reporting )
 			    )
-		formatString: #,0.0,,;(#,0.0,,);"–"
+		formatString: #,0,,.0;(#,0,,.0);"–"
 		lineageTag: d652815b-67fe-5eae-a3cf-036ce897376f
 		displayFolder: 03 Variance
 
@@ -583,7 +583,7 @@ table 'Northstar Measures'
 			        ),
 			        KEEPFILTERS ( 'Variance'[basis] = _Reporting )
 			    )
-		formatString: #,0.0,,;(#,0.0,,);"–"
+		formatString: #,0,,.0;(#,0,,.0);"–"
 		lineageTag: 9b50478a-0282-5f61-864d-caa804814477
 		displayFolder: 03 Variance
 
@@ -604,29 +604,19 @@ table 'Northstar Measures'
 			        ),
 			        KEEPFILTERS ( 'Variance'[basis] = _Reporting )
 			    )
-		formatString: #,0.0,,;(#,0.0,,);"–"
+		formatString: #,0,,.0;(#,0,,.0);"–"
 		lineageTag: 35579685-eb0d-5927-b70c-43674d30fe9e
 		displayFolder: 03 Variance
 
-	/// Variance as a percentage. On a single statement line it reads the **stored** percentage from
-	/// the mart, so Power BI and Excel cannot disagree about it. Across several lines a stored
-	/// percentage cannot be summed, so it recomputes over the absolute comparator -- absolute, so a
-	/// percentage against a negative base still reads in the same direction as the dollars.
+	/// Variance as a percentage of the comparator, at every grain: the governed additive variance
+	/// over the absolute governed comparator, with safe division. This is exactly the convention
+	/// `mart_variance` stores per entity and line (`var / |comparator|`, verified on all 17,462
+	/// rows with a non-zero comparator), so at leaf grain it agrees with the mart to the cent, and
+	/// at group, unit or statement grain it is a real percentage rather than a sum of percentages
+	/// -- which is what it was until Phase 6A.3 (P6B-D-04: EBIT read 2,713.9% where the workbook
+	/// reads (32.8%)). Percentages are never additive; this measure never adds them.
 	measure 'Variance %' =
-			VAR _Basis = SELECTEDVALUE ( 'Period Basis'[basis_code], "YTD" )
-			VAR _Stored =
-			    SWITCH (
-			        _Basis,
-			        "MTD", SUM ( 'Variance'[var_mtd_pct] ),
-			        "FY", SUM ( 'Variance'[var_fy_pct] ),
-			        SUM ( 'Variance'[var_ytd_pct] )
-			    )
-			RETURN
-			    IF (
-			        HASONEVALUE ( 'Measure Line'[measure_code] ),
-			        _Stored,
-			        DIVIDE ( [Variance], ABS ( [Variance Comparator] ) )
-			    )
+			DIVIDE ( [Variance], ABS ( [Variance Comparator] ) )
 		formatString: 0.0%;(0.0%);"–"
 		lineageTag: bf883bd6-e224-5562-be6a-561892e4c1ea
 		displayFolder: 03 Variance
@@ -671,7 +661,7 @@ table 'Northstar Measures'
 			    'Balance Sheet'[account_class] = "ASSET",
 			    'Date'[period_key] = MAX ( 'Date'[period_key] )
 			)
-		formatString: #,0.0,,;(#,0.0,,);"–"
+		formatString: #,0,,.0;(#,0,,.0);"–"
 		lineageTag: c25ac57c-0686-56a8-a0e1-2c305f00d66f
 		displayFolder: 04 Balance sheet
 
@@ -682,7 +672,7 @@ table 'Northstar Measures'
 			    'Balance Sheet'[account_class] = "LIABILITY",
 			    'Date'[period_key] = MAX ( 'Date'[period_key] )
 			)
-		formatString: #,0.0,,;(#,0.0,,);"–"
+		formatString: #,0,,.0;(#,0,,.0);"–"
 		lineageTag: a5e09027-e317-56a5-8e9d-ed03420501c1
 		displayFolder: 04 Balance sheet
 
@@ -694,14 +684,14 @@ table 'Northstar Measures'
 			    'Balance Sheet'[account_class] = "EQUITY",
 			    'Date'[period_key] = MAX ( 'Date'[period_key] )
 			)
-		formatString: #,0.0,,;(#,0.0,,);"–"
+		formatString: #,0,,.0;(#,0,,.0);"–"
 		lineageTag: ecf81153-515b-531f-a592-7ce2dbfeef5e
 		displayFolder: 04 Balance sheet
 
 	/// Assets less liabilities and equity. Nil in every period, and shown rather than assumed.
 	measure 'Balance Sheet Check' =
 			[Total Assets] - [Total Liabilities] - [Total Equity]
-		formatString: #,0.00,,;(#,0.00,,);"–"
+		formatString: #,0,,.00;(#,0,,.00);"–"
 		lineageTag: 8c46faca-167f-5251-bc02-b450ef99f6a3
 		displayFolder: 04 Balance sheet
 
@@ -713,7 +703,7 @@ table 'Northstar Measures'
 			    'Balance Sheet'[account_class] = "ASSET",
 			    'Date'[period_key] = MAX ( 'Date'[period_key] )
 			)
-		formatString: #,0.0,,;(#,0.0,,);"–"
+		formatString: #,0,,.0;(#,0,,.0);"–"
 		lineageTag: 22c503e1-631f-5e9b-9c90-533a5df5ffd7
 		displayFolder: 04 Balance sheet
 
@@ -725,7 +715,7 @@ table 'Northstar Measures'
 			    'Balance Sheet'[account_class] = "ASSET",
 			    'Date'[period_key] = MAX ( 'Date'[period_key] )
 			)
-		formatString: #,0.0,,;(#,0.0,,);"–"
+		formatString: #,0,,.0;(#,0,,.0);"–"
 		lineageTag: 05208ddc-03f1-5b7e-80bc-b732a2535ff6
 		displayFolder: 04 Balance sheet
 
@@ -737,7 +727,7 @@ table 'Northstar Measures'
 			    'Balance Sheet'[account_class] = "ASSET",
 			    'Date'[period_key] = MAX ( 'Date'[period_key] )
 			)
-		formatString: #,0.0,,;(#,0.0,,);"–"
+		formatString: #,0,,.0;(#,0,,.0);"–"
 		lineageTag: 1aea23de-1ada-5dc1-9cd1-156c048e14cd
 		displayFolder: 04 Balance sheet
 
@@ -750,7 +740,7 @@ table 'Northstar Measures'
 			    'Balance Sheet'[account_class] = "LIABILITY",
 			    'Date'[period_key] = MAX ( 'Date'[period_key] )
 			)
-		formatString: #,0.0,,;(#,0.0,,);"–"
+		formatString: #,0,,.0;(#,0,,.0);"–"
 		lineageTag: 3a162892-0c9a-55ae-942b-87b7c4652185
 		displayFolder: 04 Balance sheet
 
@@ -761,7 +751,7 @@ table 'Northstar Measures'
 			    SUM ( 'Working Capital'[nwc_usd] ),
 			    'Date'[period_key] = MAX ( 'Date'[period_key] )
 			)
-		formatString: #,0.0,,;(#,0.0,,);"–"
+		formatString: #,0,,.0;(#,0,,.0);"–"
 		lineageTag: 8367f233-1523-5bf3-9f1b-83b8a18794b6
 		displayFolder: 04 Balance sheet
 
@@ -774,7 +764,7 @@ table 'Northstar Measures'
 			    'Balance Sheet'[account_class] = "ASSET",
 			    'Date'[period_key] = MAX ( 'Date'[period_key] )
 			)
-		formatString: #,0.0,,;(#,0.0,,);"–"
+		formatString: #,0,,.0;(#,0,,.0);"–"
 		lineageTag: 9b35df39-67b8-52f9-9eef-97e02dd90a77
 		displayFolder: 04 Balance sheet
 
@@ -787,7 +777,7 @@ table 'Northstar Measures'
 			    'Balance Sheet'[account_class] = "ASSET",
 			    'Date'[period_key] = MAX ( 'Date'[period_key] )
 			)
-		formatString: #,0.0,,;(#,0.0,,);"–"
+		formatString: #,0,,.0;(#,0,,.0);"–"
 		lineageTag: 9878fd19-78d6-542d-be20-0c38f93bc9c8
 		displayFolder: 04 Balance sheet
 
@@ -799,7 +789,7 @@ table 'Northstar Measures'
 			    'Balance Sheet'[account_class] = "ASSET",
 			    'Date'[period_key] = MAX ( 'Date'[period_key] )
 			)
-		formatString: #,0.0,,;(#,0.0,,);"–"
+		formatString: #,0,,.0;(#,0,,.0);"–"
 		lineageTag: b029d952-f86b-5bcc-b3b9-a206220f3344
 		displayFolder: 04 Balance sheet
 
@@ -811,7 +801,7 @@ table 'Northstar Measures'
 			    'Balance Sheet'[account_class] = "EQUITY",
 			    'Date'[period_key] = MAX ( 'Date'[period_key] )
 			)
-		formatString: #,0.0,,;(#,0.0,,);"–"
+		formatString: #,0,,.0;(#,0,,.0);"–"
 		lineageTag: 7d57b0e9-5306-543f-b689-a2cf37f4edfd
 		displayFolder: 04 Balance sheet
 
@@ -830,7 +820,7 @@ table 'Northstar Measures'
 			    'Balance Sheet'[account_class] = "EQUITY",
 			    'Date'[period_key] = MAX ( 'Date'[period_key] )
 			)
-		formatString: #,0.0,,;(#,0.0,,);"–"
+		formatString: #,0,,.0;(#,0,,.0);"–"
 		lineageTag: 5a8ff180-f4fe-5875-980f-740809a3402a
 		displayFolder: 04 Balance sheet
 
@@ -850,14 +840,14 @@ table 'Northstar Measures'
 			    'Balance Sheet'[account_class] = "EQUITY",
 			    'Date'[period_key] = MAX ( 'Date'[period_key] )
 			)
-		formatString: #,0.0,,;(#,0.0,,);"–"
+		formatString: #,0,,.0;(#,0,,.0);"–"
 		lineageTag: dd14e7f9-ce79-569d-bd46-6bb883f5ccc7
 		displayFolder: 04 Balance sheet
 
 	/// Operating cash flow, derived upstream from balance sheet movements (ADR-0006).
 	measure 'Operating Cash Flow' =
 			SUM ( 'Cash Flow'[operating_cash_flow_usd] )
-		formatString: #,0.0,,;(#,0.0,,);"–"
+		formatString: #,0,,.0;(#,0,,.0);"–"
 		lineageTag: 623f32dc-5525-5055-8db4-e31d3bf78ea4
 		displayFolder: 05 Cash flow
 
@@ -865,7 +855,7 @@ table 'Northstar Measures'
 	/// by each account's cash flow category, never by a rule written here.
 	measure 'Investing Cash Flow' =
 			SUM ( 'Cash Flow'[investing_cash_flow_usd] )
-		formatString: #,0.0,,;(#,0.0,,);"–"
+		formatString: #,0,,.0;(#,0,,.0);"–"
 		lineageTag: 98c87ee0-2dd2-5bb0-8c30-7c6900a46e7b
 		displayFolder: 05 Cash flow
 
@@ -873,7 +863,7 @@ table 'Northstar Measures'
 	/// upstream by each account's cash flow category.
 	measure 'Financing Cash Flow' =
 			SUM ( 'Cash Flow'[financing_cash_flow_usd] )
-		formatString: #,0.0,,;(#,0.0,,);"–"
+		formatString: #,0,,.0;(#,0,,.0);"–"
 		lineageTag: 2dd99c58-2db7-5b5c-8b2d-9e0d17da087a
 		displayFolder: 05 Cash flow
 
@@ -882,7 +872,7 @@ table 'Northstar Measures'
 	/// flow tie while reporting an implausible exchange effect on a mostly-USD balance.
 	measure 'FX Effect on Cash' =
 			SUM ( 'Cash Flow'[fx_effect_on_cash_usd] )
-		formatString: #,0.0,,;(#,0.0,,);"–"
+		formatString: #,0,,.0;(#,0,,.0);"–"
 		lineageTag: c66625c4-64e2-59a1-8e5f-5dd6423a2534
 		displayFolder: 05 Cash flow
 
@@ -890,7 +880,7 @@ table 'Northstar Measures'
 	/// of the statement.
 	measure 'Net Change in Cash' =
 			SUM ( 'Cash Flow'[net_change_in_cash_usd] )
-		formatString: #,0.0,,;(#,0.0,,);"–"
+		formatString: #,0,,.0;(#,0,,.0);"–"
 		lineageTag: bb6ac47d-ca16-52d3-8a60-75a8bbeb83d7
 		displayFolder: 05 Cash flow
 
@@ -900,7 +890,7 @@ table 'Northstar Measures'
 			    SUM ( 'Cash Flow'[opening_cash_usd] ),
 			    'Date'[period_key] = MIN ( 'Date'[period_key] )
 			)
-		formatString: #,0.0,,;(#,0.0,,);"–"
+		formatString: #,0,,.0;(#,0,,.0);"–"
 		lineageTag: 34bd7760-3e09-547d-a0c4-8073329463f6
 		displayFolder: 05 Cash flow
 
@@ -916,7 +906,7 @@ table 'Northstar Measures'
 			    SUM ( 'Cash Flow'[closing_cash_usd] ),
 			    'Date'[period_key] = MAX ( 'Date'[period_key] )
 			)
-		formatString: #,0.0,,;(#,0.0,,);"–"
+		formatString: #,0,,.0;(#,0,,.0);"–"
 		lineageTag: 0440219c-1d03-509c-b835-b17ead33debf
 		displayFolder: 05 Cash flow
 
@@ -924,7 +914,7 @@ table 'Northstar Measures'
 	measure 'Cash Flow Check' =
 			[Opening Cash] + [Operating Cash Flow] + [Investing Cash Flow]
 			    + [Financing Cash Flow] + [FX Effect on Cash] - [Closing Cash]
-		formatString: #,0.00,,;(#,0.00,,);"–"
+		formatString: #,0,,.00;(#,0,,.00);"–"
 		lineageTag: 65018963-85fc-5777-81b2-63f4cd452fc4
 		displayFolder: 05 Cash flow
 
@@ -934,7 +924,7 @@ table 'Northstar Measures'
 			    SUM ( 'Cash Flow'[liquidity_usd] ),
 			    'Date'[period_key] = MAX ( 'Date'[period_key] )
 			)
-		formatString: #,0.0,,;(#,0.0,,);"–"
+		formatString: #,0,,.0;(#,0,,.0);"–"
 		lineageTag: f6345d8e-98ed-5058-b3db-c92efbca0895
 		displayFolder: 05 Cash flow
 
@@ -944,7 +934,7 @@ table 'Northstar Measures'
 			    SUM ( 'Covenants'[gross_debt_usd] ),
 			    'Date'[period_key] = MAX ( 'Date'[period_key] )
 			)
-		formatString: #,0.0,,;(#,0.0,,);"–"
+		formatString: #,0,,.0;(#,0,,.0);"–"
 		lineageTag: 181e82e9-6318-5427-afe9-ee7704e61cc8
 		displayFolder: 06 Debt and covenants
 
@@ -955,7 +945,7 @@ table 'Northstar Measures'
 			    SUM ( 'Covenants'[covenant_debt_usd] ),
 			    'Date'[period_key] = MAX ( 'Date'[period_key] )
 			)
-		formatString: #,0.0,,;(#,0.0,,);"–"
+		formatString: #,0,,.0;(#,0,,.0);"–"
 		lineageTag: 57789a1f-30d6-5d18-ab63-4d10b8d67452
 		displayFolder: 06 Debt and covenants
 
@@ -972,7 +962,7 @@ table 'Northstar Measures'
 			    SUM ( 'Covenants'[net_debt_usd] ),
 			    'Date'[period_key] = MAX ( 'Date'[period_key] )
 			)
-		formatString: #,0.0,,;(#,0.0,,);"–"
+		formatString: #,0,,.0;(#,0,,.0);"–"
 		lineageTag: c94ba204-6210-58e3-b749-5b49f43085fb
 		displayFolder: 06 Debt and covenants
 
@@ -990,7 +980,7 @@ table 'Northstar Measures'
 			    SUM ( 'Covenants'[covenant_ebitda_usd] ),
 			    'Date'[period_key] = MAX ( 'Date'[period_key] )
 			)
-		formatString: #,0.0,,;(#,0.0,,);"–"
+		formatString: #,0,,.0;(#,0,,.0);"–"
 		lineageTag: aca0f552-412c-5fb6-8aaa-7b4e2181e5aa
 		displayFolder: 06 Debt and covenants
 
@@ -1115,7 +1105,7 @@ table 'Northstar Measures'
 			    SUM ( 'Financial Detail'[amount_usd] ),
 			    'Account'[fs_caption_l2] = "Personnel costs"
 			)
-		formatString: #,0.0,,;(#,0.0,,);"–"
+		formatString: #,0,,.0;(#,0,,.0);"–"
 		lineageTag: 3ed1c39d-070c-5280-9e55-8765386750f1
 		displayFolder: 07 Workforce
 
@@ -1135,7 +1125,7 @@ table 'Northstar Measures'
 			VAR _Latest = MAX ( 'Date'[period_key] )
 			VAR _PastClose = _ActualOnly && _Latest > [Reporting Period Key]
 			RETURN IF ( _PastClose, BLANK (), SUM ( 'CapEx'[spend_usd] ) )
-		formatString: #,0.0,,;(#,0.0,,);"–"
+		formatString: #,0,,.0;(#,0,,.0);"–"
 		lineageTag: 60225886-de21-5747-8c44-b7ba1ee31885
 		displayFolder: 08 Capital expenditure
 
@@ -1146,7 +1136,7 @@ table 'Northstar Measures'
 	/// Inventing one would mean inventing the data behind it.
 	measure 'Approved CapEx' =
 			SUM ( 'CapEx'[approved_usd] )
-		formatString: #,0.0,,;(#,0.0,,);"–"
+		formatString: #,0,,.0;(#,0,,.0);"–"
 		lineageTag: d47bfa42-ea39-52ed-88bd-f1851222e37a
 		displayFolder: 08 Capital expenditure
 
@@ -1155,7 +1145,7 @@ table 'Northstar Measures'
 	/// colouring a positive variance green here would say the opposite of what it means.
 	measure 'CapEx Variance' =
 			[Actual CapEx] - [Approved CapEx]
-		formatString: #,0.0,,;(#,0.0,,);"–"
+		formatString: #,0,,.0;(#,0,,.0);"–"
 		lineageTag: 084afa35-9bb2-504e-a36d-d3d852c34ccf
 		displayFolder: 08 Capital expenditure
 
@@ -1204,14 +1194,14 @@ table 'Northstar Measures'
 	/// adjustment.
 	measure 'Constant Currency Revenue' =
 			SUM ( 'FX'[revenue_constant_ccy_usd] )
-		formatString: #,0.0,,;(#,0.0,,);"–"
+		formatString: #,0,,.0;(#,0,,.0);"–"
 		lineageTag: 8c26091f-a2f7-51eb-9ca8-9abb3b7468cd
 		displayFolder: 09 Foreign exchange
 
 	/// Reported revenue less constant currency revenue.
 	measure 'FX Translation Effect on Revenue' =
 			SUM ( 'FX'[revenue_usd] ) - [Constant Currency Revenue]
-		formatString: #,0.0,,;(#,0.0,,);"–"
+		formatString: #,0,,.0;(#,0,,.0);"–"
 		lineageTag: 3109ded3-317b-5249-b736-a9265d92842a
 		displayFolder: 09 Foreign exchange
 
@@ -1219,9 +1209,100 @@ table 'Northstar Measures'
 	/// consolidation as the residual of the translated trial balance, never plugged.
 	measure 'CTA Movement' =
 			SUM ( 'FX'[cta_movement_usd] )
-		formatString: #,0.0,,;(#,0.0,,);"–"
+		formatString: #,0,,.0;(#,0,,.0);"–"
 		lineageTag: 88f85f0c-8111-5f76-9081-8ba13fbc3738
 		displayFolder: 09 Foreign exchange
+
+	/// The account-grain amount from the monthly mart, on the period basis, reporting basis and
+	/// Actual cutoff the statement measures use. It exists so a statement line can be drilled to
+	/// the accounts behind it (Group → unit → entity → account) and it adds nothing the mart does
+	/// not already hold: month = the month's rows, year to date = the fiscal year's rows to the
+	/// selected month, full year = the fiscal year's rows. No accounting logic lives here; the
+	/// sign, the basis and the mapping to a line are the mart's.
+	measure 'Account Amount' =
+			VAR _Basis = SELECTEDVALUE ( 'Period Basis'[basis_code], "YTD" )
+			VAR _Reporting = SELECTEDVALUE ( 'Reporting Basis'[basis], "STATUTORY" )
+			VAR _Scenarios = VALUES ( 'Scenario'[scenario_code] )
+			VAR _ActualOnly =
+			    COUNTROWS ( _Scenarios ) = 1 && MAXX ( _Scenarios, 'Scenario'[scenario_code] ) = "ACT"
+			VAR _Latest = MAX ( 'Date'[period_key] )
+			VAR _Year = MAX ( 'Date'[fiscal_year] )
+			VAR _PastClose = _ActualOnly && _Latest > [Reporting Period Key]
+			VAR _Value =
+			    SWITCH (
+			        _Basis,
+			        "MTD",
+			            CALCULATE (
+			                SUM ( 'Financial Detail'[amount_usd] ),
+			                KEEPFILTERS ( 'Financial Detail'[basis] = _Reporting )
+			            ),
+			        "FY",
+			            CALCULATE (
+			                SUM ( 'Financial Detail'[amount_usd] ),
+			                REMOVEFILTERS ( 'Date' ),
+			                'Date'[fiscal_year] = _Year,
+			                KEEPFILTERS ( 'Financial Detail'[basis] = _Reporting )
+			            ),
+			        CALCULATE (
+			            SUM ( 'Financial Detail'[amount_usd] ),
+			            REMOVEFILTERS ( 'Date' ),
+			            'Date'[fiscal_year] = _Year,
+			            'Date'[period_key] <= _Latest,
+			            KEEPFILTERS ( 'Financial Detail'[basis] = _Reporting )
+			        )
+			    )
+			RETURN IF ( _PastClose, BLANK (), _Value )
+		formatString: #,0,,.0;(#,0,,.0);"–"
+		lineageTag: ba16a521-5c4e-59b3-bc49-ed8c6a17b7fb
+		displayFolder: 10 Reporting
+
+	/// EBITDA contributed by each consolidation layer in a fiscal year, from the governed
+	/// consolidation bridge: Entity Reported, Intercompany Eliminations, Consolidation Adjustments,
+	/// Management Adjustments and Translation Adjustment. Statutory is layers 1 + 2 + 3 + 5;
+	/// management adds layer 4. Presentation of the approved layers, not a new policy: the bridge
+	/// fact is the Phase 5 mart, unchanged.
+	measure 'Layer EBITDA' =
+			SUM ( 'Layer Bridge'[ebitda_usd] )
+		formatString: #,0,,.0;(#,0,,.0);"–"
+		lineageTag: 98b55abf-e9fe-5076-acf3-0f1fe30485aa
+		displayFolder: 10 Reporting
+
+	/// Net income contributed by each consolidation layer in a fiscal year, from the governed
+	/// consolidation bridge, on the same layer definitions as Layer EBITDA.
+	measure 'Layer Net Income' =
+			SUM ( 'Layer Bridge'[net_income_usd] )
+		formatString: #,0,,.0;(#,0,,.0);"–"
+		lineageTag: 062cc82d-429a-57c2-861f-3d96232533eb
+		displayFolder: 10 Reporting
+
+	/// Journal entries posted at each consolidation layer in a fiscal year, from the bridge.
+	measure 'Layer Entries' =
+			SUM ( 'Layer Bridge'[entries] )
+		formatString: #,0
+		lineageTag: d38ea7c8-6d53-597b-8b9d-dc9182c7c494
+		displayFolder: 10 Reporting
+
+	/// Revenue in the current context as a share of Group revenue in the same period, scenario and
+	/// reporting basis. The denominator removes only the Business Unit and Entity filters, by name:
+	/// on a unit row it is the Group, on an entity row it is still the Group. For the share of the
+	/// parent unit use Revenue Share of Unit -- one measure, one denominator.
+	measure 'Revenue Share of Group' =
+			DIVIDE (
+			    [Revenue],
+			    CALCULATE ( [Revenue], REMOVEFILTERS ( 'Business Unit' ), REMOVEFILTERS ( 'Entity' ) )
+			)
+		formatString: 0.0%;(0.0%);"–"
+		lineageTag: d276bca3-caed-5cac-9896-abf113d28045
+		displayFolder: 10 Reporting
+
+	/// Revenue in the current context as a share of the revenue of the business unit(s) in context,
+	/// in the same period, scenario and reporting basis. The denominator removes only the Entity
+	/// filter: on an entity row it is the entity's unit; on a unit row it is 100%.
+	measure 'Revenue Share of Unit' =
+			DIVIDE ( [Revenue], CALCULATE ( [Revenue], REMOVEFILTERS ( 'Entity' ) ) )
+		formatString: 0.0%;(0.0%);"–"
+		lineageTag: 5e36e5fc-33c1-5e72-a8c1-938d3f6abcbc
+		displayFolder: 10 Reporting
 
 	column _placeholder
 		isHidden

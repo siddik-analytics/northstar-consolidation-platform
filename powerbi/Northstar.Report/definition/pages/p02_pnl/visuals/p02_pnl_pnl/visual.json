@@ -75,8 +75,7 @@
               },
               "queryRef": "Northstar Measures.Variance Base",
               "nativeQueryRef": "Variance Base",
-              "displayName": "Base",
-              "format": "#,0,,.0;(#,0,,.0);\"–\""
+              "displayName": "Base"
             },
             {
               "field": {
@@ -91,8 +90,7 @@
               },
               "queryRef": "Northstar Measures.Variance Comparator",
               "nativeQueryRef": "Variance Comparator",
-              "displayName": "Comparator",
-              "format": "#,0,,.0;(#,0,,.0);\"–\""
+              "displayName": "Comparator"
             },
             {
               "field": {
@@ -107,8 +105,7 @@
               },
               "queryRef": "Northstar Measures.Variance",
               "nativeQueryRef": "Variance",
-              "displayName": "Variance",
-              "format": "+#,0,,.0;(#,0,,.0);\"–\""
+              "displayName": "Variance"
             },
             {
               "field": {
@@ -123,8 +120,7 @@
               },
               "queryRef": "Northstar Measures.Variance %",
               "nativeQueryRef": "Variance %",
-              "displayName": "Var %",
-              "format": "0.0%;(0.0%);\"–\""
+              "displayName": "Var %"
             },
             {
               "field": {

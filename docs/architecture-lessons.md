@@ -367,6 +367,40 @@ project controls and Desktop refuse it.
 
 ---
 
+## 16. A dimension that existed and a percentage that reconciled
+
+**Symptom.** The first Power BI report on the sealed model showed the Group total for every
+business unit, and EBIT variance to budget as 2,713.9%. Every control was green: 68 of them,
+19 dollar reconciliations to the marts, 8 to the workbook, 12 fixtures caught.
+
+**Root cause.** Two absences. The five fact→Business Unit relationships were inactive by
+design, deferring to an Entity path that had never been declared, so Business Unit was a
+table with no way to filter anything. And `[Variance %]` read the mart's stored percentage
+whenever one line was in context — a percentage stored per entity, which at group grain the
+engine summed thirteen times over.
+
+**Why controls miss it.** Every reconciliation compared dollars, at group grain, on measures
+that reach the facts through Date and Scenario. Nothing asked a unit question, and nothing
+asked a percentage above the grain it was stored at. A relationship control proved no table
+had *two* active paths and never asked whether one had *none*. The format strings, likewise,
+had been accepted because they parsed — nobody had rendered one.
+
+**Permanent fix.** `P6-PATH` walks the active graph from every dimension to every fact it is
+declared to filter and then proves the filter arrives; `P6-PCT` compares the percentage with
+the ratio of its additive parts at five grains; `P6-FMT` renders. And three lessons, stated
+where the next model will read them:
+
+> **A semantic model can reconcile at one grain while remaining wrong at another, and a
+> dimension can exist without actually filtering anything.**
+
+> **Format strings are part of the deliverable contract and require native rendering
+> validation, not merely syntactic acceptance.**
+
+> **The first report is a control.** Reading a model proves it parses; running it proves it
+> computes; only asking it the questions a reader will ask proves it answers.
+
+---
+
 ## What these have in common
 
 **A plug makes controls pass.** Items 1 and 4 both had a residual absorbing the defect, and in

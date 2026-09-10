@@ -28,8 +28,7 @@
               },
               "queryRef": "Northstar Measures.Statutory EBITDA",
               "nativeQueryRef": "Statutory EBITDA",
-              "displayName": "Statutory EBITDA",
-              "format": "#,0,,.0;(#,0,,.0);\"–\""
+              "displayName": "Statutory EBITDA"
             }
           ]
         }

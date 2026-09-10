@@ -47,8 +47,7 @@
               },
               "queryRef": "Northstar Measures.Actual Revenue",
               "nativeQueryRef": "Actual Revenue",
-              "displayName": "Actual",
-              "format": "#,0.0"
+              "displayName": "Actual"
             },
             {
               "field": {
@@ -63,8 +62,7 @@
               },
               "queryRef": "Northstar Measures.Budget Revenue",
               "nativeQueryRef": "Budget Revenue",
-              "displayName": "Budget",
-              "format": "#,0.0"
+              "displayName": "Budget"
             }
           ]
         }
@@ -197,7 +195,7 @@
             "labelDisplayUnits": {
               "expr": {
                 "Literal": {
-                  "Value": "1000000.0D"
+                  "Value": "1.0D"
                 }
               }
             },
@@ -287,7 +285,7 @@
             "labelDisplayUnits": {
               "expr": {
                 "Literal": {
-                  "Value": "1000000.0D"
+                  "Value": "1.0D"
                 }
               }
             },

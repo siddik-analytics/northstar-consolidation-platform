@@ -47,8 +47,7 @@
               },
               "queryRef": "Northstar Measures.Accounts Receivable",
               "nativeQueryRef": "Accounts Receivable",
-              "displayName": "Receivables",
-              "format": "#,0.0"
+              "displayName": "Receivables"
             },
             {
               "field": {
@@ -63,8 +62,7 @@
               },
               "queryRef": "Northstar Measures.Inventory",
               "nativeQueryRef": "Inventory",
-              "displayName": "Inventory",
-              "format": "#,0.0"
+              "displayName": "Inventory"
             },
             {
               "field": {
@@ -79,8 +77,7 @@
               },
               "queryRef": "Northstar Measures.Accounts Payable",
               "nativeQueryRef": "Accounts Payable",
-              "displayName": "Payables",
-              "format": "#,0.0"
+              "displayName": "Payables"
             },
             {
               "field": {
@@ -95,8 +92,7 @@
               },
               "queryRef": "Northstar Measures.Net Working Capital",
               "nativeQueryRef": "Net Working Capital",
-              "displayName": "Net working capital",
-              "format": "#,0.0"
+              "displayName": "Net working capital"
             }
           ]
         }
@@ -229,7 +225,7 @@
             "labelDisplayUnits": {
               "expr": {
                 "Literal": {
-                  "Value": "1000000.0D"
+                  "Value": "1.0D"
                 }
               }
             },

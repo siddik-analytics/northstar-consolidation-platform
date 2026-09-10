@@ -47,8 +47,7 @@
               },
               "queryRef": "Northstar Measures.Variance",
               "nativeQueryRef": "Variance",
-              "displayName": "Variance",
-              "format": "+#,0,,.0;(#,0,,.0);\"–\""
+              "displayName": "Variance"
             }
           ]
         }
@@ -181,7 +180,7 @@
             "labelDisplayUnits": {
               "expr": {
                 "Literal": {
-                  "Value": "1000000.0D"
+                  "Value": "1.0D"
                 }
               }
             },
@@ -271,7 +270,7 @@
             "labelDisplayUnits": {
               "expr": {
                 "Literal": {
-                  "Value": "1000000.0D"
+                  "Value": "1.0D"
                 }
               }
             },

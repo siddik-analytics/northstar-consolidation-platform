@@ -28,8 +28,7 @@
               },
               "queryRef": "Northstar Measures.Approved CapEx",
               "nativeQueryRef": "Approved CapEx",
-              "displayName": "Approved CapEx",
-              "format": "#,0,,.0;(#,0,,.0);\"–\""
+              "displayName": "Approved CapEx"
             }
           ]
         }

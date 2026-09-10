@@ -28,8 +28,7 @@
               },
               "queryRef": "Northstar Measures.Closing FTE",
               "nativeQueryRef": "Closing FTE",
-              "displayName": "Closing FTE",
-              "format": "#,0"
+              "displayName": "Closing FTE"
             }
           ]
         }

@@ -28,8 +28,7 @@
               },
               "queryRef": "Northstar Measures.Operating Cash Flow",
               "nativeQueryRef": "Operating Cash Flow",
-              "displayName": "Operating Cash Flow",
-              "format": "#,0,,.0;(#,0,,.0);\"–\""
+              "displayName": "Operating Cash Flow"
             }
           ]
         }

@@ -28,8 +28,7 @@
               },
               "queryRef": "Northstar Measures.Opening FTE",
               "nativeQueryRef": "Opening FTE",
-              "displayName": "Opening FTE",
-              "format": "#,0.0"
+              "displayName": "Opening FTE"
             }
           ]
         }

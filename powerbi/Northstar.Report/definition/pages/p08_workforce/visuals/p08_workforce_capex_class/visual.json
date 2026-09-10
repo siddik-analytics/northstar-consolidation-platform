@@ -47,8 +47,7 @@
               },
               "queryRef": "Northstar Measures.Actual CapEx",
               "nativeQueryRef": "Actual CapEx",
-              "displayName": "Spend",
-              "format": "#,0.0"
+              "displayName": "Spend"
             },
             {
               "field": {
@@ -63,8 +62,7 @@
               },
               "queryRef": "Northstar Measures.Approved CapEx",
               "nativeQueryRef": "Approved CapEx",
-              "displayName": "Approved",
-              "format": "#,0.0"
+              "displayName": "Approved"
             }
           ]
         }
@@ -197,7 +195,7 @@
             "labelDisplayUnits": {
               "expr": {
                 "Literal": {
-                  "Value": "1000000.0D"
+                  "Value": "1.0D"
                 }
               }
             },
@@ -287,7 +285,7 @@
             "labelDisplayUnits": {
               "expr": {
                 "Literal": {
-                  "Value": "1000000.0D"
+                  "Value": "1.0D"
                 }
               }
             },

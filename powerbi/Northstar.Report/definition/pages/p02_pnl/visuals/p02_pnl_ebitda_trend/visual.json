@@ -47,8 +47,7 @@
               },
               "queryRef": "Northstar Measures.Actual Adjusted EBITDA",
               "nativeQueryRef": "Actual Adjusted EBITDA",
-              "displayName": "Actual",
-              "format": "#,0.0"
+              "displayName": "Actual"
             },
             {
               "field": {
@@ -63,8 +62,7 @@
               },
               "queryRef": "Northstar Measures.Budget Adjusted EBITDA",
               "nativeQueryRef": "Budget Adjusted EBITDA",
-              "displayName": "Budget",
-              "format": "#,0.0"
+              "displayName": "Budget"
             },
             {
               "field": {
@@ -79,8 +77,7 @@
               },
               "queryRef": "Northstar Measures.Forecast Adjusted EBITDA",
               "nativeQueryRef": "Forecast Adjusted EBITDA",
-              "displayName": "Forecast",
-              "format": "#,0.0"
+              "displayName": "Forecast"
             },
             {
               "field": {
@@ -95,8 +92,7 @@
               },
               "queryRef": "Northstar Measures.Prior Year Adjusted EBITDA",
               "nativeQueryRef": "Prior Year Adjusted EBITDA",
-              "displayName": "Prior year",
-              "format": "#,0.0"
+              "displayName": "Prior year"
             }
           ]
         }
@@ -229,7 +225,7 @@
             "labelDisplayUnits": {
               "expr": {
                 "Literal": {
-                  "Value": "1000000.0D"
+                  "Value": "1.0D"
                 }
               }
             },

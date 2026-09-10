@@ -28,8 +28,7 @@
               },
               "queryRef": "Northstar Measures.Gross Margin %",
               "nativeQueryRef": "Gross Margin %",
-              "displayName": "Gross Margin %",
-              "format": "0.0%;(0.0%);\"–\""
+              "displayName": "Gross Margin %"
             }
           ]
         }

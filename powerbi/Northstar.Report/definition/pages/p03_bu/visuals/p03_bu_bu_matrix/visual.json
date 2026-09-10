@@ -61,8 +61,7 @@
               },
               "queryRef": "Northstar Measures.Revenue",
               "nativeQueryRef": "Revenue",
-              "displayName": "Revenue",
-              "format": "#,0,,.0;(#,0,,.0);\"–\""
+              "displayName": "Revenue"
             },
             {
               "field": {
@@ -77,8 +76,7 @@
               },
               "queryRef": "Northstar Measures.Gross Margin %",
               "nativeQueryRef": "Gross Margin %",
-              "displayName": "GM %",
-              "format": "0.0%;(0.0%);\"–\""
+              "displayName": "GM %"
             },
             {
               "field": {
@@ -93,8 +91,7 @@
               },
               "queryRef": "Northstar Measures.Management Adjusted EBITDA",
               "nativeQueryRef": "Management Adjusted EBITDA",
-              "displayName": "Adj. EBITDA",
-              "format": "#,0,,.0;(#,0,,.0);\"–\""
+              "displayName": "Adj. EBITDA"
             },
             {
               "field": {
@@ -109,8 +106,7 @@
               },
               "queryRef": "Northstar Measures.Adjusted EBITDA Margin %",
               "nativeQueryRef": "Adjusted EBITDA Margin %",
-              "displayName": "Margin",
-              "format": "0.0%;(0.0%);\"–\""
+              "displayName": "Margin"
             }
           ]
         }

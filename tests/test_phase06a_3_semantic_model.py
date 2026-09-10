@@ -262,7 +262,7 @@ def test_no_table_name_desktop_reserves():
 
 def test_the_measures_host_kept_every_measure_folder_and_format():
     text = _tmdl(f"tables/{C.MEASURES_TABLE}.tmdl")
-    assert text.count("\tmeasure '") == len(MEASURES) == 89
+    assert text.count("\tmeasure '") == len(MEASURES) == 95
     for name, expression, fmt, folder, description in MEASURES:
         assert f"\tmeasure '{name}' =" in text
         assert f"displayFolder: {folder}" in text
@@ -327,10 +327,89 @@ def _fault_results() -> list[dict]:
         return list(csv.DictReader(f))
 
 
-def test_twelve_semantic_fixtures_are_declared():
-    assert len(FIXTURES) == 12
+def test_sixteen_semantic_fixtures_are_declared():
+    assert len(FIXTURES) == 16
     assert {f[0] for f in FIXTURES} == ({f"F6-XAR-{i:02d}" for i in range(1, 11)}
-                                        | {"F6-PBIP-01", "F6-PBIP-02"})
+                                        | {"F6-PBIP-01", "F6-PBIP-02"}
+                                        | {f"F6A3-{i:02d}" for i in range(1, 5)})
+
+
+# ===================================================================== Phase 6A.3
+def test_business_unit_reaches_every_fact_through_entity():
+    """P6B-D-05: the active path exists and it is the only one."""
+    assert ("Entity", "bu_code", "Business Unit", "bu_code") in C.RELATIONSHIPS
+    edges, bidirectional = pbi_controls._active_graph(live=False)
+    for fact in C.EXPECTED_PATHS["Business Unit"]:
+        assert len(pbi_controls._paths(edges, "Business Unit", fact)) == 1, fact
+    assert not bidirectional
+
+
+def test_every_declared_dimension_reaches_its_facts_on_one_active_path():
+    edges, _ = pbi_controls._active_graph(live=False)
+    for dim, facts in C.EXPECTED_PATHS.items():
+        for fact in facts:
+            assert len(pbi_controls._paths(edges, dim, fact)) == 1, (dim, fact)
+
+
+def test_variance_pct_is_a_ratio_of_governed_components_at_every_grain():
+    """P6B-D-04: no stored-percentage branch, no HASONEVALUE, no SUM of a pct column."""
+    expr = next(e for n, e, *_ in MEASURES if n == "Variance %")
+    assert expr.strip() == "DIVIDE ( [Variance], ABS ( [Variance Comparator] ) )"
+    assert "pct" not in expr
+
+
+def test_money_formats_are_power_bi_grammar():
+    """P6B-D-03: scaling commas before the decimal, brackets, en dash; never the Excel form."""
+    from src.powerbi.measures import M_USD, M_USD2
+    assert M_USD == '#,0,,.0;(#,0,,.0);"–"' and M_USD2 == '#,0,,.00;(#,0,,.00);"–"'
+    assert not [n for n, e, f, *_ in MEASURES if f and ".0,," in f]
+
+
+def test_business_unit_filters_the_facts(live):
+    rows = dax.query("EVALUATE ADDCOLUMNS ( VALUES ( 'Business Unit'[bu_code] ), \"v\", "
+                     "CALCULATE ( [Revenue], 'Date'[period_key] = 202608, "
+                     "'Scenario'[scenario_code] = \"ACT\" ) )")
+    values = [r[1] for r in rows]
+    group = dax.measure_at("Revenue", 202608, "'Scenario'[scenario_code] = \"ACT\"")
+    assert len(set(values)) == 5
+    assert abs(sum(v or 0 for v in values) - group) < 0.05
+
+
+def test_variance_pct_at_group_grain_is_the_workbook_figure(live):
+    ebit = dax.query("EVALUATE ROW ( \"v\", CALCULATE ( [Variance %], 'Date'[period_key] = 202608, "
+                     "'Comparison'[comparison_code] = \"ACT_VS_BUD\", "
+                     "'Measure Line'[measure_code] = \"EBIT\" ) )")[0][0]
+    assert abs(ebit - (-0.3276)) < 0.001     # the workbook's (32.8%), not 2,713.9%
+
+
+def test_the_governed_money_format_renders(live):
+    from src.powerbi.measures import M_USD
+    fs = M_USD.replace('"', '""')
+    got = [dax.query(f'EVALUATE ROW ( "s", FORMAT ( {v}, "{fs}" ) )')[0][0]
+           for v in (5553457.5, -5553457.5, 0, 278980889.78, -939022.82)]
+    assert got == ["5.6", "(5.6)", "–", "279.0", "(0.9)"]
+
+
+def test_the_report_carries_no_format_override_and_no_stacked_display_unit():
+    import json
+    pages = C.REPORT_DIR / "definition" / "pages"
+    if not pages.exists():
+        pytest.skip("the report has not been generated")
+    money = {n for n, e, f, *_ in MEASURES if f and ",,." in f}
+    for vf in pages.rglob("visual.json"):
+        v = json.loads(vf.read_text(encoding="utf-8"))
+        for role in v.get("visual", {}).get("query", {}).get("queryState", {}).values():
+            for pr in role.get("projections", []):
+                m = pr.get("field", {}).get("Measure", {}).get("Property")
+                assert not (m in money and pr.get("format")), (vf, m)
+
+
+def test_deferred_concepts_are_on_record():
+    deferred = {c for c, m in C.REPORT_CONCEPTS.items() if m is None}
+    assert deferred == {"DSO", "DIO", "DPO", "Cash conversion cycle", "Revolver drawn",
+                        "Revolver available", "Principal by instrument"}
+    names = {m[0] for m in MEASURES}
+    assert all(m in names for m in C.REPORT_CONCEPTS.values() if m)
 
 
 def test_the_pbip_fixtures_were_accepted_by_the_engine_and_caught_by_the_project_controls():

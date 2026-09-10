@@ -28,8 +28,7 @@
               },
               "queryRef": "Northstar Measures.Exits",
               "nativeQueryRef": "Exits",
-              "displayName": "Exits",
-              "format": "#,0"
+              "displayName": "Exits"
             }
           ]
         }

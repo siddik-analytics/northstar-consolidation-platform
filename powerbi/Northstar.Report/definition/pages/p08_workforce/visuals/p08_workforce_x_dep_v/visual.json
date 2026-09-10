@@ -28,8 +28,7 @@
               },
               "queryRef": "Northstar Measures.CapEx to Depreciation",
               "nativeQueryRef": "CapEx to Depreciation",
-              "displayName": "CapEx to Depreciation",
-              "format": "0.00\"x\";(0.00\"x\");\"–\""
+              "displayName": "CapEx to Depreciation"
             }
           ]
         }

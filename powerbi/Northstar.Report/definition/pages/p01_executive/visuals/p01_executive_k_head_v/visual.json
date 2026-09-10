@@ -28,8 +28,7 @@
               },
               "queryRef": "Northstar Measures.Covenant Headroom",
               "nativeQueryRef": "Covenant Headroom",
-              "displayName": "Covenant Headroom",
-              "format": "0.00\"x\";(0.00\"x\");\"–\""
+              "displayName": "Covenant Headroom"
             }
           ]
         }

@@ -157,8 +157,19 @@ def at_latest(table: str, column: str, aggregate: str = "SUM") -> str:
             f")")
 
 
-M_USD = '#,0.0,,;(#,0.0,,);"–"'
-M_USD2 = '#,0.00,,;(#,0.00,,);"–"'
+#: Display formats, in Power BI's VBA-style grammar and proven by rendering (Phase 6A.3).
+#:
+#: The scaling commas go **before** the decimal: `#,0,,.0` is millions to one decimal, and
+#: Power BI's engine renders 5,553,457.50 as `5.6`, -5,553,457.50 as `(5.6)`, zero as `–`,
+#: 278,980,889.78 as `279.0`. The Excel form `#,0.0,,` -- which these carried until
+#: P6B-D-03 -- scales nothing in Power BI and renders `(5,553,457.5,)` on a page. One
+#: engine nuance is recorded rather than hidden: the zero section is chosen on the *rounded*
+#: value, so an amount under 50,000 prints `–` where the workbook prints `0.0`.
+#:
+#: Visuals that show these measures keep display units at *None*; a K/M/B display unit on
+#: top of a scaled format would scale twice (`P6-FMT-06` reads the report for that).
+M_USD = '#,0,,.0;(#,0,,.0);"–"'
+M_USD2 = '#,0,,.00;(#,0,,.00);"–"'
 PCT = '0.0%;(0.0%);"–"'
 TURNS = '0.00"x";(0.00"x");"–"'
 FTE = "#,0.0"
@@ -347,25 +358,15 @@ MEASURES: tuple[tuple[str, str, str | None, str, str], ...] = (
      "full year are three governed columns, so switching basis changes which column is read "
      "and never how the variance is computed."),
     ("Variance %",
-     "VAR _Basis = SELECTEDVALUE ( 'Period Basis'[basis_code], \"YTD\" )\n"
-     "VAR _Stored =\n"
-     "    SWITCH (\n"
-     "        _Basis,\n"
-     "        \"MTD\", SUM ( 'Variance'[var_mtd_pct] ),\n"
-     "        \"FY\", SUM ( 'Variance'[var_fy_pct] ),\n"
-     "        SUM ( 'Variance'[var_ytd_pct] )\n"
-     "    )\n"
-     "RETURN\n"
-     "    IF (\n"
-     "        HASONEVALUE ( 'Measure Line'[measure_code] ),\n"
-     "        _Stored,\n"
-     "        DIVIDE ( [Variance], ABS ( [Variance Comparator] ) )\n"
-     "    )", PCT, "03 Variance",
-     "Variance as a percentage. On a single statement line it reads the **stored** percentage "
-     "from the mart, so Power BI and Excel cannot disagree about it. Across several lines a "
-     "stored percentage cannot be summed, so it recomputes over the absolute comparator -- "
-     "absolute, so a percentage against a negative base still reads in the same direction as "
-     "the dollars."),
+     "DIVIDE ( [Variance], ABS ( [Variance Comparator] ) )", PCT, "03 Variance",
+     "Variance as a percentage of the comparator, at every grain: the governed additive "
+     "variance over the absolute governed comparator, with safe division. This is exactly the "
+     "convention `mart_variance` stores per entity and line (`var / |comparator|`, verified on "
+     "all 17,462 rows with a non-zero comparator), so at leaf grain it agrees with the mart to "
+     "the cent, and at group, unit or statement grain it is a real percentage rather than a "
+     "sum of percentages -- which is what it was until Phase 6A.3 (P6B-D-04: EBIT read "
+     "2,713.9% where the workbook reads (32.8%)). Percentages are never additive; this "
+     "measure never adds them."),
     ("Variance Favourability",
      "VAR _Fav = SELECTEDVALUE ( 'Measure Line'[favourable_direction] )\n"
      "VAR _Var = [Variance]\n"
@@ -666,6 +667,73 @@ MEASURES: tuple[tuple[str, str, str | None, str, str], ...] = (
     ("CTA Movement", "SUM ( 'FX'[cta_movement_usd] )", M_USD, "09 Foreign exchange",
      "The movement in the cumulative translation adjustment, an equity reserve. Derived by "
      "the consolidation as the residual of the translated trial balance, never plugged."),
+    # ================================================================ reporting (Phase 6A.3)
+    ("Account Amount",
+     "VAR _Basis = SELECTEDVALUE ( 'Period Basis'[basis_code], \"YTD\" )\n"
+     "VAR _Reporting = SELECTEDVALUE ( 'Reporting Basis'[basis], \"STATUTORY\" )\n"
+     "VAR _Scenarios = VALUES ( 'Scenario'[scenario_code] )\n"
+     "VAR _ActualOnly =\n"
+     "    COUNTROWS ( _Scenarios ) = 1 && MAXX ( _Scenarios, 'Scenario'[scenario_code] ) = \"ACT\"\n"
+     "VAR _Latest = MAX ( 'Date'[period_key] )\n"
+     "VAR _Year = MAX ( 'Date'[fiscal_year] )\n"
+     "VAR _PastClose = _ActualOnly && _Latest > [Reporting Period Key]\n"
+     "VAR _Value =\n"
+     "    SWITCH (\n"
+     "        _Basis,\n"
+     "        \"MTD\",\n"
+     "            CALCULATE (\n"
+     "                SUM ( 'Financial Detail'[amount_usd] ),\n"
+     "                KEEPFILTERS ( 'Financial Detail'[basis] = _Reporting )\n"
+     "            ),\n"
+     "        \"FY\",\n"
+     "            CALCULATE (\n"
+     "                SUM ( 'Financial Detail'[amount_usd] ),\n"
+     "                REMOVEFILTERS ( 'Date' ),\n"
+     "                'Date'[fiscal_year] = _Year,\n"
+     "                KEEPFILTERS ( 'Financial Detail'[basis] = _Reporting )\n"
+     "            ),\n"
+     "        CALCULATE (\n"
+     "            SUM ( 'Financial Detail'[amount_usd] ),\n"
+     "            REMOVEFILTERS ( 'Date' ),\n"
+     "            'Date'[fiscal_year] = _Year,\n"
+     "            'Date'[period_key] <= _Latest,\n"
+     "            KEEPFILTERS ( 'Financial Detail'[basis] = _Reporting )\n"
+     "        )\n"
+     "    )\n"
+     "RETURN IF ( _PastClose, BLANK (), _Value )", M_USD, "10 Reporting",
+     "The account-grain amount from the monthly mart, on the period basis, reporting basis "
+     "and Actual cutoff the statement measures use. It exists so a statement line can be "
+     "drilled to the accounts behind it (Group → unit → entity → account) and it adds nothing "
+     "the mart does not already hold: month = the month's rows, year to date = the fiscal "
+     "year's rows to the selected month, full year = the fiscal year's rows. No accounting "
+     "logic lives here; the sign, the basis and the mapping to a line are the mart's."),
+    ("Layer EBITDA", "SUM ( 'Layer Bridge'[ebitda_usd] )", M_USD, "10 Reporting",
+     "EBITDA contributed by each consolidation layer in a fiscal year, from the governed "
+     "consolidation bridge: Entity Reported, Intercompany Eliminations, Consolidation "
+     "Adjustments, Management Adjustments and Translation Adjustment. Statutory is layers "
+     "1 + 2 + 3 + 5; management adds layer 4. Presentation of the approved layers, not a new "
+     "policy: the bridge fact is the Phase 5 mart, unchanged."),
+    ("Layer Net Income", "SUM ( 'Layer Bridge'[net_income_usd] )", M_USD, "10 Reporting",
+     "Net income contributed by each consolidation layer in a fiscal year, from the governed "
+     "consolidation bridge, on the same layer definitions as Layer EBITDA."),
+    ("Layer Entries", "SUM ( 'Layer Bridge'[entries] )", COUNT, "10 Reporting",
+     "Journal entries posted at each consolidation layer in a fiscal year, from the bridge."),
+    ("Revenue Share of Group",
+     "DIVIDE (\n"
+     "    [Revenue],\n"
+     "    CALCULATE ( [Revenue], REMOVEFILTERS ( 'Business Unit' ), REMOVEFILTERS ( 'Entity' ) )\n"
+     ")", PCT, "10 Reporting",
+     "Revenue in the current context as a share of Group revenue in the same period, scenario "
+     "and reporting basis. The denominator removes only the Business Unit and Entity filters, "
+     "by name: on a unit row it is the Group, on an entity row it is still the Group. For the "
+     "share of the parent unit use Revenue Share of Unit -- one measure, one denominator."),
+    ("Revenue Share of Unit",
+     "DIVIDE ( [Revenue], CALCULATE ( [Revenue], REMOVEFILTERS ( 'Entity' ) ) )", PCT,
+     "10 Reporting",
+     "Revenue in the current context as a share of the revenue of the business unit(s) in "
+     "context, in the same period, scenario and reporting basis. The denominator removes only "
+     "the Entity filter: on an entity row it is the entity's unit; on a unit row it is 100%."),
+
 )
 
 #: The disconnected dimension the statement measures switch on. Not related to any fact by

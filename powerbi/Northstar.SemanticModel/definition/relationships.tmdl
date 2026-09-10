@@ -1,3 +1,7 @@
+relationship 3f5362d1-c728-5feb-bfa2-e1a208f5b137
+	fromColumn: 'Entity'.bu_code
+	toColumn: 'Business Unit'.bu_code
+
 relationship e8e29eea-bdc4-5679-848f-e4797f7db622
 	fromColumn: 'Financials'.period_key
 	toColumn: 'Date'.period_key

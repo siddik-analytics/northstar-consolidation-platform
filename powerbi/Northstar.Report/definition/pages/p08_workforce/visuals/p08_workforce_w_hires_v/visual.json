@@ -28,8 +28,7 @@
               },
               "queryRef": "Northstar Measures.Hires",
               "nativeQueryRef": "Hires",
-              "displayName": "Hires",
-              "format": "#,0"
+              "displayName": "Hires"
             }
           ]
         }

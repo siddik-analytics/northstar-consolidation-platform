@@ -467,6 +467,13 @@ itself, held by a fifth control family (`P6-PBIP`) and two fixtures. 53/53 contr
 fixtures, definition digest unchanged. See
 [`phase-06a-2-native-pbip.md`](phase-06a-2-native-pbip.md).
 
+**Phase 6A.3** corrected what the first report found: Business Unit had no active path to any
+fact (P6B-D-05), `[Variance %]` summed stored percentages above entity grain (P6B-D-04), and
+the format strings were Excel's, not Power BI's (P6B-D-03). One relationship, one measure,
+one format constant, six narrow reporting measures, four new control families, four
+fixtures. 68/68, 16/16. See
+[`phase-06a-3-report-discovered-semantic-fixes.md`](phase-06a-3-report-discovered-semantic-fixes.md).
+
 ---
 
 ## Phase 6 — Excel FP&A and management reporting models

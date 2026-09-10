@@ -159,6 +159,11 @@ XAR: tuple[tuple[str, str, str, str, str], ...] = (
 #: itself. A mart agreeing with Power BI proves the model reads the mart; this proves the mart
 #: it reads still agrees with the ledger.
 XAR_LEDGER: tuple[tuple[str, str, str, str, str], ...] = (
+    ("P6-XAR-20", "Account Amount", f"{ACT}, 'Account'[fs_caption_l1] = \"Revenue\"",
+     "Account-grain revenue (credit sign) against the statement line", """
+        SELECT -round(sum(ytd_usd), 2) FROM mart_financial_ytd
+        WHERE version_code = 'ACTUAL' AND basis = 'STATUTORY'
+          AND measure_code = 'REVENUE' AND period_key = {p}"""),
     ("P6-XAR-19", "Revenue", f"{ACT}, {STAT}",
      "Revenue recomputed from the consolidated fact, not the mart", """
         SELECT round(-sum(f.amount_usd), 2)
@@ -217,6 +222,10 @@ def _reconcile(r: Result, con, live: bool, why: str) -> None:
         actual = dax.measure_at(measure, REPORT_PERIOD, filters)
         actual = float(actual) if actual is not None else 0.0
         tol = C.TOL_RATIO if "Leverage" in measure else C.TOL_XAR_USD
+        if measure == "Account Amount":
+            # the monthly mart rounds each account-month to the cent; eight months of that
+            # across the revenue accounts sit up to a dollar from the year-to-date line
+            tol = 1.0
         diff = abs(actual - expected)
         r.ok(cid, f"Power BI [{measure}] reconciles to the marts", "BLOCKING",
              diff <= tol, f"{diff:,.6f}", f"{tol}",
@@ -635,6 +644,278 @@ def _pbip(r: Result, con, live: bool, why: str) -> None:
              "tables, measures, relationships and active relationships counted in each form")
 
 
+# ---------------------------------------------------------------------------- P6-PATH
+def _active_graph(live: bool) -> tuple[dict, list]:
+    """
+    Filter-propagation edges, from the engine when it is live and from the declarations
+    otherwise: a relationship from (many) fact to (one) dimension lets the dimension filter
+    the fact, so the edge runs dimension -> fact; a bidirectional one runs both ways.
+    """
+    edges: dict[str, set] = {}
+    bidirectional = []
+    if live:
+        rows = dax.query(
+            'EVALUATE SELECTCOLUMNS ( INFO.RELATIONSHIPS (), "f", [FromTableID], "t", [ToTableID], '
+            '"a", [IsActive], "b", [CrossFilteringBehavior] )')
+        names = {r[0]: r[1] for r in dax.query(
+            'EVALUATE SELECTCOLUMNS ( INFO.TABLES (), "id", [ID], "n", [Name] )')}
+        for f, t, active, behaviour in rows:
+            if not active:
+                continue
+            many, one = names.get(f), names.get(t)
+            edges.setdefault(one, set()).add(many)
+            if int(behaviour or 1) == 2:            # BothDirections
+                edges.setdefault(many, set()).add(one)
+                bidirectional.append((many, one))
+    else:
+        for from_table, _fc, to_table, _tc in C.RELATIONSHIPS:
+            edges.setdefault(to_table, set()).add(from_table)
+    return edges, bidirectional
+
+
+def _paths(edges: dict, start: str, goal: str, limit: int = 8) -> list[list[str]]:
+    """Every simple active path from a dimension to a fact (bounded)."""
+    out = []
+    stack = [(start, [start])]
+    while stack:
+        node, path = stack.pop()
+        if node == goal:
+            out.append(path)
+            continue
+        if len(path) > limit:
+            continue
+        for nxt in edges.get(node, ()):
+            if nxt not in path:
+                stack.append((nxt, path + [nxt]))
+    return out
+
+
+def _path_integrity(r: Result, con, live: bool, why: str) -> None:
+    """
+    Every reportable dimension reaches every fact it is declared to filter, along exactly
+    one active path, and nothing is bidirectional. A dimension can exist in a model and
+    filter nothing -- Business Unit did, until Phase 6A.3 (P6B-D-05) -- and no earlier
+    control asked whether a filter actually arrived.
+    """
+    edges, bidirectional = _active_graph(live)
+    unreachable, ambiguous = [], []
+    for dim, facts in C.EXPECTED_PATHS.items():
+        for fact in facts:
+            paths = _paths(edges, dim, fact)
+            if not paths:
+                unreachable.append(f"{dim} -> {fact}")
+            elif len(paths) > 1:
+                ambiguous.append(f"{dim} -> {fact} ({len(paths)} paths)")
+    source = "the live engine's INFO.RELATIONSHIPS" if live else "the declarations (engine not live)"
+    r.ok("P6-PATH-01", "Every declared dimension reaches every fact it filters on an active path",
+         "BLOCKING", not unreachable, "; ".join(unreachable[:6]) or 0, 0,
+         f"{sum(len(v) for v in C.EXPECTED_PATHS.values())} dimension-fact pairs from {source}")
+    r.ok("P6-PATH-02", "No dimension reaches a fact by more than one active path", "BLOCKING",
+         not ambiguous, "; ".join(ambiguous[:6]) or 0, 0,
+         "two active paths make every total ambiguous; the direct unit paths stay inactive")
+    r.ok("P6-PATH-03", "No relationship filters in both directions", "BLOCKING",
+         not bidirectional, bidirectional or 0, 0,
+         "a bidirectional path is a demonstrated requirement or it is a defect waiting")
+    if not live:
+        r.add("P6-PATH-04", "A filter on each dimension actually changes each fact it reaches",
+              "BLOCKING", "NOT_EXECUTED", "-", "-", why)
+        return
+    # the empirical half: pick one member of the dimension's key and see the fact move
+    keys = {t["name"]: t["key"][0] for t in C.TABLES if t["kind"] == "dimension"}
+    unmoved = []
+    for dim, facts in C.EXPECTED_PATHS.items():
+        key = keys.get(dim)
+        if key is None:
+            continue
+        for fact in facts:
+            total = dax.query(f"EVALUATE ROW ( \"n\", COUNTROWS ( '{fact}' ) )")[0][0] or 0
+            # a member the fact actually has rows for -- a dimension member with no rows
+            # proves nothing either way
+            member = dax.query(
+                f"EVALUATE TOPN ( 1, FILTER ( VALUES ( '{dim}'[{key}] ), "
+                f"CALCULATE ( COUNTROWS ( '{fact}' ) ) > 0 ), '{dim}'[{key}], ASC )")
+            if not member:
+                unmoved.append(f"{dim} -> {fact}: no member of {dim}[{key}] reaches a row")
+                continue
+            value = member[0][0]
+            if value is None:
+                # the first member with rows is the blank one: a fact row with no dimension
+                # member behind it, which is a filter that cannot arrive by name
+                unmoved.append(f"{dim} -> {fact}: rows reach only through a blank member")
+                continue
+            literal = f'"{value}"' if isinstance(value, str) else str(value)
+            try:
+                filtered = dax.query(
+                    f"EVALUATE ROW ( \"n\", CALCULATE ( COUNTROWS ( '{fact}' ), "
+                    f"'{dim}'[{key}] = {literal} ) )")[0][0] or 0
+            except Exception as exc:
+                unmoved.append(f"{dim} -> {fact}: {exc.__class__.__name__}")
+                continue
+            if not (0 < filtered < total):
+                unmoved.append(f"{dim}[{key}]={value} -> {fact}: {filtered}/{total}")
+    r.ok("P6-PATH-04", "A filter on each dimension actually changes each fact it reaches",
+         "BLOCKING", not unmoved, "; ".join(unmoved[:6]) or 0, 0,
+         "one member of each dimension's key, COUNTROWS of the fact with and without it")
+
+
+# ---------------------------------------------------------------------------- P6-PCT
+PCT_GRAINS = (
+    ("group", "", ""),
+    ("unit", "'Business Unit'[bu_code] = \"ES\"", "AND bu_code = 'ES'"),
+    ("entity", "'Entity'[entity_code] = \"NIG-200\"", "AND entity_code = 'NIG-200'"),
+    ("line", "'Measure Line'[measure_code] = \"EBIT\"", "AND measure_code = 'EBIT'"),
+    ("entity+line", "'Entity'[entity_code] = \"NIG-200\", 'Measure Line'[measure_code] = \"EBIT\"",
+     "AND entity_code = 'NIG-200' AND measure_code = 'EBIT'"),
+)
+
+
+def _percent_integrity(r: Result, con, live: bool, why: str) -> None:
+    """
+    Non-additive percentages are not added. `[Variance %]` is compared with the ratio of the
+    additive components summed in SQL over the mart, at five grains, four comparisons and
+    three period bases; at leaf grain it must also equal the stored percentage. Until Phase
+    6A.3 it summed the stored per-entity percentages whenever one line was in context
+    (P6B-D-04), and every reconciliation the platform ran was blind to it.
+    """
+    if not live:
+        for cid, name in (("P6-PCT-01", "Variance % equals variance over |comparator| at every grain"),
+                          ("P6-PCT-02", "Variance % at leaf grain equals the stored mart percentage")):
+            r.add(cid, name, "BLOCKING", "NOT_EXECUTED", "-", "-", why)
+        return
+    worst, checked, bad = 0.0, 0, []
+    for comp in ("ACT_VS_BUD", "ACT_VS_FC", "FC_VS_BUD", "ACT_VS_PY"):
+        for basis, col in (("MTD", "mtd"), ("YTD", "ytd"), ("FY", "fy")):
+            for grain, dfilter, sfilter in PCT_GRAINS:
+                pbi = dax.query(
+                    f"EVALUATE ROW ( \"v\", CALCULATE ( [Variance %], 'Date'[period_key] = {REPORT_PERIOD}, "
+                    f"'Comparison'[comparison_code] = \"{comp}\", 'Period Basis'[basis_code] = \"{basis}\""
+                    f"{', ' + dfilter if dfilter else ''} ) )")[0][0]
+                var, cmp_ = con.execute(
+                    f"SELECT sum(var_{col}_usd), sum(comp_{col}) FROM mart_variance "
+                    f"WHERE period_key = {REPORT_PERIOD} AND basis = 'STATUTORY' "
+                    f"AND comparison_code = '{comp}' {sfilter}").fetchone()
+                expected = float(var) / abs(float(cmp_)) if cmp_ else None
+                diff = abs((pbi or 0.0) - (expected or 0.0))
+                worst = max(worst, diff)
+                checked += 1
+                if diff > 1e-9:
+                    bad.append(f"{comp}/{basis}/{grain}: {pbi} vs {expected}")
+    r.ok("P6-PCT-01", "Variance % equals variance over |comparator| at every grain", "BLOCKING",
+         not bad, f"{worst:.2e}", "1e-9",
+         f"{checked} grain x comparison x basis combinations against SQL over mart_variance"
+         + (f"; first: {bad[0]}" if bad else ""))
+    stored = con.execute(
+        f"SELECT var_ytd_pct FROM mart_variance WHERE period_key = {REPORT_PERIOD} AND basis = 'STATUTORY' "
+        "AND comparison_code = 'ACT_VS_BUD' AND entity_code = 'NIG-200' AND measure_code = 'EBIT'"
+    ).fetchone()[0]
+    leaf = dax.query(
+        f"EVALUATE ROW ( \"v\", CALCULATE ( [Variance %], 'Date'[period_key] = {REPORT_PERIOD}, "
+        "'Comparison'[comparison_code] = \"ACT_VS_BUD\", 'Entity'[entity_code] = \"NIG-200\", "
+        "'Measure Line'[measure_code] = \"EBIT\" ) )")[0][0]
+    r.ok("P6-PCT-02", "Variance % at leaf grain equals the stored mart percentage", "BLOCKING",
+         stored is not None and leaf is not None and abs(float(stored) - leaf) < 1e-6,
+         leaf, stored, "entity NIG-200, EBIT, Actual vs Budget, year to date")
+
+
+# ---------------------------------------------------------------------------- P6-FMT
+#: Representative values and what the governed money format must render them as.
+FMT_MONEY_CASES = ((5553457.50, "5.6"), (-5553457.50, "(5.6)"), (0, "–"),
+                   (278980889.78, "279.0"), (-939022.82, "(0.9)"))
+
+
+def _format_integrity(r: Result, con, live: bool, why: str) -> None:
+    """
+    Format strings are part of the deliverable and are proven by rendering, not by parsing.
+    Every money measure carries the governed format; the engine is asked to render five
+    representative values with it; percent, ratio and headcount measures carry their own
+    classes; and the report never adds a display unit on top of a scaled format.
+    """
+    from .measures import COUNT, FTE, M_USD, M_USD2, PCT, TURNS, WHOLE
+    money = [m for m in MEASURES if m[2] in (M_USD, M_USD2)]
+    off = [m[0] for m in MEASURES if m[2] and (",," in m[2]) and m[2] not in (M_USD, M_USD2)]
+    r.ok("P6-FMT-01", "Every scaled money measure carries the governed format class", "BLOCKING",
+         not off and len(money) >= 60, off or len(money), ">= 60 money measures, 0 off-class",
+         "the format is one constant, so a page cannot inherit a stray Excel-style string")
+    balanced = [m[0] for m in MEASURES if m[2] and m[2].count("(") != m[2].count(")")]
+    r.ok("P6-FMT-02", "Every format string has balanced parentheses", "BLOCKING", not balanced,
+         balanced or 0, 0, "an unbalanced section renders a stray bracket on every negative")
+    pct_bad = [m[0] for m in MEASURES if m[0].endswith("%") and m[2] != PCT]
+    ratio_bad = [m[0] for m in MEASURES if m[0] in ("Covenant Net Leverage", "Covenant Limit",
+                 "Covenant Headroom", "Economic Leverage", "CapEx to Depreciation") and m[2] != TURNS]
+    fte_bad = [m[0] for m in MEASURES if m[0] in ("Opening FTE", "Closing FTE", "Average FTE")
+               and m[2] not in (FTE, COUNT, WHOLE)]
+    r.ok("P6-FMT-03", "Percent, ratio and headcount measures keep their own format classes",
+         "BLOCKING", not (pct_bad or ratio_bad or fte_bad),
+         pct_bad + ratio_bad + fte_bad or 0, 0,
+         "a percentage stays a percentage, leverage stays in turns, headcount is never money")
+    if not live:
+        r.add("P6-FMT-04", "The governed money format renders representative values correctly",
+              "BLOCKING", "NOT_EXECUTED", "-", "-", why)
+    else:
+        # render with the format the Revenue measure actually carries, not the constant --
+        # the control must see what a page sees
+        carried = next(m[2] for m in MEASURES if m[0] == "Revenue")
+        fs = carried.replace('"', '""')
+        wrong = []
+        for value, expected in FMT_MONEY_CASES:
+            got = dax.query(f'EVALUATE ROW ( "s", FORMAT ( {value}, "{fs}" ) )')[0][0]
+            if got != expected:
+                wrong.append(f"{value} -> {got!r} (expected {expected!r})")
+        r.ok("P6-FMT-04", "The governed money format renders representative values correctly",
+             "BLOCKING", not wrong, "; ".join(wrong) or "5/5", "5/5",
+             "FORMAT() in the engine: 5.6, (5.6), –, 279.0, (0.9) -- millions, brackets, dash")
+    # the report side: no scaled measure under a K/M/B display unit, and no projection format
+    scaled = {m[0] for m in money}
+    doubled, overrides = [], []
+    pages = C.REPORT_DIR / "definition" / "pages"
+    if pages.exists():
+        import json as _json
+        for vf in pages.rglob("visual.json"):
+            v = _json.loads(vf.read_text(encoding="utf-8"))
+            vis = v.get("visual", {})
+            roles = vis.get("query", {}).get("queryState", {})
+            for role in roles.values():
+                for pr in role.get("projections", []):
+                    field = pr.get("field", {}).get("Measure")
+                    if field and field["Property"] in scaled and pr.get("format"):
+                        overrides.append(f"{v['name']}:{field['Property']}")
+            for card in ("labels", "valueAxis", "y1AxisReferenceLine"):
+                for obj in vis.get("objects", {}).get(card, []):
+                    units = obj.get("properties", {}).get("labelDisplayUnits", {})
+                    val = units.get("expr", {}).get("Literal", {}).get("Value", "")
+                    uses_scaled = any(pr.get("field", {}).get("Measure", {}).get("Property") in scaled
+                                      for role in roles.values() for pr in role.get("projections", []))
+                    try:
+                        units = float(val.rstrip("DL")) if val else 1.0
+                    except ValueError:
+                        units = 1.0
+                    if uses_scaled and units not in (0.0, 1.0):
+                        doubled.append(f"{v['name']}:{card}={val}")
+    r.ok("P6-FMT-05", "No report visual overrides a governed money format at the projection",
+         "BLOCKING", not overrides, "; ".join(overrides[:5]) or 0, 0,
+         "the Phase 6B interim override is gone; the model's own format is what renders")
+    r.ok("P6-FMT-06", "No report visual stacks a display unit on a scaled money format",
+         "BLOCKING", not doubled, "; ".join(doubled[:5]) or 0, 0,
+         "display units stay at None where the measure already scales to millions")
+
+
+# ---------------------------------------------------------------------------- P6-COV
+def _coverage(r: Result, con, live: bool, why: str) -> None:
+    """Every financial concept the report brief names maps to a governed measure or is deferred."""
+    names = {m[0] for m in MEASURES}
+    missing = [c for c, m in C.REPORT_CONCEPTS.items() if m is not None and m not in names]
+    deferred = [c for c, m in C.REPORT_CONCEPTS.items() if m is None]
+    r.ok("P6-COV-01", "Every report concept maps to a governed measure or is explicitly deferred",
+         "BLOCKING", not missing, missing or 0, 0,
+         f"{len(C.REPORT_CONCEPTS) - len(deferred)} mapped, {len(deferred)} deferred by owner "
+         f"decision: {', '.join(deferred)}")
+    r.ok("P6-COV-02", "The deferred concepts are the working-capital day counts and revolver detail",
+         "INFO", set(deferred) == {"DSO", "DIO", "DPO", "Cash conversion cycle", "Revolver drawn",
+                                   "Revolver available", "Principal by instrument"},
+         sorted(deferred), "the Phase 6A.3 §10D list",
+         "a deferral is a decision on record, not a concept that quietly went missing")
+
+
 def run(con: duckdb.DuckDBPyConnection) -> Result:
     r = Result()
     live, why = dax.available()
@@ -647,6 +928,10 @@ def run(con: duckdb.DuckDBPyConnection) -> Result:
     _reconcile(r, con, live, why)
     _policy(r, con, live, why)
     _pbip(r, con, live, why)
+    _path_integrity(r, con, live, why)
+    _percent_integrity(r, con, live, why)
+    _format_integrity(r, con, live, why)
+    _coverage(r, con, live, why)
     return r
 
 

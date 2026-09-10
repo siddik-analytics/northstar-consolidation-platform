@@ -234,6 +234,53 @@ def f12_reserved_measures_table():
         C.MEASURES_TABLE = original
 
 
+# ---------------------------------------------------------------------------- 6A.3 fixtures
+def f13_unit_path_removed():
+    """P6B-D-05 again: the Entity -> Business Unit relationship gone; the unit filters nothing."""
+    def mutate(rels):
+        return tuple(r for r in rels if r[:3] != ("Entity", "bu_code", "Business Unit"))
+    return _patched_relationships(mutate)
+
+
+@contextmanager
+def f14_additive_variance_pct():
+    """P6B-D-04 again: [Variance %] reads the stored per-entity percentage on one line."""
+    with _patched_measure("Variance %",
+                          "VAR _Basis = SELECTEDVALUE ( 'Period Basis'[basis_code], \"YTD\" )\n"
+                          "VAR _Stored = SWITCH ( _Basis, \"MTD\", SUM ( 'Variance'[var_mtd_pct] ), "
+                          "\"FY\", SUM ( 'Variance'[var_fy_pct] ), SUM ( 'Variance'[var_ytd_pct] ) )\n"
+                          "RETURN IF ( HASONEVALUE ( 'Measure Line'[measure_code] ), _Stored, "
+                          "DIVIDE ( [Variance], ABS ( [Variance Comparator] ) ) )"):
+        yield
+
+
+@contextmanager
+def f15_excel_style_money_format():
+    """P6B-D-03 again: the Excel-style scaled format back on every money measure."""
+    original = M.MEASURES
+    bad = '#,0.0,,;(#,0.0,,);"–"'
+    M.MEASURES = tuple((n, e, bad if f == M.M_USD else f, fo, d) for n, e, f, fo, d in original)
+    controls.MEASURES = M.MEASURES
+    deploy.MEASURES = M.MEASURES
+    try:
+        yield
+    finally:
+        M.MEASURES = original
+        controls.MEASURES = original
+        deploy.MEASURES = original
+
+
+@contextmanager
+def f16_unmapped_report_concept():
+    """A financial concept the report would show with no governed measure behind it."""
+    original = C.REPORT_CONCEPTS
+    C.REPORT_CONCEPTS = dict(original, **{"Free cash flow": "Free Cash Flow"})
+    try:
+        yield
+    finally:
+        C.REPORT_CONCEPTS = original
+
+
 #: The suite's warehouse connection, for the fixtures that regenerate the project. DuckDB
 #: refuses a second connection to the same file in a different mode, so they share this one.
 ACTIVE_CON = None
@@ -266,6 +313,15 @@ FIXTURES: tuple[tuple[str, str, object, str], ...] = (
      f11_relationship_doc_comments, "P6-PBIP-01"),
     ("F6-PBIP-02", "Measures host table named the reserved `Measures` (P6B-D-02)",
      f12_reserved_measures_table, "P6-PBIP-02"),
+    # Phase 6A.3: the three defects the report found, and the coverage contract
+    ("F6A3-01", "Entity -> Business Unit active relationship removed (P6B-D-05)",
+     f13_unit_path_removed, "P6-PATH-01"),
+    ("F6A3-02", "[Variance %] additive again -- stored percentages summed (P6B-D-04)",
+     f14_additive_variance_pct, "P6-PCT-01"),
+    ("F6A3-03", "Excel-style money format restored on every money measure (P6B-D-03)",
+     f15_excel_style_money_format, "P6-FMT-04"),
+    ("F6A3-04", "A report concept with no governed measure behind it",
+     f16_unmapped_report_concept, "P6-COV-01"),
 )
 
 

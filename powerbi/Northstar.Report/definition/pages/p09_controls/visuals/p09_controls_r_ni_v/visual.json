@@ -28,8 +28,7 @@
               },
               "queryRef": "Northstar Measures.Net Income",
               "nativeQueryRef": "Net Income",
-              "displayName": "Net Income",
-              "format": "#,0,,.0;(#,0,,.0);\"–\""
+              "displayName": "Net Income"
             }
           ]
         }

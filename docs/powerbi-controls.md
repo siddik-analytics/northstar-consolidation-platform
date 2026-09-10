@@ -1,9 +1,9 @@
 # Power BI semantic controls
 
     python -m src.powerbi.run       generate, deploy, control
-    python -m src.powerbi.faults    break it twelve ways and prove each is caught
+    python -m src.powerbi.faults    break it sixteen ways and prove each is caught
 
-**53 controls, 12 fault fixtures.** The governing principle is Phase 4C's, widened one more
+**68 controls, 16 fault fixtures.** The governing principle is Phase 4C's, widened one more
 time:
 
 > Different artefacts expressing the same financial measure must reconcile to one authoritative
@@ -46,6 +46,11 @@ fall back to a SQL re-implementation and call the answer a Power BI value.
 | `P6-XLS` | 8 | Power BI reconciles to the Excel workbook |
 | `P6-POL` | 7 | the reporting policies hold in DAX |
 | `P6-PBIP` | 4 | the project on disk is one Power BI Desktop will open, and it is the same model the engine runs |
+| `P6-PATH` | 4 | every reportable dimension reaches every fact it filters by exactly one active path, and the filter demonstrably arrives |
+| `P6-PCT` | 2 | non-additive percentages are not added: `[Variance %]` reconciles at every grain, comparison and basis |
+| `P6-FMT` | 6 | formats are governed, balanced, class-correct, rendered correctly by the engine, and not overridden or double-scaled by the report |
+| `P6-COV` | 2 | every financial concept the report names maps to a governed measure or is deferred on record |
+| `P6-XAR-20` | 1 | the account-grain amount reconciles to the statement line |
 
 The fifth family was added in Phase 6A.2, after the first four had all passed on a project
 that Desktop refused to open.
@@ -125,6 +130,24 @@ the controls a dozen times, and a Desktop round trip is twenty seconds each.
 The screenshot it takes is rendered from Desktop's own window handle (`PrintWindow`), never
 grabbed from the screen, so it cannot contain whatever happened to be in front.
 
+### The Phase 6A.3 families — what the report found that the engine did not
+
+The Phase 6B report was the first thing to *ask* the model a business-unit question and the
+first thing to *look at* a percentage above entity grain. It found a dimension that filtered
+nothing and a percentage that summed. Both had passed every control: `P6-SEM-04` proved no
+table had two active paths and never asked whether one had none; every reconciliation
+compared dollars at group grain and never a percentage at any grain.
+
+`P6-PATH` walks the live engine's relationship graph (declarations when the engine is not
+live) from each dimension in `config.EXPECTED_PATHS` to each fact it must filter, then
+proves the filter arrives: a member the fact has rows for, `COUNTROWS` with and without it.
+`P6-PCT` compares `[Variance %]` with the ratio of the additive components summed in SQL over
+`mart_variance` at group, unit, entity, line and entity + line, for all four comparisons and
+all three period bases. `P6-FMT` renders five representative values with the format the
+Revenue measure actually carries and requires `5.6`, `(5.6)`, `–`, `279.0`, `(0.9)`, then
+reads the generated report for projection overrides and stacked display units. `P6-COV`
+holds the concept map: every brief item is a governed measure or a recorded deferral.
+
 ## Fault fixtures
 
 Each breaks the **model** — a measure, a relationship, a published dimension — deploys the
@@ -146,8 +169,12 @@ miss, because "something went red" and "the right thing went red" are different 
 | `F6-XAR-10` | Capital Project reverts to the colliding pre-ADR-0026 key — **P6-D-01** | `P6-SEM-01` |
 | `F6-PBIP-01` | relationship rationale emitted as a `///` doc comment — **P6B-D-01** | `P6-PBIP-01` |
 | `F6-PBIP-02` | the measures host named the reserved `Measures` — **P6B-D-02** | `P6-PBIP-02` |
+| `F6A3-01` | the `Entity → Business Unit` relationship removed — **P6B-D-05** | `P6-PATH-01` |
+| `F6A3-02` | `[Variance %]` additive again, stored percentages summed — **P6B-D-04** | `P6-PCT-01` |
+| `F6A3-03` | the Excel-style money format back on every money measure — **P6B-D-03** | `P6-FMT-04` |
+| `F6A3-04` | a report concept with no governed measure behind it | `P6-COV-01` |
 
-**12/12 detected.** Every fixture restores the model and the suite redeploys clean.
+**16/16 detected.** Every fixture restores the model and the suite redeploys clean.
 
 The two PBIP fixtures are different in kind from the ten before them. They break the **project
 on disk**, not the model: each regenerates the project into a disposable directory with the

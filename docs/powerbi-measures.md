@@ -4,7 +4,7 @@
 measure reference maintained beside the code is a measure reference that is wrong the first
 time somebody changes an expression and does not think to open the document.*
 
-**89 measures** across 10 display
+**95 measures** across 11 display
 folders. Every one is declared once, written into TMDL, deployed to Analysis Services and
 evaluated there by the `P6-SEM-14` control, and reconciled to the governed marts by `P6-XAR`.
 
@@ -101,7 +101,7 @@ SELECTEDVALUE ( 'Period Basis'[basis_name], "Year to date" )
 
 Consolidated revenue from the governed measure mart. Intercompany revenue is excluded upstream on both sides of every comparison, so a plan variance is like for like.
 
-*Format:* `#,0.0,,;(#,0.0,,);"–"`
+*Format:* `#,0,,.0;(#,0,,.0);"–"`
 
 ```dax
 VAR _Basis = SELECTEDVALUE ( 'Period Basis'[basis_code], "YTD" )
@@ -129,7 +129,7 @@ RETURN IF ( _PastClose, BLANK (), _Value )
 
 Cost of sales, positive on the management sign convention.
 
-*Format:* `#,0.0,,;(#,0.0,,);"–"`
+*Format:* `#,0,,.0;(#,0,,.0);"–"`
 
 ```dax
 VAR _Basis = SELECTEDVALUE ( 'Period Basis'[basis_code], "YTD" )
@@ -157,7 +157,7 @@ RETURN IF ( _PastClose, BLANK (), _Value )
 
 Gross profit. Stored as a subtotal upstream rather than computed here, because a subtotal computed in a reporting tool is a definition living in a reporting tool.
 
-*Format:* `#,0.0,,;(#,0.0,,);"–"`
+*Format:* `#,0,,.0;(#,0,,.0);"–"`
 
 ```dax
 VAR _Basis = SELECTEDVALUE ( 'Period Basis'[basis_code], "YTD" )
@@ -195,7 +195,7 @@ DIVIDE ( [Gross Profit], [Revenue] )
 
 Operating expenses, positive. Includes the non-recurring items the add-back policy later removes, because they sit inside operating expenses at layer 1 (ADR-0013).
 
-*Format:* `#,0.0,,;(#,0.0,,);"–"`
+*Format:* `#,0,,.0;(#,0,,.0);"–"`
 
 ```dax
 VAR _Basis = SELECTEDVALUE ( 'Period Basis'[basis_code], "YTD" )
@@ -223,7 +223,7 @@ RETURN IF ( _PastClose, BLANK (), _Value )
 
 EBITDA on the reported result, driven by the `is_ebitda` attribute on the account in the consolidation rather than by an account list here. **Distinct from Management Adjusted EBITDA and from Covenant EBITDA**, each of which has its own lineage.
 
-*Format:* `#,0.0,,;(#,0.0,,);"–"`
+*Format:* `#,0,,.0;(#,0,,.0);"–"`
 
 ```dax
 VAR _Basis = SELECTEDVALUE ( 'Period Basis'[basis_code], "YTD" )
@@ -251,7 +251,7 @@ RETURN IF ( _PastClose, BLANK (), _Value )
 
 The approved add-back policy (ADR-0013): restructuring, transaction and integration costs, legal settlements, retention bonuses and the sponsor monitoring fee. **Coalesced to zero**, because a category with no population in a period contributes nothing and must not propagate a blank into Adjusted EBITDA.
 
-*Format:* `#,0.0,,;(#,0.0,,);"–"`
+*Format:* `#,0,,.0;(#,0,,.0);"–"`
 
 ```dax
 VAR _Basis = SELECTEDVALUE ( 'Period Basis'[basis_code], "YTD" )
@@ -279,7 +279,7 @@ RETURN IF ( _PastClose, BLANK (), _Value + 0 )
 
 **Definition** statutory EBITDA plus the approved add-backs plus any layer-4 management adjustment -- the management view of trading performance. The add-back policy is settled upstream (ADR-0013) and arrives as a governed measure line; this measure selects it and decides nothing about what may be added back. **This is not Covenant EBITDA.** The two are equal in the current baseline because the sponsor fee runs below its cap and the covenant foreign exchange add-back has no population -- an outcome, not a definition. **Source** `mart_financial_ytd`, measure line ADJ_EBITDA. **Basis** pinned to MANAGEMENT and deliberately does not follow the Reporting Basis slicer: a definition that changes when someone moves a slicer is not a definition. **Scenario** follows the selection -- Actual, Budget, Forecast or Prior Year. **Blank policy** blank for an Actual month after the reporting close; a nil add-back category contributes zero.
 
-*Format:* `#,0.0,,;(#,0.0,,);"–"`
+*Format:* `#,0,,.0;(#,0,,.0);"–"`
 
 ```dax
 VAR _Basis = SELECTEDVALUE ( 'Period Basis'[basis_code], "YTD" )
@@ -327,7 +327,7 @@ DIVIDE ( [Management Adjusted EBITDA], [Revenue] )
 
 Depreciation and the amortisation of acquired intangibles, positive.
 
-*Format:* `#,0.0,,;(#,0.0,,);"–"`
+*Format:* `#,0,,.0;(#,0,,.0);"–"`
 
 ```dax
 VAR _Basis = SELECTEDVALUE ( 'Period Basis'[basis_code], "YTD" )
@@ -355,7 +355,7 @@ RETURN IF ( _PastClose, BLANK (), _Value )
 
 Statutory EBITDA less depreciation and amortisation. Stored upstream.
 
-*Format:* `#,0.0,,;(#,0.0,,);"–"`
+*Format:* `#,0,,.0;(#,0,,.0);"–"`
 
 ```dax
 VAR _Basis = SELECTEDVALUE ( 'Period Basis'[basis_code], "YTD" )
@@ -383,7 +383,7 @@ RETURN IF ( _PastClose, BLANK (), _Value )
 
 Interest expense and income, foreign exchange and other non-operating items, net and positive as a cost.
 
-*Format:* `#,0.0,,;(#,0.0,,);"–"`
+*Format:* `#,0,,.0;(#,0,,.0);"–"`
 
 ```dax
 VAR _Basis = SELECTEDVALUE ( 'Period Basis'[basis_code], "YTD" )
@@ -411,7 +411,7 @@ RETURN IF ( _PastClose, BLANK (), _Value )
 
 Current and deferred tax, positive as a charge.
 
-*Format:* `#,0.0,,;(#,0.0,,);"–"`
+*Format:* `#,0,,.0;(#,0,,.0);"–"`
 
 ```dax
 VAR _Basis = SELECTEDVALUE ( 'Period Basis'[basis_code], "YTD" )
@@ -439,7 +439,7 @@ RETURN IF ( _PastClose, BLANK (), _Value )
 
 Consolidated net income before the non-controlling attribution.
 
-*Format:* `#,0.0,,;(#,0.0,,);"–"`
+*Format:* `#,0,,.0;(#,0,,.0);"–"`
 
 ```dax
 VAR _Basis = SELECTEDVALUE ( 'Period Basis'[basis_code], "YTD" )
@@ -467,7 +467,7 @@ RETURN IF ( _PastClose, BLANK (), _Value )
 
 The minority's share of the result, below tax and outside EBITDA. Coalesced to zero: most entities have no minority, and a blank must not void the parent attribution.
 
-*Format:* `#,0.0,,;(#,0.0,,);"–"`
+*Format:* `#,0,,.0;(#,0,,.0);"–"`
 
 ```dax
 VAR _Basis = SELECTEDVALUE ( 'Period Basis'[basis_code], "YTD" )
@@ -495,7 +495,7 @@ RETURN IF ( _PastClose, BLANK (), _Value + 0 )
 
 Net income less the non-controlling attribution. The bottom line of the group.
 
-*Format:* `#,0.0,,;(#,0.0,,);"–"`
+*Format:* `#,0,,.0;(#,0,,.0);"–"`
 
 ```dax
 VAR _Basis = SELECTEDVALUE ( 'Period Basis'[basis_code], "YTD" )
@@ -526,7 +526,7 @@ RETURN IF ( _PastClose, BLANK (), _Value )
 
 Revenue on the Actual scenario, **blank after the reporting close**. The consolidation publishes Actual rows for the whole fiscal year and the group has closed eight months of it; the remaining rows carry 0.00, so without the guard this reads as a company that stopped trading in September. Blank policy: BLANK past the close, never zero.
 
-*Format:* `#,0.0,,;(#,0.0,,);"–"`
+*Format:* `#,0,,.0;(#,0,,.0);"–"`
 
 ```dax
 VAR _Scenarios = VALUES ( 'Scenario'[scenario_code] )
@@ -541,7 +541,7 @@ RETURN IF ( _PastClose, BLANK (), CALCULATE ( [Revenue], 'Scenario'[scenario_cod
 
 Management Adjusted EBITDA on Actual, blank after the reporting close.
 
-*Format:* `#,0.0,,;(#,0.0,,);"–"`
+*Format:* `#,0,,.0;(#,0,,.0);"–"`
 
 ```dax
 VAR _Scenarios = VALUES ( 'Scenario'[scenario_code] )
@@ -556,7 +556,7 @@ RETURN IF ( _PastClose, BLANK (), CALCULATE ( [Management Adjusted EBITDA], 'Sce
 
 EBIT on Actual, blank after the reporting close.
 
-*Format:* `#,0.0,,;(#,0.0,,);"–"`
+*Format:* `#,0,,.0;(#,0,,.0);"–"`
 
 ```dax
 VAR _Scenarios = VALUES ( 'Scenario'[scenario_code] )
@@ -571,7 +571,7 @@ RETURN IF ( _PastClose, BLANK (), CALCULATE ( [EBIT], 'Scenario'[scenario_code] 
 
 Revenue on the board-approved budget, which covers the whole fiscal year and is therefore not subject to the actual cutoff.
 
-*Format:* `#,0.0,,;(#,0.0,,);"–"`
+*Format:* `#,0,,.0;(#,0,,.0);"–"`
 
 ```dax
 CALCULATE ( [Revenue], 'Scenario'[scenario_code] = "BUD" )
@@ -581,7 +581,7 @@ CALCULATE ( [Revenue], 'Scenario'[scenario_code] = "BUD" )
 
 Management Adjusted EBITDA on the approved budget.
 
-*Format:* `#,0.0,,;(#,0.0,,);"–"`
+*Format:* `#,0,,.0;(#,0,,.0);"–"`
 
 ```dax
 CALCULATE ( [Management Adjusted EBITDA], 'Scenario'[scenario_code] = "BUD" )
@@ -591,7 +591,7 @@ CALCULATE ( [Management Adjusted EBITDA], 'Scenario'[scenario_code] = "BUD" )
 
 Revenue on the **current** forecast, selected by the upstream default flag rather than by name, so a superseded forecast can never be presented as the forecast.
 
-*Format:* `#,0.0,,;(#,0.0,,);"–"`
+*Format:* `#,0,,.0;(#,0,,.0);"–"`
 
 ```dax
 VAR _Version = [Current Forecast Version]
@@ -606,7 +606,7 @@ RETURN
 
 Management Adjusted EBITDA on the current forecast, selected by the default flag.
 
-*Format:* `#,0.0,,;(#,0.0,,);"–"`
+*Format:* `#,0,,.0;(#,0,,.0);"–"`
 
 ```dax
 VAR _Version = [Current Forecast Version]
@@ -621,7 +621,7 @@ RETURN
 
 Revenue twelve months earlier. Prior Year is derived upstream from Actual by a date offset and stored nowhere (ADR-0004), under the governed version `PY_DERIVED` (ADR-0027). No cutoff applies: prior year is complete by definition.
 
-*Format:* `#,0.0,,;(#,0.0,,);"–"`
+*Format:* `#,0,,.0;(#,0,,.0);"–"`
 
 ```dax
 CALCULATE ( [Revenue], 'Scenario'[scenario_code] = "PY" )
@@ -631,7 +631,7 @@ CALCULATE ( [Revenue], 'Scenario'[scenario_code] = "PY" )
 
 Management Adjusted EBITDA twelve months earlier, on the governed `PY_DERIVED` version.
 
-*Format:* `#,0.0,,;(#,0.0,,);"–"`
+*Format:* `#,0,,.0;(#,0,,.0);"–"`
 
 ```dax
 CALCULATE ( [Management Adjusted EBITDA], 'Scenario'[scenario_code] = "PY" )
@@ -656,7 +656,7 @@ CALCULATE (
 
 The measure being assessed, on the selected comparison and the selected period basis. Reads the governed variance mart; the model does not derive a comparison.
 
-*Format:* `#,0.0,,;(#,0.0,,);"–"`
+*Format:* `#,0,,.0;(#,0,,.0);"–"`
 
 ```dax
 VAR _Basis = SELECTEDVALUE ( 'Period Basis'[basis_code], "YTD" )
@@ -677,7 +677,7 @@ RETURN
 
 What the base is assessed against, on the selected comparison and period basis.
 
-*Format:* `#,0.0,,;(#,0.0,,);"–"`
+*Format:* `#,0,,.0;(#,0,,.0);"–"`
 
 ```dax
 VAR _Basis = SELECTEDVALUE ( 'Period Basis'[basis_code], "YTD" )
@@ -698,7 +698,7 @@ RETURN
 
 Base less comparator in dollars, on the selected period basis. Precomputed upstream so the sign convention cannot differ between two reporting tools. Month, year to date and full year are three governed columns, so switching basis changes which column is read and never how the variance is computed.
 
-*Format:* `#,0.0,,;(#,0.0,,);"–"`
+*Format:* `#,0,,.0;(#,0,,.0);"–"`
 
 ```dax
 VAR _Basis = SELECTEDVALUE ( 'Period Basis'[basis_code], "YTD" )
@@ -717,25 +717,12 @@ RETURN
 
 ### `Variance %`
 
-Variance as a percentage. On a single statement line it reads the **stored** percentage from the mart, so Power BI and Excel cannot disagree about it. Across several lines a stored percentage cannot be summed, so it recomputes over the absolute comparator -- absolute, so a percentage against a negative base still reads in the same direction as the dollars.
+Variance as a percentage of the comparator, at every grain: the governed additive variance over the absolute governed comparator, with safe division. This is exactly the convention `mart_variance` stores per entity and line (`var / |comparator|`, verified on all 17,462 rows with a non-zero comparator), so at leaf grain it agrees with the mart to the cent, and at group, unit or statement grain it is a real percentage rather than a sum of percentages -- which is what it was until Phase 6A.3 (P6B-D-04: EBIT read 2,713.9% where the workbook reads (32.8%)). Percentages are never additive; this measure never adds them.
 
 *Format:* `0.0%;(0.0%);"–"`
 
 ```dax
-VAR _Basis = SELECTEDVALUE ( 'Period Basis'[basis_code], "YTD" )
-VAR _Stored =
-    SWITCH (
-        _Basis,
-        "MTD", SUM ( 'Variance'[var_mtd_pct] ),
-        "FY", SUM ( 'Variance'[var_fy_pct] ),
-        SUM ( 'Variance'[var_ytd_pct] )
-    )
-RETURN
-    IF (
-        HASONEVALUE ( 'Measure Line'[measure_code] ),
-        _Stored,
-        DIVIDE ( [Variance], ABS ( [Variance Comparator] ) )
-    )
+DIVIDE ( [Variance], ABS ( [Variance Comparator] ) )
 ```
 
 ### `Variance Favourability`
@@ -777,7 +764,7 @@ IF (
 
 Total assets at the selected month end, from the approved consolidated balance sheet.
 
-*Format:* `#,0.0,,;(#,0.0,,);"–"`
+*Format:* `#,0,,.0;(#,0,,.0);"–"`
 
 ```dax
 CALCULATE (
@@ -791,7 +778,7 @@ CALCULATE (
 
 Total liabilities, sign-flipped to the positive presentation a reader expects.
 
-*Format:* `#,0.0,,;(#,0.0,,);"–"`
+*Format:* `#,0,,.0;(#,0,,.0);"–"`
 
 ```dax
 -CALCULATE (
@@ -805,7 +792,7 @@ Total liabilities, sign-flipped to the positive presentation a reader expects.
 
 Total equity, including the unclosed result for the period, the translation reserve and the non-controlling interest.
 
-*Format:* `#,0.0,,;(#,0.0,,);"–"`
+*Format:* `#,0,,.0;(#,0,,.0);"–"`
 
 ```dax
 -CALCULATE (
@@ -819,7 +806,7 @@ Total equity, including the unclosed result for the period, the translation rese
 
 Assets less liabilities and equity. Nil in every period, and shown rather than assumed.
 
-*Format:* `#,0.00,,;(#,0.00,,);"–"`
+*Format:* `#,0,,.00;(#,0,,.00);"–"`
 
 ```dax
 [Total Assets] - [Total Liabilities] - [Total Equity]
@@ -829,7 +816,7 @@ Assets less liabilities and equity. Nil in every period, and shown rather than a
 
 Cash and cash equivalents at the month end.
 
-*Format:* `#,0.0,,;(#,0.0,,);"–"`
+*Format:* `#,0,,.0;(#,0,,.0);"–"`
 
 ```dax
 CALCULATE (
@@ -844,7 +831,7 @@ CALCULATE (
 
 Trade receivables, net of provision.
 
-*Format:* `#,0.0,,;(#,0.0,,);"–"`
+*Format:* `#,0,,.0;(#,0,,.0);"–"`
 
 ```dax
 CALCULATE (
@@ -859,7 +846,7 @@ CALCULATE (
 
 Inventory, net of the unrealised profit provision the consolidation posts against it.
 
-*Format:* `#,0.0,,;(#,0.0,,);"–"`
+*Format:* `#,0,,.0;(#,0,,.0);"–"`
 
 ```dax
 CALCULATE (
@@ -874,7 +861,7 @@ CALCULATE (
 
 Trade and other payables at the latest period in context, from the governed balance sheet caption and shown positive. Statutory basis, Actual only.
 
-*Format:* `#,0.0,,;(#,0.0,,);"–"`
+*Format:* `#,0,,.0;(#,0,,.0);"–"`
 
 ```dax
 -CALCULATE (
@@ -889,7 +876,7 @@ Trade and other payables at the latest period in context, from the governed bala
 
 Receivables plus inventory less payables plus other working capital, from the governed working capital mart rather than re-added here.
 
-*Format:* `#,0.0,,;(#,0.0,,);"–"`
+*Format:* `#,0,,.0;(#,0,,.0);"–"`
 
 ```dax
 CALCULATE (
@@ -902,7 +889,7 @@ CALCULATE (
 
 Owned property, plant and equipment at net book value -- cost less accumulated depreciation, both settled upstream. Statutory basis, Actual only.
 
-*Format:* `#,0.0,,;(#,0.0,,);"–"`
+*Format:* `#,0,,.0;(#,0,,.0);"–"`
 
 ```dax
 CALCULATE (
@@ -917,7 +904,7 @@ CALCULATE (
 
 Goodwill on eleven acquisitions, derived from the goodwill bridge in the consolidation and never plugged.
 
-*Format:* `#,0.0,,;(#,0.0,,);"–"`
+*Format:* `#,0,,.0;(#,0,,.0);"–"`
 
 ```dax
 CALCULATE (
@@ -932,7 +919,7 @@ CALCULATE (
 
 Acquired customer relationships and technology at fair value, less accumulated amortisation.
 
-*Format:* `#,0.0,,;(#,0.0,,);"–"`
+*Format:* `#,0,,.0;(#,0,,.0);"–"`
 
 ```dax
 CALCULATE (
@@ -947,7 +934,7 @@ CALCULATE (
 
 Accumulated earnings closed into reserves. Positive means accumulated profit.
 
-*Format:* `#,0.0,,;(#,0.0,,);"–"`
+*Format:* `#,0,,.0;(#,0,,.0);"–"`
 
 ```dax
 -CALCULATE (
@@ -962,7 +949,7 @@ Accumulated earnings closed into reserves. Positive means accumulated profit.
 
 **Definition** the equity reserve arising because assets and liabilities translate at closing rates while equity translates at historical rates. Derived upstream as a residual of the translation itself and **never plugged** (ADR-0017). **Not the foreign exchange effect on cash**, which is a cash-flow item with a different value and a different cause; the two are separate measures here for that reason. **Source** `mart_balance_sheet`, caption 'Cumulative translation adjustment', class EQUITY, at the latest period in context. **Basis** statutory. **Scenario** Actual only. **Blank policy** blank when the caption has no row.
 
-*Format:* `#,0.0,,;(#,0.0,,);"–"`
+*Format:* `#,0,,.0;(#,0,,.0);"–"`
 
 ```dax
 -CALCULATE (
@@ -977,7 +964,7 @@ Accumulated earnings closed into reserves. Positive means accumulated profit.
 
 **Definition** the minority's share of consolidated net assets, a separate component of equity, attributed by the Phase 4 NCI engine and never derived here. **Source** `mart_balance_sheet`, caption 'Non-controlling interests', class EQUITY, at the latest period in context; sign-flipped for presentation because equity is stored credit-negative. **Basis** statutory and management are identical for NCI -- layer 4 carries no minority attribution. **Scenario** balance sheet is published on Actual only; a plan selection returns nothing rather than a plan balance sheet that was never built. **Blank policy** blank when the caption has no row, never zero: a period with no balance sheet is not a period with no minority interest.
 
-*Format:* `#,0.0,,;(#,0.0,,);"–"`
+*Format:* `#,0,,.0;(#,0,,.0);"–"`
 
 ```dax
 -CALCULATE (
@@ -995,7 +982,7 @@ Accumulated earnings closed into reserves. Positive means accumulated profit.
 
 Operating cash flow, derived upstream from balance sheet movements (ADR-0006).
 
-*Format:* `#,0.0,,;(#,0.0,,);"–"`
+*Format:* `#,0,,.0;(#,0,,.0);"–"`
 
 ```dax
 SUM ( 'Cash Flow'[operating_cash_flow_usd] )
@@ -1005,7 +992,7 @@ SUM ( 'Cash Flow'[operating_cash_flow_usd] )
 
 Cash used in investing for the period, principally capital expenditure. Classified upstream by each account's cash flow category, never by a rule written here.
 
-*Format:* `#,0.0,,;(#,0.0,,);"–"`
+*Format:* `#,0,,.0;(#,0,,.0);"–"`
 
 ```dax
 SUM ( 'Cash Flow'[investing_cash_flow_usd] )
@@ -1015,7 +1002,7 @@ SUM ( 'Cash Flow'[investing_cash_flow_usd] )
 
 Cash from financing for the period: debt drawn and repaid, and interest paid. Classified upstream by each account's cash flow category.
 
-*Format:* `#,0.0,,;(#,0.0,,);"–"`
+*Format:* `#,0,,.0;(#,0,,.0);"–"`
 
 ```dax
 SUM ( 'Cash Flow'[financing_cash_flow_usd] )
@@ -1025,7 +1012,7 @@ SUM ( 'Cash Flow'[financing_cash_flow_usd] )
 
 The retranslation of foreign-currency cash balances. **Not the cumulative translation adjustment**, which arises on net assets and sits in equity. Conflating the two makes a cash flow tie while reporting an implausible exchange effect on a mostly-USD balance.
 
-*Format:* `#,0.0,,;(#,0.0,,);"–"`
+*Format:* `#,0,,.0;(#,0,,.0);"–"`
 
 ```dax
 SUM ( 'Cash Flow'[fx_effect_on_cash_usd] )
@@ -1035,7 +1022,7 @@ SUM ( 'Cash Flow'[fx_effect_on_cash_usd] )
 
 The movement in cash, measured from the cash accounts themselves. Cash is never the residual of the statement.
 
-*Format:* `#,0.0,,;(#,0.0,,);"–"`
+*Format:* `#,0,,.0;(#,0,,.0);"–"`
 
 ```dax
 SUM ( 'Cash Flow'[net_change_in_cash_usd] )
@@ -1045,7 +1032,7 @@ SUM ( 'Cash Flow'[net_change_in_cash_usd] )
 
 Cash at the start of the selected range.
 
-*Format:* `#,0.0,,;(#,0.0,,);"–"`
+*Format:* `#,0,,.0;(#,0,,.0);"–"`
 
 ```dax
 CALCULATE (
@@ -1058,7 +1045,7 @@ CALCULATE (
 
 **Definition** cash and equivalents at the end of the selected range. **Source** `mart_cash_flow.closing_cash_usd` at the latest period in context -- taken from the cash flow rather than re-derived, so the statement that explains the movement and the balance it moves to cannot disagree. **Basis** statutory; the cash position is not a management-adjusted figure. **Scenario** Actual only. **Blank policy** blank outside the published range. `P6-XAR` reconciles it to the balance sheet cash caption and to the Excel cash sheet, both to 0.00.
 
-*Format:* `#,0.0,,;(#,0.0,,);"–"`
+*Format:* `#,0,,.0;(#,0,,.0);"–"`
 
 ```dax
 CALCULATE (
@@ -1071,7 +1058,7 @@ CALCULATE (
 
 Opening plus the movements less closing. Nil in every period.
 
-*Format:* `#,0.00,,;(#,0.00,,);"–"`
+*Format:* `#,0,,.00;(#,0,,.00);"–"`
 
 ```dax
 [Opening Cash] + [Operating Cash Flow] + [Investing Cash Flow]
@@ -1082,7 +1069,7 @@ Opening plus the movements less closing. Nil in every period.
 
 Cash plus the undrawn revolving facility at the selected month end.
 
-*Format:* `#,0.0,,;(#,0.0,,);"–"`
+*Format:* `#,0,,.0;(#,0,,.0);"–"`
 
 ```dax
 CALCULATE (
@@ -1098,7 +1085,7 @@ CALCULATE (
 
 All debt instruments at the month end, whether or not the agreement counts them.
 
-*Format:* `#,0.0,,;(#,0.0,,);"–"`
+*Format:* `#,0,,.0;(#,0,,.0);"–"`
 
 ```dax
 CALCULATE (
@@ -1111,7 +1098,7 @@ CALCULATE (
 
 Debt that counts toward the covenant, per the instrument's own flag in the debt schedule: the term loan, the revolver and finance leases, and not operating leases (CA-018).
 
-*Format:* `#,0.0,,;(#,0.0,,);"–"`
+*Format:* `#,0,,.0;(#,0,,.0);"–"`
 
 ```dax
 CALCULATE (
@@ -1124,7 +1111,7 @@ CALCULATE (
 
 **Definition** covenant debt less unrestricted cash, per credit agreement CA-019. There is no cash-netting cap (CA-020), so the full cash balance nets. This is **not** the balance sheet's net debt: covenant debt counts only the instruments the agreement counts, and `Economic Leverage` is the measure that uses the wider definition. **Source** `mart_covenants.net_debt_usd` at the latest period in context, computed upstream from the debt schedule's covenant flag. **Basis** the covenant basis, which is neither statutory nor management -- it is the agreement's. **Scenario** Actual only; the covenant is tested on reported results. **Blank policy** blank before the first measurable period, never zero.
 
-*Format:* `#,0.0,,;(#,0.0,,);"–"`
+*Format:* `#,0,,.0;(#,0,,.0);"–"`
 
 ```dax
 CALCULATE (
@@ -1137,7 +1124,7 @@ CALCULATE (
 
 **Definition** EBITDA as the **credit agreement** defines it, on a rolling twelve months. A third definition, not an alias of Adjusted EBITDA: the agreement caps the sponsor fee and adds back an FX item management reporting does not, so the two differ by construction even where they happen to sit close together. **Source** `mart_covenants.covenant_ebitda_usd`, where the bridge from statutory EBITDA is built and evidenced. **Basis** the agreement's, which is neither statutory nor management. **Scenario** Actual only -- a covenant is tested on reported results. **Blank policy** blank before twelve months of history exist, because a rolling twelve-month figure taken over eight months is not a smaller number, it is a different measure.
 
-*Format:* `#,0.0,,;(#,0.0,,);"–"`
+*Format:* `#,0,,.0;(#,0,,.0);"–"`
 
 ```dax
 CALCULATE (
@@ -1282,7 +1269,7 @@ AVERAGEX (
 
 Personnel cost from the income statement detail, so it agrees with operating expenses rather than with a payroll extract.
 
-*Format:* `#,0.0,,;(#,0.0,,);"–"`
+*Format:* `#,0,,.0;(#,0,,.0);"–"`
 
 ```dax
 CALCULATE (
@@ -1308,7 +1295,7 @@ DIVIDE ( [Personnel Cost], [Average FTE] )
 
 Capital spend, blank after the reporting close on the same rule as every other Actual measure.
 
-*Format:* `#,0.0,,;(#,0.0,,);"–"`
+*Format:* `#,0,,.0;(#,0,,.0);"–"`
 
 ```dax
 VAR _Scenarios = VALUES ( 'Scenario'[scenario_code] )
@@ -1323,7 +1310,7 @@ RETURN IF ( _PastClose, BLANK (), SUM ( 'CapEx'[spend_usd] ) )
 
 The amount approved for the projects in scope. **This is the capital plan.** The capex subledger carries no scenario dimension -- there is no separate budget or forecast version of capital spend anywhere upstream -- so the approved amount on the project is the plan a variance is measured against, and no Budget CapEx or Forecast CapEx measure is offered. Inventing one would mean inventing the data behind it.
 
-*Format:* `#,0.0,,;(#,0.0,,);"–"`
+*Format:* `#,0,,.0;(#,0,,.0);"–"`
 
 ```dax
 SUM ( 'CapEx'[approved_usd] )
@@ -1333,7 +1320,7 @@ SUM ( 'CapEx'[approved_usd] )
 
 Spend less approved. **Positive is over-approval, and over-approval is unfavourable** — capital spend follows the same account-aware favourability rule as operating expense, and colouring a positive variance green here would say the opposite of what it means.
 
-*Format:* `#,0.0,,;(#,0.0,,);"–"`
+*Format:* `#,0,,.0;(#,0,,.0);"–"`
 
 ```dax
 [Actual CapEx] - [Approved CapEx]
@@ -1392,7 +1379,7 @@ DIVIDE ( [Actual CapEx], [Depreciation and Amortisation] )
 
 This year's activity restated at last year's average rate. An **operating** measure: what a reader means by how much of the revenue movement was currency. Not the translation adjustment.
 
-*Format:* `#,0.0,,;(#,0.0,,);"–"`
+*Format:* `#,0,,.0;(#,0,,.0);"–"`
 
 ```dax
 SUM ( 'FX'[revenue_constant_ccy_usd] )
@@ -1402,7 +1389,7 @@ SUM ( 'FX'[revenue_constant_ccy_usd] )
 
 Reported revenue less constant currency revenue.
 
-*Format:* `#,0.0,,;(#,0.0,,);"–"`
+*Format:* `#,0,,.0;(#,0,,.0);"–"`
 
 ```dax
 SUM ( 'FX'[revenue_usd] ) - [Constant Currency Revenue]
@@ -1412,8 +1399,105 @@ SUM ( 'FX'[revenue_usd] ) - [Constant Currency Revenue]
 
 The movement in the cumulative translation adjustment, an equity reserve. Derived by the consolidation as the residual of the translated trial balance, never plugged.
 
-*Format:* `#,0.0,,;(#,0.0,,);"–"`
+*Format:* `#,0,,.0;(#,0,,.0);"–"`
 
 ```dax
 SUM ( 'FX'[cta_movement_usd] )
+```
+
+
+## 10 Reporting
+
+### `Account Amount`
+
+The account-grain amount from the monthly mart, on the period basis, reporting basis and Actual cutoff the statement measures use. It exists so a statement line can be drilled to the accounts behind it (Group → unit → entity → account) and it adds nothing the mart does not already hold: month = the month's rows, year to date = the fiscal year's rows to the selected month, full year = the fiscal year's rows. No accounting logic lives here; the sign, the basis and the mapping to a line are the mart's.
+
+*Format:* `#,0,,.0;(#,0,,.0);"–"`
+
+```dax
+VAR _Basis = SELECTEDVALUE ( 'Period Basis'[basis_code], "YTD" )
+VAR _Reporting = SELECTEDVALUE ( 'Reporting Basis'[basis], "STATUTORY" )
+VAR _Scenarios = VALUES ( 'Scenario'[scenario_code] )
+VAR _ActualOnly =
+    COUNTROWS ( _Scenarios ) = 1 && MAXX ( _Scenarios, 'Scenario'[scenario_code] ) = "ACT"
+VAR _Latest = MAX ( 'Date'[period_key] )
+VAR _Year = MAX ( 'Date'[fiscal_year] )
+VAR _PastClose = _ActualOnly && _Latest > [Reporting Period Key]
+VAR _Value =
+    SWITCH (
+        _Basis,
+        "MTD",
+            CALCULATE (
+                SUM ( 'Financial Detail'[amount_usd] ),
+                KEEPFILTERS ( 'Financial Detail'[basis] = _Reporting )
+            ),
+        "FY",
+            CALCULATE (
+                SUM ( 'Financial Detail'[amount_usd] ),
+                REMOVEFILTERS ( 'Date' ),
+                'Date'[fiscal_year] = _Year,
+                KEEPFILTERS ( 'Financial Detail'[basis] = _Reporting )
+            ),
+        CALCULATE (
+            SUM ( 'Financial Detail'[amount_usd] ),
+            REMOVEFILTERS ( 'Date' ),
+            'Date'[fiscal_year] = _Year,
+            'Date'[period_key] <= _Latest,
+            KEEPFILTERS ( 'Financial Detail'[basis] = _Reporting )
+        )
+    )
+RETURN IF ( _PastClose, BLANK (), _Value )
+```
+
+### `Layer EBITDA`
+
+EBITDA contributed by each consolidation layer in a fiscal year, from the governed consolidation bridge: Entity Reported, Intercompany Eliminations, Consolidation Adjustments, Management Adjustments and Translation Adjustment. Statutory is layers 1 + 2 + 3 + 5; management adds layer 4. Presentation of the approved layers, not a new policy: the bridge fact is the Phase 5 mart, unchanged.
+
+*Format:* `#,0,,.0;(#,0,,.0);"–"`
+
+```dax
+SUM ( 'Layer Bridge'[ebitda_usd] )
+```
+
+### `Layer Net Income`
+
+Net income contributed by each consolidation layer in a fiscal year, from the governed consolidation bridge, on the same layer definitions as Layer EBITDA.
+
+*Format:* `#,0,,.0;(#,0,,.0);"–"`
+
+```dax
+SUM ( 'Layer Bridge'[net_income_usd] )
+```
+
+### `Layer Entries`
+
+Journal entries posted at each consolidation layer in a fiscal year, from the bridge.
+
+*Format:* `#,0`
+
+```dax
+SUM ( 'Layer Bridge'[entries] )
+```
+
+### `Revenue Share of Group`
+
+Revenue in the current context as a share of Group revenue in the same period, scenario and reporting basis. The denominator removes only the Business Unit and Entity filters, by name: on a unit row it is the Group, on an entity row it is still the Group. For the share of the parent unit use Revenue Share of Unit -- one measure, one denominator.
+
+*Format:* `0.0%;(0.0%);"–"`
+
+```dax
+DIVIDE (
+    [Revenue],
+    CALCULATE ( [Revenue], REMOVEFILTERS ( 'Business Unit' ), REMOVEFILTERS ( 'Entity' ) )
+)
+```
+
+### `Revenue Share of Unit`
+
+Revenue in the current context as a share of the revenue of the business unit(s) in context, in the same period, scenario and reporting basis. The denominator removes only the Entity filter: on an entity row it is the entity's unit; on a unit row it is 100%.
+
+*Format:* `0.0%;(0.0%);"–"`
+
+```dax
+DIVIDE ( [Revenue], CALCULATE ( [Revenue], REMOVEFILTERS ( 'Entity' ) ) )
 ```

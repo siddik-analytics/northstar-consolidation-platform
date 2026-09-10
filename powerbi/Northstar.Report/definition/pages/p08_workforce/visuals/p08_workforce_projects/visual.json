@@ -58,8 +58,7 @@
               },
               "queryRef": "Northstar Measures.Actual CapEx",
               "nativeQueryRef": "Actual CapEx",
-              "displayName": "Spend",
-              "format": "#,0,,.0;(#,0,,.0);\"–\""
+              "displayName": "Spend"
             },
             {
               "field": {
@@ -74,8 +73,7 @@
               },
               "queryRef": "Northstar Measures.Approved CapEx",
               "nativeQueryRef": "Approved CapEx",
-              "displayName": "Approved",
-              "format": "#,0,,.0;(#,0,,.0);\"–\""
+              "displayName": "Approved"
             },
             {
               "field": {
@@ -90,8 +88,7 @@
               },
               "queryRef": "Northstar Measures.CapEx Variance %",
               "nativeQueryRef": "CapEx Variance %",
-              "displayName": "vs approval",
-              "format": "0.0%;(0.0%);\"–\""
+              "displayName": "vs approval"
             }
           ]
         }

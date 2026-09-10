@@ -28,8 +28,7 @@
               },
               "queryRef": "Northstar Measures.Inventory",
               "nativeQueryRef": "Inventory",
-              "displayName": "Inventory",
-              "format": "#,0,,.0;(#,0,,.0);\"–\""
+              "displayName": "Inventory"
             }
           ]
         }

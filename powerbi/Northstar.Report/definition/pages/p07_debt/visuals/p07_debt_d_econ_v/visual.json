@@ -28,8 +28,7 @@
               },
               "queryRef": "Northstar Measures.Economic Leverage",
               "nativeQueryRef": "Economic Leverage",
-              "displayName": "Economic Leverage",
-              "format": "0.00\"x\";(0.00\"x\");\"–\""
+              "displayName": "Economic Leverage"
             }
           ]
         }

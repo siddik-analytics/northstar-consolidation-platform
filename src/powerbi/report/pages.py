@@ -93,7 +93,7 @@ def status_card(measure_name: str, mapping: dict[str, str], size: float = 9.0,
 
 def fav_bar(category: dict, title_text: str, comparison: str, line: str | None = None,
             horizontal: bool = True, sort_desc: bool = True, subtitle_text: str | None = None,
-            units: float = 1_000_000.0) -> tuple[dict, dict]:
+            units: float = 1.0) -> tuple[dict, dict]:
     """
     Variance by category, each bar coloured by the governed favourability of that variance:
     green favourable, red unfavourable, grey neutral. The measure decides; the chart shows.
@@ -107,8 +107,6 @@ def fav_bar(category: dict, title_text: str, comparison: str, line: str | None =
               "Value": P.lit(c)["expr"]} for k, c in FAV.items()]
     v["objects"]["dataPoint"] = [{"properties": {"fill": {"solid": {"color": {"expr": {
         "Conditional": {"Cases": cases, "Else": P.lit(T.RULE_STRONG)["expr"]}}}}}}}]
-    for pr in v["query"]["queryState"]["Y"]["projections"]:
-        pr["format"] = M1S
     specs = [("Comparison", "comparison_code", [comparison])]
     if line:
         specs.append(("Measure Line", "measure_code", [line]))
@@ -116,8 +114,7 @@ def fav_bar(category: dict, title_text: str, comparison: str, line: str | None =
 
 
 def fmt_values(v: dict, fmt: str, role: str = "Y") -> dict:
-    for pr in v["query"]["queryState"][role]["projections"]:
-        pr["format"] = fmt
+    """Retired in Phase 6A.3: the model's own formats render; nothing is overridden."""
     return v
 
 
@@ -133,7 +130,7 @@ def kpi(pg: Page, key: str, x: int, y: int, w: int, label: str, value: str, fmt:
     """
     pg.add(f"{key}_l", x, y, w, 16, P.textbox(label, T.TYPE["kpi_label"], T.INK_MUTED, False))
     pg.add(f"{key}_v", x - 4, y + 14, w + 4, 32,
-           P.card(value, fmt=fmt, value_size=size or T.TYPE["kpi_value"]),
+           P.card(value, value_size=size or T.TYPE["kpi_value"]),
            filters=scope(*(value_filters if value_filters is not None else [ACTUAL]),
                          prefix=f"{key}v") if (value_filters is None or value_filters) else None)
     if comparator:
@@ -141,7 +138,7 @@ def kpi(pg: Page, key: str, x: int, y: int, w: int, label: str, value: str, fmt:
         sc = scope(("Comparison", "comparison_code", [comparison]),
                    ("Measure Line", "measure_code", [line]), prefix=f"{key}c")
         pg.add(f"{key}_d", x - 4, y + 46, 46, 16,
-               P.card("Variance", fmt=M1S, value_size=9.0, value_colour=T.INK), filters=sc)
+               P.card("Variance", value_size=9.0, value_colour=T.INK), filters=sc)
         pg.add(f"{key}_n", x + 42, y + 47, w - 42, 14,
                P.textbox(caption, T.TYPE["small"], T.INK_MUTED, False))
         pg.add(f"{key}_f", x - 4, y + 62, w + 4, 16,
@@ -223,21 +220,20 @@ def executive() -> Page:
     g = L.cols(10)
     c3 = [L.span(g, 0, 2), L.span(g, 3, 5), L.span(g, 6, 9)]
     h2 = 232
-    pg.add("rev_trend", c3[0][0], y2, c3[0][1], h2, fmt_values(P.line_chart(
+    pg.add("rev_trend", c3[0][0], y2, c3[0][1], h2, P.line_chart(
         DATE_MONTH, [("Actual Revenue", "Actual"), ("Budget Revenue", "Budget"),
                      ("Forecast Revenue", "Forecast")],
         "Revenue by month — actual, budget and current forecast",
-        colours=FORECAST_SET), "#,0.0"), filters=trend_scope())
-    pg.add("bu_ebitda", c3[1][0], y2, c3[1][1], h2, fmt_values(P.column_chart(
+        colours=FORECAST_SET), filters=trend_scope())
+    pg.add("bu_ebitda", c3[1][0], y2, c3[1][1], h2, P.column_chart(
         BU_NAME, [("Actual Adjusted EBITDA", "Actual"), ("Budget Adjusted EBITDA", "Budget")],
         "Adjusted EBITDA by unit — actual against budget", horizontal=True,
         colours={"Actual Adjusted EBITDA": T.NAVY, "Budget Adjusted EBITDA": T.BUDGET},
-        sort_field=P.measure("Actual Adjusted EBITDA"), sort_ascending=False), "#,0.0"))
+        sort_field=P.measure("Actual Adjusted EBITDA"), sort_ascending=False))
     pg.add("var_signals", c3[2][0], y2, c3[2][1], h2, P.matrix(
         [LINE], [("Variance", "Var $"), ("Variance %", "Var %"),
                  ("Variance Favourability", "Direction")],
         "Variance to budget by line", stepped=False,
-        value_formats={"Variance": M1S, "Variance %": PCT},
         row_names={"Measure Line.measure_name": "Line"},
         widths={"Measure Line.measure_name": 140, "Northstar Measures.Variance": 52,
                 "Northstar Measures.Variance %": 58, "Northstar Measures.Variance Favourability": 76},
@@ -247,18 +243,18 @@ def executive() -> Page:
     y3 = y2 + h2 + L.GUTTER
     h3 = L.CANVAS_H - 20 - y3
     c2 = L.cols(2)
-    pg.add("cash_trend", c2[0][0], y3, c2[0][1], h3, fmt_values(P.line_chart(
+    pg.add("cash_trend", c2[0][0], y3, c2[0][1], h3, P.line_chart(
         DATE_MONTH, [("Closing Cash", "Cash"), ("Total Liquidity", "Total liquidity")],
         "Cash and total liquidity — month end, closed months",
-        colours={"Closing Cash": T.NAVY, "Total Liquidity": T.COPPER}), "#,0.0"),
+        colours={"Closing Cash": T.NAVY, "Total Liquidity": T.COPPER}),
         filters=closed_scope())
-    lev = fmt_values(P.line_chart(
+    lev = P.line_chart(
         DATE_MONTH, [("Covenant Net Leverage", "Net leverage"), ("Covenant Limit", "Covenant limit"),
                      ("Economic Leverage", "Economic leverage")],
         "Net leverage against the covenant limit — indicative between test dates",
         colours={"Covenant Net Leverage": T.NAVY, "Covenant Limit": T.COPPER,
                  "Economic Leverage": T.BUDGET}, units=1.0, precision=2, y_start=3.0,
-        y_end=5.0), "0.00")
+        y_end=5.0)
     lev["objects"]["lineStyles"].append(dict(P.props(lineStyle="dashed", strokeWidth=2.0),
                                              selector={"metadata": "Northstar Measures.Covenant Limit"}))
     pg.add("lev_trend", c2[1][0], y3, c2[1][1], h3, lev, filters=closed_scope())
@@ -292,20 +288,18 @@ def pnl() -> Page:
         [("Variance Base", "Base"), ("Variance Comparator", "Comparator"),
          ("Variance", "Variance"), ("Variance %", "Var %"),
          ("Variance Favourability", "Direction")],
-        None, value_formats={"Variance Base": M1, "Variance Comparator": M1, "Variance": M1S,
-                             "Variance %": PCT},
-        conditional=[P.status_colour_rule("Variance Favourability", FAV,
+        None, conditional=[P.status_colour_rule("Variance Favourability", FAV,
                                           "Variance Favourability")],
         row_header="Line · business unit · entity"))
     v, sc = fav_bar(LINE, "Variance by line — direction is the measure's own favourability",
                     "ACT_VS_BUD", horizontal=True, sort_desc=False)
     pg.add("var_bar", right_x, y, right_w, 250, v)   # comparison follows the slicer
     y4 = y + 250 + L.GUTTER
-    pg.add("ebitda_trend", right_x, y4, right_w, L.CANVAS_H - 20 - y4, fmt_values(P.line_chart(
+    pg.add("ebitda_trend", right_x, y4, right_w, L.CANVAS_H - 20 - y4, P.line_chart(
         DATE_MONTH, [("Actual Adjusted EBITDA", "Actual"), ("Budget Adjusted EBITDA", "Budget"),
                      ("Forecast Adjusted EBITDA", "Forecast"),
                      ("Prior Year Adjusted EBITDA", "Prior year")],
-        "Adjusted EBITDA by month — the four governed scenarios", colours=EBITDA_SET), "#,0.0"),
+        "Adjusted EBITDA by month — the four governed scenarios", colours=EBITDA_SET),
         filters=trend_scope())
     pg.no_filter("sl_period", "ebitda_trend")
     pg.no_filter("sl_basis", "ebitda_trend")
@@ -322,12 +316,12 @@ def business_units() -> Page:
     y = L.CONTENT_Y
     c2 = L.cols(2)
     h1 = 236
-    pg.add("bu_rev", c2[0][0], y, c2[0][1], h1, fmt_values(P.column_chart(
+    pg.add("bu_rev", c2[0][0], y, c2[0][1], h1, P.column_chart(
         BU_NAME, [("Actual Revenue", "Actual"), ("Budget Revenue", "Budget")],
         "Revenue by business unit — actual against budget",
         colours={"Actual Revenue": T.NAVY, "Budget Revenue": T.BUDGET},
         sort_field=P.measure("Actual Revenue"), sort_ascending=False,
-        subtitle_text="Select a unit to filter the entities below"), "#,0.0"))
+        subtitle_text="Select a unit to filter the entities below"))
     v, sc = fav_bar(BU_NAME, "Adjusted EBITDA variance to budget by business unit",
                     "ACT_VS_BUD", "ADJ_EBITDA", horizontal=True)
     pg.add("bu_var", c2[1][0], y, c2[1][1], h1, v, filters=sc)
@@ -337,15 +331,13 @@ def business_units() -> Page:
         [BU_LONG, ENTITY_LONG],
         [("Revenue", "Revenue"), ("Gross Margin %", "GM %"),
          ("Management Adjusted EBITDA", "Adj. EBITDA"), ("Adjusted EBITDA Margin %", "Margin")],
-        "Unit and entity contribution — expand a unit for its entities",
-        value_formats={"Revenue": M1, "Gross Margin %": PCT, "Management Adjusted EBITDA": M1,
-                       "Adjusted EBITDA Margin %": PCT}, row_header="Business unit · entity"),
+        "Unit and entity contribution — expand a unit for its entities", row_header="Business unit · entity"),
         filters=scope(ACTUAL, prefix="bm"))
-    pg.add("ent_bar", c2[1][0], y2, c2[1][1], h2, fmt_values(P.column_chart(
+    pg.add("ent_bar", c2[1][0], y2, c2[1][1], h2, P.column_chart(
         ENTITY, [("Management Adjusted EBITDA", "Adjusted EBITDA")],
         "Adjusted EBITDA by entity", horizontal=True,
         sort_field=P.measure("Management Adjusted EBITDA"), sort_ascending=False,
-        labels=True), "#,0.0"), filters=scope(ACTUAL, prefix="eb"))
+        labels=True), filters=scope(ACTUAL, prefix="eb"))
     pg.no_filter("sl_rbasis", "bu_var", "bu_matrix", "ent_bar")
     return pg
 
@@ -379,21 +371,21 @@ def balance_sheet() -> Page:
     ])
     c2 = L.cols(2)
     h = L.CANVAS_H - 20 - y2
-    pg.add("wc_trend", c2[0][0], y2, c2[0][1], h, fmt_values(P.line_chart(
+    pg.add("wc_trend", c2[0][0], y2, c2[0][1], h, P.line_chart(
         DATE_MONTH, [("Accounts Receivable", "Receivables"), ("Inventory", "Inventory"),
                      ("Accounts Payable", "Payables"), ("Net Working Capital", "Net working capital")],
         "Working capital components — month end, closed months",
         colours={"Accounts Receivable": T.NAVY, "Inventory": T.BUDGET,
-                 "Accounts Payable": T.PRIOR, "Net Working Capital": T.COPPER}), "#,0.0"),
+                 "Accounts Payable": T.PRIOR, "Net Working Capital": T.COPPER}),
         filters=closed_scope())
-    pg.add("bs_trend", c2[1][0], y2, c2[1][1], h, fmt_values(P.line_chart(
+    pg.add("bs_trend", c2[1][0], y2, c2[1][1], h, P.line_chart(
         DATE_MONTH, [("Cash", "Cash"), ("Intangible Assets", "Intangibles"),
                      ("Cumulative Translation Adjustment", "CTA"),
                      ("Non-controlling Interest Equity", "NCI")],
         "Cash, intangibles, CTA and NCI — month end, closed months",
         colours={"Cash": T.NAVY, "Intangible Assets": T.BUDGET,
                  "Cumulative Translation Adjustment": T.COPPER,
-                 "Non-controlling Interest Equity": T.PRIOR}), "#,0.0"), filters=closed_scope())
+                 "Non-controlling Interest Equity": T.PRIOR}), filters=closed_scope())
     pg.no_filter("sl_period", "wc_trend", "bs_trend")
     return pg
 
@@ -421,16 +413,16 @@ def cash_flow() -> Page:
     ])
     c2 = L.cols(2)
     h = L.CANVAS_H - 20 - y2
-    pg.add("cf_cols", c2[0][0], y2, c2[0][1], h, fmt_values(P.column_chart(
+    pg.add("cf_cols", c2[0][0], y2, c2[0][1], h, P.column_chart(
         DATE_MONTH, [("Operating Cash Flow", "Operating"), ("Investing Cash Flow", "Investing"),
                      ("Financing Cash Flow", "Financing")],
         "Cash flow by category and month — closed months",
         colours={"Operating Cash Flow": T.NAVY, "Investing Cash Flow": T.COPPER,
-                 "Financing Cash Flow": T.BUDGET}), "#,0.0"), filters=closed_scope())
-    pg.add("liq_trend", c2[1][0], y2, c2[1][1], h, fmt_values(P.line_chart(
+                 "Financing Cash Flow": T.BUDGET}), filters=closed_scope())
+    pg.add("liq_trend", c2[1][0], y2, c2[1][1], h, P.line_chart(
         DATE_MONTH, [("Closing Cash", "Cash"), ("Total Liquidity", "Total liquidity")],
         "Cash and total liquidity — month end, closed months",
-        colours={"Closing Cash": T.NAVY, "Total Liquidity": T.COPPER}), "#,0.0"),
+        colours={"Closing Cash": T.NAVY, "Total Liquidity": T.COPPER}),
         filters=closed_scope())
     pg.no_filter("sl_period", "cf_cols", "liq_trend")
     return pg
@@ -462,13 +454,13 @@ def ebitda() -> Page:
     ])
     c2 = L.cols(2)
     h = L.CANVAS_H - 20 - y2
-    bridge = fmt_values(P.column_chart(
+    bridge = P.column_chart(
         LINE, [("Variance Base", "Actual")],
         "Statutory to management adjusted EBITDA — the add-backs are the bridge",
         sort_field=LINE, labels=True,
         category_colours={"EBITDA": T.NAVY, "Approved add-backs": T.COPPER,
                           "Adjusted EBITDA": T.NAVY},
-        category_table_col=("Measure Line", "measure_name")), "#,0.0")
+        category_table_col=("Measure Line", "measure_name"))
     pg.add("bridge", c2[0][0], y2, c2[0][1], h, bridge,
            filters=scope(("Comparison", "comparison_code", ["ACT_VS_BUD"]),
                          ("Measure Line", "measure_code", ["EBITDA", "ADDBACKS", "ADJ_EBITDA"]),
@@ -515,19 +507,19 @@ def covenants() -> Page:
     ])
     c2 = L.cols(2)
     h = L.CANVAS_H - 20 - y2
-    lev = fmt_values(P.line_chart(
+    lev = P.line_chart(
         DATE_MONTH, [("Covenant Net Leverage", "Net leverage"), ("Covenant Limit", "Covenant limit"),
                      ("Economic Leverage", "Economic leverage")],
         "Net leverage against the covenant limit — FY2026, closed months",
         colours={"Covenant Net Leverage": T.NAVY, "Covenant Limit": T.COPPER,
                  "Economic Leverage": T.BUDGET}, units=1.0, precision=2, y_start=3.0,
-        y_end=5.0, markers=True), "0.00")
+        y_end=5.0, markers=True)
     lev["objects"]["lineStyles"].append(dict(P.props(lineStyle="dashed", strokeWidth=2.0),
                                              selector={"metadata": "Northstar Measures.Covenant Limit"}))
     pg.add("lev_trend", c2[0][0], y2, c2[0][1], h, lev, filters=closed_scope())
     pg.add("tests", c2[1][0], y2, c2[1][1], 176, P.table(
-        [(DATE_MONTH_LONG, "Test date", None), (P.measure("Covenant Net Leverage"), "Net leverage", RATIO),
-         (P.measure("Covenant Limit"), "Limit", RATIO), (P.measure("Covenant Headroom"), "Headroom", RATIO),
+        [(DATE_MONTH_LONG, "Test date", None), (P.measure("Covenant Net Leverage"), "Net leverage", None),
+         (P.measure("Covenant Limit"), "Limit", None), (P.measure("Covenant Headroom"), "Headroom", None),
          (P.measure("Covenant Status"), "Status", None)],
         "Contractual test dates — the only dates a status is a verdict",
         sort_field=DATE_MONTH_LONG), filters=scope(DATE_TEST, prefix="td"))
@@ -563,15 +555,15 @@ def workforce_capex() -> Page:
             value_filters=[ACTUAL] if meas == "Personnel Cost" else [], size=16.0)
     yw2 = yw + 56
     hw = L.CANVAS_H - 20 - yw2
-    pg.add("fte_trend", c2[0][0], yw2, c2[0][1], (hw - L.GUTTER) // 2, fmt_values(P.line_chart(
+    pg.add("fte_trend", c2[0][0], yw2, c2[0][1], (hw - L.GUTTER) // 2, P.line_chart(
         DATE_MONTH, [("Closing FTE", "Closing FTE")], "Closing FTE by month — closed months",
-        colours={"Closing FTE": T.NAVY}, units=1.0, precision=0, legend=False), "#,0"),
+        colours={"Closing FTE": T.NAVY}, units=1.0, precision=0, legend=False),
         filters=closed_scope())
     pg.add("fte_family", c2[0][0], yw2 + (hw - L.GUTTER) // 2 + L.GUTTER, c2[0][1],
-           (hw - L.GUTTER) // 2, fmt_values(P.column_chart(
+           (hw - L.GUTTER) // 2, P.column_chart(
                JOB_FAMILY, [("Closing FTE", "Closing FTE")], "Closing FTE by job family",
                horizontal=True, units=1.0, precision=0,
-               sort_field=P.measure("Closing FTE"), sort_ascending=False, labels=True), "#,0"))
+               sort_field=P.measure("Closing FTE"), sort_ascending=False, labels=True))
     # ---- capex, right
     pg.section("cx", c2[1][0], y, c2[1][1], "Capital expenditure", "USD millions")
     tiles = [("x_spend", "Spend", "Actual CapEx", M1), ("x_appr", "Approved", "Approved CapEx", M1),
@@ -582,19 +574,19 @@ def workforce_capex() -> Page:
         kpi(pg, key, c2[1][0] + i * (tw + 8), yw, tw, label, meas, fmt,
             value_filters=[ACTUAL] if meas in ("Actual CapEx", "CapEx to Depreciation") else [],
             size=16.0)
-    pg.add("capex_class", c2[1][0], yw2, c2[1][1], (hw - L.GUTTER) // 2, fmt_values(P.column_chart(
+    pg.add("capex_class", c2[1][0], yw2, c2[1][1], (hw - L.GUTTER) // 2, P.column_chart(
         ASSET_CLASS, [("Actual CapEx", "Spend"), ("Approved CapEx", "Approved")],
         "Spend against approval by asset class",
         colours={"Actual CapEx": T.NAVY, "Approved CapEx": T.BUDGET},
-        sort_field=P.measure("Actual CapEx"), sort_ascending=False), "#,0.0"),
+        sort_field=P.measure("Actual CapEx"), sort_ascending=False),
         filters=scope(ACTUAL, prefix="cc"))
     pg.add("projects", c2[1][0], yw2 + (hw - L.GUTTER) // 2 + L.GUTTER, c2[1][1],
            (hw - L.GUTTER) // 2, P.table(
                [(P.column("Capital Project", "project_id"), "Project", None),
                 (P.column("Capital Project", "project_name"), "Programme", None),
-                (P.measure("Actual CapEx"), "Spend", M1),
-                (P.measure("Approved CapEx"), "Approved", M1),
-                (P.measure("CapEx Variance %"), "vs approval", PCT)],
+                (P.measure("Actual CapEx"), "Spend", None),
+                (P.measure("Approved CapEx"), "Approved", None),
+                (P.measure("CapEx Variance %"), "vs approval", None)],
                "Largest programmes — the corrected unique project key",
                sort_field=P.measure("Actual CapEx"), ascending=False,
                widths={"Capital Project.project_id": 150, "Capital Project.project_name": 178,

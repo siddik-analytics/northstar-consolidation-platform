@@ -28,8 +28,7 @@
               },
               "queryRef": "Northstar Measures.Total Liabilities",
               "nativeQueryRef": "Total Liabilities",
-              "displayName": "Total Liabilities",
-              "format": "#,0,,.0;(#,0,,.0);\"–\""
+              "displayName": "Total Liabilities"
             }
           ]
         }

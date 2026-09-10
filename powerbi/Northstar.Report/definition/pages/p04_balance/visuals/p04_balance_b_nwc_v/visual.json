@@ -28,8 +28,7 @@
               },
               "queryRef": "Northstar Measures.Net Working Capital",
               "nativeQueryRef": "Net Working Capital",
-              "displayName": "Net Working Capital",
-              "format": "#,0,,.0;(#,0,,.0);\"–\""
+              "displayName": "Net Working Capital"
             }
           ]
         }
