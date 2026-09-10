@@ -1,0 +1,16 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/pagesMetadata/1.1.0/schema.json",
+  "pageOrder": [
+    "p01_executive",
+    "p02_pnl",
+    "p03_bu",
+    "p04_balance",
+    "p05_cash",
+    "p06_ebitda",
+    "p07_debt",
+    "p08_workforce",
+    "p09_controls",
+    "p10_lineage"
+  ],
+  "activePageName": "p01_executive"
+}

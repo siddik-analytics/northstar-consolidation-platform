@@ -1,0 +1,15 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/page/2.1.0/schema.json",
+  "name": "p08_workforce",
+  "displayName": "08 Workforce & CapEx",
+  "displayOption": "FitToPage",
+  "height": 720,
+  "width": 1280,
+  "visualInteractions": [
+    {
+      "source": "p08_workforce_sl_period",
+      "target": "p08_workforce_fte_trend",
+      "type": "NoFilter"
+    }
+  ]
+}

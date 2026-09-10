@@ -1,0 +1,30 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/page/2.1.0/schema.json",
+  "name": "p02_pnl",
+  "displayName": "02 P&L Performance",
+  "displayOption": "FitToPage",
+  "height": 720,
+  "width": 1280,
+  "visualInteractions": [
+    {
+      "source": "p02_pnl_sl_period",
+      "target": "p02_pnl_ebitda_trend",
+      "type": "NoFilter"
+    },
+    {
+      "source": "p02_pnl_sl_basis",
+      "target": "p02_pnl_ebitda_trend",
+      "type": "NoFilter"
+    },
+    {
+      "source": "p02_pnl_sl_comparison",
+      "target": "p02_pnl_ebitda_trend",
+      "type": "NoFilter"
+    },
+    {
+      "source": "p02_pnl_sl_rbasis",
+      "target": "p02_pnl_ebitda_trend",
+      "type": "NoFilter"
+    }
+  ]
+}

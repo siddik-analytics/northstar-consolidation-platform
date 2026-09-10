@@ -324,26 +324,10 @@ def generate(con: duckdb.DuckDBPyConnection) -> dict:
         "version": "4.2", "settings": {},
     }, indent=2) + "\n", encoding="utf-8")
 
-    (C.REPORT_DIR / "definition.pbir").write_text(json.dumps({
-        "version": "4.0",
-        "datasetReference": {"byPath": {"path": f"../{C.PROJECT}.SemanticModel"}},
-    }, indent=2) + "\n", encoding="utf-8")
-
-    # A single technical page. Phase 6A validates a semantic model; the report pages are
-    # Phase 6B, and building them now would be building on an unapproved model.
-    (C.REPORT_DIR / "report.json").write_text(json.dumps({
-        "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/"
-                   "definition/report/1.0.0/schema.json",
-        "themeCollection": {},
-        "sections": [{
-            "name": "TechnicalValidation",
-            "displayName": "Technical validation",
-            "ordinal": 0, "width": 1280, "height": 720,
-            "visualContainers": [],
-        }],
-        "config": json.dumps({"version": "5.43", "themeCollection": {}}),
-        "layoutOptimization": 0,
-    }, indent=2) + "\n", encoding="utf-8")
+    # ---------------------------------------------------------------- the report
+    # Phase 6B: the report pages, in the enhanced (PBIR) format, from `report/pages.py`.
+    from .report import build as report_build
+    report_summary = report_build.generate(C.REPORT_DIR)
 
     # ---------------------------------------------------------------- the model
     (definition / "database.tmdl").write_text(
@@ -388,4 +372,6 @@ def generate(con: duckdb.DuckDBPyConnection) -> dict:
         "measures": len(MEASURES),
         "relationships": len(C.RELATIONSHIPS),
         "inactive_relationships": len(C.INACTIVE_RELATIONSHIPS),
+        "report_pages": report_summary["pages"],
+        "report_visuals": report_summary["visuals"],
     }

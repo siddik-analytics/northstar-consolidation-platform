@@ -16,7 +16,16 @@ each one says about the design rather than for what happened.
 
 ## Open
 
-*None.*
+| id | found in | what it is | status |
+|---|---|---|---|
+| **P6B-D-03** | Phase 6B, first native render of the report | **Excel-style format strings on the governed measures.** Every money measure carries `#,0.0,,;(#,0.0,,);"–"`. Power BI's format grammar puts the scaling commas before the decimal (`#,0,,.0`), so a matrix shows Revenue variance as `(5,553,457.5,)` and a card as `278….` | **OPEN — awaiting owner decision.** Presentation metadata, no finance logic. Proposed: `measures.py` emits `#,0,,.0;(#,0,,.0);"–"` (and the signed and two-decimal variants). Interim: the report sets a display format at every projection in Power BI's grammar, same scaling and precision as the workbook; the definition is untouched |
+| **P6B-D-04** | Phase 6B, Executive Overview and P&L matrix | **`[Variance %]` is wrong above entity grain.** It returns the stored percentage whenever the context holds one measure line, but `mart_variance` stores that percentage per entity, so at group level it **sums thirteen entity percentages**: EBIT variance to budget reads 2,713.9% in the engine where the workbook reads (32.8%). Evidence: `CALCULATE([Variance %], period 202608, ACT_VS_BUD, EBIT)` = 27.138624; `DIVIDE([Variance], ABS([Variance Comparator]))` in the same context = −0.3276 | **OPEN — awaiting owner decision.** A governed-measure defect. Proposed: read the stored percentage only when the context holds one line **and one entity** (`HASONEVALUE('Entity'[entity_code])`), otherwise recompute over the absolute comparator as the measure already does across lines. No Phase 6A control compared `[Variance %]` at group level; `P6-XLS` compares dollars and leverage only |
+| **P6B-D-05** | Phase 6B, every business-unit visual | **Business Unit filters nothing.** The Phase 6A design keeps the five fact→Business Unit relationships inactive "because a fact reaches Business Unit through Entity" — but no `Entity[bu_code] → Business Unit[bu_code]` relationship was ever declared. `INFO.RELATIONSHIPS()` shows five relationships into Business Unit, all inactive, and none out of Entity. `[Actual Revenue]` by unit returns the Group total, 278,980,889.78, for all five units | **OPEN — awaiting owner decision.** A governed-model defect. Proposed: one active many-to-one relationship `Entity[bu_code] → Business Unit[bu_code]` (an entity belongs to exactly one unit; `bu_code` is unique on the dimension), leaving the five direct paths inactive as designed. A new control should require every dimension to reach at least one fact along an active path — `P6-SEM-04` proved no table had two active paths and never asked whether one had none |
+
+Phase 6B stopped on these under its own rule: a semantic-model defect exposed by report
+construction is reported, not compensated. The report generator, the native validation
+tooling and the ten pages are committed as work in progress so the correction can be seen
+against them. Evidence: `docs/assets/phase-06b/wip/`.
 
 ## Closed in Phase 6A.2
 

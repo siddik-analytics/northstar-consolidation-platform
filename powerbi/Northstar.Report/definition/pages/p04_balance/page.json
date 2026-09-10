@@ -1,0 +1,20 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/page/2.1.0/schema.json",
+  "name": "p04_balance",
+  "displayName": "04 Balance Sheet & Working Capital",
+  "displayOption": "FitToPage",
+  "height": 720,
+  "width": 1280,
+  "visualInteractions": [
+    {
+      "source": "p04_balance_sl_period",
+      "target": "p04_balance_wc_trend",
+      "type": "NoFilter"
+    },
+    {
+      "source": "p04_balance_sl_period",
+      "target": "p04_balance_bs_trend",
+      "type": "NoFilter"
+    }
+  ]
+}

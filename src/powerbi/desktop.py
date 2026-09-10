@@ -32,6 +32,7 @@ What it can and cannot claim
 from __future__ import annotations
 
 import os
+import re
 import subprocess
 import sys
 import time
@@ -328,6 +329,14 @@ def refresh(pid: int | None = None, wait: int = 900) -> dict:
         time.sleep(4)
         dl = _dialogs(win)
         for t, d in dl:
+            if t == "Edit Parameters":
+                # Desktop asks to confirm the M parameters the first time a copy of the
+                # project is refreshed from a new location; the declared value is right.
+                for b in d.descendants(control_type="Button"):
+                    if b.window_text() == "OK":
+                        b.click_input()
+                        break
+                continue
             if t != "Refresh":                      # the progress window is not a problem
                 seen[t] = _dialog_text(d)[:300]
         remaining = bars()
@@ -337,6 +346,156 @@ def refresh(pid: int | None = None, wait: int = 900) -> dict:
         if seen:
             break
     return dict(done=not remaining and not seen, dialogs=seen, why="; ".join(remaining))
+
+
+def page_tabs(pid: int | None = None) -> list[str]:
+    """The names of the report's page tabs, in order, as Desktop shows them."""
+    win, _ = window(pid)
+    if win is None:
+        return []
+    out = []
+    for t in win.descendants(control_type="TabItem"):
+        name = t.window_text().strip()
+        # ribbon tabs and pane tabs are TabItems too; report pages are named "NN Title"
+        if re.match(r"^\d\d ", name) and name not in out:
+            out.append(name)
+    return out
+
+
+def report_view(pid: int | None = None) -> bool:
+    """Switch Desktop to Report view (the page tabs only exist there)."""
+    win, _ = window(pid)
+    if win is None:
+        return False
+    for t in win.descendants(control_type="TabItem"):
+        if t.window_text().strip() == "Report view":
+            t.click_input()
+            time.sleep(1.5)
+            return True
+    return False
+
+
+def goto_page(name: str, pid: int | None = None) -> bool:
+    """Click a page tab by its display name."""
+    win, _ = window(pid)
+    if win is None:
+        return False
+    for t in win.descendants(control_type="TabItem"):
+        if t.window_text().strip() == name:
+            try:
+                t.select()
+            except Exception:
+                t.click_input()
+            time.sleep(2.5)
+            return True
+    return False
+
+
+def visual_errors(pid: int | None = None) -> list[str]:
+    """
+    Text Desktop puts on a visual that failed: "Couldn't load the data", "See details",
+    "Something's wrong", or the fields-missing message. Empty when every visual rendered.
+    """
+    win, _ = window(pid)
+    if win is None:
+        return []
+    signs = ("couldn't load", "can't display", "see details", "something's wrong",
+             "couldn't retrieve", "fix this", "error")
+    ignore = ("copilot",)
+    out = []
+    for t in win.descendants(control_type="Text"):
+        text = t.window_text()
+        low = text.lower() if text else ""
+        if low and any(sign in low for sign in signs) and not any(i in low for i in ignore)                 and text not in out:
+            out.append(text[:160])
+    return out
+
+
+def collapse_panes(pid: int | None = None) -> int:
+    """
+    Collapse the Filters, Visualizations and Data panes so the canvas gets the width.
+
+    Desktop names every collapse chevron "Collapse"; the three pane headers are the ones
+    in the top band of the content area, rightmost first.
+    """
+    win, _ = window(pid)
+    if win is None:
+        return 0
+    rect = win.rectangle()
+    band_top, band_bottom = rect.top + int(rect.height() * 0.20), rect.top + int(rect.height() * 0.30)
+    chevrons = []
+    for b in win.descendants(control_type="Button"):
+        try:
+            if b.window_text().strip() == "Collapse" and b.is_visible():
+                r = b.rectangle()
+                if band_top <= r.top <= band_bottom and r.left > rect.left + rect.width() * 0.5:
+                    chevrons.append((r.left, b))
+        except Exception:
+            pass
+    done = 0
+    for _, b in sorted(chevrons, key=lambda t: -t[0]):
+        try:
+            b.click_input()
+            done += 1
+            time.sleep(0.7)
+        except Exception:
+            pass
+    return done
+
+
+COPPER_RGB = (0xB0, 0x7A, 0x45)
+
+
+def capture_page(path: Path | str, pid: int | None = None, mark_px: int = 64,
+                 page_size: tuple[int, int] = (1280, 720)) -> bool:
+    """
+    The report page alone, cropped out of Desktop's window at whatever zoom it is shown.
+
+    Every page has the copper mark at its top-left corner, exactly `mark_px` tall at canvas
+    scale. The first copper pixel in the canvas area is the page's origin, the mark's height
+    in pixels gives the zoom, and the page is `page_size` scaled from there. No chrome, no
+    panes, no page tabs -- and no dependence on what Desktop paints around the page.
+    """
+    from PIL import Image
+    tmp = Path(str(path) + ".full.png")
+    if not screenshot(tmp, pid):
+        return False
+    im = Image.open(tmp).convert("RGB")
+    tmp.unlink(missing_ok=True)
+    w, h = im.size
+    px = im.load()
+
+    def copper(x, y):
+        r, g, b = px[x, y]
+        return (abs(r - COPPER_RGB[0]) < 12 and abs(g - COPPER_RGB[1]) < 12
+                and abs(b - COPPER_RGB[2]) < 12)
+
+    origin = None
+    for y in range(int(h * 0.22), int(h * 0.9)):
+        for x in range(int(w * 0.03), int(w * 0.6)):
+            if copper(x, y) and copper(x + 1, y + 2):
+                origin = (x, y)
+                break
+        if origin:
+            break
+    if origin is None:
+        return False
+    x0, y0 = origin
+
+    def navy(x, y):
+        r, g, b = px[x, y]
+        return abs(r - 0x1B) < 12 and abs(g - 0x49) < 12 and abs(b - 0x65) < 12
+
+    # the rail runs the full page height down the column just inside the mark: copper for
+    # the mark, navy to the page's bottom edge -- a run exactly `page_size[1]` tall at scale
+    y1 = y0
+    while y1 < h - 1 and (copper(x0 + 1, y1 + 1) or navy(x0 + 1, y1 + 1)):
+        y1 += 1
+    scale = (y1 - y0 + 1) / page_size[1]
+    box = (x0, y0, min(w, round(x0 + page_size[0] * scale)),
+           min(h, round(y0 + page_size[1] * scale)))
+    im.crop(box).save(str(path))
+    return True
 
 
 def screenshot(path: Path | str, pid: int | None = None) -> bool:

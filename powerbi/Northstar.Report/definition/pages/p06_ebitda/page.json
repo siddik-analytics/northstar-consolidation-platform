@@ -1,0 +1,40 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/page/2.1.0/schema.json",
+  "name": "p06_ebitda",
+  "displayName": "06 EBITDA & Variance Bridge",
+  "displayOption": "FitToPage",
+  "height": 720,
+  "width": 1280,
+  "visualInteractions": [
+    {
+      "source": "p06_ebitda_sl_rbasis",
+      "target": "p06_ebitda_e_adj_v",
+      "type": "NoFilter"
+    },
+    {
+      "source": "p06_ebitda_sl_rbasis",
+      "target": "p06_ebitda_e_adj_d",
+      "type": "NoFilter"
+    },
+    {
+      "source": "p06_ebitda_sl_rbasis",
+      "target": "p06_ebitda_e_adj_f",
+      "type": "NoFilter"
+    },
+    {
+      "source": "p06_ebitda_sl_rbasis",
+      "target": "p06_ebitda_e_adjm_v",
+      "type": "NoFilter"
+    },
+    {
+      "source": "p06_ebitda_sl_rbasis",
+      "target": "p06_ebitda_e_add_v",
+      "type": "NoFilter"
+    },
+    {
+      "source": "p06_ebitda_sl_rbasis",
+      "target": "p06_ebitda_bu_var",
+      "type": "NoFilter"
+    }
+  ]
+}

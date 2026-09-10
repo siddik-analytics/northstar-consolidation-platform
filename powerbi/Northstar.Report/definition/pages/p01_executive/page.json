@@ -1,0 +1,65 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/page/2.1.0/schema.json",
+  "name": "p01_executive",
+  "displayName": "01 Executive Overview",
+  "displayOption": "FitToPage",
+  "height": 720,
+  "width": 1280,
+  "visualInteractions": [
+    {
+      "source": "p01_executive_sl_period",
+      "target": "p01_executive_rev_trend",
+      "type": "NoFilter"
+    },
+    {
+      "source": "p01_executive_sl_period",
+      "target": "p01_executive_cash_trend",
+      "type": "NoFilter"
+    },
+    {
+      "source": "p01_executive_sl_period",
+      "target": "p01_executive_lev_trend",
+      "type": "NoFilter"
+    },
+    {
+      "source": "p01_executive_sl_basis",
+      "target": "p01_executive_rev_trend",
+      "type": "NoFilter"
+    },
+    {
+      "source": "p01_executive_sl_basis",
+      "target": "p01_executive_cash_trend",
+      "type": "NoFilter"
+    },
+    {
+      "source": "p01_executive_sl_basis",
+      "target": "p01_executive_lev_trend",
+      "type": "NoFilter"
+    },
+    {
+      "source": "p01_executive_sl_rbasis",
+      "target": "p01_executive_k_ebitda_v",
+      "type": "NoFilter"
+    },
+    {
+      "source": "p01_executive_sl_rbasis",
+      "target": "p01_executive_k_ebitda_d",
+      "type": "NoFilter"
+    },
+    {
+      "source": "p01_executive_sl_rbasis",
+      "target": "p01_executive_k_ebitda_f",
+      "type": "NoFilter"
+    },
+    {
+      "source": "p01_executive_sl_rbasis",
+      "target": "p01_executive_k_margin_v",
+      "type": "NoFilter"
+    },
+    {
+      "source": "p01_executive_sl_rbasis",
+      "target": "p01_executive_bu_ebitda",
+      "type": "NoFilter"
+    }
+  ]
+}

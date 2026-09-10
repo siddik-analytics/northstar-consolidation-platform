@@ -1,0 +1,25 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/page/2.1.0/schema.json",
+  "name": "p07_debt",
+  "displayName": "07 Debt & Covenants",
+  "displayOption": "FitToPage",
+  "height": 720,
+  "width": 1280,
+  "visualInteractions": [
+    {
+      "source": "p07_debt_sl_period",
+      "target": "p07_debt_lev_trend",
+      "type": "NoFilter"
+    },
+    {
+      "source": "p07_debt_sl_period",
+      "target": "p07_debt_tests",
+      "type": "NoFilter"
+    },
+    {
+      "source": "p07_debt_sl_period",
+      "target": "p07_debt_instruments",
+      "type": "NoFilter"
+    }
+  ]
+}
