@@ -5,7 +5,13 @@ over the governed marts, built as code.
 
     python -m src.marts.run      # the marts
     python -m src.excel.build    # the workbook
-    python -m src.excel.qa       # calculate, inspect and render it in Excel
+    python -m src.excel.qa       # calculate, inspect, render and rasterise it in Excel
+
+The QA step exports every visible sheet to PDF through Excel's own writer **and rasterises it to
+PNG**, so a visual review always reads the build in front of it. The rasterisation used to be a
+manual afterthought, and a review once read images from a previous build while the PDFs beside
+them were current -- the first attempt at fixing the chart axes appeared to change nothing at
+all (Phase 5.2).
 
 ---
 

@@ -30,6 +30,7 @@ figure back to the source journal that produced it.
 | **4C — Reporting integrity & cross-artefact gate** | ✅ **Complete** | [Report](docs/phases/phase-04c-reporting-integrity.md) |
 | **5 — Reporting marts & Excel management model** | ✅ **Complete** | [Report](docs/phases/phase-05-report.md) |
 | **5.1 — Upstream dimensional-integrity correction** | ✅ **Complete** | [Report](docs/phases/phase-05-1-key-integrity.md) · [Scenario dimension](docs/phases/phase-05-1-scenario-integrity.md) |
+| **5.2 — Excel executive design and visual polish** | ✅ **Complete** | [Report](docs/phases/phase-05-2-visual-polish.md) |
 | **6A — Power BI semantic model** | ✅ **Complete** | [Report](docs/phases/phase-06a-report.md) |
 | 6B — Power BI report design | ⏸ | |
 | 7 — Board pack & commentary framework | ⏸ | |
@@ -189,6 +190,7 @@ tests/           Automated validation
 | [**Phase 5 report**](docs/phases/phase-05-report.md) | the governed reporting marts and the Excel management model |
 | [Phase 5.1 key integrity](docs/phases/phase-05-1-key-integrity.md) | a business key that was never a key, corrected at the generator, and the framework that now proves every one of them |
 | [Phase 5.1 scenario integrity](docs/phases/phase-05-1-scenario-integrity.md) | the second defect that framework found: a version code in use that resolved to nothing |
+| [Phase 5.2 visual polish](docs/phases/phase-05-2-visual-polish.md) | seventeen charts with no axes, and what looking at the workbook found |
 | [**Phase 6A report**](docs/phases/phase-06a-report.md) | the governed Power BI semantic model, and the two upstream defects that interrupted it |
 | [Key and grain framework](docs/key-and-grain-framework.md) | 73 declared keys, 290 controls, 18 fixtures, and the two defects that made them necessary |
 | [Power BI semantic model](docs/powerbi-semantic-model.md) | the star schema, the measure layer, and why it is validated by running it |

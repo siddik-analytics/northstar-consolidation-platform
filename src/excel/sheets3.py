@@ -96,11 +96,11 @@ def headcount(wb, meta):
     slots, chart_w = chart_slots(ws, 11)
     line_chart(ws, f"{slots[0]}{r + 2}", "Closing headcount and personnel cost — FY2026",
                Reference(wb["_chart"], min_col=2, min_row=2, max_row=13),
-               [(Reference(wb["_chart"], min_col=35, min_row=1, max_row=13), "Closing FTE",
+               [(Reference(wb["_chart"], min_col=35, min_row=2, max_row=13), "Closing FTE",
                  S.ACTUAL, None)], width=chart_w, height=7.4, number_format=S.FTE)
     bar_chart(ws, f"{slots[1]}{r + 2}", f"Closing FTE by business unit at {meta['report_label']}",
               Reference(wb["_chart"], min_col=8, min_row=2, max_row=6),
-              [(Reference(wb["_chart"], min_col=36, min_row=1, max_row=6), "FTE",
+              [(Reference(wb["_chart"], min_col=36, min_row=2, max_row=6), "FTE",
                 S.ACTUAL)], width=chart_w, height=7.4, number_format=S.FTE)
     ws.print_area = f"A1:L{r + 18}"
     return ws
@@ -200,13 +200,13 @@ def capex(wb, meta):
     slots, chart_w = chart_slots(ws, 11)
     bar_chart(ws, f"{slots[0]}{r + 2}", "Capital expenditure by month — FY2026",
               Reference(wb["_chart"], min_col=2, min_row=2, max_row=13),
-              [(Reference(wb["_chart"], min_col=38, min_row=1, max_row=13), "CapEx",
+              [(Reference(wb["_chart"], min_col=38, min_row=2, max_row=13), "CapEx",
                 S.ACTUAL)], width=chart_w, height=7.4)
     line_chart(ws, f"{slots[1]}{r + 2}", "Capital expenditure against depreciation",
                Reference(wb["_chart"], min_col=2, min_row=2, max_row=13),
-               [(Reference(wb["_chart"], min_col=38, min_row=1, max_row=13), "CapEx",
+               [(Reference(wb["_chart"], min_col=38, min_row=2, max_row=13), "CapEx",
                  S.ACTUAL, None),
-                (Reference(wb["_chart"], min_col=39, min_row=1, max_row=13), "Depreciation",
+                (Reference(wb["_chart"], min_col=39, min_row=2, max_row=13), "Depreciation",
                  S.FORECAST, "dash")], width=chart_w, height=7.4)
     ws.print_area = f"A1:L{r + 18}"
     return ws
@@ -284,15 +284,15 @@ def fx(wb, meta):
     slots, chart_w = chart_slots(ws, 11)
     line_chart(ws, f"{slots[0]}{r + 2}", "Average rates against USD — FY2026",
                Reference(wb["_chart"], min_col=2, min_row=2, max_row=13),
-               [(Reference(wb["_chart"], min_col=41, min_row=1, max_row=13), "EUR",
+               [(Reference(wb["_chart"], min_col=41, min_row=2, max_row=13), "EUR",
                  S.ACTUAL, None),
-                (Reference(wb["_chart"], min_col=42, min_row=1, max_row=13), "GBP",
+                (Reference(wb["_chart"], min_col=42, min_row=2, max_row=13), "GBP",
                  S.FORECAST, None),
-                (Reference(wb["_chart"], min_col=43, min_row=1, max_row=13), "CAD",
+                (Reference(wb["_chart"], min_col=43, min_row=2, max_row=13), "CAD",
                  S.BUDGET, None)], width=chart_w, height=7.4, number_format=S.RATE)
     line_chart(ws, f"{slots[1]}{r + 2}", "Cumulative translation adjustment — monthly movement",
                Reference(wb["_chart"], min_col=2, min_row=2, max_row=13),
-               [(Reference(wb["_chart"], min_col=44, min_row=1, max_row=13),
+               [(Reference(wb["_chart"], min_col=44, min_row=2, max_row=13),
                  "CTA movement", S.ACTUAL, None)], width=chart_w, height=7.4)
     ws.print_area = f"A1:K{r + 18}"
     return ws

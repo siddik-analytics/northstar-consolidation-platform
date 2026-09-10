@@ -97,6 +97,9 @@ def register(wb) -> None:
 
 
 STYLES = [
+    # A quiet group heading over a band of KPI cards: small, letter-spaced by capitals rather
+    # than by tracking Excel does not have, and muted so it labels without competing.
+    _style("ns_kpi_band", size=8, bold=True, colour=INK_MUTED, align="left"),
     # ---- structure
     _style("ns_title", size=20, bold=True, colour=HEADER_BG, align="left"),
     _style("ns_subtitle", size=11, colour=INK_MUTED, align="left"),

@@ -418,6 +418,25 @@ scenario/version assumptions. See
 
 ---
 
+## Phase 5.2 — Excel executive design and visual polish ✅
+
+**Complete, awaiting visual review.** A design pass over the approved workbook: no finance logic,
+no reporting definitions, presentation only.
+
+Rendering all sixteen sheets through Excel's own PDF writer and looking at them found that **all
+seventeen charts had no axes** — `openpyxl` deletes an axis whose `delete` is unset — and that
+**all 26 chart series started at the header row**, plotting a phantom zero and shifting every bar
+chart by one category. Neither is visible in XML, a formula audit or a reconciliation.
+
+Also corrected: charts straddling page breaks, hollow negative bars, twelve repeated
+finance-lease rows burying 96% of the debt, a control summary that stopped at Phase 5, two
+negative-number conventions on the flagship sheet, and an empty half-page on the P&L.
+
+**No reported financial value changed**; 17/17 reconciliations still pass. See
+[`phase-05-2-visual-polish.md`](phase-05-2-visual-polish.md).
+
+---
+
 ## Phase 6A — Power BI semantic model ✅
 
 **Complete, awaiting review.** A governed star schema over the Phase 5 marts: 28 tables, 89

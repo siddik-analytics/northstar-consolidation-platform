@@ -88,13 +88,13 @@ def business_units(wb, meta):
     slots, chart_w = chart_slots(ws, 11)
     bar_chart(ws, f"{slots[0]}{r + 2}", "Revenue by business unit — YTD actual against budget",
               Reference(wb["_chart"], min_col=8, min_row=2, max_row=6),
-              [(Reference(wb["_chart"], min_col=12, min_row=1, max_row=6), "Actual YTD",
+              [(Reference(wb["_chart"], min_col=12, min_row=2, max_row=6), "Actual YTD",
                 S.ACTUAL),
-               (Reference(wb["_chart"], min_col=13, min_row=1, max_row=6), "Budget YTD",
+               (Reference(wb["_chart"], min_col=13, min_row=2, max_row=6), "Budget YTD",
                 S.BUDGET)], width=chart_w, height=7.4)
     line_chart(ws, f"{slots[1]}{r + 2}", "Group gross margin — FY2026 by month",
                Reference(wb["_chart"], min_col=2, min_row=2, max_row=13),
-               [(Reference(wb["_chart"], min_col=6, min_row=1, max_row=13), "Gross margin",
+               [(Reference(wb["_chart"], min_col=6, min_row=2, max_row=13), "Gross margin",
                  S.ACTUAL, None)], width=chart_w, height=7.4, number_format=S.PCT1)
     ws.print_area = f"A1:K{r + 18}"
     return ws
@@ -303,13 +303,13 @@ def cash_flow(wb, meta):
     slots, chart_w = chart_slots(ws, 11)
     line_chart(ws, f"{slots[0]}{r + 2}", "Cash and total liquidity — FY2026",
                Reference(wb["_chart"], min_col=2, min_row=2, max_row=13),
-               [(Reference(wb["_chart"], min_col=16, min_row=1, max_row=13), "Cash",
+               [(Reference(wb["_chart"], min_col=16, min_row=2, max_row=13), "Cash",
                  S.ACTUAL, None),
-                (Reference(wb["_chart"], min_col=17, min_row=1, max_row=13),
+                (Reference(wb["_chart"], min_col=17, min_row=2, max_row=13),
                  "Total liquidity", S.FORECAST, None)], width=chart_w, height=7.4)
     bar_chart(ws, f"{slots[1]}{r + 2}", "Year-to-date cash flow by category",
               Reference(wb["_chart"], min_col=19, min_row=2, max_row=5),
-              [(Reference(wb["_chart"], min_col=20, min_row=1, max_row=5), "USD m",
+              [(Reference(wb["_chart"], min_col=20, min_row=2, max_row=5), "USD m",
                 S.ACTUAL)], width=chart_w, height=7.4)
     note(ws, r + 18, "The statement is derived from balance sheet movements, so it ties by "
                      "construction — the check row above is nil in every month. The effect of "
@@ -373,11 +373,11 @@ def working_capital(wb, meta):
     slots, chart_w = chart_slots(ws, 11)
     line_chart(ws, f"{slots[0]}{r + 2}", "Net working capital — FY2026",
                Reference(wb["_chart"], min_col=2, min_row=2, max_row=13),
-               [(Reference(wb["_chart"], min_col=22, min_row=1, max_row=13),
+               [(Reference(wb["_chart"], min_col=22, min_row=2, max_row=13),
                  "Net working capital", S.ACTUAL, None)], width=chart_w, height=7.4)
     line_chart(ws, f"{slots[1]}{r + 2}", "Cash conversion cycle — days",
                Reference(wb["_chart"], min_col=2, min_row=2, max_row=13),
-               [(Reference(wb["_chart"], min_col=23, min_row=1, max_row=13),
+               [(Reference(wb["_chart"], min_col=23, min_row=2, max_row=13),
                  "Cash conversion cycle", S.FORECAST, None)], width=chart_w, height=7.4,
                number_format=S.DAYS)
     ws.print_area = f"A1:L{r + 18}"
@@ -478,7 +478,7 @@ def ebitda_bridge(wb, meta):
 
     bar_chart(ws, f"B{r}", "EBITDA bridge — FY2026 statutory to adjusted",
               Reference(wb["_chart"], min_col=25, min_row=2, max_row=5),
-              [(Reference(wb["_chart"], min_col=26, min_row=1, max_row=5), "USD m",
+              [(Reference(wb["_chart"], min_col=26, min_row=2, max_row=5), "USD m",
                 S.ACTUAL)], width=16.5, height=7.4)
     ws.print_area = f"A1:H{r + 16}"
     return ws
@@ -499,13 +499,19 @@ def debt_covenants(wb, meta):
                     "Hedged", "Maturity", "In covenant debt"], label_text="Instrument")
     r = 8
     first = r
-    for iid, iname, itype, ccy, rate, rtype, hedged, maturity, in_cov in meta["instruments"]:
+    for kind, key, iname, itype, ccy, rate, rtype, hedged, maturity, in_cov in \
+            meta["instruments"]:
+        # One row may be a single instrument or a whole class of them; the criterion column
+        # changes, the arithmetic does not, and the total still sums the rows on the page.
+        criterion = "dbt_id" if kind == "id" else "dbt_type"
         put(ws, f"B{r}", iname, "ns_label")
         put(ws, f"C{r}", itype.replace("_", " ").title(), "ns_text_mut")
         put(ws, f"D{r}", ccy, "ns_text_c")
-        ws[f"E{r}"] = f'=SUMIFS(dbt_closing,dbt_id,"{iid}",dbt_period,{REPORT_PERIOD})'
+        ws[f"E{r}"] = (f'=SUMIFS(dbt_closing,{criterion},"{key}",'
+                       f'dbt_period,{REPORT_PERIOD})')
         ws[f"E{r}"].style = "ns_m1"
-        ws[f"F{r}"] = f'=SUMIFS(dbt_undrawn,dbt_id,"{iid}",dbt_period,{REPORT_PERIOD})'
+        ws[f"F{r}"] = (f'=SUMIFS(dbt_undrawn,{criterion},"{key}",'
+                       f'dbt_period,{REPORT_PERIOD})')
         ws[f"F{r}"].style = "ns_m1"
         put(ws, f"G{r}", rate, "ns_text_c")
         put(ws, f"H{r}", rtype.title(), "ns_text_c")
@@ -576,16 +582,16 @@ def debt_covenants(wb, meta):
     slots, chart_w = chart_slots(ws, 11)
     line_chart(ws, f"{slots[0]}{r + 2}", "Net leverage against the covenant limit",
                Reference(wb["_chart"], min_col=2, min_row=2, max_row=13),
-               [(Reference(wb["_chart"], min_col=28, min_row=1, max_row=13), "Net leverage",
+               [(Reference(wb["_chart"], min_col=28, min_row=2, max_row=13), "Net leverage",
                  S.ACTUAL, None),
-                (Reference(wb["_chart"], min_col=29, min_row=1, max_row=13), "Covenant limit",
+                (Reference(wb["_chart"], min_col=29, min_row=2, max_row=13), "Covenant limit",
                  S.UNFAVOURABLE, "dash"),
-                (Reference(wb["_chart"], min_col=30, min_row=1, max_row=13),
+                (Reference(wb["_chart"], min_col=30, min_row=2, max_row=13),
                  "Economic leverage", S.BUDGET, None)],
-               width=chart_w, height=7.4, number_format=S.RATIO)
-    bar_chart(ws, f"{slots[1]}{r + 2}", "Debt maturity profile — drawn by instrument",
+               width=chart_w, height=7.4, number_format=S.RATIO, y_min=3.0, y_max=5.0)
+    bar_chart(ws, f"{slots[1]}{r + 2}", "Drawn debt by instrument type",
               Reference(wb["_chart"], min_col=32, min_row=2, max_row=5),
-              [(Reference(wb["_chart"], min_col=33, min_row=1, max_row=5), "USD m",
+              [(Reference(wb["_chart"], min_col=33, min_row=2, max_row=5), "USD m",
                 S.ACTUAL)], width=chart_w, height=7.4)
     ws.print_area = f"A1:K{r + 18}"
     return ws

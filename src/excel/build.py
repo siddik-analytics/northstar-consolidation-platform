@@ -86,6 +86,7 @@ NAMES: dict[str, dict[str, str]] = {
     "_addback": {"group_account": "ab_account", "fiscal_year": "ab_year",
                  "amount_m": "ab_amount"},
     "_debt": {"instrument_id": "dbt_id", "period_key": "dbt_period",
+              "instrument_type": "dbt_type",
               "closing_m": "dbt_closing", "undrawn_m": "dbt_undrawn"},
     "_cov": {"period_key": "cov_period", "max_net_leverage": "cov_max_net_leverage",
              "covenant_debt_m": "cov_covenant_debt_m", "cash_m": "cov_cash_m",
@@ -293,6 +294,34 @@ def _chart_sheet(wb, con, meta):
     for i, (label, value) in enumerate(debt_rows[:4]):
         ws.cell(row=2 + i, column=32, value=label.replace("_", " ").title())
         ws.cell(row=2 + i, column=33, value=value)
+
+    # ---- the P&L page's own two charts, in free columns beyond the FX block
+    ebitda_margin = q(f"""
+        SELECT period_key,
+               round(sum(mtd_usd) FILTER (WHERE measure_code='EBITDA')
+                     / nullif(sum(mtd_usd) FILTER (WHERE measure_code='REVENUE'), 0), 6)
+        FROM mart_financial_ytd
+        WHERE basis='STATUTORY' AND version_code='{ACT_VERSION}' AND fiscal_year={REPORT_FY}
+          AND period_key <= {REPORT_PERIOD}
+        GROUP BY 1""")
+    ws.cell(row=1, column=46, value="EBITDA margin")
+    for i, period in enumerate(months):
+        ws.cell(row=2 + i, column=46, value=ebitda_margin.get(period))
+
+    # Year-to-date variance against budget, by statement line. The bridge a reader wants when
+    # the tables above tell them the group is 5.6 behind: behind on what.
+    var_lines = con.execute(f"""
+        SELECT measure_name, round(sum(var_ytd_usd)/1e6, 4)
+        FROM mart_variance
+        WHERE comparison_code='ACT_VS_BUD' AND basis='STATUTORY'
+          AND period_key={REPORT_PERIOD}
+          AND measure_code IN ('REVENUE','COST_OF_SALES','OPEX','EBITDA','DA','EBIT')
+        GROUP BY 1, measure_sort ORDER BY measure_sort""").fetchall()
+    ws.cell(row=1, column=48, value="Line")
+    ws.cell(row=1, column=49, value="Variance")
+    for i, (label, value) in enumerate(var_lines):
+        ws.cell(row=2 + i, column=48, value=label)
+        ws.cell(row=2 + i, column=49, value=value)
     return ws
 
 
@@ -326,20 +355,36 @@ def _meta(con, tables):
     fte_py = scalar(f"SELECT sum(fte_closing) FROM mart_headcount "
                     f"WHERE period_key={REPORT_PERIOD - 100}")
 
+    def money(value: float, decimals: int = 1) -> str:
+        """
+        A negative in brackets, the way the rest of the workbook writes one.
+
+        The KPI comparators used a leading minus while every table on every sheet used
+        parentheses, so the flagship page disagreed with the pack behind it about how to
+        write a negative number. One convention, chosen to match the tables because there
+        are far more of them.
+        """
+        return (f"({abs(value):,.{decimals}f})" if value < 0
+                else f"{value:,.{decimals}f}")
+
     def delta(actual, budget, higher_is_good=True):
         d = actual - budget
         fav = "NEUTRAL" if abs(d) < 1e-9 else (
             "FAVOURABLE" if (d > 0) == higher_is_good else "UNFAVOURABLE")
-        pct = f" ({d / abs(budget):+.1%})" if budget else ""
-        return f"{d:+,.1f} vs budget{pct}", fav
+        # The brackets ARE the minus sign, so the percentage carries its own pair and is not
+        # then wrapped in another: "(2.0%)", never "((2.0)%)".
+        ratio = d / abs(budget) * 100 if budget else 0
+        pct = (f" ({abs(ratio):,.1f}%)" if ratio < 0 else f" ({ratio:,.1f}%)") if budget else ""
+        return f"{money(d)} vs budget{pct}", fav
 
     kpi = {}
     kpi["REVENUE"] = dict(zip(("delta", "fav"), delta(rev_a, rev_b)))
     kpi["REVENUE"]["value"] = round(rev_a, 4)
     kpi["GROSS_MARGIN"] = {"value": round(gp_a / rev_a, 6) if rev_a else 0}
     d, f = delta(gp_a / rev_a if rev_a else 0, gp_b / rev_b if rev_b else 0)
-    kpi["GROSS_MARGIN"].update({"delta": f"{(gp_a/rev_a - gp_b/rev_b)*100:+.1f} pp vs budget"
-                                if rev_a and rev_b else "", "fav": f})
+    kpi["GROSS_MARGIN"].update(
+        {"delta": f"{money((gp_a/rev_a - gp_b/rev_b)*100)} pp vs budget"
+         if rev_a and rev_b else "", "fav": f})
     kpi["EBITDA"] = dict(zip(("delta", "fav"), delta(eb_a, eb_b)))
     kpi["EBITDA"]["value"] = round(eb_a, 4)
     kpi["ADJ_EBITDA"] = dict(zip(("delta", "fav"), delta(adj_a, adj_b)))
@@ -450,14 +495,36 @@ def _meta(con, tables):
     # full text stays on the mart; the sheet shows the pricing and the Hedged column already
     # says which instrument is swapped, because a truncated column tells a reader less than a
     # shorter one that is not.
-    instruments = con.execute(f"""
+    # Capital structure, largest first, with the twelve finance leases on one line.
+    #
+    # Listing them individually gave twelve near-identical rows -- same rate, same maturity,
+    # same everything but the entity -- above the two instruments that are 96% of the debt.
+    # A reader's eye went to the noise. The leases are one economic exposure and are presented
+    # as one, with the count so nothing is hidden; the mart still holds every instrument and
+    # the total still sums from the rows on the page.
+    rows = con.execute(f"""
         SELECT instrument_id, instrument_name, instrument_type, currency_code,
                CASE WHEN interest_rate_basis LIKE '%SOFR%' THEN 'SOFR + 425bps'
-                    ELSE interest_rate_basis END,
+                    ELSE interest_rate_basis END AS rate,
                rate_type, is_hedged,
-               strftime(CAST(maturity_date AS DATE), '%b %Y'), counts_toward_covenant_debt
+               strftime(CAST(maturity_date AS DATE), '%b %Y') AS maturity,
+               counts_toward_covenant_debt, closing_principal_usd
         FROM mart_debt WHERE period_key = {REPORT_PERIOD}
         ORDER BY instrument_type, instrument_id""").fetchall()
+
+    leases = [r for r in rows if r[2] == "FINANCE_LEASE"]
+    others = [r for r in rows if r[2] != "FINANCE_LEASE"]
+    # ("id" | "type", criterion, name, type label, ccy, rate, rate type, hedged, maturity,
+    #  in covenant)
+    instruments = [("id", r[0], r[1], r[2], r[3], r[4], r[5], r[6], r[7], r[8])
+                   for r in sorted(others, key=lambda r: -(r[9] or 0))]
+    if leases:
+        lead = leases[0]
+        instruments.append(
+            ("type", "FINANCE_LEASE",
+             f"Finance leases ({len(leases)} instruments)", "FINANCE_LEASE",
+             "Various" if len({r[3] for r in leases}) > 1 else lead[3],
+             lead[4], lead[5], lead[6], lead[7], lead[8]))
     # The credit agreement sets a maximum leverage per FISCAL YEAR (CA-009 to CA-012), so the
     # test dates are the fiscal year ends and nothing else. An earlier draft presented
     # quarterly columns and stamped BREACH on September 2024 and March 2025 -- dates the
@@ -510,7 +577,17 @@ def _meta(con, tables):
               UNION ALL SELECT 'Phase 4 — consolidation', status
               FROM read_csv('data/phase04_control_results.csv', header=true, all_varchar=true)
               UNION ALL SELECT 'Phase 5 — reporting marts', status
-              FROM read_csv('data/phase05_control_results.csv', header=true, all_varchar=true))
+              FROM read_csv('data/phase05_control_results.csv', header=true, all_varchar=true)
+              -- The control environment did not stop at Phase 5. The key, grain and version
+              -- framework and the Power BI semantic suite are governed control registers like
+              -- any other, and a page that claims to show "every phase, every control" while
+              -- omitting them is understating the platform it is describing.
+              UNION ALL SELECT 'Phase 5.1 — keys, grain and versions', status
+              FROM read_csv('data/phase07_key_control_results.csv', header=true,
+                            all_varchar=true)
+              UNION ALL SELECT 'Phase 6A — Power BI semantic model', status
+              FROM read_csv('data/phase06a_control_results.csv', header=true,
+                            all_varchar=true))
         GROUP BY 1 ORDER BY 1""").fetchall()
 
     # ---------------- deterministic attention list
@@ -522,10 +599,16 @@ def _meta(con, tables):
           AND period_key = {REPORT_PERIOD} AND ytd_favourability = 'UNFAVOURABLE'
           AND measure_code IN ('REVENUE', 'GROSS_PROFIT', 'EBITDA', 'ADJ_EBITDA', 'EBIT')
         GROUP BY 1 ORDER BY abs(v) DESC LIMIT 3""").fetchall()
-    for name, value in worst:
-        attention.append((f"{name} below budget", "YTD variance", round(float(value), 3),
-                          "Largest unfavourable year-to-date variance against budget, "
-                          "by absolute value."))
+    # The three largest shortfalls, ranked. The comment used to be the same sentence three
+    # times over, which reads as generated text and tells a reader nothing they cannot see
+    # from the ordering; each line now says where it sits and how big the gap is.
+    ordinal = ("Largest", "Second largest", "Third largest")
+    for rank, (name, value) in enumerate(worst):
+        pct = ""
+        attention.append((
+            f"{name} below budget", "YTD variance", round(float(value), 3),
+            f"{ordinal[rank] if rank < len(ordinal) else 'Further'} unfavourable variance "
+            f"against budget year to date — {abs(float(value)):,.1f}m behind plan.{pct}"))
     bu_worst = con.execute(f"""
         SELECT b.bu_name, round((sum(a.ytd_usd) - sum(bud.ytd_usd))/1e6, 3) AS v
         FROM mart_business_unit a

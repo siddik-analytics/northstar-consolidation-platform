@@ -118,6 +118,46 @@ the series.
   under. Fixed 16.5 cm charts ran off the page on every sheet narrower than 33 cm.
 * No pie charts, no 3D, no gradients, no data labels on a twelve-point line.
 
+### Axes, and the defect that wrote these rules
+
+Phase 5.2 rendered all sixteen sheets and looked at them, and found that **all seventeen charts
+had no axes at all** — no value scale, no category labels, just lines and bars over gridlines
+that implied a scale nobody could read. `openpyxl` writes `<c:delete val="1"/>` on an axis whose
+`delete` attribute is left unset, and nothing set it.
+
+The same pass found a second defect the first had hidden: **all 26 series references started at
+row 1** of the chart data sheet — the *header* row — while their categories started at row 2.
+Excel plots a text header as zero, so every line dived to the axis before it began, every bar
+chart was shifted one category, and the leverage chart's scale was dragged to zero by a point
+that did not exist.
+
+Neither is visible in the XML, in a formula audit or in a reconciliation. Both needed someone to
+look at the picture.
+
+| element | rule |
+|---|---|
+| axes | always visible. `delete = False` is set centrally in `_style_axis`, never at a call site where the next chart would forget it |
+| axis line | hairline in the rule colour, no tick marks |
+| axis text | 8pt muted |
+| gridlines | value axis only, hairline. Never on the category axis |
+| title | 9.5pt bold ink, the workbook's own font |
+| border and fill | none — the section header already frames the chart |
+| negative bars | keep their series colour. Excel's hollow-outline default reads as missing data |
+| series range | starts at **row 2**. Row 1 is a header |
+| page breaks | a chart band starts on a fresh page, so no chart is cut in half — unless the sheet is designed as one page, as the Executive Summary is |
+
+### A chart must earn its place
+
+One chart was built during Phase 5.2, reviewed, and removed: a bar of six year-to-date variances
+said exactly what the Var $ column beside it already said. A chart that repeats its own table is
+decoration.
+
+### Scales
+
+An axis starts at zero unless a non-zero start is what the reader needs. The leverage chart runs
+3.00x–5.00x because the question is distance to a 4.50x covenant, and a 0–5 axis compresses the
+whole covenant band into the top fifth of the plot.
+
 ## Sizing the page
 
 Every sheet is reviewed at 100% zoom, in Excel, from the rendered PDF — not from the code that

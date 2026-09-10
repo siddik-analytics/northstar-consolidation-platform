@@ -19,10 +19,18 @@ chart ranges with it, and these sheets have to survive being exported to PDF.
 from __future__ import annotations
 
 from openpyxl.chart import BarChart, LineChart, Reference, Series
+from openpyxl.chart.axis import ChartLines
+from openpyxl.chart.label import DataLabelList
+from openpyxl.chart.text import RichText
+from openpyxl.chart.shapes import GraphicalProperties
+from openpyxl.drawing.colors import ColorChoice
+from openpyxl.drawing.text import (CharacterProperties, Font, Paragraph,
+                                   ParagraphProperties)
 from openpyxl.chart.marker import Marker
 from openpyxl.drawing.line import LineProperties
 from openpyxl.formatting.rule import CellIsRule
 from openpyxl.utils import get_column_letter
+from openpyxl.worksheet.pagebreak import Break
 from openpyxl.worksheet.datavalidation import DataValidation
 
 from . import style as S
@@ -106,18 +114,94 @@ def label_style(is_subtotal, is_total, indent):
     return "ns_label_i" if indent else "ns_label"
 
 
+#: Chart text. One size for a title, one for everything else, both muted -- a chart is read
+#: for its shape first and its numbers second, and 11pt black axis labels fight the shape.
+CHART_TITLE_PT = 950
+CHART_AXIS_PT = 800
+
+
+def _text_properties(size: int, colour: str, bold: bool = False):
+    """Rich text for a chart element, in the workbook's own font and palette."""
+    return RichText(
+        p=[Paragraph(pPr=ParagraphProperties(
+            defRPr=CharacterProperties(sz=size, b=bold, latin=Font(typeface=S.FONT),
+                                       solidFill=ColorChoice(srgbClr=colour))),
+            endParaRPr=CharacterProperties(sz=size, b=bold))])
+
+
+def _style_axis(axis, number_format=None, gridlines=False):
+    """
+    Make an axis visible and quiet.
+
+    openpyxl builds an axis with `delete` unset, which Excel reads as **deleted**. Every chart
+    in this workbook rendered with no value scale and no category labels because of it: bare
+    lines floating over gridlines that implied a scale nobody could read. `delete = False` is
+    the whole fix, and it is the reason this helper exists rather than three lines at each
+    call site where the next chart would forget it again.
+    """
+    axis.delete = False
+    if number_format:
+        axis.numFmt = number_format
+    axis.majorTickMark = "none"
+    axis.minorTickMark = "none"
+    axis.txPr = _text_properties(CHART_AXIS_PT, S.INK_MUTED)
+    axis.spPr = GraphicalProperties(ln=LineProperties(solidFill=S.RULE, w=6350))
+    if gridlines:
+        # Present, but a hairline in the table-rule colour: enough to read a value against,
+        # not enough to compete with the data.
+        axis.majorGridlines = ChartLines(
+            spPr=GraphicalProperties(ln=LineProperties(solidFill=S.RULE, w=6350)))
+    else:
+        axis.majorGridlines = None
+
+
+def _frame(ch):
+    """No border and no fill. The section header already frames the chart."""
+    ch.graphical_properties = GraphicalProperties(noFill=True)
+    ch.graphical_properties.ln = LineProperties(noFill=True)
+
+
+def _keep_chart_whole(ws, anchor: str):
+    """
+    Start the chart band on a fresh page, unless the sheet is designed as one page.
+
+    The Executive Summary opts out: it is meant to be taken in at a glance, and pushing its
+    two trend charts onto a second page to keep them whole trades the thing that matters for
+    the thing that does not.
+
+    Sheets print as one page wide and as many pages tall as they need, so a chart placed
+    under a long table lands wherever the table happens to end -- and on the cash flow sheet
+    that put the page break through the middle of both charts, cutting the top off one page
+    and the bottom off the next. Neither half was readable and the legend appeared without
+    the plot it belonged to.
+
+    The break goes three rows above the chart so the section header travels with it.
+    """
+    row = int("".join(ch for ch in anchor if ch.isdigit()) or 0)
+    if row <= 4:
+        return
+    target = row - 3
+    if target not in {b.id for b in ws.row_breaks.brk}:
+        ws.row_breaks.append(Break(id=target))
+
+
 def line_chart(ws, anchor, title_text, cats_ref, series, width=17.5, height=7.2,
-               number_format=S.USD_M1, y_title=None):
+               number_format=S.USD_M1, y_title=None, y_min=None, y_max=None,
+               page_break=True):
     ch = LineChart()
     ch.title = title_text
     ch.style = None
     ch.width, ch.height = width, height
-    ch.y_axis.numFmt = number_format
-    ch.y_axis.majorGridlines.spPr = None
     # A month with no actual yet is a GAP, not a zero. Excel's default plots an empty cell as
     # zero, and the first draft of the revenue chart showed the group falling off a cliff in
     # September because the actual series simply had not been posted yet.
     ch.dispBlanksAs = "gap"
+    _style_axis(ch.y_axis, number_format, gridlines=True)
+    _style_axis(ch.x_axis)
+    if y_min is not None:
+        ch.y_axis.scaling.min = y_min
+    if y_max is not None:
+        ch.y_axis.scaling.max = y_max
     if y_title:
         ch.y_axis.title = y_title
     for ref, name, colour, dash in series:
@@ -129,8 +213,27 @@ def line_chart(ws, anchor, title_text, cats_ref, series, width=17.5, height=7.2,
         ch.series.append(s)
     ch.set_categories(cats_ref)
     _legend(ch, len(series))
+    _title(ch, title_text)
+    _frame(ch)
+    if page_break:
+        _keep_chart_whole(ws, anchor)
     ws.add_chart(ch, anchor)
     return ch
+
+
+def _title(ch, title_text):
+    """A chart title in the workbook's own voice: small, muted, not shouting."""
+    if title_text is None:
+        ch.title = None
+        return
+    ch.title = title_text
+    try:
+        ch.title.tx.rich.p[0].pPr = ParagraphProperties(
+            defRPr=CharacterProperties(sz=CHART_TITLE_PT, b=True,
+                                       latin=Font(typeface=S.FONT),
+                                       solidFill=ColorChoice(srgbClr=S.INK)))
+    except (AttributeError, IndexError):          # pragma: no cover - openpyxl shape
+        pass
 
 
 def _legend(ch, series_count):
@@ -144,26 +247,50 @@ def _legend(ch, series_count):
         return
     ch.legend.position = "b"
     ch.legend.overlay = False
+    ch.legend.txPr = _text_properties(CHART_AXIS_PT, S.INK_MUTED)
 
 
 def bar_chart(ws, anchor, title_text, cats_ref, series, width=17.5, height=7.2,
-              number_format=S.USD_M1, overlap=-10, gap=60):
+              number_format=S.USD_M1, overlap=-10, gap=60, horizontal=False,
+              data_labels=False, page_break=True):
     ch = BarChart()
-    ch.type = "col"
-    ch.title = title_text
+    ch.type = "bar" if horizontal else "col"
     ch.style = None
     ch.dispBlanksAs = "gap"
     ch.width, ch.height = width, height
-    ch.y_axis.numFmt = number_format
     ch.overlap = overlap
     ch.gapWidth = gap
+    # Gridlines run across the value axis only, and on a horizontal bar chart that is the
+    # x axis rather than the y.
+    value_axis, category_axis = (ch.x_axis, ch.y_axis) if horizontal else (ch.y_axis,
+                                                                          ch.x_axis)
+    _style_axis(value_axis, number_format, gridlines=True)
+    _style_axis(category_axis)
     for ref, name, colour in series:
         s = Series(ref, title=name)
         s.graphicalProperties.solidFill = colour
         s.graphicalProperties.line.noFill = True
+        # Excel's default inverts a negative bar to a hollow outline, which reads as missing
+        # data rather than as a negative number -- the cash flow chart had three empty
+        # rectangles where investing, financing and FX should have been.
+        s.invertIfNegative = False
         ch.series.append(s)
     ch.set_categories(cats_ref)
+    if data_labels:
+        # A short bar chart reads better labelled than measured against a scale.
+        ch.dataLabels = DataLabelList(showVal=True, showSerName=False, showCatName=False,
+                                      showLegendKey=False)
+        # The format has to be set on the label list itself and flagged as not linked to the
+        # source, or Excel renders the underlying float at full precision and a tidy chart
+        # ends up captioned 1.32902.
+        ch.dataLabels.numFmt = number_format
+        ch.dataLabels.showVal = True
+        ch.dataLabels.txPr = _text_properties(CHART_AXIS_PT, S.INK_MUTED)
     _legend(ch, len(series))
+    _title(ch, title_text)
+    _frame(ch)
+    if page_break:
+        _keep_chart_whole(ws, anchor)
     ws.add_chart(ch, anchor)
     return ch
 
@@ -312,6 +439,11 @@ KPI = [
 ]
 
 
+#: The two KPI bands, named. Ten metrics in an undifferentiated grid is ten things to read;
+#: two named groups of five is a page a reader can take in at a glance, which is what an
+#: executive summary is for.
+KPI_BANDS = ("Performance", "Cash, leverage and capacity")
+
 EXEC_COLS = 16
 
 
@@ -329,6 +461,8 @@ def executive(wb, meta):
             right_text="Year to date against budget")
     r = 7
     for block in range(2):
+        put(ws, f"B{r}", KPI_BANDS[block], "ns_kpi_band")
+        r += 1
         for i in range(5):
             k = block * 5 + i
             if k >= len(KPI):
@@ -411,19 +545,19 @@ def executive(wb, meta):
     cats = Reference(wb["_chart"], min_col=2, min_row=2, max_row=13)
     line_chart(ws, f"{slots[0]}{chart_row}", "Revenue — actual against budget, FY2026",
                cats,
-               [(Reference(wb["_chart"], min_col=3, min_row=1, max_row=13), "Actual",
+               [(Reference(wb["_chart"], min_col=3, min_row=2, max_row=13), "Actual",
                  S.ACTUAL, None),
-                (Reference(wb["_chart"], min_col=4, min_row=1, max_row=13), "Budget",
+                (Reference(wb["_chart"], min_col=4, min_row=2, max_row=13), "Budget",
                  S.BUDGET, "dash")],
-               width=chart_w, height=7.4)
+               width=chart_w, height=7.4, page_break=False)
 
     line_chart(ws, f"{slots[1]}{chart_row}", "Adjusted EBITDA — actual against budget, FY2026",
                cats,
-               [(Reference(wb["_chart"], min_col=5, min_row=1, max_row=13), "Actual",
+               [(Reference(wb["_chart"], min_col=5, min_row=2, max_row=13), "Actual",
                  S.FORECAST, None),
-                (Reference(wb["_chart"], min_col=7, min_row=1, max_row=13), "Budget",
+                (Reference(wb["_chart"], min_col=7, min_row=2, max_row=13), "Budget",
                  S.BUDGET, "dash")],
-               width=chart_w, height=7.4)
+               width=chart_w, height=7.4, page_break=False)
     # Two charts, not three. The business unit comparison has a whole sheet of its own and the
     # brief for this page is not to overcrowd it.
     r = chart_row + 16
@@ -531,7 +665,25 @@ def profit_and_loss(wb, meta):
                 "adjustments, so plan comparisons are like for like down to EBIT and are not "
                 "below it. Intercompany trade is removed from both sides of every comparison.",
          last_col=15)
-    ws.print_area = f"A1:O{r + 1}"
+    r += 2
+
+    # The lower half of this sheet was empty canvas. A management P&L is read for its margins
+    # as much as its absolutes, and the two questions the tables above cannot answer at a
+    # glance -- is the margin holding, and where is the gap to plan -- are the two charts here.
+    # One chart, not two. A bar of six year-to-date variances says exactly what the Var $
+    # column beside it already says, and a chart that repeats the table it sits under is
+    # decoration. What the tables cannot show at a glance is the shape of the margin over the
+    # year, so that is the chart that stays -- and it gets the full width rather than half.
+    section(ws, r, "Margin trend", last_col=EXEC_COLS)
+    _, chart_w = chart_slots(ws, EXEC_COLS, count=2)
+    line_chart(ws, f"C{r + 2}", "Gross and EBITDA margin — FY2026 by month",
+               Reference(wb["_chart"], min_col=2, min_row=2, max_row=13),
+               [(Reference(wb["_chart"], min_col=6, min_row=2, max_row=13), "Gross margin",
+                 S.ACTUAL, None),
+                (Reference(wb["_chart"], min_col=46, min_row=2, max_row=13), "EBITDA margin",
+                 S.FORECAST, None)],
+               width=chart_w * 2, height=7.6, number_format=S.PCT1)
+    ws.print_area = f"A1:O{r + 18}"
     return ws
 
 

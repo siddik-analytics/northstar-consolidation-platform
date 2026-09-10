@@ -72,7 +72,7 @@ def calculate_and_inspect(render: bool = True) -> list[dict]:
 
         if render:
             RENDER_DIR.mkdir(parents=True, exist_ok=True)
-            for f in RENDER_DIR.glob("*.pdf"):
+            for f in list(RENDER_DIR.glob("*.pdf")) + list(RENDER_DIR.glob("*.png")):
                 f.unlink()
 
         for sheet in wb.Worksheets:
@@ -171,6 +171,34 @@ def _render(app, sheet, path: Path, last_row: int, last_col: int):
         sheet.ExportAsFixedFormat(0, str(path.resolve()))     # 0 = xlTypePDF
     except Exception as exc:                                  # rendering must never fail a build
         print(f"  render failed for {sheet.Name}: {exc}")
+        return
+    _to_png(path)
+
+
+def _to_png(pdf_path: Path, dpi: int = 150) -> int:
+    """
+    Rasterise the exported PDF so the layout can be *looked at*.
+
+    The PNGs used to be produced by hand after the fact, which meant a review could be
+    conducted against images from a previous build -- and was: the first attempt at fixing the
+    chart axes appeared to change nothing, because the pictures being reviewed were hours old
+    while the PDF beside them was current. A visual review reading stale images is worse than
+    no visual review, so the rasterisation belongs here, beside the export that feeds it.
+    """
+    try:
+        import fitz                                            # PyMuPDF
+    except ImportError:                                        # pragma: no cover - optional
+        return 0
+    written = 0
+    try:
+        with fitz.open(pdf_path) as doc:
+            for i, page in enumerate(doc, start=1):
+                out = pdf_path.with_name(f"{pdf_path.stem}_p{i}.png")
+                page.get_pixmap(dpi=dpi).save(out)
+                written += 1
+    except Exception as exc:                                   # pragma: no cover
+        print(f"  png conversion failed for {pdf_path.name}: {exc}")
+    return written
 
 
 def reconcile(con: duckdb.DuckDBPyConnection) -> list[dict]:
