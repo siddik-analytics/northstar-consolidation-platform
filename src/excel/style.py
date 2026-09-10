@@ -42,9 +42,22 @@ HEADER_TX = "FFFFFF"
 PANEL_BG = "EEF3F7"     # KPI panels and input areas
 INPUT_BG = "FFF6E5"     # anything a user may change
 
+#: The secondary accent: a muted industrial copper, not an orange.
+#:
+#: The workbook already had a warm colour -- a saturated amber used, without ever being named
+#: as such, for whatever a chart's second series happened to be. Introducing a *separate*
+#: copper beside it would have given the pack two warm hues competing at slightly different
+#: saturations, which reads as indecision. So the amber is retuned to copper and there is one
+#: warm colour in the system, used deliberately.
+#:
+#: Contrast against white is about 3.7:1 -- enough for a line, a fill, a marker or a short
+#: bold label, and NOT enough for body text. It is never used for body text.
+COPPER = "B07A45"
+COPPER_TINT = "E8D8C8"  # a light wash, for a rule or a band, never for a whole panel
+
 ACTUAL = "1B4965"       # deep teal-blue
 BUDGET = "8C9BAB"       # grey-blue
-FORECAST = "C9772E"     # amber
+FORECAST = COPPER       # forecast is the warm scenario, and the warm colour is copper
 PRIOR = "B7BFC7"        # light grey
 FAVOURABLE = "1E7A46"   # green
 UNFAVOURABLE = "B3261E" # red
@@ -103,6 +116,9 @@ STYLES = [
     # ---- structure
     _style("ns_title", size=20, bold=True, colour=HEADER_BG, align="left"),
     _style("ns_subtitle", size=11, colour=INK_MUTED, align="left"),
+    # A hairline of copper under the page title. It is the only mark on most sheets that is
+    # not navy or grey, which is exactly how much identity a management pack needs.
+    _style("ns_title_rule", size=1, fill=COPPER),
     _style("ns_section", size=12, bold=True, colour=HEADER_TX, fill=HEADER_BG, align="left",
            indent=1),
     _style("ns_section_r", size=12, bold=True, colour=HEADER_TX, fill=HEADER_BG,

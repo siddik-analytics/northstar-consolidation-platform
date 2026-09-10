@@ -306,7 +306,8 @@ def cash_flow(wb, meta):
                [(Reference(wb["_chart"], min_col=16, min_row=2, max_row=13), "Cash",
                  S.ACTUAL, None),
                 (Reference(wb["_chart"], min_col=17, min_row=2, max_row=13),
-                 "Total liquidity", S.FORECAST, None)], width=chart_w, height=7.4)
+                 "Total liquidity", S.FORECAST, None)], width=chart_w, height=7.4,
+               page_break=True)
     bar_chart(ws, f"{slots[1]}{r + 2}", "Year-to-date cash flow by category",
               Reference(wb["_chart"], min_col=19, min_row=2, max_row=5),
               [(Reference(wb["_chart"], min_col=20, min_row=2, max_row=5), "USD m",
@@ -476,10 +477,20 @@ def ebitda_bridge(wb, meta):
          last_col=8)
     r += 3
 
+    # The bridge's middle components -- the approved add-backs and the layer-4 management
+    # effect -- are what turns statutory EBITDA into the management measure. They are given
+    # copper so a reader can see at a glance which bars are the adjustment and which are the
+    # two EBITDA definitions either side of it. Copper here means "management adjustment",
+    # never favourable or unfavourable; those stay green and red and mean what they always did.
+    # Width derived from the sheet, not fixed. At a hardcoded 16.5 cm this chart ran past the
+    # print area's right edge and Excel simply did not render it -- the page printed with an
+    # empty band where the bridge should have been, and nothing reported an error.
+    _, bridge_w = chart_slots(ws, 8, count=1)
     bar_chart(ws, f"B{r}", "EBITDA bridge — FY2026 statutory to adjusted",
               Reference(wb["_chart"], min_col=25, min_row=2, max_row=5),
               [(Reference(wb["_chart"], min_col=26, min_row=2, max_row=5), "USD m",
-                S.ACTUAL)], width=16.5, height=7.4)
+                S.ACTUAL)], width=bridge_w, height=7.4,
+              point_colours={1: S.COPPER, 2: S.COPPER})
     ws.print_area = f"A1:H{r + 16}"
     return ws
 

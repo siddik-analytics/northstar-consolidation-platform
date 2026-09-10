@@ -179,3 +179,76 @@ carries no information.
 
 The value is meant to come from the finance architecture, the reconciliations and the analysis
 — not from the styling. The styling's job is to get out of the way.
+
+---
+
+## The palette
+
+Navy is the workbook. Copper is the accent. Everything else is neutral, and the financial
+status colours mean what they have always meant.
+
+Target balance: **navy 70–80%, copper 10–15%, neutral the rest.** Copper is at the lower end of
+that range on purpose — it appears as a gutter mark beside each page title, as the warm scenario
+line, and on the two adjustment bars of the EBITDA bridge. Nowhere else.
+
+### Structure
+
+| purpose | hex | RGB | where |
+|---|---|---|---|
+| Primary navy | `1B4965` | 27, 73, 101 | section headers, page titles, Actual series, primary bars |
+| **Secondary copper** | `B07A45` | 176, 122, 69 | gutter mark beside the page title, warm chart series, bridge adjustment bars |
+| Light copper tint | `E8D8C8` | 232, 216, 200 | defined for a light wash; **currently unused** — nothing needed it, and a colour used because it exists is decoration |
+| Body text | `1F2A37` | 31, 42, 55 | all body and table text |
+| Muted text | `5B6B7B` | 91, 107, 123 | units, notes, footnotes, chart axes and legends |
+| Hairline | `D5DBE1` | 213, 219, 225 | table rules, chart axis lines, gridlines |
+| Strong rule | `9AA7B4` | 154, 167, 180 | subtotal and total rules |
+| Zebra band | `F5F8FA` | 245, 248, 250 | very light row banding |
+| Panel | `EEF3F7` | 238, 243, 247 | KPI card backgrounds |
+| Input | `FFF6E5` | 255, 246, 229 | anything a user may change |
+
+### Scenario colours — semantic, not decorative
+
+| scenario | hex | RGB |
+|---|---|---|
+| Actual | `1B4965` | 27, 73, 101 |
+| Budget | `8C9BAB` | 140, 155, 171 |
+| **Forecast** | `B07A45` | 176, 122, 69 |
+| Prior year | `B7BFC7` | 183, 191, 199 |
+
+Forecast **is** the copper. The workbook already carried a warm colour — a saturated amber used,
+without ever being named as such, for whatever a chart's second series happened to be.
+Introducing a separate copper beside it would have left two warm hues competing at slightly
+different saturations, which reads as indecision. So the amber was retuned to copper and there
+is one warm colour in the system.
+
+Retuning it also exposed a scenario inconsistency and fixed it: the Adjusted EBITDA chart on the
+Executive Summary drew **Actual** in the warm colour while the revenue chart beside it drew
+Actual in navy. Two charts on the flagship page disagreed about what the same scenario looks
+like. Actual is navy everywhere.
+
+### Financial status — never branding
+
+| meaning | hex | RGB |
+|---|---|---|
+| Favourable | `1E7A46` | 30, 122, 70 |
+| Unfavourable | `B3261E` | 179, 38, 30 |
+| Neutral | `5B6B7B` | 91, 107, 123 |
+| Warning / breach | `B3261E` | 179, 38, 30 |
+| Control pass | `1E7A46` | 30, 122, 70 |
+
+**Copper never carries a financial meaning.** It is not favourable, not unfavourable, not a
+warning, not a breach, and not a control state. On the EBITDA bridge it means *management
+adjustment* — a category, not a judgement. On the covenant page it appears only as the gutter
+mark, because a warm colour anywhere near a compliance status would be read as an alert.
+
+### Contrast
+
+Copper on white is about **3.7:1** — enough for a line, a fill, a marker or a short bold label,
+and **not** enough for body text under WCAG AA. It is therefore never used for body text, and
+never for small type. Fill, line, marker, accent only.
+
+### For Power BI
+
+This palette is the visual foundation for Phase 6B. The scenario colours in particular must
+carry across unchanged: a reader who learns that navy is Actual and copper is Forecast in the
+workbook must not have to relearn it in the report.

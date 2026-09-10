@@ -26,7 +26,7 @@ from openpyxl.chart.shapes import GraphicalProperties
 from openpyxl.drawing.colors import ColorChoice
 from openpyxl.drawing.text import (CharacterProperties, Font, Paragraph,
                                    ParagraphProperties)
-from openpyxl.chart.marker import Marker
+from openpyxl.chart.marker import DataPoint, Marker
 from openpyxl.drawing.line import LineProperties
 from openpyxl.formatting.rule import CellIsRule
 from openpyxl.utils import get_column_letter
@@ -61,6 +61,14 @@ def title(ws, text, subtitle, width_cols=14):
     ws.row_dimensions[1].height = 30
     put(ws, "B2", subtitle, "ns_subtitle")
     ws.row_dimensions[2].height = 16
+    # A copper mark in the gutter beside the title, not a rule beneath it.
+    #
+    # A horizontal hairline under the title block rendered as an underline running through the
+    # subtitle -- it read as an accident rather than as an accent. The gutter column is empty
+    # on every sheet by design, so a short vertical mark there is unmistakably deliberate, and
+    # it is the workbook's only non-navy structural element.
+    for row in (1, 2):
+        ws.cell(row=row, column=1).style = "ns_title_rule"
 
 
 def section(ws, row, text, last_col=14, right_text=None):
@@ -180,14 +188,20 @@ def _keep_chart_whole(ws, anchor: str):
     row = int("".join(ch for ch in anchor if ch.isdigit()) or 0)
     if row <= 4:
         return
-    target = row - 3
+    # Break after the last row that has content, not a fixed three rows above the chart.
+    # A fixed offset lands wherever the preceding table happens to end -- on the EBITDA bridge
+    # it fell inside the final table, orphaning two rows onto a page of their own and pushing
+    # the chart to a third page.
+    target = min(row - 1, max(ws.max_row + 1, 2))
+    if target >= row or target <= 1:
+        return
     if target not in {b.id for b in ws.row_breaks.brk}:
         ws.row_breaks.append(Break(id=target))
 
 
 def line_chart(ws, anchor, title_text, cats_ref, series, width=17.5, height=7.2,
                number_format=S.USD_M1, y_title=None, y_min=None, y_max=None,
-               page_break=True):
+               page_break=False):
     ch = LineChart()
     ch.title = title_text
     ch.style = None
@@ -252,7 +266,7 @@ def _legend(ch, series_count):
 
 def bar_chart(ws, anchor, title_text, cats_ref, series, width=17.5, height=7.2,
               number_format=S.USD_M1, overlap=-10, gap=60, horizontal=False,
-              data_labels=False, page_break=True):
+              data_labels=False, page_break=False, point_colours=None):
     ch = BarChart()
     ch.type = "bar" if horizontal else "col"
     ch.style = None
@@ -274,17 +288,27 @@ def bar_chart(ws, anchor, title_text, cats_ref, series, width=17.5, height=7.2,
         # data rather than as a negative number -- the cash flow chart had three empty
         # rectangles where investing, financing and FX should have been.
         s.invertIfNegative = False
+        # Individual bars may carry their own colour. Used for the EBITDA bridge, where the
+        # two definitions either side and the adjustment between them are different kinds of
+        # thing and should not look identical.
+        if point_colours:
+            s.data_points = [
+                DataPoint(idx=idx,
+                          spPr=GraphicalProperties(
+                              solidFill=colour_at,
+                              ln=LineProperties(noFill=True)))
+                for idx, colour_at in sorted(point_colours.items())]
         ch.series.append(s)
     ch.set_categories(cats_ref)
     if data_labels:
-        # A short bar chart reads better labelled than measured against a scale.
+        # Kept for a caller that genuinely needs labels, with one caveat recorded here rather
+        # than rediscovered: this openpyxl version does not serialise `numFmt` on a label
+        # list, so labels render at the source value's full precision -- "29.2024", not
+        # "29.2". Nothing in the pack uses them for that reason; every chart carries a visible
+        # value axis instead, which is what an axis is for.
         ch.dataLabels = DataLabelList(showVal=True, showSerName=False, showCatName=False,
-                                      showLegendKey=False)
-        # The format has to be set on the label list itself and flagged as not linked to the
-        # source, or Excel renders the underlying float at full precision and a tidy chart
-        # ends up captioned 1.32902.
-        ch.dataLabels.numFmt = number_format
-        ch.dataLabels.showVal = True
+                                      showLegendKey=False, showPercent=False,
+                                      showBubbleSize=False, showLeaderLines=False)
         ch.dataLabels.txPr = _text_properties(CHART_AXIS_PT, S.INK_MUTED)
     _legend(ch, len(series))
     _title(ch, title_text)
@@ -553,8 +577,12 @@ def executive(wb, meta):
 
     line_chart(ws, f"{slots[1]}{chart_row}", "Adjusted EBITDA — actual against budget, FY2026",
                cats,
+               # Actual is navy on every chart in the pack. This one was warm, sitting beside
+               # a revenue chart whose Actual was navy, so two charts on the flagship page
+               # disagreed about what the same scenario looks like. Scenario meaning outranks
+               # variety (Phase 5.2A).
                [(Reference(wb["_chart"], min_col=5, min_row=2, max_row=13), "Actual",
-                 S.FORECAST, None),
+                 S.ACTUAL, None),
                 (Reference(wb["_chart"], min_col=7, min_row=2, max_row=13), "Budget",
                  S.BUDGET, "dash")],
                width=chart_w, height=7.4, page_break=False)
