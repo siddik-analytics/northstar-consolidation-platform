@@ -169,6 +169,34 @@ def run(deploy_model: bool = True, launch: bool = False) -> dict:
     report_build.generate(C.REPORT_DIR)
     summary["control_seconds"] = round(time.time() - t2, 2)
 
+    if C.SEMANTIC_DIR.exists():
+        manifest = {
+            "phase": "6A.3",
+            "build_id": build_id(),
+            "project_digest": project_digest(),
+            "definition_digest": definition_digest(),
+            "measures_table": C.MEASURES_TABLE,
+            "desktop": desktop.version(),
+            "reporting_mart_build_id": json.loads(
+                (C.DATA / "phase05_manifest.json").read_text(encoding="utf-8"))["build_id"],
+            "tables": summary["tables"],
+            "measures": summary["measures"],
+            "relationships": summary["relationships"],
+            "inactive_relationships": summary["inactive_relationships"],
+            "semantic_dimension_rows": dimensions,
+            "deployed": deployed,
+            "controls": {"total": len(res),
+                         "passed": sum(r["status"] == "PASS" for r in res),
+                         "not_executed": len(res.not_executed),
+                         "failed": len(res.failed)},
+            "artefacts": {
+                f"35_semantic/{name}.parquet": _sha256(C.SEMANTIC_DIR / f"{name}.parquet")
+                for name in sorted(dimensions)
+            },
+        }
+        C.MANIFEST.write_text(json.dumps(manifest, indent=2, sort_keys=True) + "\n",
+                              encoding="utf-8")
+
     # ---- Phase 6B: the report on the model
     t3 = time.time()
     from .report import controls as RK
@@ -201,34 +229,6 @@ def run(deploy_model: bool = True, launch: bool = False) -> dict:
     RK.report(rres)
     summary["report_control_seconds"] = round(time.time() - t3, 2)
     summary["report_failed"] = len(rres.failed)
-
-    if C.SEMANTIC_DIR.exists():
-        manifest = {
-            "phase": "6A.3",
-            "build_id": build_id(),
-            "project_digest": project_digest(),
-            "definition_digest": definition_digest(),
-            "measures_table": C.MEASURES_TABLE,
-            "desktop": desktop.version(),
-            "reporting_mart_build_id": json.loads(
-                (C.DATA / "phase05_manifest.json").read_text(encoding="utf-8"))["build_id"],
-            "tables": summary["tables"],
-            "measures": summary["measures"],
-            "relationships": summary["relationships"],
-            "inactive_relationships": summary["inactive_relationships"],
-            "semantic_dimension_rows": dimensions,
-            "deployed": deployed,
-            "controls": {"total": len(res),
-                         "passed": sum(r["status"] == "PASS" for r in res),
-                         "not_executed": len(res.not_executed),
-                         "failed": len(res.failed)},
-            "artefacts": {
-                f"35_semantic/{name}.parquet": _sha256(C.SEMANTIC_DIR / f"{name}.parquet")
-                for name in sorted(dimensions)
-            },
-        }
-        C.MANIFEST.write_text(json.dumps(manifest, indent=2, sort_keys=True) + "\n",
-                              encoding="utf-8")
 
     report_manifest = {
         "phase": "6B",
@@ -263,6 +263,13 @@ def run(deploy_model: bool = True, launch: bool = False) -> dict:
                      "detected": sum(f["status"] == "DETECTED" for f in b1_fixtures)},
         "workbook_digest": report_manifest["workbook_digest"],
     }, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+
+    # the Phase 6A manifest was written before the report's last regeneration (the pages
+    # read it), so its project digest is refreshed now that the project is final
+    if C.MANIFEST.exists():
+        m6 = json.loads(C.MANIFEST.read_text(encoding="utf-8"))
+        m6["project_digest"] = project_digest()
+        C.MANIFEST.write_text(json.dumps(m6, indent=2, sort_keys=True) + chr(10), encoding="utf-8")
 
     con.close()
     summary["generate_seconds"] = generated

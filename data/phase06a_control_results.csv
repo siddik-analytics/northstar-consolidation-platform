@@ -1,5 +1,5 @@
 control_id,control_name,severity,status,measured,threshold,detail
-P6-SEM-00,The semantic model is available for execution,INFO,PASS,live,live,connected to Desktop on port 49677
+P6-SEM-00,The semantic model is available for execution,INFO,PASS,live,live,connected to Desktop on port 59690
 P6-SEM-01,Every dimension key is unique over its published population,BLOCKING,PASS,0,0,a dimension with a duplicate key silently fans out every fact that joins to it
 P6-SEM-02,"Every relationship resolves: no orphan key, so no blank member",BLOCKING,PASS,0,0,an unresolved key becomes a blank member in every visual that uses the dimension
 P6-SEM-03,Every declared many-to-one relationship is many-to-one in the data,BLOCKING,PASS,0,0,declaring a cardinality does not make the data have it; Power BI silently promotes a broken one to many-to-many and the totals stop meaning anything
@@ -51,7 +51,7 @@ P6-POL-06,Statutory and management measures pin the basis they are named for,BLO
 P6-POL-07,The current forecast version is the one the master marks as default,BLOCKING,PASS,model 'FC_FY26_08',governed 'FC_FY26_08',three forecasts are retained and only one is current; a superseded forecast presented as the forecast is an error nobody would notice from the number alone
 P6-PBIP-01,Doc comments only on objects that carry a Description,BLOCKING,PASS,0,0,a `///` above a relationship is a Description property the parser rejects (P6B-D-01); rationale travels as an annotation instead
 P6-PBIP-02,No table name Power BI Desktop reserves,BLOCKING,PASS,0,0,"28 tables declared; reserved list ['measures'] confirmed against Desktop, not assumed (P6B-D-02)"
-P6-PBIP-03,Power BI Desktop opens the generated project and loads it,BLOCKING,PASS,opened,opened,opened in 18.9s as 'Northstar'; native refresh loaded every partition
+P6-PBIP-03,Power BI Desktop opens the generated project and loads it,BLOCKING,PASS,opened,opened,opened in 13.9s as 'Northstar'; native refresh loaded every partition
 P6-PBIP-04,"Native project, deployed engine and Desktop session agree on structure",BLOCKING,PASS,"{'engine': {'tables': 28, 'measures': 96, 'relationships': 38, 'active_relationships': 33}, 'desktop': {'tables': 28, 'measures': 96, 'relationships': 38, 'active_relationships': 33}}","{'tables': 28, 'measures': 96, 'relationships': 38, 'active_relationships': 33}","tables, measures, relationships and active relationships counted in each form"
 P6-PATH-01,Every declared dimension reaches every fact it filters on an active path,BLOCKING,PASS,0,0,35 dimension-fact pairs from the live engine's INFO.RELATIONSHIPS
 P6-PATH-02,No dimension reaches a fact by more than one active path,BLOCKING,PASS,0,0,two active paths make every total ambiguous; the direct unit paths stay inactive
