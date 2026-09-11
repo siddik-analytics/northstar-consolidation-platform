@@ -4,6 +4,12 @@ Phase 6A orchestrator.
     python -m src.powerbi.run              generate, deploy if an engine is reachable, control
     python -m src.powerbi.run --no-deploy  generate and run only what needs no engine
     python -m src.powerbi.run --launch     start Power BI Desktop first, then the above
+    python -m src.powerbi.run --native     also exercise the report in Desktop (Phase 6B)
+    python -m src.powerbi.run --no-fixtures   skip the Phase 6B report fixtures (~10 min)
+
+Phase 6B runs after the semantic phase in the same command: the report's own controls, its
+fixtures, the object inventory and -- with `--native` -- the pass through Power BI Desktop
+that reads what was actually rendered.
 
 The semantic model is generated from `config.py` and `measures.py` into two forms that cannot
 disagree because they come from one declaration: the **PBIP/TMDL project**, which is what a
@@ -98,6 +104,28 @@ def definition_digest() -> str:
     return hashlib.sha256(text.encode("utf-8")).hexdigest()[:16]
 
 
+REPORT_INPUTS = tuple(sorted((Path(__file__).parent / "report").glob("*.py")))
+
+
+def report_build_id() -> str:
+    """The Phase 6B lineage id: the report package's declared inputs, canonically hashed."""
+    return lineage.build_id(REPORT_INPUTS)
+
+
+
+def _native_summary() -> dict:
+    from .report.controls import NATIVE_QA
+    if not NATIVE_QA.exists():
+        return {}
+    qa = json.loads(NATIVE_QA.read_text(encoding="utf-8"))
+    return {"project_digest": qa.get("project_digest"), "desktop": qa.get("desktop"),
+            "visual_errors": sum(len(v) for v in qa.get("visual_errors", {}).values()),
+            "navigation": qa.get("navigation", {}).get("passed"),
+            "unit_narrowed": qa.get("unit_slicer", {}).get("narrowed"),
+            "cutoff": qa.get("cutoff", {}).get("stops_at_close"),
+            "seconds": qa.get("seconds")}
+
+
 def project_digest() -> str:
     """
     A digest of the generated project text -- what a reviewer would diff.
@@ -141,6 +169,29 @@ def run(deploy_model: bool = True, launch: bool = False) -> dict:
     report_build.generate(C.REPORT_DIR)
     summary["control_seconds"] = round(time.time() - t2, 2)
 
+    # ---- Phase 6B: the report on the model
+    t3 = time.time()
+    from .report import controls as RK
+    from .report import faults as RF
+    rres = RK.run(con, native=False)
+    RK.write(rres)
+    fixtures = [] if "--no-fixtures" in sys.argv else RF.run(con)
+    if fixtures:
+        RF.write(fixtures)
+    # the Consolidation & Controls page now has this phase's register to read
+    report_build.generate(C.REPORT_DIR)
+    if "--native" in sys.argv:
+        from .report import native_qa
+        native_qa.run()
+    rres = RK.run(con, native=True)
+    RK.write(rres)
+    report_build.generate(C.REPORT_DIR)   # and the page reads the register this run wrote
+    inventory = RK.inventory()
+    RK.INVENTORY.write_text(json.dumps(inventory, indent=2) + "\n", encoding="utf-8")
+    RK.report(rres)
+    summary["report_control_seconds"] = round(time.time() - t3, 2)
+    summary["report_failed"] = len(rres.failed)
+
     if C.SEMANTIC_DIR.exists():
         manifest = {
             "phase": "6A.3",
@@ -169,6 +220,29 @@ def run(deploy_model: bool = True, launch: bool = False) -> dict:
         C.MANIFEST.write_text(json.dumps(manifest, indent=2, sort_keys=True) + "\n",
                               encoding="utf-8")
 
+    report_manifest = {
+        "phase": "6B",
+        "build_id": report_build_id(),
+        "project_digest": project_digest(),
+        "semantic_build_id": build_id(),
+        "desktop": desktop.version(),
+        "pages": inventory["visuals"] and len(inventory["pages"]),
+        "visuals": inventory["visuals"],
+        "objects": inventory["total"],
+        "controls": {"total": len(rres),
+                     "passed": sum(r["status"] == "PASS" for r in rres),
+                     "not_executed": len(rres.not_executed),
+                     "failed": len(rres.failed)},
+        "fixtures": {"total": len(fixtures),
+                     "detected": sum(f["status"] == "DETECTED" for f in fixtures)},
+        "native": _native_summary(),
+        "workbook_digest": json.loads(
+            (C.DATA / "phase05_workbook_manifest.json").read_text(encoding="utf-8")
+        ).get("build_digest", "")[:16],
+    }
+    RK.MANIFEST.write_text(json.dumps(report_manifest, indent=2, sort_keys=True) + "\n",
+                           encoding="utf-8")
+
     con.close()
     summary["generate_seconds"] = generated
     summary["seconds"] = round(time.time() - t0, 2)
@@ -180,7 +254,7 @@ def run(deploy_model: bool = True, launch: bool = False) -> dict:
 
 def main(argv: list[str]) -> int:
     res = run(deploy_model="--no-deploy" not in argv, launch="--launch" in argv)
-    return 1 if res["failed"] else 0
+    return 1 if res["failed"] or res.get("report_failed") else 0
 
 
 if __name__ == "__main__":

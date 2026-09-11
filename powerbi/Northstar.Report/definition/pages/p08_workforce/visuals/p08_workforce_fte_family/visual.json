@@ -3,11 +3,11 @@
   "name": "p08_workforce_fte_family",
   "position": {
     "x": 200,
-    "y": 471,
-    "z": 37,
+    "y": 418,
+    "z": 36,
     "width": 520,
-    "height": 229,
-    "tabOrder": 37000
+    "height": 282,
+    "tabOrder": 36000
   },
   "visual": {
     "visualType": "barChart",
@@ -299,7 +299,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Closing FTE by job family'"
+                  "Value": "'Closing FTE by job family — at the month selected'"
                 }
               }
             },

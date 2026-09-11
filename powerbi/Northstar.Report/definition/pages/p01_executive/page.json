@@ -37,28 +37,33 @@
       "type": "NoFilter"
     },
     {
-      "source": "p01_executive_sl_rbasis",
-      "target": "p01_executive_k_ebitda_v",
+      "source": "p01_executive_sl_basis",
+      "target": "p01_executive_outlook",
       "type": "NoFilter"
     },
     {
       "source": "p01_executive_sl_rbasis",
-      "target": "p01_executive_k_ebitda_d",
+      "target": "p01_executive_p_ebitda_v",
       "type": "NoFilter"
     },
     {
       "source": "p01_executive_sl_rbasis",
-      "target": "p01_executive_k_ebitda_f",
+      "target": "p01_executive_p_ebitda_d",
       "type": "NoFilter"
     },
     {
       "source": "p01_executive_sl_rbasis",
-      "target": "p01_executive_k_margin_v",
+      "target": "p01_executive_p_ebitda_f",
       "type": "NoFilter"
     },
     {
       "source": "p01_executive_sl_rbasis",
-      "target": "p01_executive_bu_ebitda",
+      "target": "p01_executive_s_margin_v",
+      "type": "NoFilter"
+    },
+    {
+      "source": "p01_executive_sl_rbasis",
+      "target": "p01_executive_bu_var",
       "type": "NoFilter"
     }
   ]

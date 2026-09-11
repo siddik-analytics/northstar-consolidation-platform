@@ -13,6 +13,8 @@ a property of the grid rather than a discipline every page has to keep separatel
 
 from __future__ import annotations
 
+import re
+
 from . import pbir as P
 from . import theme as T
 
@@ -22,6 +24,8 @@ X0 = RAIL_W + 24            # first content pixel
 X1 = CANVAS_W - 24          # last content pixel
 CONTENT_W = X1 - X0         # 1056
 GUTTER = 16
+#: the density gate: analytical objects (charts, matrices, tables) a page may carry
+MAX_ANALYTICAL = 6
 
 TITLE_Y = 14
 SUBTITLE_Y = 46
@@ -71,6 +75,35 @@ def span(columns: list[tuple[int, int]], first: int, last: int) -> tuple[int, in
     return x, columns[last][0] + columns[last][1] - x
 
 
+#: The vocabulary of the object inventory. A page is judged on its *analytical* objects --
+#: the charts and tables a reader reads -- and on the KPI tiles; the rest is chrome.
+KINDS = ("analytical", "kpi", "slicer", "navigation", "text", "shape", "tooltip", "other")
+
+_ANALYTICAL = {"lineChart", "clusteredColumnChart", "barChart", "lineClusteredColumnComboChart",
+               "waterfallChart", "pivotTable", "tableEx"}
+_CHROME_PREFIXES = ("st", "id", "md", "pq", "cr", "rc", "ch", "rail", "brand", "rp")
+
+
+def classify(key: str, visual: dict) -> str:
+    """What a visual is for, from its type and the key the page gave it."""
+    kind = visual.get("visualType", "")
+    if kind == "slicer":
+        return "slicer"
+    if kind == "actionButton":
+        return "navigation"
+    if kind in _ANALYTICAL:
+        return "analytical"
+    if kind == "card":
+        return "kpi" if not key.startswith(_CHROME_PREFIXES) else "text"
+    if kind == "textbox":
+        # a tile's label, variance caption or note belongs to the tile it sits on
+        tile_part = re.search(r"_(l|n|d|f)$", key) is not None
+        return "kpi" if tile_part and not key.startswith(_CHROME_PREFIXES) else "text"
+    if kind == "shape":
+        return "shape"
+    return "other"
+
+
 class Page:
     """Accumulates visuals for one page and writes them in PBIR order."""
 
@@ -81,6 +114,10 @@ class Page:
         self.display = display
         self.visuals: list[dict] = []
         self.interactions: list[dict] = []
+        #: one reason per NoFilter edge, keyed (source, target) -- `P6B-15` requires it
+        self.reasons: dict[tuple[str, str], str] = {}
+        #: what each visual is for, keyed by visual name -- the object inventory
+        self.kinds: dict[str, str] = {}
         self.page_filters = page_filters
         self._z = 0
         self._chrome(title, subtitle, slicers)
@@ -91,14 +128,23 @@ class Page:
         self._z += 1
         self.visuals.append(P.container(self.name, key, int(x), int(y), int(w), int(h),
                                         visual, z=self._z, filter_config=filters))
-        return P._name(self.name, key)
+        name = P._name(self.name, key)
+        self.kinds[name] = classify(key, visual)
+        return name
 
-    def no_filter(self, source_key: str, *target_keys: str) -> None:
-        """Slicer `source` does not filter these visuals (trend charts keep the whole year)."""
+    def no_filter(self, source_key: str, *target_keys: str, reason: str) -> None:
+        """
+        Slicer `source` does not filter these visuals. `reason` is mandatory: an interaction
+        that is switched off without a stated reason is how a page quietly stops answering
+        the slicer, and `P6B-15` fails a NoFilter that has none.
+        """
+        if not reason or not reason.strip():
+            raise ValueError(f"{self.name}: NoFilter from {source_key} needs a reason")
         for target in target_keys:
-            self.interactions.append({"source": P._name(self.name, source_key),
-                                      "target": P._name(self.name, target),
+            source, target_name = P._name(self.name, source_key), P._name(self.name, target)
+            self.interactions.append({"source": source, "target": target_name,
                                       "type": "NoFilter"})
+            self.reasons[(source, target_name)] = reason.strip()
 
     def label(self, key: str, x: int, y: int, w: int, text: str, h: int = 18,
               size: float | None = None, colour: str = T.INK_MUTED, bold: bool = True) -> str:

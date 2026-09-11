@@ -4,10 +4,10 @@
   "position": {
     "x": 1056,
     "y": 139,
-    "z": 40,
+    "z": 39,
     "width": 200,
     "height": 18,
-    "tabOrder": 40000
+    "tabOrder": 39000
   },
   "visual": {
     "visualType": "textbox",
@@ -19,7 +19,7 @@
               {
                 "textRuns": [
                   {
-                    "value": "USD millions",
+                    "value": "USD millions · month selected",
                     "textStyle": {
                       "fontSize": "8pt",
                       "color": "#5B6B7B",

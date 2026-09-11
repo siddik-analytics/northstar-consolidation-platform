@@ -3,11 +3,11 @@
   "name": "p09_controls_cr1_1074",
   "position": {
     "x": 1074,
-    "y": 216,
-    "z": 59,
+    "y": 160,
+    "z": 48,
     "width": 52,
     "height": 18,
-    "tabOrder": 59000
+    "tabOrder": 48000
   },
   "visual": {
     "visualType": "textbox",

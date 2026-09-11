@@ -399,6 +399,42 @@ where the next model will read them:
 > **The first report is a control.** Reading a model proves it parses; running it proves it
 > computes; only asking it the questions a reader will ask proves it answers.
 
+## 17. A report that was right in every number and wrong in three scopes
+
+**Symptom.** The report resumed on the corrected model, and every number on it was a governed
+measure that reconciled. Yet the full-year outlook read revenue as 5,246.4m against a budget
+of 5,376.0m — twelve and a half times the year; every bar on the unit variance chart was red,
+including the one unit that had beaten its budget; and the cash flow page offered a business
+unit slicer that changed nothing when moved.
+
+**Root cause.** Three scope faults, none of them in a measure. The outlook was told to ignore
+the month slicer, so a full-year figure that the mart carries on every month's row was summed
+across twelve rows. The favourability rule on the bar chart was declared once for the series
+and evaluated once, at the Group, so every bar wore the Group's verdict. And the cash flow,
+balance sheet, working capital and covenant marts are consolidated Group facts with no entity
+grain, so a unit slicer beside them was a control that controlled nothing.
+
+**Why controls miss it.** The semantic controls evaluate a measure in a filter *the control
+writes*. A visual's scope is written by the page — its own filters, the slicer defaults, and
+the interactions it switched off — and no control had evaluated a measure in the scope a
+reader would actually meet it in. A rendered pixel is not in any register.
+
+**Permanent fix.** `P6B-30…42` reconcile in the visual's own scope, derived from the
+generated files, so a scope mistake fails even when the measure is right. `P6B-25` reads the
+cards Desktop rendered from its accessibility tree and re-evaluates each in its tile's scope.
+`P6B-24` walks each slicer's dimension along the active one-to-many paths to the tables the
+page's measures read, and fails a slicer that reaches none. `P6B-16` refuses a switched-off
+interaction without a written reason. And the favourability rule now carries the data-point
+wildcard selector, which is the difference between colouring a series and colouring a bar.
+
+> **A number can be governed and still be shown in the wrong scope.** The measure is the
+> definition; the visual's filters, the slicer defaults and the interactions the page switched
+> off are the scope; and a control has to evaluate the definition in the scope the reader
+> gets, not the scope the control finds convenient.
+
+> **An inert control is a defect.** A slicer that moves nothing teaches a reader that the
+> number is per unit when it is the Group's.
+
 ---
 
 ## What these have in common

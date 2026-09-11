@@ -1,0 +1,96 @@
+{
+  "pages": {
+    "01 Executive Overview": {
+      "analytical": 5,
+      "kpi": 34,
+      "navigation": 10,
+      "shape": 12,
+      "slicer": 5,
+      "text": 6,
+      "objects": 72
+    },
+    "02 P&L Performance": {
+      "analytical": 3,
+      "navigation": 10,
+      "shape": 2,
+      "slicer": 6,
+      "text": 6,
+      "objects": 27
+    },
+    "03 Business Units & Entities": {
+      "analytical": 4,
+      "navigation": 10,
+      "shape": 2,
+      "slicer": 5,
+      "text": 6,
+      "objects": 27
+    },
+    "04 Balance Sheet & Working Capital": {
+      "analytical": 2,
+      "kpi": 33,
+      "navigation": 10,
+      "shape": 8,
+      "slicer": 1,
+      "text": 6,
+      "objects": 60
+    },
+    "05 Cash Flow & Liquidity": {
+      "analytical": 2,
+      "kpi": 23,
+      "navigation": 10,
+      "shape": 6,
+      "slicer": 1,
+      "text": 6,
+      "objects": 48
+    },
+    "06 EBITDA & Variance Bridge": {
+      "analytical": 2,
+      "kpi": 20,
+      "navigation": 10,
+      "shape": 8,
+      "slicer": 5,
+      "text": 7,
+      "objects": 52
+    },
+    "07 Debt & Covenants": {
+      "analytical": 3,
+      "kpi": 30,
+      "navigation": 10,
+      "shape": 8,
+      "slicer": 1,
+      "text": 6,
+      "objects": 58
+    },
+    "08 Workforce & CapEx": {
+      "analytical": 4,
+      "kpi": 20,
+      "navigation": 10,
+      "shape": 4,
+      "slicer": 3,
+      "text": 10,
+      "objects": 51
+    },
+    "09 Consolidation & Controls": {
+      "analytical": 3,
+      "navigation": 10,
+      "shape": 21,
+      "text": 83,
+      "objects": 117
+    },
+    "10 Lineage & Technical": {
+      "navigation": 10,
+      "shape": 45,
+      "text": 88,
+      "objects": 143
+    }
+  },
+  "total": {
+    "shape": 116,
+    "text": 224,
+    "navigation": 100,
+    "slicer": 27,
+    "kpi": 160,
+    "analytical": 28
+  },
+  "visuals": 655
+}

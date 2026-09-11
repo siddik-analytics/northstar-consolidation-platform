@@ -28,6 +28,7 @@
               },
               "queryRef": "Business Unit.bu_name",
               "nativeQueryRef": "bu_name",
+              "displayName": "Business unit · entity",
               "active": true
             },
             {
@@ -71,12 +72,27 @@
                       "Entity": "Northstar Measures"
                     }
                   },
-                  "Property": "Gross Margin %"
+                  "Property": "Revenue Share of Group"
                 }
               },
-              "queryRef": "Northstar Measures.Gross Margin %",
-              "nativeQueryRef": "Gross Margin %",
-              "displayName": "GM %"
+              "queryRef": "Northstar Measures.Revenue Share of Group",
+              "nativeQueryRef": "Revenue Share of Group",
+              "displayName": "Group share"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Northstar Measures"
+                    }
+                  },
+                  "Property": "Revenue Share of Unit"
+                }
+              },
+              "queryRef": "Northstar Measures.Revenue Share of Unit",
+              "nativeQueryRef": "Revenue Share of Unit",
+              "displayName": "Unit share"
             },
             {
               "field": {
@@ -503,6 +519,90 @@
               }
             }
           }
+        },
+        {
+          "properties": {
+            "value": {
+              "expr": {
+                "Literal": {
+                  "Value": "188.0D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "Business Unit.bu_name"
+          }
+        },
+        {
+          "properties": {
+            "value": {
+              "expr": {
+                "Literal": {
+                  "Value": "58.0D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "Northstar Measures.Revenue"
+          }
+        },
+        {
+          "properties": {
+            "value": {
+              "expr": {
+                "Literal": {
+                  "Value": "60.0D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "Northstar Measures.Revenue Share of Group"
+          }
+        },
+        {
+          "properties": {
+            "value": {
+              "expr": {
+                "Literal": {
+                  "Value": "56.0D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "Northstar Measures.Revenue Share of Unit"
+          }
+        },
+        {
+          "properties": {
+            "value": {
+              "expr": {
+                "Literal": {
+                  "Value": "70.0D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "Northstar Measures.Management Adjusted EBITDA"
+          }
+        },
+        {
+          "properties": {
+            "value": {
+              "expr": {
+                "Literal": {
+                  "Value": "54.0D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "Northstar Measures.Adjusted EBITDA Margin %"
+          }
         }
       ]
     },
@@ -560,6 +660,58 @@
               "expr": {
                 "Literal": {
                   "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "subTitle": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Group share: of Group revenue · Unit share: of the parent unit''s revenue'"
+                }
+              }
+            },
+            "fontColor": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#5B6B7B'"
+                    }
+                  }
+                }
+              }
+            },
+            "fontSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "8.0D"
+                }
+              }
+            },
+            "fontFamily": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Segoe UI'"
+                }
+              }
+            },
+            "alignment": {
+              "expr": {
+                "Literal": {
+                  "Value": "'left'"
                 }
               }
             }

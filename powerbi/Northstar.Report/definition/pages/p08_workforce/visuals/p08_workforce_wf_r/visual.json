@@ -4,10 +4,10 @@
   "position": {
     "x": 520,
     "y": 139,
-    "z": 25,
+    "z": 24,
     "width": 200,
     "height": 18,
-    "tabOrder": 25000
+    "tabOrder": 24000
   },
   "visual": {
     "visualType": "textbox",
@@ -19,7 +19,7 @@
               {
                 "textRuns": [
                   {
-                    "value": "full-time equivalents",
+                    "value": "full-time equivalents · month selected",
                     "textStyle": {
                       "fontSize": "8pt",
                       "color": "#5B6B7B",

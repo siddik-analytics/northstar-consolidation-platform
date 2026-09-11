@@ -3,11 +3,11 @@
   "name": "p01_executive_cash_trend",
   "position": {
     "x": 200,
-    "y": 506,
-    "z": 70,
+    "y": 550,
+    "z": 71,
     "width": 520,
-    "height": 194,
-    "tabOrder": 70000
+    "height": 150,
+    "tabOrder": 71000
   },
   "visual": {
     "visualType": "lineChart",
@@ -334,7 +334,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Cash and total liquidity — month end, closed months'"
+                  "Value": "'Cash and total liquidity at month end — how much room remains'"
                 }
               }
             },

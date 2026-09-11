@@ -3,11 +3,11 @@
   "name": "p09_controls_rc3_rule",
   "position": {
     "x": 736,
-    "y": 456,
-    "z": 109,
+    "y": 422,
+    "z": 105,
     "width": 520,
     "height": 1,
-    "tabOrder": 109000
+    "tabOrder": 105000
   },
   "visual": {
     "visualType": "shape",

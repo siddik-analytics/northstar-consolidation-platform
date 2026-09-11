@@ -4,10 +4,10 @@
   "position": {
     "x": 736,
     "y": 258,
-    "z": 60,
+    "z": 57,
     "width": 520,
-    "height": 176,
-    "tabOrder": 60000
+    "height": 172,
+    "tabOrder": 57000
   },
   "visual": {
     "visualType": "tableEx",
@@ -285,6 +285,13 @@
                   "Value": "9.0D"
                 }
               }
+            },
+            "wordWrap": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
             }
           }
         }
@@ -344,10 +351,80 @@
             "autoSizeColumns": {
               "expr": {
                 "Literal": {
-                  "Value": "true"
+                  "Value": "false"
                 }
               }
             }
+          }
+        },
+        {
+          "properties": {
+            "value": {
+              "expr": {
+                "Literal": {
+                  "Value": "110.0D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "Date.month_label_long"
+          }
+        },
+        {
+          "properties": {
+            "value": {
+              "expr": {
+                "Literal": {
+                  "Value": "96.0D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "Northstar Measures.Covenant Net Leverage"
+          }
+        },
+        {
+          "properties": {
+            "value": {
+              "expr": {
+                "Literal": {
+                  "Value": "70.0D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "Northstar Measures.Covenant Limit"
+          }
+        },
+        {
+          "properties": {
+            "value": {
+              "expr": {
+                "Literal": {
+                  "Value": "90.0D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "Northstar Measures.Covenant Headroom"
+          }
+        },
+        {
+          "properties": {
+            "value": {
+              "expr": {
+                "Literal": {
+                  "Value": "100.0D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "Northstar Measures.Covenant Status"
           }
         }
       ]

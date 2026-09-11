@@ -3,11 +3,11 @@
   "name": "p09_controls_arch_r",
   "position": {
     "x": 520,
-    "y": 139,
-    "z": 23,
+    "y": 83,
+    "z": 21,
     "width": 200,
     "height": 18,
-    "tabOrder": 23000
+    "tabOrder": 21000
   },
   "visual": {
     "visualType": "textbox",

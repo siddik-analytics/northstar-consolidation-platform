@@ -14,6 +14,7 @@ import csv
 import json
 from pathlib import Path
 
+from ...lineage import build_id as _build_id
 from .. import config as C
 
 DATA = C.DATA
@@ -45,6 +46,8 @@ def control_status() -> list[dict]:
          "phase07_key_fault_results.csv"),
         ("Phase 6A", "Semantic model and native project", "phase06a_control_results.csv",
          "phase06a_fault_results.csv"),
+        ("Phase 6B", "Report on the model", "phase06b_control_results.csv",
+         "phase06b_fault_results.csv"),
     ]
     out = []
     for phase, scope, controls, faults in families:
@@ -57,6 +60,8 @@ def control_status() -> list[dict]:
         # deferred to a later phase, suppressed by design, or proven as a separation.
         handled = ("DETECTED", "NOT_APPLICABLE_DEFERRED", "SUPPRESSED", "SEPARATION_PROVEN")
         detected = sum(r.get("status") in handled for r in fixtures)
+        if not rows:
+            continue   # a register that does not exist yet is not a row of dashes
         out.append(dict(phase=phase, scope=scope, controls=total, passed=passed,
                         blocking=blocking, fixtures=len(fixtures), detected=detected,
                         status="PASS" if total and not blocking and passed == total else
@@ -73,6 +78,10 @@ def reconciliations() -> list[dict]:
     xar = [r for r in pbi if r["control_id"].startswith("P6-XAR")]
     xls = [r for r in pbi if r["control_id"].startswith("P6-XLS")]
     pbip = [r for r in pbi if r["control_id"].startswith("P6-PBIP")]
+    rpt = _rows("phase06b_control_results.csv")
+    recon = [r for r in rpt if r["control_id"] >= "P6B-30"]
+    native = [r for r in rpt if r["control_id"] in ("P6B-20", "P6B-21", "P6B-22", "P6B-23",
+                                                     "P6B-25")]
     return [
         dict(name="Excel workbook to marts", passed=sum(r.get("status") == "PASS" for r in excel),
              total=len(excel)),
@@ -82,7 +91,12 @@ def reconciliations() -> list[dict]:
              total=len(xls)),
         dict(name="Native project (Desktop)", passed=sum(r["status"] == "PASS" for r in pbip),
              total=len(pbip), not_executed=sum(r["status"] == "NOT_EXECUTED" for r in pbip)),
-    ]
+    ] + ([
+        dict(name="Report scope to engine to marts", passed=sum(r["status"] == "PASS" for r in recon),
+             total=len(recon), not_executed=sum(r["status"] == "NOT_EXECUTED" for r in recon)),
+        dict(name="Native render (Desktop)", passed=sum(r["status"] == "PASS" for r in native),
+             total=len(native), not_executed=sum(r["status"] == "NOT_EXECUTED" for r in native)),
+    ] if rpt else [])
 
 
 def lineage() -> dict:
@@ -96,7 +110,9 @@ def lineage() -> dict:
         phase04=m4.get("build_id", ""),
         phase05=m5.get("build_id", ""),
         phase06a=m6.get("build_id", ""),
-        project_digest=m6.get("project_digest", ""),
+        # the report's own build id, computed here rather than read from a manifest: a
+        # manifest written after generation can only hold the digest of the previous one
+        report_build_id=_build_id(sorted(Path(__file__).parent.glob("*.py"))),
         definition_digest=m6.get("definition_digest", ""),
         workbook_digest=(wb.get("build_digest") or "")[:16],
         desktop=m6.get("desktop", ""),

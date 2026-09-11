@@ -3,11 +3,11 @@
   "name": "p09_controls_ctl_r",
   "position": {
     "x": 1056,
-    "y": 139,
-    "z": 41,
+    "y": 83,
+    "z": 30,
     "width": 200,
     "height": 18,
-    "tabOrder": 41000
+    "tabOrder": 30000
   },
   "visual": {
     "visualType": "textbox",
@@ -19,7 +19,7 @@
               {
                 "textRuns": [
                   {
-                    "value": "every phase, from its own register",
+                    "value": "read from the registers, never typed",
                     "textStyle": {
                       "fontSize": "8pt",
                       "color": "#5B6B7B",

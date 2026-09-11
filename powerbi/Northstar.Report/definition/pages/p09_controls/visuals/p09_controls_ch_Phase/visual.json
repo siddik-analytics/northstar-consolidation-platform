@@ -3,11 +3,11 @@
   "name": "p09_controls_ch_Phase",
   "position": {
     "x": 736,
-    "y": 170,
-    "z": 42,
+    "y": 114,
+    "z": 31,
     "width": 66,
     "height": 16,
-    "tabOrder": 42000
+    "tabOrder": 31000
   },
   "visual": {
     "visualType": "textbox",

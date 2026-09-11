@@ -8,7 +8,17 @@
   "visualInteractions": [
     {
       "source": "p08_workforce_sl_period",
-      "target": "p08_workforce_fte_trend",
+      "target": "p08_workforce_fte_moves",
+      "type": "NoFilter"
+    },
+    {
+      "source": "p08_workforce_sl_period",
+      "target": "p08_workforce_capex_class",
+      "type": "NoFilter"
+    },
+    {
+      "source": "p08_workforce_sl_period",
+      "target": "p08_workforce_projects",
       "type": "NoFilter"
     }
   ]

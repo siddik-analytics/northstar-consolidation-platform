@@ -1,10 +1,12 @@
-# Power BI semantic controls
+# Power BI controls — semantic model and report
 
-    python -m src.powerbi.run       generate, deploy, control
-    python -m src.powerbi.faults    break it sixteen ways and prove each is caught
+    python -m src.powerbi.run --native      generate, deploy, control the model and the report
+    python -m src.powerbi.faults            break the model sixteen ways and prove each is caught
+    python -m src.powerbi.report.faults     break the report twelve ways and prove each is caught
 
-**68 controls, 16 fault fixtures.** The governing principle is Phase 4C's, widened one more
-time:
+**Semantic model: 68 controls, 16 fault fixtures. Report: 43 controls, 12 fault fixtures**
+([§ the report on the model](#the-report-on-the-model-p6b)). The governing principle is Phase
+4C's, widened one more time:
 
 > Different artefacts expressing the same financial measure must reconcile to one authoritative
 > definition — **and Power BI is another artefact.**
@@ -194,6 +196,80 @@ tables in DuckDB, but the model's partitions read **Parquet**, so the deployment
 clean model stayed loaded, and the controls correctly found nothing wrong with it. The harness
 now publishes damaged sources to Parquet and treats a failed deployment as its own outcome
 rather than as a miss.
+
+---
+
+## The report on the model (`P6B`)
+
+    python -m src.powerbi.report.controls
+
+The semantic families prove the model. These prove the **report on top of it**: that every
+number a page shows is a governed measure in a stated scope, that the scope is the one the
+page claims, and that nothing on a page was typed, computed locally, scaled twice or dressed
+up as a verdict the agreement never gave. Three kinds of evidence, and the register says which
+each control used: **static** (the generated PBIR files, read as JSON — what Desktop opens),
+**live** (the model's own measures evaluated by the engine in the scope a visual declares),
+and **native** (the last pass through Power BI Desktop, accepted only while the report
+declarations and the model definition it was taken on are the ones on disk).
+
+| control | evidence | asserts |
+|---|---|---|
+| `P6B-01` | static | no financial amount typed: no decimal, percentage or ratio in any textbox on the eight financial pages; every card binds a measure |
+| `P6B-02` | static | every value on every visual is an explicit governed measure — no aggregation, no arithmetic, no fact column in a value role, no unknown measure |
+| `P6B-03` | static | the headline KPIs are the four governed primaries (Revenue, Management Adjusted EBITDA, Closing Cash, Covenant Net Leverage); every tile a measure |
+| `P6B-04` | static | the income statement is the governed line hierarchy with unit and entity beneath, and its values are the five variance measures |
+| `P6B-05` | live | selecting a unit narrows Revenue, Adjusted EBITDA and FTE in the Executive Overview's own scope through the slicer's column, and the units sum to the Group |
+| `P6B-06` | static | every percentage or variance shown is the governed measure; the report carries no ratio of its own |
+| `P6B-07` | static | no visual scoped to the Actual scenario binds a fact column — the cutoff cannot be bypassed |
+| `P6B-08` | static + live | every month-end trend on a carried-forward balance is scoped to closed months, and every Actual measure the report uses is blank for the four months after the close |
+| `P6B-09` | static | no version on any page: `PY_DERIVED` and `version_code` appear in no filter, slicer or projection |
+| `P6B-10` | live | the forecast on the page equals the mart for the version `ref_default_version` marks current |
+| `P6B-11` · `-11L` | static · live | the status tile binds `[Covenant Status]` alone, the test table is filtered to period 12, no verdict is typed; the engine reads *Indicative* at the close and the mart's verdict at the last test date |
+| `P6B-12` · `-12L` | static · live | the project table is keyed on `project_id`; engine, dimension and mart agree on 1,846 distinct projects with 0 duplicates |
+| `P6B-13` | static | the control counts on page 09 equal the registers' row counts, and the page code holds no control-count literal |
+| `P6B-14` | static | DSO, DIO, DPO, CCC and the revolver concepts are absent, and deferred on record |
+| `P6B-15` | static | no display unit other than None on a scaled money measure, no projection format |
+| `P6B-16` | static | every `NoFilter` interaction has a reason in the page declaration (29 edges) |
+| `P6B-17` | static | slicers synced by key, defaulted to the reporting close, unit paired with entity |
+| `P6B-18` | static | one navigation button per page on every page, each to a page that exists |
+| `P6B-19` | static | every object on the canvas, no two analytical objects overlapping, no page above the density gate of 6 |
+| `P6B-24` | static | no slicer that moves nothing on its page (through the measures' tables and the active one-to-many paths) |
+| `P6B-26` · `-27` | static | every colour a named palette colour; every font and size on the type scale |
+| `P6B-20` | native | the last Desktop pass rendered every page with zero visual errors |
+| `P6B-21` | native | every rail button landed on its page |
+| `P6B-22` | native | choosing Industrial Services narrowed the Executive Overview |
+| `P6B-23` | native | the rendered Actual revenue line ends at the reporting close |
+| `P6B-25` | native + live | every card Desktop rendered on the Executive Overview equals the engine's value in the tile's own scope, compared as rendered text |
+| `P6B-30…42` | live | thirteen three-way reconciliations: Revenue, Gross Profit, Statutory EBITDA, Adjusted EBITDA, EBIT, Net Income, Cash, Net Debt, Covenant EBITDA, Covenant Leverage, Covenant Headroom, FTE, CapEx — the visual's own scope evaluated in the engine against the semantic controls' mart SQL |
+
+**Why three routes.** `P6-XAR` already reconciles the engine to the marts at group grain in
+a filter the control writes. `P6B-30…42` reconcile in the filter the *page* writes — the
+visual's filters plus the slicer defaults, minus the slicers the page switched off — so a
+scope mistake on a page (a card reading the wrong basis, an outlook that summed twelve
+full-year rows) fails here even though the measure itself is right.
+
+### Report fault fixtures
+
+Each puts one report-level fault into a scratch copy of the generated report and asks
+whether the control named for it notices. A fixture caught only by another control is a miss.
+
+| fixture | what it breaks | caught by |
+|---|---|---|
+| `F6B-01` | the Revenue card replaced by the number typed as text | `P6B-01` |
+| `F6B-02` | a chart series that is *Sum of amount_usd*, not a measure | `P6B-02` |
+| `F6B-03` | account detail reading the raw fact column under an Actual filter — post-close rows would show | `P6B-07` |
+| `F6B-04` | the covenant status tile replaced by the word *Breach*, typed | `P6B-11` |
+| `F6B-05` | the project table on the pre-correction project key | `P6B-12` |
+| `F6B-06` | the Phase 6A control count typed as the stale 53 | `P6B-13` |
+| `F6B-07` | the outlook's Var % computed in the visual as Variance ÷ Comparator | `P6B-06` |
+| `F6B-08` | a million display unit on a card whose measure already scales | `P6B-15` |
+| `F6B-09` | a rail button to a page that does not exist | `P6B-18` |
+| `F6B-10` | a thousands display unit on a money chart's axis | `P6B-15` |
+| `F6B-11` | a `NoFilter` interaction with its reason erased | `P6B-16` |
+| `F6B-12` | unit and entity slicers on the Group-level cash flow page | `P6B-24` |
+
+**12/12 detected.** The first ten mutate the generated files, the last two the declarations;
+every fixture works on its own copy and the committed report is never touched.
 
 ---
 

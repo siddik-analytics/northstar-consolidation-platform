@@ -32,7 +32,7 @@ figure back to the source journal that produced it.
 | **5.1 — Upstream dimensional-integrity correction** | ✅ **Complete** | [Report](docs/phases/phase-05-1-key-integrity.md) · [Scenario dimension](docs/phases/phase-05-1-scenario-integrity.md) |
 | **5.2 — Excel executive design and visual polish** | ✅ **Approved · frozen** | [Report](docs/phases/phase-05-2-visual-polish.md) · [5.2A copper system](docs/phases/phase-05-2a-copper-correction.md) |
 | **6A — Power BI semantic model** | ✅ **Complete · resealed 6A.3** | [Report](docs/phases/phase-06a-report.md) · [6A.2 native PBIP](docs/phases/phase-06a-2-native-pbip.md) · [6A.3 report-discovered fixes](docs/phases/phase-06a-3-report-discovered-semantic-fixes.md) |
-| 6B — Power BI report design | ⏸ | |
+| **6B — Power BI executive report** | 🔍 **Built · awaiting owner visual review** | [Report](docs/phases/phase-06b-report.md) · [the report](docs/powerbi-report.md) · [style guide](docs/powerbi-style-guide.md) |
 | 7 — Board pack & commentary framework | ⏸ | |
 | 8 — Board pack & commentary framework | ⏸ | |
 | 9 — QA & performance hardening | ⏸ | |
@@ -94,8 +94,9 @@ python -m src.excel.build              # build the Excel management reporting mo
 python -m src.excel.qa                 # calculate, inspect and render the workbook in Excel
 python -m src.integrity.controls       # prove every declared key and grain, source to mart
 python -m src.integrity.faults         # break each one on purpose and prove it is caught
-python -m src.powerbi.run              # generate the semantic model, deploy it, control it
-python -m src.powerbi.faults           # break the model ten ways and prove each is caught
+python -m src.powerbi.run --native     # generate model and report, deploy, control both, exercise the report in Desktop
+python -m src.powerbi.faults           # break the model sixteen ways and prove each is caught
+python -m src.powerbi.report.faults    # break the report twelve ways and prove each is caught
 python -m pytest tests -q              # validate every accounting identity, seed and dataset
 ```
 
@@ -149,7 +150,7 @@ docs/            Design documentation
   adr/           25 architecture decision records
   phases/        Roadmap and per-phase reports
 excel/           Excel deliverables (Phase 6)
-powerbi/         PBIP project (Phase 7)
+powerbi/         PBIP project: the semantic model (Phase 6A) and the report (Phase 6B), generated
 sql/             Transformation layer, ordered by pipeline stage (Phases 3–5)
 src/
   anchors/       The financial anchor model (Phase 1)
@@ -160,6 +161,7 @@ src/
   excel/         The Excel management reporting model, built as code (Phase 5)
   integrity/     Declared-key and declared-grain registry, controls and fixtures
   powerbi/       The governed semantic model, built as code (Phase 6A)
+    report/      The ten-page executive report, declared and generated, with its own controls (Phase 6B)
 tools/           Maintenance utilities (anchor derivation, source and workbook diffs,
                  the financial invariance harness)
 tests/           Automated validation
@@ -195,7 +197,10 @@ tests/           Automated validation
 | [Key and grain framework](docs/key-and-grain-framework.md) | 73 declared keys, 290 controls, 18 fixtures, and the two defects that made them necessary |
 | [Power BI semantic model](docs/powerbi-semantic-model.md) | the star schema, the measure layer, and why it is validated by running it |
 | [Power BI measures](docs/powerbi-measures.md) | *Generated.* All 89 measures, their DAX and their descriptions |
-| [Power BI controls](docs/powerbi-controls.md) | 68 semantic, native-project, path, percentage and format controls, 16 fixtures, and what executing, opening and finally *reading* the model found |
+| [Power BI controls](docs/powerbi-controls.md) | 68 semantic, native-project, path, percentage and format controls, 16 fixtures, and what executing, opening and finally *reading* the model found; 43 report controls and 12 report fixtures |
+| [**Phase 6B report**](docs/phases/phase-06b-report.md) | the executive report on the model: ten pages, a native pass through Desktop, and three scope faults no measure could have shown |
+| [Power BI report](docs/powerbi-report.md) | the ten pages, the question each answers, the object inventory and the native evidence |
+| [Power BI style guide](docs/powerbi-style-guide.md) | the workbook's palette and type scale carried across by name, and the two controls that hold them |
 | [Defect register](docs/defect-register.md) | every defect found, what closed it, and the control that now stops it recurring |
 | [**Architecture lessons**](docs/architecture-lessons.md) | ten defects that balanced perfectly while being wrong, and the design change each produced |
 

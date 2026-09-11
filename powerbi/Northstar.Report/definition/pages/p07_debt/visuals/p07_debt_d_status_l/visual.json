@@ -2,12 +2,12 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.12.0/schema.json",
   "name": "p07_debt_d_status_l",
   "position": {
-    "x": 1157,
+    "x": 1144,
     "y": 160,
-    "z": 56,
-    "width": 91,
+    "z": 53,
+    "width": 102,
     "height": 16,
-    "tabOrder": 56000
+    "tabOrder": 53000
   },
   "visual": {
     "visualType": "textbox",

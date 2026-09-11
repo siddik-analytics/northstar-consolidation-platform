@@ -3,11 +3,11 @@
   "name": "p01_executive_lev_trend",
   "position": {
     "x": 736,
-    "y": 506,
-    "z": 71,
+    "y": 550,
+    "z": 72,
     "width": 520,
-    "height": 194,
-    "tabOrder": 71000
+    "height": 150,
+    "tabOrder": 72000
   },
   "visual": {
     "visualType": "lineChart",

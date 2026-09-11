@@ -286,6 +286,15 @@
       ],
       "dataPoint": [
         {
+          "selector": {
+            "data": [
+              {
+                "dataViewWildcard": {
+                  "matchingOption": 1
+                }
+              }
+            ]
+          },
           "properties": {
             "fill": {
               "solid": {

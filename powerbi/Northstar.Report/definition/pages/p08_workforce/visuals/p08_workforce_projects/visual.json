@@ -3,11 +3,11 @@
   "name": "p08_workforce_projects",
   "position": {
     "x": 736,
-    "y": 471,
-    "z": 52,
+    "y": 418,
+    "z": 51,
     "width": 520,
-    "height": 229,
-    "tabOrder": 52000
+    "height": 282,
+    "tabOrder": 51000
   },
   "visual": {
     "visualType": "tableEx",
@@ -74,21 +74,6 @@
               "queryRef": "Northstar Measures.Approved CapEx",
               "nativeQueryRef": "Approved CapEx",
               "displayName": "Approved"
-            },
-            {
-              "field": {
-                "Measure": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "Northstar Measures"
-                    }
-                  },
-                  "Property": "CapEx Variance %"
-                }
-              },
-              "queryRef": "Northstar Measures.CapEx Variance %",
-              "nativeQueryRef": "CapEx Variance %",
-              "displayName": "vs approval"
             }
           ]
         }
@@ -285,6 +270,13 @@
                   "Value": "9.0D"
                 }
               }
+            },
+            "wordWrap": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
             }
           }
         }
@@ -355,7 +347,7 @@
             "value": {
               "expr": {
                 "Literal": {
-                  "Value": "150.0D"
+                  "Value": "166.0D"
                 }
               }
             }
@@ -369,7 +361,7 @@
             "value": {
               "expr": {
                 "Literal": {
-                  "Value": "178.0D"
+                  "Value": "168.0D"
                 }
               }
             }
@@ -397,27 +389,13 @@
             "value": {
               "expr": {
                 "Literal": {
-                  "Value": "64.0D"
-                }
-              }
-            }
-          },
-          "selector": {
-            "metadata": "Northstar Measures.Approved CapEx"
-          }
-        },
-        {
-          "properties": {
-            "value": {
-              "expr": {
-                "Literal": {
                   "Value": "66.0D"
                 }
               }
             }
           },
           "selector": {
-            "metadata": "Northstar Measures.CapEx Variance %"
+            "metadata": "Northstar Measures.Approved CapEx"
           }
         }
       ]
@@ -436,7 +414,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Largest programmes — the corrected unique project key'"
+                  "Value": "'Largest programmes — FY2026 to the close, on the corrected unique project key'"
                 }
               }
             },
@@ -489,6 +467,112 @@
     "filters": [
       {
         "name": "pj0",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "Date"
+              }
+            },
+            "Property": "fiscal_year_label"
+          }
+        },
+        "type": "Categorical",
+        "filter": {
+          "Version": 2,
+          "From": [
+            {
+              "Name": "f",
+              "Entity": "Date",
+              "Type": 0
+            }
+          ],
+          "Where": [
+            {
+              "Condition": {
+                "In": {
+                  "Expressions": [
+                    {
+                      "Column": {
+                        "Expression": {
+                          "SourceRef": {
+                            "Source": "f"
+                          }
+                        },
+                        "Property": "fiscal_year_label"
+                      }
+                    }
+                  ],
+                  "Values": [
+                    [
+                      {
+                        "Literal": {
+                          "Value": "'FY2026'"
+                        }
+                      }
+                    ]
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      },
+      {
+        "name": "pj1",
+        "field": {
+          "Column": {
+            "Expression": {
+              "SourceRef": {
+                "Entity": "Date"
+              }
+            },
+            "Property": "is_actual_month"
+          }
+        },
+        "type": "Categorical",
+        "filter": {
+          "Version": 2,
+          "From": [
+            {
+              "Name": "f",
+              "Entity": "Date",
+              "Type": 0
+            }
+          ],
+          "Where": [
+            {
+              "Condition": {
+                "In": {
+                  "Expressions": [
+                    {
+                      "Column": {
+                        "Expression": {
+                          "SourceRef": {
+                            "Source": "f"
+                          }
+                        },
+                        "Property": "is_actual_month"
+                      }
+                    }
+                  ],
+                  "Values": [
+                    [
+                      {
+                        "Literal": {
+                          "Value": "true"
+                        }
+                      }
+                    ]
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      },
+      {
+        "name": "pj2",
         "field": {
           "Column": {
             "Expression": {

@@ -3,11 +3,11 @@
   "name": "p07_debt_instruments",
   "position": {
     "x": 736,
-    "y": 450,
-    "z": 61,
+    "y": 446,
+    "z": 58,
     "width": 520,
-    "height": 250,
-    "tabOrder": 61000
+    "height": 254,
+    "tabOrder": 58000
   },
   "visual": {
     "visualType": "tableEx",
@@ -68,21 +68,6 @@
                       "Entity": "Debt Instrument"
                     }
                   },
-                  "Property": "is_hedged"
-                }
-              },
-              "queryRef": "Debt Instrument.is_hedged",
-              "nativeQueryRef": "is_hedged",
-              "displayName": "Hedged"
-            },
-            {
-              "field": {
-                "Column": {
-                  "Expression": {
-                    "SourceRef": {
-                      "Entity": "Debt Instrument"
-                    }
-                  },
                   "Property": "maturity_date"
                 }
               },
@@ -103,7 +88,7 @@
               },
               "queryRef": "Debt Instrument.counts_toward_covenant_debt",
               "nativeQueryRef": "counts_toward_covenant_debt",
-              "displayName": "In covenant debt"
+              "displayName": "Covenant"
             }
           ]
         }
@@ -300,6 +285,13 @@
                   "Value": "9.0D"
                 }
               }
+            },
+            "wordWrap": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
             }
           }
         }
@@ -359,10 +351,80 @@
             "autoSizeColumns": {
               "expr": {
                 "Literal": {
-                  "Value": "true"
+                  "Value": "false"
                 }
               }
             }
+          }
+        },
+        {
+          "properties": {
+            "value": {
+              "expr": {
+                "Literal": {
+                  "Value": "146.0D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "Debt Instrument.instrument_name"
+          }
+        },
+        {
+          "properties": {
+            "value": {
+              "expr": {
+                "Literal": {
+                  "Value": "104.0D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "Debt Instrument.instrument_type"
+          }
+        },
+        {
+          "properties": {
+            "value": {
+              "expr": {
+                "Literal": {
+                  "Value": "64.0D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "Debt Instrument.rate_type"
+          }
+        },
+        {
+          "properties": {
+            "value": {
+              "expr": {
+                "Literal": {
+                  "Value": "78.0D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "Debt Instrument.maturity_date"
+          }
+        },
+        {
+          "properties": {
+            "value": {
+              "expr": {
+                "Literal": {
+                  "Value": "66.0D"
+                }
+              }
+            }
+          },
+          "selector": {
+            "metadata": "Debt Instrument.counts_toward_covenant_debt"
           }
         }
       ]
@@ -421,6 +483,58 @@
               "expr": {
                 "Literal": {
                   "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "subTitle": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Covenant: counts toward covenant debt'"
+                }
+              }
+            },
+            "fontColor": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#5B6B7B'"
+                    }
+                  }
+                }
+              }
+            },
+            "fontSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "8.0D"
+                }
+              }
+            },
+            "fontFamily": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Segoe UI'"
+                }
+              }
+            },
+            "alignment": {
+              "expr": {
+                "Literal": {
+                  "Value": "'left'"
                 }
               }
             }

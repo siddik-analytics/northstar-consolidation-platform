@@ -33,7 +33,17 @@
     },
     {
       "source": "p06_ebitda_sl_rbasis",
-      "target": "p06_ebitda_bu_var",
+      "target": "p06_ebitda_ebitda_trend",
+      "type": "NoFilter"
+    },
+    {
+      "source": "p06_ebitda_sl_period",
+      "target": "p06_ebitda_ebitda_trend",
+      "type": "NoFilter"
+    },
+    {
+      "source": "p06_ebitda_sl_basis",
+      "target": "p06_ebitda_ebitda_trend",
       "type": "NoFilter"
     }
   ]

@@ -530,8 +530,10 @@ def matrix(rows: list[dict], values: list[tuple[str, str | None]], title_text: s
            subtitle_text: str | None = None, row_header: str | None = None,
            row_names: dict[str, str] | None = None,
            widths: dict[str, int] | None = None) -> dict:
+    # the row-header caption is the first row field's display name; `row_header` names it
     roles = {"Rows": [projection(r, active=(i == 0),
-                                 display_name=(row_names or {}).get(_query_ref(r)))
+                                 display_name=(row_names or {}).get(_query_ref(r))
+                                 or (row_header if i == 0 else None))
                       for i, r in enumerate(rows)],
              "Values": [projection(measure(m), display_name=d,
                                    fmt=(value_formats or {}).get(m))
@@ -587,7 +589,7 @@ def table(fields: list[tuple[dict, str | None, str | None]], title_text: str | N
                                 outline="BottomOnly", wordWrap=True)],
         "values": [props(fontColorPrimary=colour(T.INK), backColorPrimary=colour(T.WHITE),
                          fontColorSecondary=colour(T.INK), backColorSecondary=colour(T.WHITE),
-                         fontFamily=T.FONT, fontSize=float(T.TYPE["body"]))],
+                         fontFamily=T.FONT, fontSize=float(T.TYPE["body"]), wordWrap=False)],
         "total": [props(totals=totals, fontColor=colour(T.NAVY), backColor=colour(T.WHITE),
                         fontFamily=T.FONT_SEMIBOLD, outline="TopOnly")],
         "columnWidth": [props(autoSizeColumns=not widths)]
@@ -638,7 +640,7 @@ def nav_button(label: str, page_name: str, active: bool) -> dict:
                      dict(text, selector={"id": "hover"})],
             "fill": [dict(props(show=True, fillColor=colour(fill), transparency=0.0),
                           selector={"id": "default"}),
-                     dict(props(show=True, fillColor=colour(T.COPPER if active else "#2A5A78"),
+                     dict(props(show=True, fillColor=colour(T.COPPER if active else T.NAVY_HOVER),
                                 transparency=0.0), selector={"id": "hover"})],
             "outline": [props(show=False)],
             "shape": [props(tileShape="rectangle")],

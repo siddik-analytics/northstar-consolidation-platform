@@ -2,10 +2,10 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.12.0/schema.json",
   "name": "p07_debt_d_lev_v",
   "position": {
-    "x": 729,
+    "x": 784,
     "y": 174,
     "z": 42,
-    "width": 95,
+    "width": 106,
     "height": 32,
     "tabOrder": 42000
   },

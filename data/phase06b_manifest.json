@@ -1,0 +1,37 @@
+{
+  "build_id": "3ae52c995de48892",
+  "controls": {
+    "failed": 0,
+    "not_executed": 0,
+    "passed": 43,
+    "total": 43
+  },
+  "desktop": "2.157.1354.0",
+  "fixtures": {
+    "detected": 0,
+    "total": 0
+  },
+  "native": {
+    "cutoff": true,
+    "desktop": "2.157.1354.0",
+    "navigation": 10,
+    "project_digest": "a6ec6ca6a830788a",
+    "seconds": 303.9,
+    "unit_narrowed": true,
+    "visual_errors": 0
+  },
+  "objects": {
+    "analytical": 28,
+    "kpi": 160,
+    "navigation": 100,
+    "shape": 116,
+    "slicer": 27,
+    "text": 224
+  },
+  "pages": 10,
+  "phase": "6B",
+  "project_digest": "6a7239d6772b92f6",
+  "semantic_build_id": "cfefefbaa93f16a1",
+  "visuals": 655,
+  "workbook_digest": "bf847b4327526a39"
+}

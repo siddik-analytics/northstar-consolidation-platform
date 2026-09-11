@@ -16,7 +16,18 @@ each one says about the design rather than for what happened.
 
 ## Open
 
-*None.*
+| id | found in | what it is | proposed correction | status |
+|---|---|---|---|---|
+| **P6B-D-06** | Phase 6B, P&L account detail | **`Account[fs_caption_l2]` sorts by `sort_order`, a column that is unique per account, not per caption.** Any visual that groups by the level-2 caption shows each caption once per account beneath it ("Product revenue" three times). No number is affected; the report avoids the column and groups by the level-1 caption instead | sort `fs_caption_l2` by a caption-grain order (`min(sort_order)` per caption) in `dim_semantic_account`; a presentation property, not a finance definition, but a model change and therefore the owner's | **open — owner decision** |
+
+### Observation, not a defect: the layer bridge and the reporting close
+
+`mart_consolidation_bridge` is by fiscal year and carries every entry dated in the year,
+including the source's post-close months (September–December 2026, 1.1m of EBITDA). The
+governed `[Layer EBITDA]` for FY2026 therefore reads 29.2m where year-to-date statutory
+EBITDA at the August close reads 28.1m. The measure is as approved in Phase 6A.3 — "as the
+mart holds it" — and the page says what it carries; whether the bridge should stop at the
+close is a Phase 5 mart question for the owner (`docs/phases/phase-06b-report.md` §9).
 
 ## Closed in Phase 6A.3
 

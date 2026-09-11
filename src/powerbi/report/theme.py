@@ -18,6 +18,8 @@ from __future__ import annotations
 
 # ---- the palette, by the Excel style guide's names
 NAVY = "#1B4965"
+#: the rail button under the pointer: navy lifted one step, structure still, never data
+NAVY_HOVER = "#2A5A78"
 COPPER = "#B07A45"
 COPPER_TINT = "#E8D8C8"
 INK = "#1F2A37"

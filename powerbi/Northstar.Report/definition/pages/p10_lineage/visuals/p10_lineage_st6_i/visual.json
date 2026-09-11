@@ -3,10 +3,10 @@
   "name": "p10_lineage_st6_i",
   "position": {
     "x": 1120,
-    "y": 162,
+    "y": 160,
     "z": 53,
     "width": 126,
-    "height": 24,
+    "height": 40,
     "tabOrder": 53000
   },
   "visual": {
@@ -19,7 +19,7 @@
               {
                 "textRuns": [
                   {
-                    "value": "project 28178e288544b27f",
+                    "value": "report build 3ae52c995de48892",
                     "textStyle": {
                       "fontSize": "8pt",
                       "color": "#E8D8C8",

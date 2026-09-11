@@ -476,6 +476,27 @@ fixtures. 68/68, 16/16. See
 
 ---
 
+## Phase 6B — Power BI executive report 🔍
+
+**Built, awaiting owner visual review.** Ten pages generated from declarations on the sealed
+model: an Executive Overview read in thirty seconds (four first-tier KPIs, six second-tier,
+the year so far, the full-year outlook, the unit that needs attention, cash and leverage
+against the limit), the governed P&L with account detail, units and entities with share
+measures, balance sheet, cash flow, the three EBITDAs and their bridge, debt and covenants
+with a verdict only on test dates, workforce and capital on the corrected key, consolidation
+layers with the control environment read from the registers, and lineage.
+
+Controlled as an artefact of its own: **43 report controls, 12 report fixtures**, a native
+pass through Power BI Desktop that reads the rendered cards, presses every navigation
+button, chooses a unit in the slicer and measures where the Actual line stops, and thirteen
+three-way reconciliations in the visual's own scope. Three scope faults found and fixed that
+no measure-level control could have shown (lessons §17). One open model observation
+(P6B-D-06, a sort-by column) and one mart question (the annual layer bridge and the close)
+for the owner. Excel untouched at `bf847b4327526a39`. See
+[`phase-06b-report.md`](phase-06b-report.md).
+
+---
+
 ## Phase 6 — Excel FP&A and management reporting models
 
 **Deliverables**

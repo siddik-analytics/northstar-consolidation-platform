@@ -3,11 +3,11 @@
   "name": "p09_controls_ch_Passed",
   "position": {
     "x": 1074,
-    "y": 170,
-    "z": 45,
+    "y": 114,
+    "z": 34,
     "width": 52,
     "height": 16,
-    "tabOrder": 45000
+    "tabOrder": 34000
   },
   "visual": {
     "visualType": "textbox",

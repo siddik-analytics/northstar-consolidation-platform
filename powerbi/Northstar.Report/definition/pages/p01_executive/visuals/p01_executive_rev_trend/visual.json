@@ -3,11 +3,11 @@
   "name": "p01_executive_rev_trend",
   "position": {
     "x": 200,
-    "y": 258,
-    "z": 67,
-    "width": 305,
-    "height": 232,
-    "tabOrder": 67000
+    "y": 312,
+    "z": 68,
+    "width": 380,
+    "height": 222,
+    "tabOrder": 68000
   },
   "visual": {
     "visualType": "lineChart",
@@ -385,7 +385,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Revenue by month — actual, budget and current forecast'"
+                  "Value": "'Revenue by month — actual, budget, forecast'"
                 }
               }
             },

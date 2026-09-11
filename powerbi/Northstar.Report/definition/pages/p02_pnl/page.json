@@ -7,23 +7,8 @@
   "width": 1280,
   "visualInteractions": [
     {
-      "source": "p02_pnl_sl_period",
-      "target": "p02_pnl_ebitda_trend",
-      "type": "NoFilter"
-    },
-    {
-      "source": "p02_pnl_sl_basis",
-      "target": "p02_pnl_ebitda_trend",
-      "type": "NoFilter"
-    },
-    {
       "source": "p02_pnl_sl_comparison",
-      "target": "p02_pnl_ebitda_trend",
-      "type": "NoFilter"
-    },
-    {
-      "source": "p02_pnl_sl_rbasis",
-      "target": "p02_pnl_ebitda_trend",
+      "target": "p02_pnl_accounts",
       "type": "NoFilter"
     }
   ]

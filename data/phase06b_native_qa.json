@@ -1,0 +1,191 @@
+{
+  "opened": true,
+  "refusal": "",
+  "desktop": "2.157.1354.0",
+  "project_digest": "a6ec6ca6a830788a",
+  "report_build_id": "3ae52c995de48892",
+  "definition_digest": "af1c6264f61aeb66",
+  "pid": 9624,
+  "refreshed": true,
+  "pages": [
+    "01 Executive Overview",
+    "02 P&L Performance",
+    "03 Business Units & Entities",
+    "04 Balance Sheet & Working Capital",
+    "05 Cash Flow & Liquidity",
+    "06 EBITDA & Variance Bridge",
+    "07 Debt & Covenants",
+    "08 Workforce & CapEx",
+    "09 Consolidation & Controls",
+    "10 Lineage & Technical"
+  ],
+  "rendered": {
+    "Revenue": "279.0",
+    "Management Adjusted EBITDA": "31.9",
+    "Closing Cash": "14.6",
+    "Covenant Net Leverage": "4.21x",
+    "Variance": "(5.6)",
+    "Variance Favourability": "Unfavourable",
+    "Gross Margin %": "27.2%",
+    "EBITDA Margin %": "10.1%",
+    "Operating Cash Flow": "5.0",
+    "Covenant Net Debt": "243.8",
+    "Covenant Headroom": "0.29x",
+    "Closing FTE": "2,477.4",
+    "Reporting Period": "Aug 2026"
+  },
+  "visual_errors": {
+    "01 Executive Overview": [],
+    "02 P&L Performance": [],
+    "03 Business Units & Entities": [],
+    "04 Balance Sheet & Working Capital": [],
+    "05 Cash Flow & Liquidity": [],
+    "06 EBITDA & Variance Bridge": [],
+    "07 Debt & Covenants": [],
+    "08 Workforce & CapEx": [],
+    "09 Consolidation & Controls": [],
+    "10 Lineage & Technical": []
+  },
+  "screenshots": {
+    "01 Executive Overview": "docs\\assets\\phase-06b\\final\\01_executive_overview.png",
+    "02 P&L Performance": "docs\\assets\\phase-06b\\final\\02_pnl_performance.png",
+    "03 Business Units & Entities": "docs\\assets\\phase-06b\\final\\03_business_units_entities.png",
+    "04 Balance Sheet & Working Capital": "docs\\assets\\phase-06b\\final\\04_balance_sheet_working_capital.png",
+    "05 Cash Flow & Liquidity": "docs\\assets\\phase-06b\\final\\05_cash_flow_liquidity.png",
+    "06 EBITDA & Variance Bridge": "docs\\assets\\phase-06b\\final\\06_ebitda_bridge.png",
+    "07 Debt & Covenants": "docs\\assets\\phase-06b\\final\\07_debt_covenants.png",
+    "08 Workforce & CapEx": "docs\\assets\\phase-06b\\final\\08_workforce_capex.png",
+    "09 Consolidation & Controls": "docs\\assets\\phase-06b\\final\\09_consolidation_controls.png",
+    "10 Lineage & Technical": "docs\\assets\\phase-06b\\final\\10_lineage_technical.png"
+  },
+  "cutoff": {
+    "stops_at_close": true,
+    "last_actual_px": 489,
+    "close_px": 493,
+    "next_month_px": 523,
+    "detail": "the Actual line ends at x=489px; 202608 sits at 493px and the next month at 523px"
+  },
+  "unit_slicer": {
+    "unit": "Industrial Services",
+    "before": {
+      "Revenue": "279.0",
+      "Management Adjusted EBITDA": "31.9",
+      "Closing Cash": "14.6",
+      "Covenant Net Leverage": "4.21x",
+      "Variance": "(5.6)",
+      "Variance Favourability": "Unfavourable",
+      "Gross Margin %": "27.2%",
+      "EBITDA Margin %": "10.1%",
+      "Operating Cash Flow": "5.0",
+      "Covenant Net Debt": "243.8",
+      "Covenant Headroom": "0.29x",
+      "Closing FTE": "2,477.4",
+      "Reporting Period": "Aug 2026"
+    },
+    "after": {
+      "Revenue": "84.1",
+      "Management Adjusted EBITDA": "4.6",
+      "Closing Cash": "14.6",
+      "Covenant Net Leverage": "4.21x",
+      "Variance": "(0.3)",
+      "Variance Favourability": "Unfavourable",
+      "Gross Margin %": "20.1%",
+      "EBITDA Margin %": "4.6%",
+      "Operating Cash Flow": "5.0",
+      "Covenant Net Debt": "243.8",
+      "Covenant Headroom": "0.29x",
+      "Closing FTE": "1,051.7",
+      "Reporting Period": "Aug 2026"
+    },
+    "moved": {
+      "Revenue": [
+        "279.0",
+        "84.1"
+      ],
+      "Management Adjusted EBITDA": [
+        "31.9",
+        "4.6"
+      ],
+      "Variance": [
+        "(5.6)",
+        "(0.3)"
+      ],
+      "Gross Margin %": [
+        "27.2%",
+        "20.1%"
+      ],
+      "EBITDA Margin %": [
+        "10.1%",
+        "4.6%"
+      ],
+      "Closing FTE": [
+        "2,477.4",
+        "1,051.7"
+      ]
+    },
+    "held": {
+      "Closing Cash": "14.6",
+      "Covenant Net Leverage": "4.21x",
+      "Variance Favourability": "Unfavourable",
+      "Operating Cash Flow": "5.0",
+      "Covenant Net Debt": "243.8",
+      "Covenant Headroom": "0.29x",
+      "Reporting Period": "Aug 2026"
+    },
+    "narrowed": true,
+    "reset_ok": false,
+    "restored": {
+      "Revenue": "84.1",
+      "Management Adjusted EBITDA": "4.6",
+      "Closing FTE": "1,051.7"
+    },
+    "detail": "6 cards moved, 7 held (Group-level measures)"
+  },
+  "navigation": {
+    "total": 10,
+    "passed": 10,
+    "results": [
+      [
+        "01 Executive Overview",
+        "01 Executive Overview"
+      ],
+      [
+        "02 P&L Performance",
+        "02 P&L Performance"
+      ],
+      [
+        "03 Business Units & Entities",
+        "03 Business Units & Entities"
+      ],
+      [
+        "04 Balance Sheet & Working Capital",
+        "04 Balance Sheet & Working Capital"
+      ],
+      [
+        "05 Cash Flow & Liquidity",
+        "05 Cash Flow & Liquidity"
+      ],
+      [
+        "06 EBITDA & Variance Bridge",
+        "06 EBITDA & Variance Bridge"
+      ],
+      [
+        "07 Debt & Covenants",
+        "07 Debt & Covenants"
+      ],
+      [
+        "08 Workforce & CapEx",
+        "08 Workforce & CapEx"
+      ],
+      [
+        "09 Consolidation & Controls",
+        "09 Consolidation & Controls"
+      ],
+      [
+        "10 Lineage & Technical",
+        "10 Lineage & Technical"
+      ]
+    ]
+  },
+  "seconds": 303.9
+}

@@ -4,10 +4,10 @@
   "position": {
     "x": 1156,
     "y": 170,
-    "z": 49,
+    "z": 48,
     "width": 97,
     "height": 16,
-    "tabOrder": 49000
+    "tabOrder": 48000
   },
   "visual": {
     "visualType": "textbox",
@@ -19,7 +19,7 @@
               {
                 "textRuns": [
                   {
-                    "value": "CapEx / depreciation",
+                    "value": "CapEx / D&A",
                     "textStyle": {
                       "fontSize": "9pt",
                       "color": "#5B6B7B",

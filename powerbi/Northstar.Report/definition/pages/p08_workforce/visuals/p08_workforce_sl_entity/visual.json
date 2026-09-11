@@ -2,12 +2,12 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.12.0/schema.json",
   "name": "p08_workforce_sl_entity",
   "position": {
-    "x": 776,
+    "x": 532,
     "y": 76,
-    "z": 22,
+    "z": 21,
     "width": 208,
     "height": 46,
-    "tabOrder": 22000
+    "tabOrder": 21000
   },
   "visual": {
     "visualType": "slicer",

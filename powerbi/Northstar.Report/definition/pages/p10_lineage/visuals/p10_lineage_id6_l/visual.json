@@ -3,7 +3,7 @@
   "name": "p10_lineage_id6_l",
   "position": {
     "x": 200,
-    "y": 382,
+    "y": 390,
     "z": 75,
     "width": 240,
     "height": 18,
@@ -19,7 +19,7 @@
               {
                 "textRuns": [
                   {
-                    "value": "PBIP project digest",
+                    "value": "Report build id",
                     "textStyle": {
                       "fontSize": "9pt",
                       "color": "#1F2A37",

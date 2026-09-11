@@ -3,11 +3,11 @@
   "name": "p09_controls_ch_Scope",
   "position": {
     "x": 806,
-    "y": 170,
-    "z": 43,
+    "y": 114,
+    "z": 32,
     "width": 200,
     "height": 16,
-    "tabOrder": 43000
+    "tabOrder": 32000
   },
   "visual": {
     "visualType": "textbox",

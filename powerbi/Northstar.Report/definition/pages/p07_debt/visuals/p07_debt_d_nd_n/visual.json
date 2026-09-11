@@ -2,11 +2,11 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.12.0/schema.json",
   "name": "p07_debt_d_nd_n",
   "position": {
-    "x": 511,
+    "x": 544,
     "y": 208,
     "z": 34,
-    "width": 91,
-    "height": 28,
+    "width": 102,
+    "height": 32,
     "tabOrder": 34000
   },
   "visual": {

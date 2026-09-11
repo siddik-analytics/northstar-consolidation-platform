@@ -3,11 +3,11 @@
   "name": "p09_controls_res_t",
   "position": {
     "x": 210,
-    "y": 372,
-    "z": 26,
+    "y": 316,
+    "z": 24,
     "width": 310,
     "height": 22,
-    "tabOrder": 26000
+    "tabOrder": 24000
   },
   "visual": {
     "visualType": "textbox",
@@ -19,7 +19,7 @@
               {
                 "textRuns": [
                   {
-                    "value": "Consolidated result",
+                    "value": "What each layer contributes",
                     "textStyle": {
                       "fontSize": "11pt",
                       "color": "#1B4965",

@@ -3,11 +3,11 @@
   "name": "p09_controls_cr5_736",
   "position": {
     "x": 736,
-    "y": 304,
-    "z": 84,
+    "y": 248,
+    "z": 73,
     "width": 66,
     "height": 18,
-    "tabOrder": 84000
+    "tabOrder": 73000
   },
   "visual": {
     "visualType": "textbox",

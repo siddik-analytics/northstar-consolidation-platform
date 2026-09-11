@@ -2,12 +2,12 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.12.0/schema.json",
   "name": "p07_debt_d_status_v",
   "position": {
-    "x": 1153,
+    "x": 1140,
     "y": 174,
-    "z": 57,
-    "width": 95,
+    "z": 54,
+    "width": 106,
     "height": 32,
-    "tabOrder": 57000
+    "tabOrder": 54000
   },
   "visual": {
     "visualType": "card",
@@ -41,7 +41,7 @@
             "fontSize": {
               "expr": {
                 "Literal": {
-                  "Value": "18.0D"
+                  "Value": "15.0D"
                 }
               }
             },

@@ -3,7 +3,7 @@
   "name": "p10_lineage_md7_v",
   "position": {
     "x": 896,
-    "y": 404,
+    "y": 412,
     "z": 106,
     "width": 360,
     "height": 18,
@@ -19,7 +19,7 @@
               {
                 "textRuns": [
                   {
-                    "value": "import from Parquet · Power Query in Desktop and TMSL in the engine",
+                    "value": "Parquet import · Power Query in Desktop, TMSL in the engine",
                     "textStyle": {
                       "fontSize": "9pt",
                       "color": "#1B4965",

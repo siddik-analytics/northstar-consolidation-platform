@@ -28,6 +28,7 @@
               },
               "queryRef": "Measure Line.measure_name",
               "nativeQueryRef": "measure_name",
+              "displayName": "Line · unit · entity",
               "active": true
             },
             {
@@ -345,7 +346,7 @@
             "title": {
               "expr": {
                 "Literal": {
-                  "Value": "'Line · business unit · entity'"
+                  "Value": "'Line · unit · entity'"
                 }
               }
             }
