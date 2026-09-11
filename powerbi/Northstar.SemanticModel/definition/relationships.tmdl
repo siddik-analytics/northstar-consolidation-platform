@@ -126,6 +126,10 @@ relationship d804bd1e-9a50-596a-bfc3-88b0d2acb527
 	fromColumn: 'Layer Bridge'.layer_id
 	toColumn: 'Consolidation Layer'.layer_id
 
+relationship 0d1f074f-0218-587e-8647-ed04c0fbbb98
+	fromColumn: 'Layer Bridge'.period_key
+	toColumn: 'Date'.period_key
+
 relationship cdb507ce-c8a3-5bda-b321-2844996288a0
 	isActive: false
 	fromColumn: 'Financials'.bu_code

@@ -111,7 +111,7 @@ table 'Balance Sheet'
 		mode: import
 		source =
 				let
-				    Source = Parquet.Document(File.Contents(DataFolder & "\30_marts\mart_balance_sheet.parquet"))
+				    Source = Parquet.Document(File.Contents(DataFolder & "\35_semantic\fact_semantic_balance_sheet.parquet"))
 				in
 				    Source
 

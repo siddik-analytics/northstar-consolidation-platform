@@ -122,9 +122,15 @@ def test_the_model_has_at_most_one_calculated_column():
 
 
 def test_no_semantic_table_recreates_a_mart():
-    """Every table loads a governed published artefact; none is assembled in the model."""
+    """
+    Every table loads a governed published artefact; none is assembled in the model. The
+    Phase 6B.1 publications (`fact_semantic_*`) are restatements of a mart at the grain the
+    model sorts or reads at, published to 35_semantic and declared in the key registry.
+    """
     for t in C.TABLES:
-        assert t["source"].startswith(("mart_", "dim_")), t["source"]
+        assert t["source"].startswith(("mart_", "dim_", "fact_semantic_")), t["source"]
+        if t["source"].startswith("fact_semantic_"):
+            assert t["folder"] == "semantic"
 
 
 # ===================================================================== statements and policy
@@ -262,7 +268,7 @@ def test_no_table_name_desktop_reserves():
 
 def test_the_measures_host_kept_every_measure_folder_and_format():
     text = _tmdl(f"tables/{C.MEASURES_TABLE}.tmdl")
-    assert text.count("\tmeasure '") == len(MEASURES) == 95
+    assert text.count("\tmeasure '") == len(MEASURES) == 96
     for name, expression, fmt, folder, description in MEASURES:
         assert f"\tmeasure '{name}' =" in text
         assert f"displayFolder: {folder}" in text

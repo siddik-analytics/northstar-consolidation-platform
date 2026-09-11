@@ -3,11 +3,11 @@
   "name": "p09_controls_cr6_rule",
   "position": {
     "x": 736,
-    "y": 290,
-    "z": 86,
+    "y": 346,
+    "z": 88,
     "width": 520,
     "height": 1,
-    "tabOrder": 86000
+    "tabOrder": 88000
   },
   "visual": {
     "visualType": "shape",

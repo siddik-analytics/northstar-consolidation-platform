@@ -16,18 +16,14 @@ each one says about the design rather than for what happened.
 
 ## Open
 
-| id | found in | what it is | proposed correction | status |
+*None.*
+
+## Closed in Phase 6B.1
+
+| id | found in | what it was | closed by | permanent control |
 |---|---|---|---|---|
-| **P6B-D-06** | Phase 6B, P&L account detail | **`Account[fs_caption_l2]` sorts by `sort_order`, a column that is unique per account, not per caption.** Any visual that groups by the level-2 caption shows each caption once per account beneath it ("Product revenue" three times). No number is affected; the report avoids the column and groups by the level-1 caption instead | sort `fs_caption_l2` by a caption-grain order (`min(sort_order)` per caption) in `dim_semantic_account`; a presentation property, not a finance definition, but a model change and therefore the owner's | **open — owner decision** |
-
-### Observation, not a defect: the layer bridge and the reporting close
-
-`mart_consolidation_bridge` is by fiscal year and carries every entry dated in the year,
-including the source's post-close months (September–December 2026, 1.1m of EBITDA). The
-governed `[Layer EBITDA]` for FY2026 therefore reads 29.2m where year-to-date statutory
-EBITDA at the August close reads 28.1m. The measure is as approved in Phase 6A.3 — "as the
-mart holds it" — and the page says what it carries; whether the bridge should stop at the
-close is a Phase 5 mart question for the owner (`docs/phases/phase-06b-report.md` §9).
+| **P6B-D-06** | Phase 6B, P&L account detail | **`Account[fs_caption_l2]` sorted by `sort_order`, an account-grain key.** One caption, several keys: a visual grouping by the level-2 caption showed "Product revenue" once per account beneath it. No number was affected | every level of the hierarchy carries a key at its own grain, derived from the governed chart (a caption's key is the smallest account sort order beneath it); the three level-2 labels the chart reuses under different level-1 captions are qualified so a label names one node. The same control then found `Scenario[scenario_name]` and `Balance Sheet[caption]` sorted at the wrong grain, both restated in the semantic layer | `P6B1-HS-01…03`, fixture `F6B1-01` |
+| **P6B-O-01** | Phase 6B, Consolidation & Controls | **the annual layer bridge beside a year-to-date headline**: 29.2m (every FY2026 entry, post-close months included) against 28.1m. Both correct; the scope was not | the bridge at month grain (`fact_semantic_layer_bridge`, `rpt_layer_bridge`'s definitions), `[Layer EBITDA]` and `[Layer Net Income]` on the governed period basis with the reporting-close cutoff, the page on the headline's slicers, the title stating the scope. YTD at Aug 2026: 28,100,907.83 both ways | `P6B1-SC-01`, `P6B1-BR-01…08`, fixtures `F6B1-02`, `F6B1-03` |
 
 ## Closed in Phase 6A.3
 

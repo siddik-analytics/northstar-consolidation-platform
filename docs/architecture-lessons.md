@@ -435,6 +435,34 @@ wildcard selector, which is the difference between colouring a series and colour
 > **An inert control is a defect.** A slicer that moves nothing teaches a reader that the
 > number is per unit when it is the Group's.
 
+## 18. A key at the wrong grain, and a bridge on the wrong scope
+
+**Symptom.** The level-2 caption of the chart of accounts showed once per account beneath
+it; a consolidation bridge on the Controls page read 29.2m beside a year-to-date headline of
+28.1m. Both numbers were right. Both presentations were wrong.
+
+**Root cause.** The caption sorted by an account-grain key, so the engine had several keys
+for one label and treated each as a row. The bridge was annual because its mart was annual,
+and sat beside a year-to-date figure with nothing but a subtitle to say so.
+
+**Why controls miss it.** `P6-SEM-11` asked that captions sort by *a* governed order and
+never asked at what grain the order lived; every reconciliation compared the bridge with
+its own mart and never with the statement it stood beside. Grain and scope are the two
+questions a value-level control does not ask.
+
+**Permanent fix.** `P6B1-HS-01` requires every sorted column to map one value to one key
+and back, for every sort declaration in the model — and found two more the moment it ran
+(`Scenario[scenario_name]`, `Balance Sheet[caption]`). `P6B1-SC-01` requires a bridge and the
+measure it reconciles to share their slicers, their interactions and a title that states
+the scope; `P6B1-BR-02…07` require the statutory layers to sum to the governed measure on
+every period basis.
+
+> **A sort key belongs to the grain of the thing it sorts.** A key at a finer grain is a
+> duplicate waiting for a visual to expose it.
+
+> **Two figures on a page must share a scope or state their difference.** A subtitle that
+> explains a mismatch is a mismatch with a caption.
+
 ---
 
 ## What these have in common

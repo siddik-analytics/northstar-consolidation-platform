@@ -3,11 +3,11 @@
   "name": "p09_controls_rec_mark",
   "position": {
     "x": 736,
-    "y": 306,
-    "z": 87,
+    "y": 384,
+    "z": 96,
     "width": 4,
     "height": 14,
-    "tabOrder": 87000
+    "tabOrder": 96000
   },
   "visual": {
     "visualType": "shape",

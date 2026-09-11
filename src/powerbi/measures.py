@@ -150,6 +150,35 @@ def caption(name: str, account_class: str, negate: bool = False) -> str:
             f")")
 
 
+#: A consolidation-layer amount on the selected period basis. The bridge fact is monthly,
+#: so the month is a plain sum, the year to date is the fiscal year's months up to the one
+#: selected, and the fiscal year is all of it -- the same three readings `PERIOD_SWITCH`
+#: takes from the stored mart columns, computed here because the bridge stores months. The
+#: cutoff is unconditional: the bridge is Actual by nature and has no scenario to test.
+def layer_measure(column: str) -> str:
+    return f"""VAR _Basis = SELECTEDVALUE ( 'Period Basis'[basis_code], "YTD" )
+VAR _Latest = MAX ( 'Date'[period_key] )
+VAR _Year = MAX ( 'Date'[fiscal_year] )
+VAR _PastClose = _Latest > [Reporting Period Key]
+VAR _Value =
+    SWITCH (
+        _Basis,
+        "MTD", SUM ( 'Layer Bridge'[{column}] ),
+        "FY", CALCULATE (
+            SUM ( 'Layer Bridge'[{column}] ),
+            REMOVEFILTERS ( 'Date' ),
+            'Date'[fiscal_year] = _Year
+        ),
+        CALCULATE (
+            SUM ( 'Layer Bridge'[{column}] ),
+            REMOVEFILTERS ( 'Date' ),
+            'Date'[fiscal_year] = _Year,
+            'Date'[period_key] <= _Latest
+        )
+    )
+RETURN IF ( _PastClose, BLANK (), _Value )"""
+
+
 def at_latest(table: str, column: str, aggregate: str = "SUM") -> str:
     return (f"CALCULATE (\n"
             f"    {aggregate} ( '{table}'[{column}] ),\n"
@@ -182,6 +211,15 @@ MEASURES: tuple[tuple[str, str, str | None, str, str], ...] = (
     ("Reporting Period Key", str(REPORT_PERIOD), "0", "00 Model context",
      "The period key of the reporting close, August 2026. Held as one measure so the cutoff "
      "is defined once and everything that depends on it moves together when the close moves."),
+    ("Consolidation Bridge Title",
+     "SELECTEDVALUE ( 'Period Basis'[basis_name], \"Year to date\" )\n"
+     "    & \" consolidation bridge — \"\n"
+     "    & SELECTEDVALUE ( 'Date'[month_label_long], \"period selected\" )", None,
+     "00 Model context",
+     "The consolidation bridge's title, as words that state its scope -- \"Year to date "
+     "consolidation bridge — Aug 2026\" -- so the bridge can never look like it reconciles a "
+     "figure on another basis. A title that follows the slicers is a title that cannot go "
+     "stale."),
     ("Reporting Period",
      "VAR _Key = [Reporting Period Key]\n"
      "RETURN\n"
@@ -707,17 +745,22 @@ MEASURES: tuple[tuple[str, str, str | None, str, str], ...] = (
      "the mart does not already hold: month = the month's rows, year to date = the fiscal "
      "year's rows to the selected month, full year = the fiscal year's rows. No accounting "
      "logic lives here; the sign, the basis and the mapping to a line are the mart's."),
-    ("Layer EBITDA", "SUM ( 'Layer Bridge'[ebitda_usd] )", M_USD, "10 Reporting",
-     "EBITDA contributed by each consolidation layer in a fiscal year, from the governed "
-     "consolidation bridge: Entity Reported, Intercompany Eliminations, Consolidation "
+    ("Layer EBITDA", layer_measure("ebitda_usd"), M_USD, "10 Reporting",
+     "EBITDA contributed by each consolidation layer on the period basis selected -- the "
+     "month, the fiscal year to the month, or the fiscal year -- and blank after the "
+     "reporting close, exactly as Statutory EBITDA is. From the governed consolidation "
+     "bridge at month grain: Entity Reported, Intercompany Eliminations, Consolidation "
      "Adjustments, Management Adjustments and Translation Adjustment. Statutory is layers "
-     "1 + 2 + 3 + 5; management adds layer 4. Presentation of the approved layers, not a new "
-     "policy: the bridge fact is the Phase 5 mart, unchanged."),
-    ("Layer Net Income", "SUM ( 'Layer Bridge'[net_income_usd] )", M_USD, "10 Reporting",
-     "Net income contributed by each consolidation layer in a fiscal year, from the governed "
-     "consolidation bridge, on the same layer definitions as Layer EBITDA."),
+     "1 + 2 + 3 + 5 and sums to [Statutory EBITDA] on every basis (`P6B1-BR`); management "
+     "adds layer 4. Presentation of the approved layers, not a new policy."),
+    ("Layer Net Income", layer_measure("net_income_usd"), M_USD, "10 Reporting",
+     "Net income contributed by each consolidation layer on the period basis selected, "
+     "blank after the reporting close, from the governed consolidation bridge at month "
+     "grain; the statutory layers sum to [Net Income] on every basis."),
     ("Layer Entries", "SUM ( 'Layer Bridge'[entries] )", COUNT, "10 Reporting",
-     "Journal entries posted at each consolidation layer in a fiscal year, from the bridge."),
+     "Journal entries posted at each consolidation layer in the months in context -- a "
+     "count over the months selected, not a period-basis measure; a visual says which months "
+     "it counts."),
     ("Revenue Share of Group",
      "DIVIDE (\n"
      "    [Revenue],\n"

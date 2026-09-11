@@ -4,7 +4,7 @@ F6B-02,An implicit Sum of a fact column on a chart,P6B-02,DETECTED,['p03_bu_bu_r
 F6B-03,Account detail reading the raw fact column past the cutoff,P6B-07,DETECTED,['p02_pnl_accounts: amount_usd'],P6B-02
 F6B-04,A covenant verdict typed as text off the test date,P6B-11,DETECTED,"{'tile': [], 'tests_filtered': True, 'typed_verdicts': ['p07_debt_d_status_v']}",
 F6B-05,The project table on the pre-correction project key,P6B-12,DETECTED,"['Capital Project.project_code', 'Capital Project.project_name']",
-F6B-06,The Phase 6A control count typed as the stale 53,P6B-13,DETECTED,"{'page': {'Phase 2': (80, 80), 'Phase 3': (62, 62), 'Phase 4': (72, 72), 'Phase 5': (36, 36), 'Phase 5.1': (295, 295), 'Phase 6A': (53, 68), 'Phase 6B': (38, 38)}, 'typed_literals': 0}",
+F6B-06,The Phase 6A control count typed as the stale 53,P6B-13,DETECTED,"{'page': {'Phase 2': (80, 80), 'Phase 3': (62, 62), 'Phase 4': (72, 72), 'Phase 5': (36, 36), 'Phase 5.1': (295, 295), 'Phase 6A': (53, 68), 'Phase 6B': (38, 38), 'Phase 6B.1': (12, 12)}, 'typed_liter",
 F6B-07,A variance percentage computed in the visual,P6B-06,DETECTED,['p01_executive_outlook: Var %'],P6B-02
 F6B-08,A million-scaled card on a measure that already scales,P6B-15,DETECTED,['p01_executive_p_rev_v/labels.labelDisplayUnits=1000000.0'],
 F6B-09,A rail button to a page that does not exist,P6B-18,DETECTED,"[""p02_pnl: ['p01_executive', 'p02_pnl', 'p03_bu', 'p04_balance', 'p05_cash', 'p06_ebitda', 'p07_debt', 'p08_workforce', 'p09_controls', 'p11_missing']""]",

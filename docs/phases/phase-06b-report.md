@@ -1,6 +1,8 @@
 # Phase 6B — Power BI executive report
 
-**Status:** built, controlled, exercised natively — **awaiting owner visual review**
+**Status:** reviewed at `2fe00ee` — architecture, controls, native validation, interactions and
+density **approved**; final sign-off held for two corrections, made in
+[Phase 6B.1](phase-06b-1-reporting-integrity.md)
 **Baseline:** `89d1369` (Phase 6A.3 sealed); Excel frozen at `bf847b4327526a39`, untouched
 **Docs:** [the report](../powerbi-report.md) · [style guide](../powerbi-style-guide.md) ·
 [controls](../powerbi-controls.md#the-report-on-the-model-p6b) · [defect register](../defect-register.md) ·

@@ -64,7 +64,7 @@ and `P6B-16` fails an edge without one.
 | 06 EBITDA & Variance Bridge | Which EBITDA is which, and what bridges statutory to adjusted? | 2 |
 | 07 Debt & Covenants | How close is leverage to the limit, and when is it actually tested? | 3 |
 | 08 Workforce & CapEx | Are people and capital moving with the plan? | 4 |
-| 09 Consolidation & Controls | What does consolidation do, and what proves it right? | 3 |
+| 09 Consolidation & Controls | What does each layer contribute this period, and what proves it right? | 2 |
 | 10 Lineage & Technical | Is this the same data as the source, and which build is it? | 0 |
 
 Every chart title is the management question it answers, in words a CFO would use
@@ -95,9 +95,9 @@ year and the outlook is full-year by its own filter; the reasons are on record.
 The governed income statement is the primary object: fourteen lines, expandable to business
 unit and entity, on the period basis and comparison selected, with base, comparator, variance,
 `[Variance %]` and the favourability word in its colour. Beside it, the variance on the six
-key lines as bars, and the **account detail** — `[Account Amount]` by caption and account,
-actual, credits negative — so a line can be taken to the accounts behind it without leaving
-the page.
+key lines as bars, and the **account detail** — `[Account Amount]` by caption, sub-caption
+and account in statement order (the caption-grain sort keys of Phase 6B.1), actual, credits
+negative — so a line can be taken to the accounts behind it without leaving the page.
 
 ### 03 Business Units & Entities
 
@@ -140,11 +140,13 @@ the reporting close. The project table is keyed on the corrected unique `project
 ### 09 Consolidation & Controls
 
 The five layers and the two views they make; what each layer contributes to EBITDA and net
-income for FY2026 from the governed `[Layer EBITDA]` / `[Layer Net Income]`; entries by
-layer and year from `[Layer Entries]`; the control environment of every phase and the
-reconciliations across artefacts, **read from the registers when the report is generated**
-and checked against them by `P6B-13` (the page shows 68 for Phase 6A because
-`phase06a_control_results.csv` has 68 rows; the page code contains no such literal).
+income **on the period basis and month selected** — the bridge's title is the governed
+`[Consolidation Bridge Title]` (*Year to date consolidation bridge — Aug 2026*), its bars
+`[Layer EBITDA]` / `[Layer Net Income]` at month grain with the reporting-close cutoff, and
+the statutory layers sum to the headline on every basis (`P6B1-BR`); the control environment
+of every phase and the reconciliations across artefacts, **read from the registers when the
+report is generated** and checked against them by `P6B-13` (the page shows 68 for Phase 6A
+because `phase06a_control_results.csv` has 68 rows; the page code contains no such literal).
 
 ### 10 Lineage & Technical
 
@@ -157,9 +159,8 @@ facts, and the ten questions. No slicer.
 
 * The Executive Overview's cash, net debt, leverage and headroom are Group figures; the tiles
   say so, and a unit selection leaves them unchanged by design.
-* The Layer bridge is annual and carries no reporting-close cutoff; its FY2026 total (29.2m)
-  includes the source's post-close months and is not the year-to-date statutory figure
-  (28.1m). The chart's subtitle says so; see the phase record for the owner question.
+* The layer bridge is read on the period basis and month selected, blank after the close,
+  and its title says so; the statutory layers sum to the headline on every basis.
 * DSO, DIO, DPO, cash conversion cycle, revolver drawn/available and principal by
   instrument are deferred by owner decision (`P6-COV-02`) and appear nowhere (`P6B-14`).
 * Hires and exits are counts for the month; in August 2026 the source has none.

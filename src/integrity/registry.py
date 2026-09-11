@@ -158,6 +158,20 @@ REGISTRY: tuple[Declared, ...] = (
              "src/powerbi/measures.py PERIOD_BASIS_ROWS", "Phase 6A",
              note="Disconnected on purpose: read by the statement measures to choose which "
                   "governed column to aggregate, and it filters no fact."),
+    # Phase 6B.1: restatements at the grain the semantic model sorts and reads at
+    Declared("dim_semantic_scenario", "DIMENSION", ("version_code",), FORBIDDEN,
+             "src/powerbi/config.py SEMANTIC_DIMENSIONS", "Phase 6B.1",
+             note="dim_report_scenario with a scenario-grain sort key beside the version-grain "
+                  "one (P6B1-HS-01)."),
+    Declared("fact_semantic_balance_sheet", "FACT", ("period_key", "account_class", "caption"),
+             FORBIDDEN, "src/powerbi/config.py SEMANTIC_DIMENSIONS", "Phase 6B.1",
+             note="mart_balance_sheet with the one caption that spans two classes qualified, "
+                  "so the caption sorts at its own grain (P6B1-HS-01)."),
+    Declared("fact_semantic_layer_bridge", "FACT", ("period_key", "layer_id"), FORBIDDEN,
+             "src/powerbi/config.py SEMANTIC_DIMENSIONS", "Phase 6B.1",
+             note="The consolidation bridge at month grain, so the layer measures follow the "
+                  "period basis and the reporting close; sums to mart_consolidation_bridge "
+                  "by fiscal year (P6B1-BR-01)."),
 
     # ============================================================ Phase 5 reporting dimensions
     Declared("dim_report_scenario", "DIMENSION", ("version_code",), FORBIDDEN,

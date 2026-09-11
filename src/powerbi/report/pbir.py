@@ -151,9 +151,14 @@ def selector_data(table: str, col: str, value) -> dict:
     }}}]}}
 
 
-def title(text: str, size: float | None = None, colour_hex: str = T.NAVY,
+def title(text: str | dict, size: float | None = None, colour_hex: str = T.NAVY,
           show: bool = True) -> dict:
-    return {"title": [props(show=show, text=text,
+    """
+    `text` is a literal, or a measure reference (`measure(...)`) for a title that follows
+    the slicers -- a title that states its own scope cannot go stale.
+    """
+    value = {"expr": text} if isinstance(text, dict) else lit(text)
+    return {"title": [props(show=show, text=value,
                             fontColor=colour(colour_hex),
                             fontSize=float(size or T.TYPE["chart_title"]),
                             fontFamily=T.FONT_SEMIBOLD, alignment="left", titleWrap=False)]}

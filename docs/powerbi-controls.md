@@ -4,7 +4,7 @@
     python -m src.powerbi.faults            break the model sixteen ways and prove each is caught
     python -m src.powerbi.report.faults     break the report twelve ways and prove each is caught
 
-**Semantic model: 68 controls, 16 fault fixtures. Report: 43 controls, 12 fault fixtures**
+**Semantic model: 68 controls, 16 fault fixtures. Report: 43 controls, 12 fault fixtures. Phase 6B.1: 12 controls, 3 fixtures**
 ([§ the report on the model](#the-report-on-the-model-p6b)). The governing principle is Phase
 4C's, widened one more time:
 
@@ -270,6 +270,36 @@ whether the control named for it notices. A fixture caught only by another contr
 
 **12/12 detected.** The first ten mutate the generated files, the last two the declarations;
 every fixture works on its own copy and the committed report is never touched.
+
+---
+
+## Phase 6B.1 (`P6B1`)
+
+    python -m src.powerbi.controls_b1
+    python -m src.powerbi.faults_b1
+
+The two corrections the owner held Phase 6B for, each with the control that keeps it
+corrected. The family keeps its own register (`data/phase06b1_control_results.csv`) so the
+Phase 6A register the frozen workbook reads stays at 68 rows.
+
+| control | evidence | asserts |
+|---|---|---|
+| `P6B1-HS-01` | static | every sorted column in the model maps one value to exactly one sort key, and back — 14 sort declarations; found `Scenario[scenario_name]` and `Balance Sheet[caption]` at the wrong grain the first time it ran |
+| `P6B1-HS-02` | static | the statement hierarchy's keys are at caption grain, level-1 in the chart's order, level-2 contiguous under its level-1, and neither alphabetical; the balance sheet leads with Current Assets, the income statement with Revenue |
+| `P6B1-HS-03` | live | the engine groups each level-2 caption once (0 duplicates), resolves 175 accounts beneath their captions, and puts *Cash and cash equivalents* first |
+| `P6B1-SC-01` | static | the consolidation bridge and the headline it reconciles to share the period and basis slicers, no interaction is switched off between them, the bridge pins no year of its own, and its title is the governed `[Consolidation Bridge Title]` |
+| `P6B1-BR-01` | static | the month-grain bridge sums to `mart_consolidation_bridge` for every layer and fiscal year (EBITDA, net income, entries) |
+| `P6B1-BR-02…07` | live | the statutory layers' EBITDA and net income sum to `[Statutory EBITDA]` and `[Net Income]` on MTD, YTD and FY at the close, within the cent tolerance |
+| `P6B1-BR-08` | live | the bridge is blank after the reporting close on every basis |
+
+| fixture | what it breaks | caught by |
+|---|---|---|
+| `F6B1-01` | *Accrued liabilities* given two level-2 sort keys in the published Account dimension — P6B-D-06 put back | `P6B1-HS-01` |
+| `F6B1-02` | the bridge switched off from the period slicer: annual again, beside a year-to-date headline | `P6B1-SC-01` |
+| `F6B1-03` | `[Layer EBITDA]` reverted to a plain sum of the bridge fact, blind to the basis and the close | `P6B1-BR-03` |
+
+**3/3 detected.** The engine, asked to load the dimension with the duplicated key, took it
+without complaint — which is exactly why the control exists.
 
 ---
 

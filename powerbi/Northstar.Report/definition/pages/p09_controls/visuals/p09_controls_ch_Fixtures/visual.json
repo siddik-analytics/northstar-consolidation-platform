@@ -3,11 +3,11 @@
   "name": "p09_controls_ch_Fixtures",
   "position": {
     "x": 1130,
-    "y": 114,
-    "z": 35,
+    "y": 170,
+    "z": 37,
     "width": 62,
     "height": 16,
-    "tabOrder": 35000
+    "tabOrder": 37000
   },
   "visual": {
     "visualType": "textbox",

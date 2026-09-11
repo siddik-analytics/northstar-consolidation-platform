@@ -28,8 +28,22 @@
               },
               "queryRef": "Account.fs_caption_l1",
               "nativeQueryRef": "fs_caption_l1",
-              "displayName": "Caption · account",
+              "displayName": "Caption · sub-caption · account",
               "active": true
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Account"
+                    }
+                  },
+                  "Property": "fs_caption_l2"
+                }
+              },
+              "queryRef": "Account.fs_caption_l2",
+              "nativeQueryRef": "fs_caption_l2"
             },
             {
               "field": {
@@ -272,7 +286,7 @@
             "title": {
               "expr": {
                 "Literal": {
-                  "Value": "'Caption · account'"
+                  "Value": "'Caption · sub-caption · account'"
                 }
               }
             }
@@ -563,7 +577,7 @@
             "text": {
               "expr": {
                 "Literal": {
-                  "Value": "'Actual · credits negative · expand a caption for its accounts'"
+                  "Value": "'Actual · statement order · credits negative · expand a caption'"
                 }
               }
             },

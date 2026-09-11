@@ -3,11 +3,11 @@
   "name": "p09_controls_ctl_r",
   "position": {
     "x": 1056,
-    "y": 83,
-    "z": 30,
+    "y": 139,
+    "z": 32,
     "width": 200,
     "height": 18,
-    "tabOrder": 30000
+    "tabOrder": 32000
   },
   "visual": {
     "visualType": "textbox",

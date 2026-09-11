@@ -3,11 +3,11 @@
   "name": "p09_controls_res_r",
   "position": {
     "x": 520,
-    "y": 319,
-    "z": 25,
+    "y": 375,
+    "z": 27,
     "width": 200,
     "height": 18,
-    "tabOrder": 25000
+    "tabOrder": 27000
   },
   "visual": {
     "visualType": "textbox",
@@ -19,7 +19,7 @@
               {
                 "textRuns": [
                   {
-                    "value": "FY2026 · USD millions",
+                    "value": "period and basis selected · USD millions",
                     "textStyle": {
                       "fontSize": "8pt",
                       "color": "#5B6B7B",

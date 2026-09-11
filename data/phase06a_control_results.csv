@@ -1,5 +1,5 @@
 control_id,control_name,severity,status,measured,threshold,detail
-P6-SEM-00,The semantic model is available for execution,INFO,PASS,live,live,connected to Desktop on port 57800
+P6-SEM-00,The semantic model is available for execution,INFO,PASS,live,live,connected to Desktop on port 49677
 P6-SEM-01,Every dimension key is unique over its published population,BLOCKING,PASS,0,0,a dimension with a duplicate key silently fans out every fact that joins to it
 P6-SEM-02,"Every relationship resolves: no orphan key, so no blank member",BLOCKING,PASS,0,0,an unresolved key becomes a blank member in every visual that uses the dimension
 P6-SEM-03,Every declared many-to-one relationship is many-to-one in the data,BLOCKING,PASS,0,0,declaring a cardinality does not make the data have it; Power BI silently promotes a broken one to many-to-many and the totals stop meaning anything
@@ -10,10 +10,10 @@ P6-SEM-07,Every measure carries a description,BLOCKING,PASS,0,0,a measure whose 
 P6-SEM-08,"Every high-risk measure states its definition, source and basis",BLOCKING,PASS,0,0,the measures a reader is most likely to be challenged on are the ones that must answer for themselves
 P6-SEM-09,Every measure sits in a display folder,BLOCKING,PASS,0,0,
 P6-SEM-10,Every numeric measure carries a format string,BLOCKING,PASS,0,0,an unformatted measure renders at full precision and makes a report look unfinished
-P6-SEM-11,"Statement captions sort by their governed order, not alphabetically",BLOCKING,PASS,12,>= 2,"a P&L in alphabetical order starts at Cost of sales, and a balance sheet in alphabetical order is not a balance sheet"
+P6-SEM-11,"Statement captions sort by their governed order, not alphabetically",BLOCKING,PASS,14,>= 2,"a P&L in alphabetical order starts at Cost of sales, and a balance sheet in alphabetical order is not a balance sheet"
 P6-SEM-12,No fact key column is left visible to a report author,BLOCKING,PASS,0,0,a visible key invites someone to drag it onto a visual and summarise it
 P6-SEM-13,The model loads in Analysis Services with every declared table,BLOCKING,PASS,28,28,deployed and refreshed from the same declarations the TMDL is written from
-P6-SEM-14,Every measure parses and evaluates in the engine,BLOCKING,PASS,0,0,95 measures evaluated against the live model
+P6-SEM-14,Every measure parses and evaluates in the engine,BLOCKING,PASS,0,0,96 measures evaluated against the live model
 P6-XAR-01,Power BI [Revenue] reconciles to the marts,BLOCKING,PASS,0.000000,0.05,"Revenue, year to date: DAX 278,980,889.78 vs mart 278,980,889.78"
 P6-XAR-02,Power BI [Gross Profit] reconciles to the marts,BLOCKING,PASS,0.000000,0.05,"Gross profit, year to date: DAX 75,980,813.59 vs mart 75,980,813.59"
 P6-XAR-03,Power BI [Statutory EBITDA] reconciles to the marts,BLOCKING,PASS,0.000000,0.05,"Statutory EBITDA, pinned to the statutory basis: DAX 28,100,907.83 vs mart 28,100,907.83"
@@ -51,9 +51,9 @@ P6-POL-06,Statutory and management measures pin the basis they are named for,BLO
 P6-POL-07,The current forecast version is the one the master marks as default,BLOCKING,PASS,model 'FC_FY26_08',governed 'FC_FY26_08',three forecasts are retained and only one is current; a superseded forecast presented as the forecast is an error nobody would notice from the number alone
 P6-PBIP-01,Doc comments only on objects that carry a Description,BLOCKING,PASS,0,0,a `///` above a relationship is a Description property the parser rejects (P6B-D-01); rationale travels as an annotation instead
 P6-PBIP-02,No table name Power BI Desktop reserves,BLOCKING,PASS,0,0,"28 tables declared; reserved list ['measures'] confirmed against Desktop, not assumed (P6B-D-02)"
-P6-PBIP-03,Power BI Desktop opens the generated project and loads it,BLOCKING,PASS,opened,opened,opened in 19.6s as 'Northstar'; native refresh loaded every partition
-P6-PBIP-04,"Native project, deployed engine and Desktop session agree on structure",BLOCKING,PASS,"{'engine': {'tables': 28, 'measures': 95, 'relationships': 37, 'active_relationships': 32}, 'desktop': {'tables': 28, 'measures': 95, 'relationships': 37, 'active_relationships': 32}}","{'tables': 28, 'measures': 95, 'relationships': 37, 'active_relationships': 32}","tables, measures, relationships and active relationships counted in each form"
-P6-PATH-01,Every declared dimension reaches every fact it filters on an active path,BLOCKING,PASS,0,0,34 dimension-fact pairs from the live engine's INFO.RELATIONSHIPS
+P6-PBIP-03,Power BI Desktop opens the generated project and loads it,BLOCKING,PASS,opened,opened,opened in 18.9s as 'Northstar'; native refresh loaded every partition
+P6-PBIP-04,"Native project, deployed engine and Desktop session agree on structure",BLOCKING,PASS,"{'engine': {'tables': 28, 'measures': 96, 'relationships': 38, 'active_relationships': 33}, 'desktop': {'tables': 28, 'measures': 96, 'relationships': 38, 'active_relationships': 33}}","{'tables': 28, 'measures': 96, 'relationships': 38, 'active_relationships': 33}","tables, measures, relationships and active relationships counted in each form"
+P6-PATH-01,Every declared dimension reaches every fact it filters on an active path,BLOCKING,PASS,0,0,35 dimension-fact pairs from the live engine's INFO.RELATIONSHIPS
 P6-PATH-02,No dimension reaches a fact by more than one active path,BLOCKING,PASS,0,0,two active paths make every total ambiguous; the direct unit paths stay inactive
 P6-PATH-03,No relationship filters in both directions,BLOCKING,PASS,0,0,a bidirectional path is a demonstrated requirement or it is a defect waiting
 P6-PATH-04,A filter on each dimension actually changes each fact it reaches,BLOCKING,PASS,0,0,"one member of each dimension's key, COUNTROWS of the fact with and without it"

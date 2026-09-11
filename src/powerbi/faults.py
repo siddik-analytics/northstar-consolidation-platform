@@ -348,10 +348,11 @@ def _damaged_sources(con) -> None:
     """
     con.execute("""
         CREATE OR REPLACE TABLE stg_bs_missing_caption AS
-        SELECT * FROM mart_balance_sheet WHERE caption <> 'Cash and cash equivalents'""")
+        SELECT * FROM fact_semantic_balance_sheet
+        WHERE caption <> 'Cash and cash equivalents'""")
     con.execute("""
         CREATE OR REPLACE TABLE stg_scenario_without_py AS
-        SELECT * FROM dim_report_scenario WHERE version_code <> 'PY_DERIVED'""")
+        SELECT * FROM dim_semantic_scenario WHERE version_code <> 'PY_DERIVED'""")
     # The pre-correction key: entity, period and a sequence within the entity-month, with the
     # asset class dropped -- which is exactly how five programmes came to share one id.
     con.execute("""
@@ -363,14 +364,14 @@ def _damaged_sources(con) -> None:
                project_name, asset_class, entity_code, bu_code,
                approved_period, approved_fiscal_year
         FROM dim_semantic_project""")
-    _publish(con, "stg_bs_missing_caption", "30_marts")
-    _publish(con, "stg_scenario_without_py", "30_marts")
+    _publish(con, "stg_bs_missing_caption", "35_semantic")
+    _publish(con, "stg_scenario_without_py", "35_semantic")
     _publish(con, "stg_project_old_key", "35_semantic")
 
 
 def _drop_damaged(con) -> None:
-    for table, folder in (("stg_bs_missing_caption", "30_marts"),
-                          ("stg_scenario_without_py", "30_marts"),
+    for table, folder in (("stg_bs_missing_caption", "35_semantic"),
+                          ("stg_scenario_without_py", "35_semantic"),
                           ("stg_project_old_key", "35_semantic")):
         con.execute(f"DROP TABLE IF EXISTS {table}")
         path = C.DATA / folder / f"{table}.parquet"

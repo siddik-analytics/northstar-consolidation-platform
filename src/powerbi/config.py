@@ -116,11 +116,93 @@ SEMANTIC_DIMENSIONS: tuple[tuple[str, str], ...] = (
     ("dim_semantic_business_unit", """
         SELECT bu_code, bu_name, bu_short_name, segment_type, is_reportable_segment,
                sort_order FROM dim_business_unit ORDER BY sort_order"""),
+    # P6B-D-06: every reportable level of the financial-statement hierarchy carries a sort key
+    # at its own grain. The key is derived from the governed chart order and nothing else --
+    # a caption sits where its first account sits (the minimum account sort order beneath it)
+    # -- so a caption maps to exactly one key by construction, the statement order is the
+    # chart's own, and nothing is alphabetical. Three level-2 labels are reused under more
+    # than one level-1 caption (Intercompany balances under four, Non-controlling interests
+    # and Operating lease liabilities under two); each such node is qualified with its
+    # level-1 caption so that the label, too, names exactly one node with one key.
     ("dim_semantic_account", """
-        SELECT group_account, account_name, statement, fs_caption_l1, fs_caption_l2,
+        WITH a AS (
+            SELECT * FROM dim_account WHERE NOT is_statistical
+        ),
+        l2 AS (
+            SELECT fs_caption_l1, fs_caption_l2,
+                   count(*) OVER (PARTITION BY fs_caption_l2) AS l1_count
+            FROM (SELECT DISTINCT fs_caption_l1, fs_caption_l2 FROM a)
+        ),
+        named AS (
+            SELECT a.*,
+                   CASE WHEN l2.l1_count > 1
+                        THEN a.fs_caption_l2 || ' (' || lower(a.fs_caption_l1) || ')'
+                        ELSE a.fs_caption_l2 END AS fs_caption_l2_node
+            FROM a JOIN l2 USING (fs_caption_l1, fs_caption_l2)
+        )
+        SELECT group_account, account_name, statement,
+               fs_caption_l1,
+               min(sort_order) OVER (PARTITION BY fs_caption_l1) AS fs_caption_l1_sort,
+               fs_caption_l2_node AS fs_caption_l2,
+               min(sort_order) OVER (PARTITION BY fs_caption_l2_node) AS fs_caption_l2_sort,
                account_class, normal_balance, cash_flow_category, is_intercompany,
                is_ebitda, is_ebitda_addback, sort_order
-        FROM dim_account WHERE NOT is_statistical ORDER BY group_account"""),
+        FROM named ORDER BY group_account"""),
+    # Phase 6B.1 (found by P6B1-HS-01 the first time it ran): two more sorted columns whose
+    # key was at a finer grain than the value. The scenario name repeats across versions, so
+    # it takes the smallest version sort order beneath it; the balance-sheet caption
+    # "Intercompany balances" spans ASSET and LIABILITY, so the two nodes are qualified.
+    # Both marts stay as Phase 5 published them; the semantic layer restates them.
+    ("dim_semantic_scenario", """
+        SELECT *, min(sort_order) OVER (PARTITION BY scenario_name) AS scenario_sort
+        FROM dim_report_scenario ORDER BY sort_order"""),
+    ("fact_semantic_balance_sheet", """
+        WITH spans AS (
+            SELECT caption, count(DISTINCT account_class) AS classes
+            FROM mart_balance_sheet GROUP BY caption
+        )
+        SELECT b.period_key, b.fiscal_year,
+               CASE WHEN s.classes > 1
+                    THEN b.caption || ' (' || lower(b.account_class) || ')'
+                    ELSE b.caption END AS caption,
+               b.account_class, b.sort_order, b.balance_usd, b.movement_usd,
+               b.prior_month_usd, b.prior_year_usd, b.mom_movement_usd, b.yoy_movement_usd
+        FROM mart_balance_sheet b JOIN spans s USING (caption)
+        ORDER BY b.period_key, b.sort_order"""),
+    # Phase 6B.1: the consolidation bridge at month grain, so the layer measures can follow
+    # the governed period basis and the reporting close like every other financial measure.
+    # The definitions are `rpt_layer_bridge`'s, unchanged (P4-D-03: the year-end close is
+    # excluded from the result measures); `P6B1-BR-01` proves every fiscal year of this
+    # publication sums to the Phase 5 mart, which stays as it is.
+    ("fact_semantic_layer_bridge", """
+        WITH months AS (
+            SELECT DISTINCT period_key, fiscal_year FROM fact_financials
+        ),
+        measure AS (
+            SELECT f.layer_id, f.period_key,
+                   round(-coalesce(sum(f.amount_usd) FILTER (
+                       WHERE a.is_ebitda AND f.journal_character <> 'CLOSE'), 0), 2)
+                       AS ebitda_usd,
+                   round(-coalesce(sum(f.amount_usd) FILTER (
+                       WHERE a.statement = 'IS' AND a.group_account <> '850100'
+                         AND f.journal_character <> 'CLOSE'), 0), 2) AS net_income_usd
+            FROM fact_financials f JOIN dim_account a USING (group_account)
+            GROUP BY ALL
+        ),
+        posted AS (
+            SELECT layer_id, period_key, count(DISTINCT consol_journal_id) AS entries,
+                   count(*) AS legs
+            FROM fact_consol_journal GROUP BY ALL
+        )
+        SELECT l.layer_id, m.period_key, m.fiscal_year,
+               coalesce(x.ebitda_usd, 0) AS ebitda_usd,
+               coalesce(x.net_income_usd, 0) AS net_income_usd,
+               coalesce(p.entries, 0) AS entries, coalesce(p.legs, 0) AS legs
+        FROM dim_consolidation_layer l
+        CROSS JOIN months m
+        LEFT JOIN measure x ON x.layer_id = l.layer_id AND x.period_key = m.period_key
+        LEFT JOIN posted p ON p.layer_id = l.layer_id AND p.period_key = m.period_key
+        ORDER BY m.period_key, l.layer_id"""),
     ("dim_semantic_cost_centre", """
         SELECT DISTINCT entity_code || '|' || cost_center_code AS cost_centre_key,
                cost_center_code, cost_center_name, entity_code, department_code,
@@ -205,7 +287,10 @@ TABLES: tuple[dict, ...] = (
                      "is the entity view rolled up, and a second path would make every "
                      "segment total ambiguous."),
     dict(name="Account", source="dim_semantic_account", folder="semantic", kind="dimension",
-         key=("group_account",), sort={"fs_caption_l2": "sort_order"}, hide=("sort_order",),
+         key=("group_account",),
+         sort={"fs_caption_l1": "fs_caption_l1_sort", "fs_caption_l2": "fs_caption_l2_sort",
+               "account_name": "sort_order"},
+         hide=("sort_order", "fs_caption_l1_sort", "fs_caption_l2_sort"),
          description="The group chart of accounts, with the statement, the caption and the "
                      "attributes the consolidation drives EBITDA and the add-back policy "
                      "from."),
@@ -225,10 +310,10 @@ TABLES: tuple[dict, ...] = (
     dict(name="Currency", source="dim_semantic_currency", folder="semantic",
          kind="dimension", key=("currency_code",), sort={}, hide=(),
          description="Transaction and functional currencies. The presentation currency is USD."),
-    dict(name="Scenario", source="dim_report_scenario", folder="marts", kind="dimension",
+    dict(name="Scenario", source="dim_semantic_scenario", folder="semantic", kind="dimension",
          key=("version_code",),
-         sort={"version_name": "sort_order", "scenario_name": "sort_order"},
-         hide=("sort_order", "derived_from_scenario_code"),
+         sort={"version_name": "sort_order", "scenario_name": "scenario_sort"},
+         hide=("sort_order", "scenario_sort", "derived_from_scenario_code"),
          hierarchies={"Scenario and version": ("scenario_name", "version_name")},
          description="Scenario and version in ONE dimension, keyed by version, with a "
                      "Scenario -> Version hierarchy. A version belongs to exactly one "
@@ -320,7 +405,8 @@ TABLES: tuple[dict, ...] = (
          description="Every approved comparison, precomputed upstream: base, comparator, "
                      "variance and favourability. The model reads these rather than deriving "
                      "a comparison in DAX."),
-    dict(name="Balance Sheet", source="mart_balance_sheet", folder="marts", kind="fact",
+    dict(name="Balance Sheet", source="fact_semantic_balance_sheet", folder="semantic",
+         kind="fact",
          key=("caption", "account_class", "period_key"),
          sort={"caption": "sort_order"},
          hide=("period_key", "fiscal_year", "sort_order"),
@@ -371,11 +457,12 @@ TABLES: tuple[dict, ...] = (
          hide=("period_key", "fiscal_year", "currency_code"),
          description="Rates, currency exposure, constant currency and the translation "
                      "adjustment."),
-    dict(name="Layer Bridge", source="mart_consolidation_bridge", folder="marts",
-         kind="fact", key=("layer_id", "fiscal_year"), sort={},
-         hide=("layer_id", "layer_code", "layer_name", "in_statutory_view",
-               "in_management_view", "fiscal_year"),
-         description="What each consolidation layer contributed, by fiscal year."),
+    dict(name="Layer Bridge", source="fact_semantic_layer_bridge", folder="semantic",
+         kind="fact", key=("layer_id", "period_key"), sort={},
+         hide=("layer_id", "period_key", "fiscal_year"),
+         description="What each consolidation layer contributed, by month: the Phase 5 "
+                     "consolidation bridge at month grain, so the layer measures follow the "
+                     "period basis and the reporting close."),
 )
 
 #: Active relationships. Every one is single-direction many-to-one from a fact to a dimension,
@@ -387,7 +474,8 @@ TABLES: tuple[dict, ...] = (
 #: reaches nothing is exactly what P6B-D-05 was, and no earlier control asked the question.
 EXPECTED_PATHS: dict[str, tuple[str, ...]] = {
     "Date": ("Financials", "Financial Detail", "Variance", "Balance Sheet", "Cash Flow",
-             "Working Capital", "Covenants", "Debt", "Headcount", "CapEx", "FX"),
+             "Working Capital", "Covenants", "Debt", "Headcount", "CapEx", "FX",
+             "Layer Bridge"),
     "Entity": ("Financials", "Financial Detail", "Variance", "Headcount", "CapEx"),
     "Business Unit": ("Financials", "Financial Detail", "Variance", "Headcount", "CapEx"),
     "Account": ("Financial Detail",),
@@ -444,6 +532,7 @@ RELATIONSHIPS: tuple[tuple[str, str, str, str], ...] = (
     ("FX", "period_key", "Date", "period_key"),
     ("FX", "currency_code", "Currency", "currency_code"),
     ("Layer Bridge", "layer_id", "Consolidation Layer", "layer_id"),
+    ("Layer Bridge", "period_key", "Date", "period_key"),
 )
 
 #: Relationships deliberately left inactive, and why. An inactive relationship is a documented

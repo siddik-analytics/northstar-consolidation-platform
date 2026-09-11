@@ -302,19 +302,6 @@ def refresh(pid: int | None = None, wait: int = 900) -> dict:
     # A project opened in place leaves Desktop's Home pane over the ribbon; Escape closes it.
     send_keys("{ESC}")
     time.sleep(1.5)
-    buttons = [b for b in win.descendants(control_type="Button")
-               if b.window_text().strip() == "Refresh" and b.is_visible()]
-    if not buttons:
-        return dict(done=False, dialogs={}, why="no Refresh button on the ribbon")
-    buttons[0].click_input()
-    time.sleep(1.5)
-    items = [m for m in win.descendants() if m.window_text().strip() == "Schema and data"
-             and m.is_visible()]
-    if items:
-        items[0].click_input()
-    else:
-        # the split button's top half refreshes directly; nothing more to choose
-        pass
     def bars():
         # A dismissed bar stays in the UI Automation tree, hidden; only a visible one counts.
         return sorted({b.window_text().strip() for b in win.descendants(control_type="Text")
@@ -322,10 +309,35 @@ def refresh(pid: int | None = None, wait: int = 900) -> dict:
                            or "incomplete or no data" in b.window_text())
                        and b.is_visible()})
 
+    def press() -> bool:
+        buttons = [b for b in win.descendants(control_type="Button")
+                   if b.window_text().strip() == "Refresh" and b.is_visible()]
+        if not buttons:
+            return False
+        buttons[0].click_input()
+        time.sleep(1.5)
+        items = [m for m in win.descendants() if m.window_text().strip() == "Schema and data"
+                 and m.is_visible()]
+        if items:
+            items[0].click_input()
+        # else the split button's top half refreshes directly; nothing more to choose
+        return True
+
     t0 = time.time()
     seen: dict[str, str] = {}
     remaining = bars()
+    progressed = False
+    attempts = 0
+    pressed_at = 0.0
     while time.time() - t0 < wait:
+        # Desktop occasionally swallows the first press while its Home pane is still
+        # settling after an open: with no progress window inside twenty seconds and the
+        # "no data" bars still up, press again (three times at most).
+        if not progressed and (attempts == 0 or time.time() - pressed_at > 20) and attempts < 3:
+            if not press():
+                return dict(done=False, dialogs={}, why="no Refresh button on the ribbon")
+            attempts += 1
+            pressed_at = time.time()
         time.sleep(4)
         dl = _dialogs(win)
         for t, d in dl:
@@ -336,12 +348,15 @@ def refresh(pid: int | None = None, wait: int = 900) -> dict:
                     if b.window_text() == "OK":
                         b.click_input()
                         break
+                progressed = True
                 continue
-            if t != "Refresh":                      # the progress window is not a problem
-                seen[t] = _dialog_text(d)[:300]
+            if t == "Refresh":                      # the progress window is not a problem
+                progressed = True
+                continue
+            seen[t] = _dialog_text(d)[:300]
         remaining = bars()
         # done when the progress window has gone and the "no data" bars with it
-        if not dl and not remaining and time.time() - t0 > 8:
+        if not dl and not remaining and time.time() - pressed_at > 8:
             break
         if seen:
             break

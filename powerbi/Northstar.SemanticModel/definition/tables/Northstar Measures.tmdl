@@ -11,6 +11,16 @@ table 'Northstar Measures'
 		lineageTag: 661bb414-76bc-5606-8647-189dc4fa39b0
 		displayFolder: 00 Model context
 
+	/// The consolidation bridge's title, as words that state its scope -- "Year to date
+	/// consolidation bridge — Aug 2026" -- so the bridge can never look like it reconciles a figure
+	/// on another basis. A title that follows the slicers is a title that cannot go stale.
+	measure 'Consolidation Bridge Title' =
+			SELECTEDVALUE ( 'Period Basis'[basis_name], "Year to date" )
+			    & " consolidation bridge — "
+			    & SELECTEDVALUE ( 'Date'[month_label_long], "period selected" )
+		lineageTag: d6b28144-bd8f-562d-80c9-263888db9219
+		displayFolder: 00 Model context
+
 	/// The reporting close as a label, for a report header. Reads the Date dimension, so it cannot
 	/// disagree with the calendar.
 	measure 'Reporting Period' =
@@ -1256,26 +1266,70 @@ table 'Northstar Measures'
 		lineageTag: ba16a521-5c4e-59b3-bc49-ed8c6a17b7fb
 		displayFolder: 10 Reporting
 
-	/// EBITDA contributed by each consolidation layer in a fiscal year, from the governed
-	/// consolidation bridge: Entity Reported, Intercompany Eliminations, Consolidation Adjustments,
-	/// Management Adjustments and Translation Adjustment. Statutory is layers 1 + 2 + 3 + 5;
-	/// management adds layer 4. Presentation of the approved layers, not a new policy: the bridge
-	/// fact is the Phase 5 mart, unchanged.
+	/// EBITDA contributed by each consolidation layer on the period basis selected -- the month,
+	/// the fiscal year to the month, or the fiscal year -- and blank after the reporting close,
+	/// exactly as Statutory EBITDA is. From the governed consolidation bridge at month grain:
+	/// Entity Reported, Intercompany Eliminations, Consolidation Adjustments, Management
+	/// Adjustments and Translation Adjustment. Statutory is layers 1 + 2 + 3 + 5 and sums to
+	/// [Statutory EBITDA] on every basis (`P6B1-BR`); management adds layer 4. Presentation of the
+	/// approved layers, not a new policy.
 	measure 'Layer EBITDA' =
-			SUM ( 'Layer Bridge'[ebitda_usd] )
+			VAR _Basis = SELECTEDVALUE ( 'Period Basis'[basis_code], "YTD" )
+			VAR _Latest = MAX ( 'Date'[period_key] )
+			VAR _Year = MAX ( 'Date'[fiscal_year] )
+			VAR _PastClose = _Latest > [Reporting Period Key]
+			VAR _Value =
+			    SWITCH (
+			        _Basis,
+			        "MTD", SUM ( 'Layer Bridge'[ebitda_usd] ),
+			        "FY", CALCULATE (
+			            SUM ( 'Layer Bridge'[ebitda_usd] ),
+			            REMOVEFILTERS ( 'Date' ),
+			            'Date'[fiscal_year] = _Year
+			        ),
+			        CALCULATE (
+			            SUM ( 'Layer Bridge'[ebitda_usd] ),
+			            REMOVEFILTERS ( 'Date' ),
+			            'Date'[fiscal_year] = _Year,
+			            'Date'[period_key] <= _Latest
+			        )
+			    )
+			RETURN IF ( _PastClose, BLANK (), _Value )
 		formatString: #,0,,.0;(#,0,,.0);"–"
 		lineageTag: 98b55abf-e9fe-5076-acf3-0f1fe30485aa
 		displayFolder: 10 Reporting
 
-	/// Net income contributed by each consolidation layer in a fiscal year, from the governed
-	/// consolidation bridge, on the same layer definitions as Layer EBITDA.
+	/// Net income contributed by each consolidation layer on the period basis selected, blank after
+	/// the reporting close, from the governed consolidation bridge at month grain; the statutory
+	/// layers sum to [Net Income] on every basis.
 	measure 'Layer Net Income' =
-			SUM ( 'Layer Bridge'[net_income_usd] )
+			VAR _Basis = SELECTEDVALUE ( 'Period Basis'[basis_code], "YTD" )
+			VAR _Latest = MAX ( 'Date'[period_key] )
+			VAR _Year = MAX ( 'Date'[fiscal_year] )
+			VAR _PastClose = _Latest > [Reporting Period Key]
+			VAR _Value =
+			    SWITCH (
+			        _Basis,
+			        "MTD", SUM ( 'Layer Bridge'[net_income_usd] ),
+			        "FY", CALCULATE (
+			            SUM ( 'Layer Bridge'[net_income_usd] ),
+			            REMOVEFILTERS ( 'Date' ),
+			            'Date'[fiscal_year] = _Year
+			        ),
+			        CALCULATE (
+			            SUM ( 'Layer Bridge'[net_income_usd] ),
+			            REMOVEFILTERS ( 'Date' ),
+			            'Date'[fiscal_year] = _Year,
+			            'Date'[period_key] <= _Latest
+			        )
+			    )
+			RETURN IF ( _PastClose, BLANK (), _Value )
 		formatString: #,0,,.0;(#,0,,.0);"–"
 		lineageTag: 062cc82d-429a-57c2-861f-3d96232533eb
 		displayFolder: 10 Reporting
 
-	/// Journal entries posted at each consolidation layer in a fiscal year, from the bridge.
+	/// Journal entries posted at each consolidation layer in the months in context -- a count over
+	/// the months selected, not a period-basis measure; a visual says which months it counts.
 	measure 'Layer Entries' =
 			SUM ( 'Layer Bridge'[entries] )
 		formatString: #,0

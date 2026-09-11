@@ -3,11 +3,11 @@
   "name": "p09_controls_layers",
   "position": {
     "x": 200,
-    "y": 114,
-    "z": 22,
+    "y": 170,
+    "z": 24,
     "width": 520,
     "height": 190,
-    "tabOrder": 22000
+    "tabOrder": 24000
   },
   "visual": {
     "visualType": "tableEx",

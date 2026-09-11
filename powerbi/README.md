@@ -7,8 +7,8 @@ hand: both halves are generated from declarations in `src/powerbi/` and regenera
 
 | folder | what | phase | docs |
 |---|---|---|---|
-| `Northstar.SemanticModel/` | the governed star schema: 28 tables, 95 measures, 32 active and 5 inactive relationships, TMDL | 6A (resealed 6A.3) | [`docs/powerbi-semantic-model.md`](../docs/powerbi-semantic-model.md) |
-| `Northstar.Report/` | the ten-page executive report, PBIR, 655 visuals | 6B | [`docs/powerbi-report.md`](../docs/powerbi-report.md) |
+| `Northstar.SemanticModel/` | the governed star schema: 28 tables, 96 measures, 33 active and 5 inactive relationships, TMDL | 6A (resealed 6A.3, corrected 6B.1) | [`docs/powerbi-semantic-model.md`](../docs/powerbi-semantic-model.md) |
+| `Northstar.Report/` | the ten-page executive report, PBIR, 665 visuals | 6B, 6B.1 | [`docs/powerbi-report.md`](../docs/powerbi-report.md) |
 | `Northstar.pbip` | the project Desktop opens | | |
 
 Open `Northstar.pbip` in Power BI Desktop 2.157 or later and refresh; the partitions read the
@@ -17,6 +17,6 @@ registers under `data/` at generation time, so a regenerated report says what th
 found.
 
 Validation is by running, opening and reading it: 68 semantic controls and 16 fixtures on
-the model, 43 report controls and 12 fixtures on the report, and a native pass through
+the model, 43 report controls and 12 fixtures on the report, 12 hierarchy-grain and bridge-scope controls and 3 fixtures, and a native pass through
 Desktop itself ([`docs/powerbi-controls.md`](../docs/powerbi-controls.md)). A published
 `.pbix` is a build artefact, not a source file, and is git-ignored.

@@ -30,7 +30,7 @@ table 'Scenario'
 		lineageTag: 1c495c1e-471b-5815-b6c3-7f03d3cdae67
 		summarizeBy: none
 		sourceColumn: scenario_name
-		sortByColumn: sort_order
+		sortByColumn: scenario_sort
 
 		annotation SummarizationSetBy = Automatic
 
@@ -134,6 +134,15 @@ table 'Scenario'
 
 		annotation SummarizationSetBy = Automatic
 
+	column scenario_sort
+		dataType: int64
+		isHidden
+		lineageTag: c1682664-f19f-50e5-9026-ea60db11dd74
+		summarizeBy: none
+		sourceColumn: scenario_sort
+
+		annotation SummarizationSetBy = Automatic
+
 	hierarchy 'Scenario and version'
 		lineageTag: 4f52b446-4571-5fe6-b471-c39a05d96b51
 
@@ -149,7 +158,7 @@ table 'Scenario'
 		mode: import
 		source =
 				let
-				    Source = Parquet.Document(File.Contents(DataFolder & "\30_marts\dim_report_scenario.parquet"))
+				    Source = Parquet.Document(File.Contents(DataFolder & "\35_semantic\dim_semantic_scenario.parquet"))
 				in
 				    Source
 

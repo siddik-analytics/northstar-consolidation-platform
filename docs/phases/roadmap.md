@@ -495,6 +495,15 @@ no measure-level control could have shown (lessons §17). One open model observa
 for the owner. Excel untouched at `bf847b4327526a39`. See
 [`phase-06b-report.md`](phase-06b-report.md).
 
+**Phase 6B.1** made the two corrections the owner held sign-off for: every level of the
+statement hierarchy sorts by a key at its own grain, derived from the governed chart
+(P6B-D-06 closed, and the same control found two more sort keys at the wrong grain), and
+the consolidation bridge follows the period basis and the reporting close — the YTD bridge
+at Aug 2026 sums to the YTD Statutory EBITDA to the cent, on a page that carries the
+headline's slicers and a title that states the scope. 12 controls, 3 fixtures, native
+validation, Excel untouched. See
+[`phase-06b-1-reporting-integrity.md`](phase-06b-1-reporting-integrity.md).
+
 ---
 
 ## Phase 6 — Excel FP&A and management reporting models

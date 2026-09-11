@@ -17,6 +17,7 @@ table 'Account'
 		lineageTag: ffc6d765-6167-5e20-af1c-eed4df6c45ae
 		summarizeBy: none
 		sourceColumn: account_name
+		sortByColumn: sort_order
 
 		annotation SummarizationSetBy = Automatic
 
@@ -33,6 +34,16 @@ table 'Account'
 		lineageTag: 24015424-5070-5d48-80da-9acc3b84c910
 		summarizeBy: none
 		sourceColumn: fs_caption_l1
+		sortByColumn: fs_caption_l1_sort
+
+		annotation SummarizationSetBy = Automatic
+
+	column fs_caption_l1_sort
+		dataType: int64
+		isHidden
+		lineageTag: faf3c33a-ad3f-5aef-99a3-348659997f23
+		summarizeBy: none
+		sourceColumn: fs_caption_l1_sort
 
 		annotation SummarizationSetBy = Automatic
 
@@ -41,7 +52,16 @@ table 'Account'
 		lineageTag: 38c51565-b1a0-5d9b-975a-ea19c850df11
 		summarizeBy: none
 		sourceColumn: fs_caption_l2
-		sortByColumn: sort_order
+		sortByColumn: fs_caption_l2_sort
+
+		annotation SummarizationSetBy = Automatic
+
+	column fs_caption_l2_sort
+		dataType: int64
+		isHidden
+		lineageTag: 78b00a2e-5960-52e8-936b-e58e7a691dd1
+		summarizeBy: none
+		sourceColumn: fs_caption_l2_sort
 
 		annotation SummarizationSetBy = Automatic
 

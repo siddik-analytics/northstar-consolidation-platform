@@ -355,11 +355,12 @@ def pnl() -> Page:
                            "NET_INCOME"]), prefix="vb"))
     y4 = y + 216 + L.GUTTER
     pg.add("accounts", right_x, y4, right_w, L.CANVAS_H - 20 - y4, P.matrix(
-        [P.column("Account", "fs_caption_l1"), P.column("Account", "account_name")],
+        [P.column("Account", "fs_caption_l1"), P.column("Account", "fs_caption_l2"),
+         P.column("Account", "account_name")],
         [("Account Amount", "Amount")],
         "Account detail — the accounts behind the lines",
-        subtitle_text="Actual · credits negative · expand a caption for its accounts",
-        row_header="Caption · account",
+        subtitle_text="Actual · statement order · credits negative · expand a caption",
+        row_header="Caption · sub-caption · account",
         widths={"Account.fs_caption_l1": 276, "Northstar Measures.Account Amount": 70}),
         filters=scope(ACTUAL, ("Account", "statement", ["IS"]), prefix="ac"))
     pg.no_filter("sl_comparison", "accounts",
@@ -695,9 +696,10 @@ def workforce_capex() -> Page:
 # ================================================================ 09 Consolidation & controls
 def consolidation() -> Page:
     pg = Page("p09_controls", "09 Consolidation & Controls", "Consolidation and control status",
-              "What the consolidation does to the reported numbers, and the evidence that it "
-              "is right · by fiscal year", slicers=())
-    y = L.SLICER_Y + 4   # no slicer band: the page is by fiscal year and from the registers
+              "What the consolidation does to the reported numbers on the period basis "
+              "selected, and the evidence that it is right",
+              slicers=("sl_period", "sl_basis"))
+    y = L.CONTENT_Y
     c2 = L.cols(2)
     # ---- the architecture, left: the five governed layers and the two views they make
     pg.section("arch", c2[0][0], y, c2[0][1], "Consolidation layers",
@@ -716,20 +718,22 @@ def consolidation() -> Page:
                 "Consolidation Layer.in_management_view": 92}))
     yb = ya + 190 + 12
     pg.section("res", c2[0][0], yb, c2[0][1], "What each layer contributes",
-               "FY2026 · USD millions")
+               "period and basis selected · USD millions")
     yb += 34
     hb = L.CANVAS_H - 20 - yb - 44
+    # the title is the governed [Consolidation Bridge Title] -- "Year to date consolidation
+    # bridge — Aug 2026" -- so the bridge states the scope it reconciles in, and follows the
+    # slicers the headline EBITDA follows (P6B1-SC-01)
     pg.add("layer_bridge", c2[0][0], yb, c2[0][1], hb, P.column_chart(
         LAYER, [("Layer EBITDA", "EBITDA"), ("Layer Net Income", "Net income")],
-        "Reported → eliminations → consolidation → management → translation",
-        subtitle_text="FY2026 as the bridge holds it: all entries dated in the year, "
-                      "including post-close months",
+        P.measure("Consolidation Bridge Title"),
+        subtitle_text="Reported → eliminations → consolidation → management → translation · "
+                      "statutory layers sum to Statutory EBITDA and Net Income",
         colours={"Layer EBITDA": T.NAVY, "Layer Net Income": T.COPPER}, sort_field=LAYER,
-        labels=True), filters=scope(("Layer Bridge", "fiscal_year", [2026]), prefix="lb"))
+        labels=True))
     note(pg, "arch_note", c2[0][0], yb + hb + 4, c2[0][1],
-         "Statutory = layers 1 + 2 + 3 + 5. Management = statutory + layer 4. The bridge is "
-         "annual and carries no reporting-close cutoff, so its FY2026 total is not the "
-         "year-to-date statutory figure; the period slicer does not apply.", h=40)
+         "Statutory = layers 1 + 2 + 3 + 5; management adds layer 4. The bridge follows the "
+         "period basis and the reporting close exactly as the headline measures do.", h=36)
     # ---- the control environment, right: read from the registers, never typed
     pg.section("ctl", c2[1][0], y, c2[1][1], "Control environment",
                "read from the registers, never typed")
@@ -770,15 +774,10 @@ def consolidation() -> Page:
             align="right"))
         pg.add(f"rc{i}_rule", x0, yr + 20, c2[1][1], 1, P.shape(T.RULE))
         yr += 22
-    ye = yr + 10
-    pg.section("ent", x0, ye, c2[1][1], "Consolidation entries by layer and year",
-               "journal entries posted")
-    ye += 34
-    pg.add("entries", x0, ye, c2[1][1], L.CANVAS_H - 20 - ye, P.matrix(
-        [LAYER], [("Layer Entries", "Entries")], None,
-        columns=[P.column("Layer Bridge", "fiscal_year")], stepped=False,
-        row_header="Layer", sort_field=LAYER,
-        widths={"Consolidation Layer.layer_name": 200}))
+    note(pg, "ctl_note", x0, yr + 8, c2[1][1],
+         "Every count is read from its register when the report is generated and checked "
+         "against it again by P6B-13 on every run. The bridge above reconciles to the "
+         "statements on every period basis (P6B1-BR).", h=34)
     return pg
 
 
@@ -889,7 +888,7 @@ QUESTIONS = (
     ("06 EBITDA", "Which EBITDA is which, and what bridges statutory to adjusted?"),
     ("07 Debt", "How close is leverage to the limit, and when is it actually tested?"),
     ("08 Workforce", "Are people and capital moving with the plan?"),
-    ("09 Controls", "What does consolidation do, and what proves it right?"),
+    ("09 Controls", "What does each layer contribute this period, and what proves it right?"),
     ("10 Lineage", "Is this the same data as the source, and which build is it?"),
 )
 

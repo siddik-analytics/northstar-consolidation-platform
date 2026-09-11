@@ -4,7 +4,7 @@
 measure reference maintained beside the code is a measure reference that is wrong the first
 time somebody changes an expression and does not think to open the document.*
 
-**95 measures** across 11 display
+**96 measures** across 11 display
 folders. Every one is declared once, written into TMDL, deployed to Analysis Services and
 evaluated there by the `P6-SEM-14` control, and reconciled to the governed marts by `P6-XAR`.
 
@@ -50,6 +50,16 @@ The period key of the reporting close, August 2026. Held as one measure so the c
 
 ```dax
 202608
+```
+
+### `Consolidation Bridge Title`
+
+The consolidation bridge's title, as words that state its scope -- "Year to date consolidation bridge — Aug 2026" -- so the bridge can never look like it reconciles a figure on another basis. A title that follows the slicers is a title that cannot go stale.
+
+```dax
+SELECTEDVALUE ( 'Period Basis'[basis_name], "Year to date" )
+    & " consolidation bridge — "
+    & SELECTEDVALUE ( 'Date'[month_label_long], "period selected" )
 ```
 
 ### `Reporting Period`
@@ -1451,27 +1461,67 @@ RETURN IF ( _PastClose, BLANK (), _Value )
 
 ### `Layer EBITDA`
 
-EBITDA contributed by each consolidation layer in a fiscal year, from the governed consolidation bridge: Entity Reported, Intercompany Eliminations, Consolidation Adjustments, Management Adjustments and Translation Adjustment. Statutory is layers 1 + 2 + 3 + 5; management adds layer 4. Presentation of the approved layers, not a new policy: the bridge fact is the Phase 5 mart, unchanged.
+EBITDA contributed by each consolidation layer on the period basis selected -- the month, the fiscal year to the month, or the fiscal year -- and blank after the reporting close, exactly as Statutory EBITDA is. From the governed consolidation bridge at month grain: Entity Reported, Intercompany Eliminations, Consolidation Adjustments, Management Adjustments and Translation Adjustment. Statutory is layers 1 + 2 + 3 + 5 and sums to [Statutory EBITDA] on every basis (`P6B1-BR`); management adds layer 4. Presentation of the approved layers, not a new policy.
 
 *Format:* `#,0,,.0;(#,0,,.0);"–"`
 
 ```dax
-SUM ( 'Layer Bridge'[ebitda_usd] )
+VAR _Basis = SELECTEDVALUE ( 'Period Basis'[basis_code], "YTD" )
+VAR _Latest = MAX ( 'Date'[period_key] )
+VAR _Year = MAX ( 'Date'[fiscal_year] )
+VAR _PastClose = _Latest > [Reporting Period Key]
+VAR _Value =
+    SWITCH (
+        _Basis,
+        "MTD", SUM ( 'Layer Bridge'[ebitda_usd] ),
+        "FY", CALCULATE (
+            SUM ( 'Layer Bridge'[ebitda_usd] ),
+            REMOVEFILTERS ( 'Date' ),
+            'Date'[fiscal_year] = _Year
+        ),
+        CALCULATE (
+            SUM ( 'Layer Bridge'[ebitda_usd] ),
+            REMOVEFILTERS ( 'Date' ),
+            'Date'[fiscal_year] = _Year,
+            'Date'[period_key] <= _Latest
+        )
+    )
+RETURN IF ( _PastClose, BLANK (), _Value )
 ```
 
 ### `Layer Net Income`
 
-Net income contributed by each consolidation layer in a fiscal year, from the governed consolidation bridge, on the same layer definitions as Layer EBITDA.
+Net income contributed by each consolidation layer on the period basis selected, blank after the reporting close, from the governed consolidation bridge at month grain; the statutory layers sum to [Net Income] on every basis.
 
 *Format:* `#,0,,.0;(#,0,,.0);"–"`
 
 ```dax
-SUM ( 'Layer Bridge'[net_income_usd] )
+VAR _Basis = SELECTEDVALUE ( 'Period Basis'[basis_code], "YTD" )
+VAR _Latest = MAX ( 'Date'[period_key] )
+VAR _Year = MAX ( 'Date'[fiscal_year] )
+VAR _PastClose = _Latest > [Reporting Period Key]
+VAR _Value =
+    SWITCH (
+        _Basis,
+        "MTD", SUM ( 'Layer Bridge'[net_income_usd] ),
+        "FY", CALCULATE (
+            SUM ( 'Layer Bridge'[net_income_usd] ),
+            REMOVEFILTERS ( 'Date' ),
+            'Date'[fiscal_year] = _Year
+        ),
+        CALCULATE (
+            SUM ( 'Layer Bridge'[net_income_usd] ),
+            REMOVEFILTERS ( 'Date' ),
+            'Date'[fiscal_year] = _Year,
+            'Date'[period_key] <= _Latest
+        )
+    )
+RETURN IF ( _PastClose, BLANK (), _Value )
 ```
 
 ### `Layer Entries`
 
-Journal entries posted at each consolidation layer in a fiscal year, from the bridge.
+Journal entries posted at each consolidation layer in the months in context -- a count over the months selected, not a period-basis measure; a visual says which months it counts.
 
 *Format:* `#,0`
 

@@ -71,11 +71,12 @@
       "objects": 51
     },
     "09 Consolidation & Controls": {
-      "analytical": 3,
+      "analytical": 2,
       "navigation": 10,
-      "shape": 21,
-      "text": 83,
-      "objects": 117
+      "shape": 22,
+      "slicer": 2,
+      "text": 91,
+      "objects": 127
     },
     "10 Lineage & Technical": {
       "navigation": 10,
@@ -85,12 +86,12 @@
     }
   },
   "total": {
-    "shape": 116,
-    "text": 224,
+    "shape": 117,
+    "text": 232,
     "navigation": 100,
-    "slicer": 27,
+    "slicer": 29,
     "kpi": 160,
-    "analytical": 28
+    "analytical": 27
   },
-  "visuals": 655
+  "visuals": 665
 }

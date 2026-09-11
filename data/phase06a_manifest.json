@@ -1,6 +1,6 @@
 {
   "artefacts": {
-    "35_semantic/dim_semantic_account.parquet": "011aca5e426c8f323d79bb4ec6f0c4fcfd74ea96776b0a07dd5ac7abd40f588e",
+    "35_semantic/dim_semantic_account.parquet": "83bb53d8b32ced63077a0588e73753aa71b43f65e42f863ad4368b9eeea77212",
     "35_semantic/dim_semantic_basis.parquet": "9b8f4356487e28ba1674766e6b57543cc56ad8a34cf3b871d9a7811636ad8ddb",
     "35_semantic/dim_semantic_business_unit.parquet": "0b65b79060b16e21c9bab14454f82ff8d004540696722a5fafa9043b5bfa4204",
     "35_semantic/dim_semantic_cost_centre.parquet": "820157642821f131d38b0b0014e38e119e744ff6f90595cdc7778303f2665c41",
@@ -11,24 +11,27 @@
     "35_semantic/dim_semantic_job_family.parquet": "6638a86d580888548963e71f95c9c5fc9189e511ab8a02bb6ae1acaf3e2af3d2",
     "35_semantic/dim_semantic_layer.parquet": "717316ad408514a3bf86adf0ee41a26751174919975b869030aa48760e107b42",
     "35_semantic/dim_semantic_period_basis.parquet": "4d34e34692c770819a80d54b1e792210f682c9b0550906112fc61d469e64b843",
-    "35_semantic/dim_semantic_project.parquet": "4c27014b05d2e5ec82c8a404b682dfa2ba7fb344c28c8e7151d970690f77346f"
+    "35_semantic/dim_semantic_project.parquet": "4c27014b05d2e5ec82c8a404b682dfa2ba7fb344c28c8e7151d970690f77346f",
+    "35_semantic/dim_semantic_scenario.parquet": "feb3f84812ed2c801356681b758fef70c39e6b1c36bb420fdb074c39453cd738",
+    "35_semantic/fact_semantic_balance_sheet.parquet": "1b39e783657fdd65e7bea73d15b76fb049a9c767febc940ad9c9e05923151f2f",
+    "35_semantic/fact_semantic_layer_bridge.parquet": "0d029a906576a78815bf7782bfbaa1dad00b050aff162ae20e5895fb1aee926e"
   },
-  "build_id": "cfefefbaa93f16a1",
+  "build_id": "4b103cfb8fa9c6ed",
   "controls": {
     "failed": 0,
     "not_executed": 0,
     "passed": 68,
     "total": 68
   },
-  "definition_digest": "af1c6264f61aeb66",
+  "definition_digest": "6230f1c9a8f4246b",
   "deployed": true,
   "desktop": "2.157.1354.0",
   "inactive_relationships": 5,
-  "measures": 95,
+  "measures": 96,
   "measures_table": "Northstar Measures",
   "phase": "6A.3",
-  "project_digest": "6a7239d6772b92f6",
-  "relationships": 32,
+  "project_digest": "33333b68135ba2a2",
+  "relationships": 33,
   "reporting_mart_build_id": "00d3dd24020f900d",
   "semantic_dimension_rows": {
     "dim_semantic_account": 175,
@@ -42,7 +45,10 @@
     "dim_semantic_job_family": 12,
     "dim_semantic_layer": 5,
     "dim_semantic_period_basis": 3,
-    "dim_semantic_project": 1846
+    "dim_semantic_project": 1846,
+    "dim_semantic_scenario": 6,
+    "fact_semantic_balance_sheet": 1296,
+    "fact_semantic_layer_bridge": 240
   },
   "tables": 28
 }

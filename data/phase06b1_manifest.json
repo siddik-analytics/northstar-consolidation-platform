@@ -1,0 +1,17 @@
+{
+  "controls": {
+    "failed": 0,
+    "not_executed": 0,
+    "passed": 12,
+    "total": 12
+  },
+  "definition_digest": "6230f1c9a8f4246b",
+  "fixtures": {
+    "detected": 0,
+    "total": 0
+  },
+  "phase": "6B.1",
+  "project_digest": "33333b68135ba2a2",
+  "report_build_id": "5348891e5412354b",
+  "workbook_digest": "bf847b4327526a39"
+}

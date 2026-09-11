@@ -1,0 +1,4 @@
+fixture_id,description,expected_control,status,controls_triggered
+F6B1-01,One level-2 caption with two sort values in the Account dimension (P6B-D-06),P6B1-HS-01,DETECTED,P6B1-HS-01;P6B1-HS-02
+F6B1-02,The consolidation bridge switched off from the period slicer,P6B1-SC-01,DETECTED,P6B1-SC-01
+F6B1-03,Layer EBITDA reverted to a plain sum of the bridge fact,P6B1-BR-03,DETECTED,P6B1-BR-03;P6B1-BR-04;P6B1-BR-08

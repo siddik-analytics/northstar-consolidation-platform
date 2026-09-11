@@ -185,7 +185,17 @@ def run(deploy_model: bool = True, launch: bool = False) -> dict:
         native_qa.run()
     rres = RK.run(con, native=True)
     RK.write(rres)
-    report_build.generate(C.REPORT_DIR)   # and the page reads the register this run wrote
+    # ---- Phase 6B.1: hierarchy sort grain and layer-bridge scope
+    from . import controls_b1 as K1
+    from . import faults_b1 as F1
+    b1 = K1.run(con)
+    K1.write(b1)
+    b1_fixtures = [] if "--no-fixtures" in sys.argv else F1.run(con)
+    if b1_fixtures:
+        F1.write(b1_fixtures)
+    K1.report(b1)
+    summary["b1_failed"] = len(b1.failed)
+    report_build.generate(C.REPORT_DIR)   # and the page reads the registers this run wrote
     inventory = RK.inventory()
     RK.INVENTORY.write_text(json.dumps(inventory, indent=2) + "\n", encoding="utf-8")
     RK.report(rres)
@@ -242,6 +252,17 @@ def run(deploy_model: bool = True, launch: bool = False) -> dict:
     }
     RK.MANIFEST.write_text(json.dumps(report_manifest, indent=2, sort_keys=True) + "\n",
                            encoding="utf-8")
+    (C.DATA / "phase06b1_manifest.json").write_text(json.dumps({
+        "phase": "6B.1",
+        "definition_digest": definition_digest(),
+        "report_build_id": report_build_id(),
+        "project_digest": project_digest(),
+        "controls": {"total": len(b1), "passed": sum(r["status"] == "PASS" for r in b1),
+                     "not_executed": len(b1.not_executed), "failed": len(b1.failed)},
+        "fixtures": {"total": len(b1_fixtures),
+                     "detected": sum(f["status"] == "DETECTED" for f in b1_fixtures)},
+        "workbook_digest": report_manifest["workbook_digest"],
+    }, indent=2, sort_keys=True) + "\n", encoding="utf-8")
 
     con.close()
     summary["generate_seconds"] = generated
@@ -254,7 +275,7 @@ def run(deploy_model: bool = True, launch: bool = False) -> dict:
 
 def main(argv: list[str]) -> int:
     res = run(deploy_model="--no-deploy" not in argv, launch="--launch" in argv)
-    return 1 if res["failed"] or res.get("report_failed") else 0
+    return 1 if res["failed"] or res.get("report_failed") or res.get("b1_failed") else 0
 
 
 if __name__ == "__main__":

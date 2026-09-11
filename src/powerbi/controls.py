@@ -345,7 +345,8 @@ def _semantic(r: Result, con, live: bool, why: str) -> None:
     money_without_format = [
         n for n, e, f, fo, d in MEASURES
         if f is None and not any(w in n for w in ("Status", "Version", "Period", "Basis",
-                                                 "Favourability", "Comparable", "Is "))]
+                                                 "Favourability", "Comparable", "Is ",
+                                                 "Title"))]
     r.ok("P6-SEM-10", "Every numeric measure carries a format string", "BLOCKING",
          not money_without_format, "; ".join(money_without_format) or 0, 0,
          "an unformatted measure renders at full precision and makes a report look unfinished")

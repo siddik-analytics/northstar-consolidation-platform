@@ -3,9 +3,10 @@
     python -m src.powerbi.run          generate the project, deploy it, run the controls
     python -m src.powerbi.faults       break it ten ways and prove each is caught
 
-A governed star schema over the Phase 5 reporting marts. **28 tables, 95 measures, 32 active
+A governed star schema over the Phase 5 reporting marts. **28 tables, 96 measures, 33 active
 relationships and 5 deliberately inactive ones**, generated from two Python declarations and
-validated by executing real DAX against a real Analysis Services engine.
+validated by executing real DAX against a real Analysis Services engine. Last corrected in
+Phase 6B.1 (caption-grain sort keys; the consolidation bridge at month grain).
 
 Nothing in it decides an accounting question. Every consolidation rule — layers, FX, CTA,
 intercompany, PPA, NCI, unrealised profit, the add-back policy, the covenant bridge — is settled
@@ -195,14 +196,30 @@ report's freedom from projection overrides and stacked display units. One engine
 recorded: the zero section is chosen on the rounded value, so an amount under 50,000 prints
 `–` where the workbook prints `0.0`.
 
-## Reporting measures (Phase 6A.3)
+## Reporting measures (Phase 6A.3, corrected in 6B.1)
 
 Six measures added by owner decision, none of them a new accounting policy:
 `Account Amount` (the monthly mart at account grain on the statement measures' basis,
 period basis and cutoff — for the line → account drill), `Layer EBITDA`, `Layer Net Income`
-and `Layer Entries` (the consolidation bridge by layer and fiscal year, as the Phase 5 mart
-holds it), and `Revenue Share of Group` / `Revenue Share of Unit` (explicit denominators,
-named). DSO, DIO, DPO and the cash conversion cycle are **deferred**: each needs a
+and `Layer Entries` (the consolidation bridge by layer, since Phase 6B.1 at **month grain**
+on the governed period basis and the reporting close, so the statutory layers sum to
+`[Statutory EBITDA]` and `[Net Income]` on MTD, YTD and FY alike — `P6B1-BR`), and
+`Revenue Share of Group` / `Revenue Share of Unit` (explicit denominators, named).
+`Consolidation Bridge Title` is the one text measure added in 6B.1: the bridge's title, as
+words that state its scope.
+
+## Hierarchy sort keys (Phase 6B.1)
+
+Every reportable level of the financial-statement hierarchy sorts by a key **at its own
+grain**: `fs_caption_l1` by `fs_caption_l1_sort`, `fs_caption_l2` by `fs_caption_l2_sort`,
+`account_name` by `sort_order`. The caption keys are derived from the governed chart — a
+caption's key is the smallest account sort order beneath it — so the statement order is the
+chart's own and a caption maps to one key by construction. Level-2 labels the chart reuses
+under more than one level-1 caption (*Intercompany balances*, *Non-controlling interests*,
+*Operating lease liabilities*) are qualified with their level-1 caption, because a label that
+names two nodes cannot carry one key. The same rule holds for every sort declaration in the
+model (`P6B1-HS-01`), which is how `Scenario[scenario_name]` and `Balance Sheet[caption]`
+came to be restated at their own grain (`dim_semantic_scenario`, `fact_semantic_balance_sheet`). DSO, DIO, DPO and the cash conversion cycle are **deferred**: each needs a
 metric-policy decision (ending or average balance, the denominator period, the day
 convention, COGS or purchases for DPO), and `P6-COV-01` holds the deferral on record
 rather than letting a report invent one.

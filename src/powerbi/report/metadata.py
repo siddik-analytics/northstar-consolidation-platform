@@ -48,6 +48,8 @@ def control_status() -> list[dict]:
          "phase06a_fault_results.csv"),
         ("Phase 6B", "Report on the model", "phase06b_control_results.csv",
          "phase06b_fault_results.csv"),
+        ("Phase 6B.1", "Hierarchy sort grain, bridge scope", "phase06b1_control_results.csv",
+         "phase06b1_fault_results.csv"),
     ]
     out = []
     for phase, scope, controls, faults in families:
@@ -79,6 +81,8 @@ def reconciliations() -> list[dict]:
     xls = [r for r in pbi if r["control_id"].startswith("P6-XLS")]
     pbip = [r for r in pbi if r["control_id"].startswith("P6-PBIP")]
     rpt = _rows("phase06b_control_results.csv")
+    b1 = _rows("phase06b1_control_results.csv")
+    bridge = [r for r in b1 if r["control_id"].startswith("P6B1-BR")]
     recon = [r for r in rpt if r["control_id"] >= "P6B-30"]
     native = [r for r in rpt if r["control_id"] in ("P6B-20", "P6B-21", "P6B-22", "P6B-23",
                                                      "P6B-25")]
@@ -96,7 +100,10 @@ def reconciliations() -> list[dict]:
              total=len(recon), not_executed=sum(r["status"] == "NOT_EXECUTED" for r in recon)),
         dict(name="Native render (Desktop)", passed=sum(r["status"] == "PASS" for r in native),
              total=len(native), not_executed=sum(r["status"] == "NOT_EXECUTED" for r in native)),
-    ] if rpt else [])
+    ] if rpt else []) + ([
+        dict(name="Layer bridge to the statements", passed=sum(r["status"] == "PASS" for r in bridge),
+             total=len(bridge), not_executed=sum(r["status"] == "NOT_EXECUTED" for r in bridge)),
+    ] if b1 else [])
 
 
 def lineage() -> dict:

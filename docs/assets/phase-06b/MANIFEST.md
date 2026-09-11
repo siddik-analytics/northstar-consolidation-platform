@@ -19,12 +19,24 @@ owner's visual review.
 | `07_debt_covenants.png` | 07 Debt & Covenants | *Indicative* at the August close; every test date Compliant; the dashed copper limit |
 | `09_consolidation_controls.png` | 09 Consolidation & Controls | the layer bridge from `[Layer EBITDA]`/`[Layer Net Income]`, entries by year, the control environment read from the registers — Phase 6A 68/68, Phase 6B from its own register |
 
+Re-taken in Phase 6B.1 after the two corrections: the Consolidation & Controls page now
+carries the period and basis slicers and the bridge titled *Year to date consolidation
+bridge — Aug 2026*; the P&L account detail is the full caption → sub-caption → account
+hierarchy.
+
 ## `final/` — evidence
 
 | file | shows |
 |---|---|
 | `01_executive_overview_unit_selected.png` | the Executive Overview with *Industrial Services* chosen in the unit slicer: Revenue 84.1, Adjusted EBITDA 4.6 (favourable), FTE 1,051.7; Group cash, net debt and leverage unchanged, as their captions say |
 | `01_executive_overview_cutoff.png` | the revenue-by-month visual alone: the navy Actual line ends at August, budget and forecast carry on to December (`P6B-23` measures the last navy pixel against the position of August) |
+| `02_pnl_performance_expanded.png` | Phase 6B.1: the account detail with *Revenue* expanded — Product revenue, Service revenue, Project revenue, Other revenue, Revenue deductions, Intercompany revenue, in statement order, each once (P6B-D-06 closed) |
+
+## `../phase-06b-1/` — the hierarchy lab
+
+| file | shows |
+|---|---|
+| `hierarchy_lab_is_bs.png` | a lab project (not the report) with four single-level matrices: both statements' level-1 and level-2 captions as Desktop sorts them by the governed keys — statement order, each caption once, the reused labels qualified |
 
 ## Earlier in the phase
 

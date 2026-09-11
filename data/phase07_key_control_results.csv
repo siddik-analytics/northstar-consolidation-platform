@@ -1,6 +1,6 @@
 control_id,control_name,severity,status,measured,threshold,detail
-P7-REG-01,Every keyed object in the warehouse is declared in the registry,BLOCKING,PASS,0,0,"73 objects in scope, all declared"
-P7-REG-02,Every registry entry names an object that exists,BLOCKING,PASS,0,0,"73 declarations, all resolve"
+P7-REG-01,Every keyed object in the warehouse is declared in the registry,BLOCKING,PASS,0,0,"76 objects in scope, all declared"
+P7-REG-02,Every registry entry names an object that exists,BLOCKING,PASS,0,0,"76 declarations, all resolve"
 P7-REG-03,Every declared key column exists on its object,BLOCKING,PASS,0,0,
 P7-REG-04,Every keyless waiver carries a reason,BLOCKING,PASS,0,0,no waivers in force
 P7-KEY-dim_date,"dim_date is unique on its declared key (period_key, accounting_period)",BLOCKING,PASS,0 duplicate rows,0,"60 rows, 60 distinct keys; owner Phase 3; authority config/calendar.yml"
@@ -78,6 +78,15 @@ P7-NUL-dim_semantic_job_family-declared,dim_semantic_job_family states a reason 
 P7-KEY-dim_semantic_period_basis,dim_semantic_period_basis is unique on its declared key (basis_code),BLOCKING,PASS,0 duplicate rows,0,"3 rows, 3 distinct keys; owner Phase 6A; authority src/powerbi/measures.py PERIOD_BASIS_ROWS"
 P7-NUL-dim_semantic_period_basis,dim_semantic_period_basis has no null in an unpermitted key column,BLOCKING,PASS,0,0,1 of 1 key columns must never be null
 P7-NUL-dim_semantic_period_basis-declared,dim_semantic_period_basis states a reason for every nullable key column,BLOCKING,PASS,coherent,coherent,a nullable key column needs a reason a reviewer would accept
+P7-KEY-dim_semantic_scenario,dim_semantic_scenario is unique on its declared key (version_code),BLOCKING,PASS,0 duplicate rows,0,"6 rows, 6 distinct keys; owner Phase 6B.1; authority src/powerbi/config.py SEMANTIC_DIMENSIONS"
+P7-NUL-dim_semantic_scenario,dim_semantic_scenario has no null in an unpermitted key column,BLOCKING,PASS,0,0,1 of 1 key columns must never be null
+P7-NUL-dim_semantic_scenario-declared,dim_semantic_scenario states a reason for every nullable key column,BLOCKING,PASS,coherent,coherent,a nullable key column needs a reason a reviewer would accept
+P7-KEY-fact_semantic_balance_sheet,"fact_semantic_balance_sheet is unique on its declared key (period_key, account_class, caption)",BLOCKING,PASS,0 duplicate rows,0,"1,296 rows, 1,296 distinct keys; owner Phase 6B.1; authority src/powerbi/config.py SEMANTIC_DIMENSIONS"
+P7-NUL-fact_semantic_balance_sheet,fact_semantic_balance_sheet has no null in an unpermitted key column,BLOCKING,PASS,0,0,3 of 3 key columns must never be null
+P7-NUL-fact_semantic_balance_sheet-declared,fact_semantic_balance_sheet states a reason for every nullable key column,BLOCKING,PASS,coherent,coherent,a nullable key column needs a reason a reviewer would accept
+P7-KEY-fact_semantic_layer_bridge,"fact_semantic_layer_bridge is unique on its declared key (period_key, layer_id)",BLOCKING,PASS,0 duplicate rows,0,"240 rows, 240 distinct keys; owner Phase 6B.1; authority src/powerbi/config.py SEMANTIC_DIMENSIONS"
+P7-NUL-fact_semantic_layer_bridge,fact_semantic_layer_bridge has no null in an unpermitted key column,BLOCKING,PASS,0,0,2 of 2 key columns must never be null
+P7-NUL-fact_semantic_layer_bridge-declared,fact_semantic_layer_bridge states a reason for every nullable key column,BLOCKING,PASS,coherent,coherent,a nullable key column needs a reason a reviewer would accept
 P7-KEY-dim_report_scenario,dim_report_scenario is unique on its declared key (version_code),BLOCKING,PASS,0 duplicate rows,0,"6 rows, 6 distinct keys; owner Phase 5; authority src/marts/config.py"
 P7-NUL-dim_report_scenario,dim_report_scenario has no null in an unpermitted key column,BLOCKING,PASS,0,0,1 of 1 key columns must never be null
 P7-NUL-dim_report_scenario-declared,dim_report_scenario states a reason for every nullable key column,BLOCKING,PASS,coherent,coherent,a nullable key column needs a reason a reviewer would accept

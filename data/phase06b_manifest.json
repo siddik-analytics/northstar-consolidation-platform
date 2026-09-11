@@ -1,5 +1,5 @@
 {
-  "build_id": "3ae52c995de48892",
+  "build_id": "5348891e5412354b",
   "controls": {
     "failed": 0,
     "not_executed": 0,
@@ -15,23 +15,23 @@
     "cutoff": true,
     "desktop": "2.157.1354.0",
     "navigation": 10,
-    "project_digest": "a6ec6ca6a830788a",
-    "seconds": 303.9,
+    "project_digest": "6f7e48557bbfc155",
+    "seconds": 295.3,
     "unit_narrowed": true,
     "visual_errors": 0
   },
   "objects": {
-    "analytical": 28,
+    "analytical": 27,
     "kpi": 160,
     "navigation": 100,
-    "shape": 116,
-    "slicer": 27,
-    "text": 224
+    "shape": 117,
+    "slicer": 29,
+    "text": 232
   },
   "pages": 10,
   "phase": "6B",
-  "project_digest": "6a7239d6772b92f6",
-  "semantic_build_id": "cfefefbaa93f16a1",
-  "visuals": 655,
+  "project_digest": "33333b68135ba2a2",
+  "semantic_build_id": "4b103cfb8fa9c6ed",
+  "visuals": 665,
   "workbook_digest": "bf847b4327526a39"
 }

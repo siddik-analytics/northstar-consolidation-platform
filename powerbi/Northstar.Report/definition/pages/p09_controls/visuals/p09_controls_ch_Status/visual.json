@@ -3,11 +3,11 @@
   "name": "p09_controls_ch_Status",
   "position": {
     "x": 1196,
-    "y": 114,
-    "z": 36,
+    "y": 170,
+    "z": 38,
     "width": 60,
     "height": 16,
-    "tabOrder": 36000
+    "tabOrder": 38000
   },
   "visual": {
     "visualType": "textbox",

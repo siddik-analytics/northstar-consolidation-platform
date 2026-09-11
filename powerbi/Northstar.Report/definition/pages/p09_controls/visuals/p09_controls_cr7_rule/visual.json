@@ -1,35 +1,53 @@
 {
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.12.0/schema.json",
-  "name": "p09_controls_ent_r",
+  "name": "p09_controls_cr7_rule",
   "position": {
-    "x": 1056,
-    "y": 481,
-    "z": 116,
-    "width": 200,
-    "height": 18,
-    "tabOrder": 116000
+    "x": 736,
+    "y": 368,
+    "z": 95,
+    "width": 520,
+    "height": 1,
+    "tabOrder": 95000
   },
   "visual": {
-    "visualType": "textbox",
+    "visualType": "shape",
     "objects": {
-      "general": [
+      "shape": [
         {
           "properties": {
-            "paragraphs": [
-              {
-                "textRuns": [
-                  {
-                    "value": "journal entries posted",
-                    "textStyle": {
-                      "fontSize": "8pt",
-                      "color": "#5B6B7B",
-                      "fontFamily": "Segoe UI"
-                    }
-                  }
-                ],
-                "horizontalTextAlignment": "right"
+            "tileShape": {
+              "expr": {
+                "Literal": {
+                  "Value": "'rectangle'"
+                }
               }
-            ]
+            }
+          }
+        }
+      ],
+      "fill": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "outline": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
           }
         }
       ]
@@ -41,7 +59,25 @@
             "show": {
               "expr": {
                 "Literal": {
-                  "Value": "false"
+                  "Value": "true"
+                }
+              }
+            },
+            "color": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#D5DBE1'"
+                    }
+                  }
+                }
+              }
+            },
+            "transparency": {
+              "expr": {
+                "Literal": {
+                  "Value": "0.0D"
                 }
               }
             }
