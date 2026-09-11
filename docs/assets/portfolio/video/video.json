@@ -1,0 +1,13 @@
+{
+  "mp4": "docs\\assets\\portfolio\\video\\northstar-walkthrough.mp4",
+  "gif": "docs\\assets\\portfolio\\video\\preview.gif",
+  "seconds": 150.5,
+  "mp4_mb": 9.7,
+  "gif_mb": 0.5,
+  "preview_seconds": 69.5,
+  "live": {
+    "opened": true,
+    "refreshed": true,
+    "frames": 9
+  }
+}

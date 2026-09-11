@@ -13,7 +13,7 @@ Outputs go to `docs/assets/portfolio/`:
 
     excel/        framed Excel sheets (two-page sheets stacked)
     powerbi/      framed Power BI pages
-    architecture/ the pipeline diagram (SVG, hand-drawn in code so it renders on GitHub)
+    architecture/ the pipeline diagram (drawn in code, in the palette)
     hero.png      the two-panel Excel + Power BI composition
 """
 
@@ -138,10 +138,13 @@ def build_hero() -> None:
     Overview, the same numbers in two artefacts, with the pipeline written beneath.
     """
     excel = excel_sheet("01_Executive_Summary")
-    # the top of the sheet: title, KPI tiles and the performance table
-    excel = excel.crop((0, 0, excel.width, int(excel.height * 0.50)))
+    # the top-left of the sheet: title and the two KPI tile bands, the part a reader meets
+    # first; the sheet is wide and a full-width panel would shrink past legibility on GitHub
+    excel = excel.crop((0, 0, int(excel.width * 0.705), int(excel.height * 0.36)))
     pbi = Image.open(PBI / "01_executive_overview.png").convert("RGB")
-    panel_h = 760
+    # the report's first two tiers and its middle row
+    pbi = pbi.crop((0, 0, pbi.width, int(pbi.height * 0.74)))
+    panel_h = 600
     excel = excel.resize((round(excel.width * panel_h / excel.height), panel_h), Image.LANCZOS)
     pbi = pbi.resize((round(pbi.width * panel_h / pbi.height), panel_h), Image.LANCZOS)
     gap, pad, top, bottom = 40, 72, 150, 130
@@ -168,98 +171,100 @@ def build_hero() -> None:
 
 
 # ------------------------------------------------------------------ the architecture diagram
-def build_architecture() -> None:
-    W, H = 1400, 980
-    parts = []
-    parts.append(f'<svg xmlns="http://www.w3.org/2000/svg" width="{W}" height="{H}" viewBox="0 0 {W} {H}" '
-                 f'font-family="Segoe UI, Helvetica, Arial, sans-serif">')
-    parts.append(f'<rect width="{W}" height="{H}" fill="{GROUND}"/>')
+def build_architecture(controls: int = 677, fixtures: int = 83) -> None:
+    """The pipeline as five bands with the control layer beside them, drawn in the palette."""
+    W, H = 1600, 1180
+    im = Image.new("RGB", (W, H), GROUND)
+    d = ImageDraw.Draw(im)
+    f_title, f_band, f_sub, f_box, f_note = font(32, True), font(22, True), font(16), font(17, True), font(14)
+    d.rectangle((0, 0, W, 8), fill=NAVY)
+    d.rectangle((0, 8, 160, 14), fill=COPPER)
+    d.text((60, 44), "How the platform is built", fill=NAVY, font=f_title)
+    d.text((60, 90), "From three ERP extracts to two reporting artefacts, with controls and lineage as a layer of their own",
+           fill=INK_MUTED, font=f_sub)
+    left, right = 60, W - 300
+    cx = (left + right) // 2
 
-    def band(y, h, title, sub, fill, text=NAVY):
-        parts.append(f'<rect x="60" y="{y}" width="{W - 320}" height="{h}" rx="6" fill="{fill}" stroke="{RULE}"/>')
-        parts.append(f'<text x="84" y="{y + 30}" font-size="20" font-weight="700" fill="{text}">{title}</text>')
-        if sub:
-            parts.append(f'<text x="84" y="{y + 54}" font-size="14" fill="{INK_MUTED}">{sub}</text>')
+    def band(y, h, title, sub, fill):
+        d.rectangle((left, y, right, y + h), fill=fill, outline=RULE)
+        d.text((left + 24, y + 18), title, fill=NAVY, font=f_band)
+        d.text((left + 24, y + 52), sub, fill=INK_MUTED, font=f_sub)
 
-    def box(x, y, w, h, label, note=None, fill="white", stroke=NAVY, text=INK):
-        parts.append(f'<rect x="{x}" y="{y}" width="{w}" height="{h}" rx="4" fill="{fill}" stroke="{stroke}"/>')
-        parts.append(f'<text x="{x + w / 2}" y="{y + (24 if note else h / 2 + 5)}" text-anchor="middle" '
-                     f'font-size="15" font-weight="600" fill="{text}">{label}</text>')
+    def box(x, y, w, h, label, note=None, fill="white", stroke=NAVY):
+        d.rectangle((x, y, x + w, y + h), fill=fill, outline=stroke, width=2)
+        tw = d.textlength(label, font=f_box)
+        d.text((x + (w - tw) / 2, y + (12 if note else (h - 22) / 2)), label, fill=INK, font=f_box)
         if note:
-            parts.append(f'<text x="{x + w / 2}" y="{y + 44}" text-anchor="middle" font-size="12" fill="{INK_MUTED}">{note}</text>')
+            nw = d.textlength(note, font=f_note)
+            d.text((x + (w - nw) / 2, y + 40), note, fill=INK_MUTED, font=f_note)
 
-    def arrow(y0, y1, x=W / 2 - 130):
-        parts.append(f'<line x1="{x}" y1="{y0}" x2="{x}" y2="{y1 - 10}" stroke="{NAVY}" stroke-width="2"/>')
-        parts.append(f'<polygon points="{x - 7},{y1 - 12} {x + 7},{y1 - 12} {x},{y1}" fill="{NAVY}"/>')
+    def arrow(y0, y1):
+        d.line((cx, y0, cx, y1 - 12), fill=NAVY, width=3)
+        d.polygon([(cx - 9, y1 - 14), (cx + 9, y1 - 14), (cx, y1)], fill=NAVY)
 
-    # title
-    parts.append(f'<rect x="0" y="0" width="{W}" height="6" fill="{NAVY}"/>')
-    parts.append(f'<rect x="0" y="6" width="140" height="5" fill="{COPPER}"/>')
-    parts.append(f'<text x="60" y="50" font-size="26" font-weight="700" fill="{NAVY}">How the platform is built</text>')
-    parts.append(f'<text x="60" y="76" font-size="15" fill="{INK_MUTED}">From three ERP extracts to two reporting artefacts, with controls and lineage as a layer of their own</text>')
-
-    # 1 sources
-    y = 100
-    band(y, 118, "Source systems", "three ERPs, three charts of accounts, three sign conventions · 507 native extracts · ~1.1M journal lines", "white")
-    bw = 300
-    for i, (name, note) in enumerate((("Aurora ERP", "US entities · USD"), ("Sable ERP", "European entities · EUR, GBP"),
+    y = 140
+    band(y, 150, "Source systems",
+         "three ERPs, three charts of accounts, three sign conventions  ·  507 native extracts  ·  ~1.1M journal lines", "white")
+    bw = (right - left - 48 - 2 * 24) // 3
+    for k, (name, note) in enumerate((("Aurora ERP", "US entities · USD"), ("Sable ERP", "European entities · EUR, GBP"),
                                       ("Kestrel ERP", "Canadian entities · CAD"))):
-        box(84 + i * (bw + 30), y + 66, bw, 40, name, None)
-        parts.append(f'<text x="{84 + i * (bw + 30) + bw / 2}" y="{y + 108}" text-anchor="middle" font-size="12" fill="{INK_MUTED}">{note}</text>')
-    arrow(y + 118, y + 150)
+        box(left + 24 + k * (bw + 24), y + 84, bw, 70, name, note)
+    arrow(y + 168, y + 200)
 
-    # 2 processing
-    y = 250
-    band(y, 118, "Ingestion and harmonisation", "one schema, one calendar, one currency table · group chart of accounts · conformed dimensions", "white")
-    bw = 222
-    for i, name in enumerate(("Parsing", "Standardisation", "COA mapping", "Conformed dimensions")):
-        box(84 + i * (bw + 22), y + 66, bw, 40, name)
-    arrow(y + 118, y + 150)
+    y = 340
+    band(y, 150, "Ingestion and harmonisation",
+         "one schema, one calendar, one currency table  ·  the group chart of accounts  ·  conformed dimensions", "white")
+    bw = (right - left - 48 - 3 * 20) // 4
+    for k, name in enumerate(("Parsing", "Standardisation", "COA mapping", "Conformed dimensions")):
+        box(left + 24 + k * (bw + 20), y + 84, bw, 52, name)
+    arrow(y + 150, y + 184)
 
-    # 3 consolidation
-    y = 400
-    band(y, 150, "Five-layer consolidation", "statutory = layers 1 + 2 + 3 + 5 · management adds layer 4 · every entry a journal with a rule and evidence", PANEL)
-    bw = 178
+    y = 524
+    band(y, 170, "Five-layer consolidation",
+         "statutory = layers 1 + 2 + 3 + 5  ·  management adds layer 4  ·  every entry a journal with a rule and its evidence", PANEL)
+    bw = (right - left - 48 - 4 * 14) // 5
     layers = (("1  Reported", "translated at governed rates"), ("2  IC eliminations", "matched relationship-periods"),
-              ("3  Consolidation adj.", "PPA · goodwill · NCI · unrealised profit"), ("4  Management adj.", "approved add-backs"),
+              ("3  Consolidation adj.", "PPA · goodwill · NCI · PUP"), ("4  Management adj.", "approved add-backs"),
               ("5  FX / CTA", "translation to the group currency"))
-    for i, (name, note) in enumerate(layers):
-        box(84 + i * (bw + 12), y + 66, bw, 66, name, note, fill="white", stroke=COPPER if i == 3 else NAVY)
-    arrow(y + 150, y + 182)
+    for k, (name, note) in enumerate(layers):
+        box(left + 24 + k * (bw + 14), y + 84, bw, 70, name, note, stroke=COPPER if k == 3 else NAVY)
+    arrow(y + 170, y + 204)
 
-    # 4 marts
-    y = 582
-    band(y, 100, "Governed reporting marts", "fifteen marts at declared grain · monthly and year-to-date · variance, covenants, cash flow, working capital, headcount, capex", "white")
-    box(84, y + 62, W - 368, 28, "one authoritative definition per measure · keys and grain declared and proven", fill=PANEL, stroke=RULE, text=INK_MUTED)
-    arrow(y + 100, y + 132)
+    y = 728
+    band(y, 130, "Governed reporting marts",
+         "fifteen marts at declared grain  ·  monthly and year to date  ·  variance, covenants, cash flow, working capital, headcount, capex", "white")
+    box(left + 24, y + 84, right - left - 48, 34,
+        "one authoritative definition per measure  ·  keys and grain declared and proven", fill=PANEL, stroke=RULE)
+    arrow(y + 130, y + 164)
 
-    # 5 outputs
-    y = 714
-    band(y, 150, "Outputs", "the same governed numbers, in the artefact each reader uses", "white")
-    bw = 320
-    outs = (("Excel management reporting", "16 report sheets · Power Query refresh · rendered and reconciled natively"),
-            ("Power BI semantic model", "28 tables · 96 measures · PBIP / TMDL · validated in the engine and in Desktop"),
-            ("Power BI executive report", "10 pages · generated from declarations · 43 controls of its own"))
-    for i, (name, note) in enumerate(outs):
-        box(84 + i * (bw + 22), y + 66, bw, 66, name, note, fill=COPPER_TINT if i == 0 else "white", stroke=NAVY)
+    y = 892
+    band(y, 170, "Outputs", "the same governed numbers, in the artefact each reader uses", "white")
+    bw = (right - left - 48 - 2 * 20) // 3
+    outs = (("Excel management reporting", "16 sheets · rendered and reconciled natively"),
+            ("Power BI semantic model", "28 tables · 96 measures · PBIP / TMDL"),
+            ("Power BI executive report", "10 pages · 43 controls of its own"))
+    for k, (name, note) in enumerate(outs):
+        box(left + 24 + k * (bw + 20), y + 84, bw, 70, name, note, fill=COPPER_TINT if k == 0 else "white")
 
-    # cross-cutting controls
-    x = W - 240
-    parts.append(f'<rect x="{x}" y="100" width="180" height="764" rx="6" fill="{NAVY}"/>')
-    parts.append(f'<rect x="{x}" y="100" width="180" height="6" fill="{COPPER}"/>')
-    lines = ["Controls and", "lineage", "", "677 automated controls", "83 fault fixtures", "reconciliation across", "every artefact",
-             "", "deterministic builds", "canonical build ids", "digests at every layer", "", "a defect register", "and the design", "lesson each one", "taught"]
-    for i, t in enumerate(lines):
-        weight = "700" if i < 2 else "400"
-        size = 18 if i < 2 else 14
-        parts.append(f'<text x="{x + 90}" y="{150 + i * 30}" text-anchor="middle" font-size="{size}" font-weight="{weight}" fill="white">{t}</text>')
-
-    parts.append(f'<text x="60" y="{H - 40}" font-size="13" fill="{INK_MUTED}">Northstar Consolidation &amp; Board Reporting Platform · a synthetic environment · every number regenerable from a fixed seed</text>')
-    parts.append("</svg>")
-    path = OUT / "architecture" / "architecture.svg"
-    path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text("\n".join(parts), encoding="utf-8")
-    print(f"  {path.relative_to(ROOT)}")
+    # the cross-cutting layer
+    x0 = W - 260
+    d.rectangle((x0, 140, W - 60, 1062), fill=NAVY)
+    d.rectangle((x0, 140, W - 60, 147), fill=COPPER)
+    lines = [("Controls and lineage", True), ("", False), (f"{controls} automated controls", False),
+             (f"{fixtures} fault fixtures, each", False), ("caught by the control", False), ("named for it", False),
+             ("", False), ("reconciliation across", False), ("every artefact: ledger,", False), ("marts, workbook,", False),
+             ("model, rendered page", False), ("", False), ("deterministic builds", False), ("canonical build ids", False),
+             ("digests at every layer", False), ("", False), ("a defect register and", False), ("the design lesson", False),
+             ("each one taught", False)]
+    yy = 190
+    for text, bold in lines:
+        f = font(19, True) if bold else font(16)
+        tw = d.textlength(text, font=f)
+        d.text((x0 + (200 - tw) / 2, yy), text, fill="white", font=f)
+        yy += 34 if bold else 28
+    d.text((60, H - 56), "Northstar Consolidation & Board Reporting Platform  ·  a synthetic environment  ·  every number regenerable from a fixed seed",
+           fill=INK_MUTED, font=f_note)
+    save(im, OUT / "architecture" / "architecture.png")
 
 
 def main(argv: list[str]) -> int:

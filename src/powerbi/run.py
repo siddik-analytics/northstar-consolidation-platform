@@ -104,7 +104,11 @@ def definition_digest() -> str:
     return hashlib.sha256(text.encode("utf-8")).hexdigest()[:16]
 
 
-REPORT_INPUTS = tuple(sorted((Path(__file__).parent / "report").glob("*.py")))
+#: The report's declared inputs: the modules the report is generated from. The controls,
+#: fixtures and the native pass test the artefact and are not inputs to it, so a change to
+#: how the report is verified does not move the id of the report.
+REPORT_INPUTS = tuple(Path(__file__).parent / "report" / f"{name}.py"
+                      for name in ("theme", "pbir", "layout", "pages", "metadata", "build"))
 
 
 def report_build_id() -> str:

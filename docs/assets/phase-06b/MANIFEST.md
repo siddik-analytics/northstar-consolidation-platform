@@ -42,5 +42,5 @@ hierarchy.
 
 | folder / file | what it was |
 |---|---|
-| `wip/` | the first renders at the `331814d` stop, before Phase 6A.3: the unit chart showing the Group total for every unit, the variance matrix at 2,713.9%, the literal Excel formats |
+| `stop-331814d/` | the first renders at the `331814d` stop, before Phase 6A.3: the unit chart showing the Group total for every unit, the variance matrix at 2,713.9%, the literal Excel formats |
 | `desktop_P6B-D-02_unsupported_table_name.png` | Desktop's refusal of the table name `Measures` at the first native open (Phase 6A.2) |

@@ -15,21 +15,18 @@ each contained two genuinely separable pieces of work with different risk profil
 
 | Phase | Name | Status |
 |---|---|---|
-| 1 | Business design & architecture | **Complete** |
-| 1.1 | Architecture correction pass | **Complete — ready for Phase 2 approval** |
-| 2 | Synthetic source systems & reference data | **Complete** |
-| 2.1 | Source data correction pass | **Complete** |
-| 2.2 | Source-layer integrity pass | **Complete — ready for Phase 3 approval** |
-| 3 | Ingestion, staging & COA harmonisation | **Complete — awaiting owner review** |
-| 4 | Consolidation engine | Not started |
-| 5 | Reporting marts & automated control suite | Not started |
-| 6 | Excel FP&A and management reporting models | Not started |
-| 7 | Power BI semantic model & report suite | Not started |
-| 8 | Board reporting pack & commentary framework | Not started |
-| 9 | QA, reconciliation & performance hardening | Not started |
-| 10 | Documentation & portfolio packaging | Not started |
+| 1 · 1.1 | Business design & architecture, correction pass | Complete |
+| 2 · 2.1 · 2.2 | Synthetic source systems, correction and integrity passes | Complete |
+| 3 · 3.1 · 3.2 | Ingestion, staging & COA harmonisation, source corrections | Complete |
+| 4 · 4A · 4B · 4C | Consolidation engine, proof gate, documentation gate, reporting integrity | Complete |
+| 5 · 5.1 · 5.2 | Reporting marts & Excel management reporting, key integrity, visual polish | Complete — workbook frozen at `0576e03d47570d2c` |
+| 6A · 6A.2 · 6A.3 | Power BI semantic model, native PBIP, report-discovered fixes | Complete — definition `6230f1c9a8f4246b` |
+| 6B · 6B.1 | Power BI executive report, final reporting integrity corrections | Complete — accepted at `3ed985a` |
+| 7 | Portfolio release & presentation | Package complete — awaiting owner publication approval |
 
----
+The original ten-phase plan's later entries (Excel FP&A models, the Power BI suite, a board
+pack, hardening, packaging) were delivered inside phases 5 to 7 above or deliberately left
+out of scope; the original plan text is kept at the end of this file for the record.
 
 ## Phase 1 — Business design & architecture ✅
 
@@ -505,6 +502,26 @@ validation, Excel untouched. See
 [`phase-06b-1-reporting-integrity.md`](phase-06b-1-reporting-integrity.md).
 
 ---
+
+## Phase 7 — Portfolio release & presentation
+
+**Package complete, awaiting owner publication approval.** A governance-only refresh of the
+workbook (the four control-count cells, 295 → 304; new permanent digest `0576e03d47570d2c`),
+the final Power BI baseline validated natively once more (definition `6230f1c9a8f4246b`,
+report build `82890711b04f655a`), and the portfolio material: the README rebuilt as a
+project landing page, a case study, framed Excel and Power BI screenshots, a hero
+composition, an architecture diagram, a 2:30 walkthrough video with a short preview, and
+the copy for GitHub, Upwork, a resume and LinkedIn. No finance output changed. See
+[`phase-07-portfolio-release.md`](phase-07-portfolio-release.md).
+
+---
+
+## The original plan — later phases, as first written
+
+Kept for the record. Phase 6 below became Phase 5's workbook (one workbook, not three);
+Phase 7 became Phases 6A and 6B; the board pack, hardening and packaging phases were
+delivered as parts of Phases 4A–4C, 5.1 and 7, or left out of scope (row-level security,
+calculation groups, the paginated board pack, the commentary framework).
 
 ## Phase 6 — Excel FP&A and management reporting models
 

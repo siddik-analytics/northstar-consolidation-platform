@@ -291,7 +291,7 @@ Two surfaces, validated separately, because passing one proves nothing about the
 
 The Analysis Services instance Desktop runs behind itself accepts TMSL over XMLA, so the model
 is deployed there and queried there. That is the real engine, the real model, the real DAX:
-all 89 measures parse and evaluate; 19 reconciliations against the marts and 8 against the
+all 96 measures parse and evaluate; 19 reconciliations against the marts and 8 against the
 Excel workbook pass; 12 fault fixtures are each caught by the control named for them.
 
 ### The project

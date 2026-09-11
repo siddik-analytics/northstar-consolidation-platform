@@ -119,7 +119,9 @@ def lineage() -> dict:
         phase06a=m6.get("build_id", ""),
         # the report's own build id, computed here rather than read from a manifest: a
         # manifest written after generation can only hold the digest of the previous one
-        report_build_id=_build_id(sorted(Path(__file__).parent.glob("*.py"))),
+        report_build_id=_build_id([Path(__file__).parent / f"{n}.py"
+                                   for n in ("theme", "pbir", "layout", "pages", "metadata",
+                                             "build")]),
         definition_digest=m6.get("definition_digest", ""),
         workbook_digest=(wb.get("build_digest") or "")[:16],
         desktop=m6.get("desktop", ""),

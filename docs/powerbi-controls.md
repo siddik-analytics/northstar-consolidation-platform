@@ -66,7 +66,7 @@ one to many-to-many; no two tables joined by more than one active path; every in
 relationship carrying a written reason; descriptions on every table and measure; the five
 required elements on every high-risk measure; display folders; format strings; statement
 captions sorting by governed order rather than alphabetically; no technical key left visible;
-the model loading in the engine; **all 89 measures parsing and evaluating**.
+the model loading in the engine; **every measure parsing and evaluating** (96 today).
 
 ### `P6-XAR` — Power BI against the marts
 

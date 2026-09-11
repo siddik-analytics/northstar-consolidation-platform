@@ -100,9 +100,23 @@ def prepare(pid) -> None:
     w, rect = _win(pid)
     w.set_focus()
     time.sleep(0.5)
-    for dx in (1364, 1636, 1910):          # the three pane chevrons, right-anchored
-        mouse.click(coords=(rect.left + dx, rect.top + 280))
+    send_keys("{ESC}")
+    time.sleep(0.5)
+
+    def panes_open() -> bool:
+        return any(t.window_text().strip() in ("Visualizations", "Filters", "Data") and t.is_visible()
+                   and t.rectangle().left > rect.left + rect.width() * 0.8
+                   for t in w.descendants(control_type="Text"))
+
+    for _ in range(2):                      # the chevrons by name first, then by position
+        if not panes_open():
+            break
+        desktop.collapse_panes(pid)
         time.sleep(1.0)
+        if panes_open():
+            for dx in (1364, 1636, 1910):   # the three pane chevrons, right-anchored
+                mouse.click(coords=(rect.left + dx, rect.top + 280))
+                time.sleep(1.0)
     send_keys("^{F1}")                      # collapse the ribbon
     time.sleep(1.5)
 

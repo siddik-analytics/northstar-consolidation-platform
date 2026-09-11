@@ -74,7 +74,7 @@ semantics every join in the platform already relies on.
 | `P7-CPX` | 9 | the capital-project chain, end to end |
 | `P7-VER` | 14 | scenario and version governance, including the derived-version policy |
 
-**290 controls, 290 pass, nothing quarantined.**
+**304 controls, 304 pass, nothing quarantined** (290 at Phase 5.1; 295 after the Phase 6A dimensions; 304 after the Phase 6B.1 publications).
 
 The suite grew from 249 when Phase 6A published twelve conformed semantic dimensions for Power
 BI. `P7-REG-01` failed on all twelve the moment they appeared, which is exactly what it is for:
