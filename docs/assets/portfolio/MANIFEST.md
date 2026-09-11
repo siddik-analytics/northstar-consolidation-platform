@@ -20,6 +20,6 @@ value is edited.
 | `powerbi/01_executive_overview_unit_selected.png` | the same with Industrial Services chosen |
 | `powerbi/02_pnl_performance.png` · `03_business_units_entities.png` · `06_ebitda_bridge.png` | framed, available; not all used in the README |
 | `powerbi/05_cash_flow_liquidity.png` · `07_debt_covenants.png` · `09_consolidation_controls.png` | used in the README |
-| `video/northstar-walkthrough.mp4` | the 2:30 walkthrough (script: `docs/portfolio/video-script.md`) |
+| `video/northstar-walkthrough.mp4` | the 2:45 walkthrough (script: `docs/portfolio/video-script.md`) |
 | `video/preview.gif` | the live Power BI segment as a small silent preview for the README |
 | `video/video.json` | durations and sizes, written by the producer |

@@ -1,6 +1,6 @@
 # Walkthrough video — script and cue sheet
 
-`docs/assets/portfolio/video/northstar-walkthrough.mp4` · 2:30 · 1920×1080 · produced by
+`docs/assets/portfolio/video/northstar-walkthrough.mp4` · 2:45 · 1920×1080 · produced by
 `python tools/portfolio_video.py` from the workbook's own renders and live captures of Power
 BI Desktop. The preview, `preview.gif`, is the live Power BI segment.
 

@@ -138,7 +138,7 @@ and consolidation pages visited:
 
 ![Power BI walkthrough preview](docs/assets/portfolio/video/preview.gif)
 
-The full walkthrough (2:30) is at
+The full walkthrough (2:45) is at
 [`docs/assets/portfolio/video/northstar-walkthrough.mp4`](docs/assets/portfolio/video/northstar-walkthrough.mp4).
 
 ## The questions the platform answers

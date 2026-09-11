@@ -22,7 +22,7 @@ each contained two genuinely separable pieces of work with different risk profil
 | 5 · 5.1 · 5.2 | Reporting marts & Excel management reporting, key integrity, visual polish | Complete — workbook frozen at `0576e03d47570d2c` |
 | 6A · 6A.2 · 6A.3 | Power BI semantic model, native PBIP, report-discovered fixes | Complete — definition `6230f1c9a8f4246b` |
 | 6B · 6B.1 | Power BI executive report, final reporting integrity corrections | Complete — accepted at `3ed985a` |
-| 7 | Portfolio release & presentation | Package complete — awaiting owner publication approval |
+| 7 | Portfolio release & presentation | **v1.0 released** |
 
 The original ten-phase plan's later entries (Excel FP&A models, the Power BI suite, a board
 pack, hardening, packaging) were delivered inside phases 5 to 7 above or deliberately left
@@ -473,9 +473,9 @@ fixtures. 68/68, 16/16. See
 
 ---
 
-## Phase 6B — Power BI executive report 🔍
+## Phase 6B — Power BI executive report ✅
 
-**Built, awaiting owner visual review.** Ten pages generated from declarations on the sealed
+**Complete; reviewed and approved bar two corrections, made in Phase 6B.1.** Ten pages generated from declarations on the sealed
 model: an Executive Overview read in thirty seconds (four first-tier KPIs, six second-tier,
 the year so far, the full-year outlook, the unit that needs attention, cash and leverage
 against the limit), the governed P&L with account detail, units and entities with share
@@ -505,12 +505,12 @@ validation, Excel untouched. See
 
 ## Phase 7 — Portfolio release & presentation
 
-**Package complete, awaiting owner publication approval.** A governance-only refresh of the
+**v1.0 released.** A governance-only refresh of the
 workbook (the four control-count cells, 295 → 304; new permanent digest `0576e03d47570d2c`),
 the final Power BI baseline validated natively once more (definition `6230f1c9a8f4246b`,
 report build `82890711b04f655a`), and the portfolio material: the README rebuilt as a
 project landing page, a case study, framed Excel and Power BI screenshots, a hero
-composition, an architecture diagram, a 2:30 walkthrough video with a short preview, and
+composition, an architecture diagram, a 2:45 walkthrough video with a short preview, and
 the copy for GitHub, Upwork, a resume and LinkedIn. No finance output changed. See
 [`phase-07-portfolio-release.md`](phase-07-portfolio-release.md).
 

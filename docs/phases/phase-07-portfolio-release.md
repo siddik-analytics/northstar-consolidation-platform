@@ -1,7 +1,6 @@
 # Phase 7 — Portfolio release and presentation
 
-**Status:** package complete — **awaiting owner publication approval**; nothing tagged or
-published
+**Status:** **v1.0 released** — tag `v1.0` on the release commit, GitHub Release published
 **Baseline:** Phase 6B.1 accepted at `3ed985a`; Excel and Power BI frozen in this phase
 **Docs:** [README](../../README.md) · [case study](../portfolio/case-study.md) ·
 [copy](../portfolio/copy.md) · [video script](../portfolio/video-script.md) ·
@@ -37,7 +36,7 @@ engine (`P6B-20…25`, `P6B1-HS/SC/BR`, all passing).
 | hero composition | `docs/assets/portfolio/hero.png` |
 | architecture diagram | `docs/assets/portfolio/architecture/architecture.png` |
 | framed Excel screenshots (5) and Power BI screenshots (8) | `docs/assets/portfolio/excel/`, `docs/assets/portfolio/powerbi/` |
-| walkthrough video, 2:30, and the 70-second silent preview | `docs/assets/portfolio/video/` |
+| walkthrough video, 2:45, and the 76-second silent preview | `docs/assets/portfolio/video/` |
 | voice-over script and cue sheet | `docs/portfolio/video-script.md` |
 | asset builders (reproducible from the renders and captures) | `tools/portfolio_assets.py`, `tools/portfolio_video.py` |
 
@@ -67,7 +66,7 @@ regression reproduces).
 ## 5. Release recommendation
 
 `v1.0` — the first public release: every phase complete, both reporting artefacts frozen,
-the control suite clean, no open defect. Annotated tag, created only on the owner's approval.
+the control suite clean, no open defect. Annotated tag, created on the owner's approval.
 
 ## 6. Owner review checklist
 
@@ -79,7 +78,7 @@ the control suite clean, no open defect. Annotated tag, created only on the owne
 4. Case study reads as a consulting case study and states the environment is synthetic.
 5. Copy: GitHub description within the limit, topics valid, Upwork entry discloses the
    synthetic environment, resume bullets and LinkedIn copy make no unsupported outcome claim.
-6. Video: 2:30, cuts and holds long enough to read, captions accurate, no audio; the script
+6. Video: 2:45, cuts and holds long enough to read, captions accurate, no audio; the script
    matches the cues.
 7. Control story: the counts (677 controls, 83 fixtures, 588 tests) match the registers.
 8. AI disclosure: present, concise, positioned as assisted development under governed
